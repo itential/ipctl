@@ -1,0 +1,16 @@
+---
+##############################################################################
+# Reader commands
+##############################################################################
+#
+get:
+  use: configuration-parsers
+  group: configuration-manager
+  description: |
+    Display one or more configuration parsers
+
+describe:
+  use: device-group <name>
+  group: configuration-manager
+  description: |
+    Display details about a configuration parsers

@@ -1,0 +1,38 @@
+{
+  "result": {
+    "ok": 1,
+    "n": 1
+  },
+  "ops": [
+    {
+      "_id": "test",
+      "name": "test",
+      "os": "",
+      "passRule": false,
+      "ignoreWarnings": false,
+      "commands": [
+        {
+          "command": "",
+          "passRule": true,
+          "rules": [
+            {
+              "rule": "",
+              "eval": "contains",
+              "severity": "error"
+            }
+          ]
+        }
+      ],
+      "tags": null,
+      "created": 1737921835182,
+      "createdBy": "",
+      "lastUpdated": 1737921835182,
+      "lastUpdatedBy": "",
+      "namespace": null
+    }
+  ],
+  "insertedCount": 1,
+  "insertedIds": {
+    "0": "test"
+  }
+}

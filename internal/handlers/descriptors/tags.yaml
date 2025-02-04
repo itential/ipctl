@@ -1,0 +1,12 @@
+---
+get:
+  use: tags
+  group: admin-essentials
+  description: |
+    Display one or more tags
+
+describe:
+  use: tag <name>
+  group: admin-essentials
+  description: |
+    Display details about a tag

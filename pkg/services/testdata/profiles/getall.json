@@ -1,0 +1,197 @@
+{
+  "results": [
+    {
+      "metadata": {
+        "isActive": true,
+        "activeSync": true
+      },
+      "profile": {
+        "launchDelay": 2000,
+        "launchTimeout": 120000,
+        "applicationProps": {
+          "directory": "./node_modules/"
+        },
+        "uiProps": {
+          "description": "UI",
+          "layout": "node_modules/@itential/pronghorn-core/ui/views/layout.pug",
+          "home": "node_modules/@itential/iap-ui/build/index.html",
+          "login": "node_modules/@itential/iap-ui/build/index.html",
+          "profile": "node_modules/@itential/iap-ui/build/index.html",
+          "user_config": "node_modules/@itential/pronghorn-core/ui/views/user_config.pug",
+          "group_config": "node_modules/@itential/pronghorn-core/ui/views/group_config.pug",
+          "new_user": "node_modules/@itential/pronghorn-core/ui/views/dialogs/new_user.pug",
+          "edit_user": "node_modules/@itential/pronghorn-core/ui/views/dialogs/edit_user.pug",
+          "new_group": "node_modules/@itential/pronghorn-core/ui/views/dialogs/new_group.pug",
+          "fav_icon": "node_modules/@itential/pronghorn-core/ui/img/favicon.ico",
+          "apple_touch_icon": "node_modules/@itential/pronghorn-core/ui/img/apple-touch-icon.png"
+        },
+        "authenticationProps": {
+          "description": "Authentication",
+          "uniqueSession": false,
+          "admins": [
+            {
+              "group": "pronghorn_admin",
+              "provenance": "local_aaa"
+            }
+          ],
+          "brokerPrincipal": false,
+          "sso": {
+            "enabled": false,
+            "config": ""
+          }
+        },
+        "expressProps": {
+          "description": "Express Server",
+          "cacheControl": true,
+          "timeout": 600000,
+          "express_http": {
+            "enable": true,
+            "port": 3000
+          },
+          "express_https": {
+            "enable": true,
+            "port": 3443,
+            "key": "/opt/itential/keys/itential.key",
+            "cert": "/opt/itential/keys/itential.cert",
+            "secureProtocol": "TLSv1_2_method",
+            "ciphers": "ECDHE-RSA-AES128-GCM-SHA256",
+            "client_reneg_limit": 1,
+            "client_reneg_window": 600
+          }
+        },
+        "loggerProps": {
+          "description": "Logging",
+          "log_max_files": 10,
+          "log_max_file_size": 10485760,
+          "log_level": "info",
+          "log_directory": "/opt/itential/logs",
+          "log_filename": "itential.log",
+          "console_level": "info",
+          "syslog": {
+            "level": "warning",
+            "host": "127.0.0.1",
+            "port": 514,
+            "protocol": "udp4",
+            "facility": "local0",
+            "type": "BSD",
+            "path": "",
+            "pid": "process.pid",
+            "localhost": "",
+            "app_name": "",
+            "eol": ""
+          }
+        },
+        "alarmProps": [
+          {
+            "ip": "127.0.0.1",
+            "community": "public",
+            "type": "trap",
+            "properties": {
+              "retries": 1,
+              "timeout": 5000,
+              "transport": "udp4",
+              "trapPort": 162,
+              "version": "v2c"
+            }
+          }
+        ],
+        "auditProps": {
+          "description": "Audit",
+          "audit": true,
+          "brokerValidation": false
+        },
+        "pathProps": {
+          "description": "File Path Variables",
+          "sdk_dir": "/opt/pronghorn/pronghorn-applications",
+          "encrypted": true
+        },
+        "taskWorkerProps": {
+          "active": true,
+          "tick": 1500
+        },
+        "redisProps": {
+          "host": "iap.devel.redis",
+          "port": 6379,
+          "db": 0
+        },
+        "id": "profile1",
+        "services": [
+          "local_aaa",
+          "MOP",
+          "ConfigurationManager",
+          "LifecycleManager",
+          "AutomationCatalog",
+          "NSOManager",
+          "AGManager",
+          "Tags",
+          "ServiceCatalog",
+          "Search",
+          "FormBuilder",
+          "TemplateBuilder",
+          "JsonForms",
+          "ServiceCog",
+          "OperationsManager",
+          "WorkflowBuilder",
+          "AutomationStudio",
+          "Jst",
+          "WorkFlowEngine"
+        ],
+        "description": "An IAP Profile",
+        "systemProps": {
+          "deadProcessCheckInterval": 5,
+          "deadProcessMaxPeriod": 15,
+          "deadProcessCheck": false,
+          "shutdownTimeout": 3,
+          "launchDelay": 2,
+          "launchTimeout": 120
+        },
+        "integrationProps": {
+          "timeout": 15000,
+          "threadCount": 5
+        },
+        "prebuiltProps": {
+          "repoConfigs": {
+            "@itentialopensource": {
+              "enabled": true,
+              "type": "gitlab",
+              "hostname": "gitlab.com",
+              "path": "itentialopensource/pre-built-automations",
+              "credentials": {},
+              "versionStatus": "current"
+            }
+          }
+        },
+        "retryStrategy": {
+          "maxRetries": 10,
+          "retryResetTimer": 60000
+        },
+        "adapterStrategy": {
+          "device": {
+            "adapterTypes": [],
+            "exceptions": {
+              "runCommand": ""
+            }
+          }
+        },
+        "adapterProps": {
+          "adapters": [
+            {
+              "id": "local_aaa",
+              "type": "local_aaa",
+              "properties": {
+                "database": {
+                  "url": "mongodb://iap.devel.mongo:27017?replicaSet=rs0",
+                  "db": "LocalAAA",
+                  "credentials": {
+                    "dbAuth": false
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "total": 1
+}

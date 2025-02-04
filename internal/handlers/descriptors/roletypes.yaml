@@ -1,0 +1,13 @@
+---
+get:
+  use: role-types
+  group: admin-essentials
+
+  description: |
+    Displays the list of available role types
+
+  example: |
+    # Get the list of avalable role types
+    $ ipctl get role-types
+
+

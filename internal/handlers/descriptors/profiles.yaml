@@ -1,0 +1,49 @@
+---
+get:
+  use: profiles
+  group: admin-essentials
+  description: |
+    Display one or more profiles
+
+describe:
+  use: profile <name>
+  group: admin-essentials
+  description: |
+    Display detailed information about a profile
+
+create:
+  use: profile <name>
+  group: admin-essentials
+  description: |
+    Create a new profile
+
+delete:
+  use: profile <name>
+  group: admin-essentials
+  description: |
+    Delete an existing profile
+
+import:
+  use: profile <path>
+  group: admin-essentials
+  description: |
+    Import a profile
+
+export:
+  use: profile <name>
+  group: admin-essentials
+  description: |
+    Export a profile
+
+push:
+  use: profile <name> <repository>
+  group: admin-essentials
+  description: |
+    Push a profile to a repository
+
+pull:
+  use: profile <filename> <repository>
+  group: admin-essentials
+  description: |
+    Pull a profile from a repository
+

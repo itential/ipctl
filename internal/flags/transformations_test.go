@@ -1,0 +1,15 @@
+// Copyright 2024 Itential Inc. All Rights Reserved
+// Unauthorized copying of this file, via any medium is strictly prohibited
+// Proprietary and confidential
+
+package flags
+
+import "testing"
+
+func TestTransformationCreateOptions(t *testing.T) {
+	checkFlags(t, &TransformationCreateOptions{}, []string{"description", "replace"})
+}
+
+func TestTransformationGetOptions(t *testing.T) {
+	checkFlags(t, &TransformationGetOptions{}, []string{"all"})
+}

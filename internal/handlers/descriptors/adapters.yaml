@@ -1,0 +1,103 @@
+---
+#############################################################################
+# Reader commands
+#############################################################################
+get:
+  use: adapters
+  group: admin-essentials
+  description: |
+    Display one or more adapters
+
+describe:
+  use: adapter <name>
+  group: admin-essentials
+  description: |
+    Display detailed information about an adapter
+
+#############################################################################
+# Writer commands
+#############################################################################
+create:
+  use: adapter <name>
+  group: admin-essentials
+
+  hidden: true
+
+  description: |
+    Create a new adapter
+
+    The `adapter create` command will create a new adapter on the target
+    server.
+
+delete:
+  use: adapter <name>
+  group: admin-essentials
+  description: |
+    Delete an existing adapter
+
+copy:
+  use: adapter <name> <dst>
+  group: admin-essentials
+  description: |
+    Copy adapter configuration to another server
+
+    The copy command will copy the specified adapter configuration from the
+    source server to the destination server.
+
+#############################################################################
+# Promoter commands
+#############################################################################
+import:
+  use: adapter <name>
+  group: admin-essentials
+  description: |
+    Import an adapter configuration
+
+export:
+  use: adapter <name>
+  group: admin-essentials
+  description: |
+    Export an adapter configuration
+
+#############################################################################
+# Controller commands
+#############################################################################
+
+start:
+  use: adapter <name>
+  description: |
+    Start a stopped adapter
+
+stop:
+  use: adapter <name>
+  description: |
+    Stop a running adapter
+
+restart:
+  use: adapter <name>
+  description: |
+    Restart an adapter
+
+#############################################################################
+# Inspector commands
+#############################################################################
+inspect:
+  use: adapters
+  description: |
+    Show adapter status
+
+
+#############################################################################
+# Gitter commands
+#############################################################################
+pull:
+  use: adapter <name>
+  group: admin-essentials
+  description: |
+    Pull an adapter configuration from a repository
+
+push:
+  use: adapter <name> <repository>
+  group: admin-essentials
+  description: |
+    Push an adapter configuration to a repository

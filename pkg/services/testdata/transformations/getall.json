@@ -1,0 +1,23 @@
+{
+  "results": [
+    {
+      "_id": "679629d71190db2bc5752df2",
+      "name": "ipctl",
+      "description": "",
+      "incoming": [],
+      "outgoing": [],
+      "steps": [],
+      "functions": [],
+      "view": {
+        "col": 3,
+        "row": 5
+      },
+      "created": "2025-01-26T12:25:59.987Z",
+      "createdBy": "678ec2276d849669c6dbe974",
+      "lastUpdated": "2025-01-26T12:25:59.987Z",
+      "lastUpdatedBy": "678ec2276d849669c6dbe974",
+      "tags": []
+    }
+  ],
+  "total": 1
+}

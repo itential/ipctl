@@ -1,0 +1,192 @@
+---
+##############################################################################
+# Reader commands
+##############################################################################
+
+get:
+  use: projects
+  group: automation-studio
+
+  description: |
+    Display one or more projects
+
+    The `get projects` command will retieve all configured projects from
+    the server and output them in table format by default.  If there are
+    no configured projects, the command will return an empty table.
+
+  example: |
+    # Display all configured projects
+    $ ipctl get projects
+
+describe:
+  use: project <name>
+  group: automation-studio
+
+  description: |
+    Display details about a project
+
+    The `describe project <name>` command will retrieve the specified
+    project from the server, if it exists, and display it.  If the
+    specified project does not exist, this command will return an error.
+
+  example: |
+    # Display details about a project called `cli test`
+    $ ipctl describe project "cli test"
+
+
+##############################################################################
+# Writer commands
+##############################################################################
+
+create:
+  use: project <name>
+  group: automation-studio
+
+  description: |
+    Create a new project
+
+    The `create project` command will create a new empty project with the
+    specified name on the server.  If a project with the same name already
+    exists, this command will return an error.
+
+  example: |
+    # Create a new project called `cli test`
+    $ ipctl create project "cli test"
+
+delete:
+  use: project <name>
+  group: automation-studio
+
+  description: |
+    Delete a project
+
+    Use the `delete project` command to delete an existing project from
+    the server.  If the specified project does not exist on the server,
+    this command will return an error
+
+  example: |
+    # Delete a project named `cli test`
+    $ ipctl delete project "cli test"
+
+copy:
+  use: project <name> --from <profile> --to profile
+  group: automation-studio
+
+  description: |
+    Copy a project from one server to another
+
+    The copy command can be used to copy a project from one Itential Automation
+    Platfom server to another one.
+
+    The `name` argument sepcifies the Automation Studio Project name to copy
+    from one server to another.  If it does not exist on the source server,
+    the command will return an error.
+
+    The command has two required options, `--from` and `--to`.  The `--from`
+    option specifies the name of the profile that points to the server to
+    copy the project from.  The `--to` option specifies the name of the profile
+    that points to the server to copy the project to.
+
+    Both the `to` and `from` profiles must exist in the configuration file
+    otherwise this command will produce an error.
+
+    When the copy operation is performed, the destination server is first
+    checked to see if the project already exists.  If the project does
+    exist, then the copy operation will return an error.
+
+    The copy operation will export the project from the source server and
+    then import the project to the destination server.  When this operation
+    happens, all member privileges are removed from the project.  The
+    `--member` option can be used to set permissions for the project on
+    the destination server.
+
+    To add a user or group account to the project on import, use the
+    `--member` option.  The `--member` option accepts a set of key=value
+    arguments.
+
+    To add a user to the project, the `--member` option would be
+    `--member type=account,name=<username>,access=owner`.  If the `access`
+    value is not specified, the default is set to `editor`.  Valid values
+    for access include `owner`, `editor`, `operator`, or `viewer`.
+
+
+  example: |
+    # Copy a project called `test` from `ipctl-dev` to `ipctl-staging`
+    $ ipctl copy test --from ipctl-dev --to ipctl-staging
+
+    # Copy a project and set the group `admins` as the owner
+    $ ipctl copy test --from ipctl-dev --to ipctl-staging --member type=group,name=admins,access=owner
+
+clear:
+  use: projects
+  group: automation-studio
+
+  description: |
+    Delete all configured projects
+
+    The `clear projects` command will delete all configured projects from
+    the server.  This is a destructive command and cannot be undone.
+
+  example: |
+    # Delete all projects from the server
+    $ ipctl clear projects
+
+##############################################################################
+# Promoter commands
+##############################################################################
+
+import:
+  use: project <path>
+  group: automation-studio
+
+  description: |
+    Import a project
+
+    The import command will import a project into IAP.  The project name must
+    not already exist otherwise this command will return an error.
+
+    When importing a project into IAP, the owner of the project will be based
+    on the credentials used to authenticate the `ipctl` client.   Additional
+    members can be added to the project on import.
+
+    To add a user or group account to the project on import, use the
+    `--member` option.  The `--member` option accepts a set of key=value
+    arguments.
+
+    To add a user to the project, the `--member` option would be
+    `--member type=account,name=<username>,access=owner`.  If the `access`
+    value is not specified, the default is set to `editor`.  Valid values
+    for access include `owner`, `editor`, `operator`, or `viewer`.
+
+  example: |
+    # Import a project and add members
+    $ ipctl import project path/to/proj.project.json --member type=account,name=bob,type=owner
+
+export:
+  use: project <name>
+  group: automation-studio
+
+  exact_args: 1
+
+  description: |
+    Export a project
+
+
+##############################################################################
+# Gitter commands
+##############################################################################
+
+pull:
+  use: project <repo>
+  gorup: automation-studio
+
+  description: |
+    Pull a project from a repository
+
+push:
+  use: project <name> <repo>
+  group: automation-studio
+
+  description: |
+    Push a project to a repository
+

@@ -1,0 +1,40 @@
+---
+get:
+  use: groups
+  group: admin-essentials
+  description: |
+    Dispaly one or more groups
+
+create:
+  use: group <name>
+  group: admin-essentials
+  description: |
+    Create a new group
+
+delete:
+  use: group <name>
+  group: admin-essentials
+
+  description: |
+    Delete a group
+
+    The `delete group <name>` command will delete a locally defined group in
+    Itential Platform.  This command can only delete locally defined groups
+    and will generate an error if the specified group name is not a local
+    group.
+
+  examples: |
+    # Delete a group call admins
+    $ ipctl delete group admin
+
+describe:
+  use: group <name>
+  group: admin-essentials
+  description: |
+    Display details about a group
+
+clear:
+  use: groups
+  group: admin-essentials
+  description: |
+    Delete all local groups

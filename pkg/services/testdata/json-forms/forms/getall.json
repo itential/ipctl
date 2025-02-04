@@ -1,0 +1,54 @@
+[
+  {
+    "id": "6795a570a209bf3192120bfb",
+    "createdBy": "admin@pronghorn",
+    "lastUpdatedBy": "admin@pronghorn",
+    "struct": {
+      "description": "",
+      "items": [],
+      "type": "object"
+    },
+    "bindingSchema": {},
+    "validationSchema": {},
+    "tags": [],
+    "created": "2025-01-26T03:01:04.653Z",
+    "lastUpdated": "2025-01-26T03:01:04.653Z",
+    "name": "test",
+    "description": "",
+    "schema": {
+      "description": "",
+      "properties": {},
+      "required": [],
+      "title": "test",
+      "type": "object"
+    },
+    "uiSchema": {},
+    "version": "2020.1"
+  },
+  {
+    "id": "678f121d3ed2bff9bec56160",
+    "createdBy": "admin@pronghorn",
+    "lastUpdatedBy": "admin@pronghorn",
+    "struct": {
+      "description": "",
+      "items": [],
+      "type": "object"
+    },
+    "bindingSchema": {},
+    "validationSchema": {},
+    "tags": [],
+    "created": "2025-01-21T03:18:53.041Z",
+    "lastUpdated": "2025-01-21T03:18:53.041Z",
+    "name": "test",
+    "description": "",
+    "schema": {
+      "description": "",
+      "properties": {},
+      "required": [],
+      "title": "foo",
+      "type": "object"
+    },
+    "uiSchema": {},
+    "version": "2020.1"
+  }
+]

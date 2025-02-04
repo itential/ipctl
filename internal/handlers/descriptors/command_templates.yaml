@@ -1,0 +1,121 @@
+---
+##############################################################################
+# Reader Commands
+##############################################################################
+
+get:
+  use: command-templates
+  group: automation-studio
+
+  description: |
+    Display one or more command-templates
+
+    This command will display a list of all configured command templates
+    available on the server in table format by default.  If there are no
+    configured command templates, this command will return an empty
+    table
+
+  example: |
+    # Display list of all command templates
+    $ ipctl get command-templates
+
+describe:
+  use: command-template <name>
+  group: automation-studio
+
+  description: |
+    Display details about a command-template
+
+    The `describe command-template` command will display detailed
+    information about the specified command template.  If the specified
+    command template does not exist, this command will return an error
+
+  example: |
+    # Describe a command template called `cli test`
+    $ ipctl describe command-template "cli test"
+
+
+##############################################################################
+# Writer Commands
+##############################################################################
+
+create:
+  use: command-template <name>
+  group: automation-studio
+
+  description: |
+    Create a new command-template
+
+    The `create command-template` command will add a new command template
+    to the server.  If the specified command template already exists on
+    the server, this command will return an error
+
+  example: |
+    # Create a new command template named `CLI test`
+    $ ipctl create command-template "CLI test"
+
+delete:
+  use: command-template <name>
+  group: automation-studio
+
+  description: |
+    Delete a command-template
+
+    The `delete command-template` command will delete a configured command
+    template from the server.  If the specified command template does not
+    exist, this command will return an error
+
+  example: |
+    # Delete command template called `cli test`
+    $ ipctl delete command-template "cli test"
+
+copy:
+  use: command-template <name> --from <profile> --to <profile>
+  group: automation-studio
+  description: |
+    Copy command template from one server to another
+
+clear:
+  use: command-templates
+  group: automation-studio
+
+  description: |
+    Delete all configured command-templates
+
+    The `clear command-templates` command will delete all configured
+    command templates from the server.  This is a destructive command
+    that cannot be undone.
+
+  example: |
+    # Delete all configured command templates
+    $ ipctl clear command-templates
+
+##############################################################################
+# Promoter Commands
+##############################################################################
+import:
+  use: command-template <path>
+  group: automation-studio
+  description: |
+    Import a command template
+
+export:
+  use: command-template <name>
+  group: automation-studio
+  description: |
+    Export a command template
+
+##############################################################################
+# Gitter Commands
+##############################################################################
+push:
+  use: command-template <name> <repository>
+  group: automation-studio
+  description: |
+    Push a command template to a repository
+
+pull:
+  use: command-template <filename> <repository>
+  group: automation-studio
+  description: |
+    Pull a command template from a repository

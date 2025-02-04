@@ -1,0 +1,58 @@
+---
+##############################################################################
+# Reader Commands
+##############################################################################
+get:
+  use: gctrees
+  group: configuration-manager
+  description: |
+    Display one or more Golden Config trees
+
+describe:
+  use: gctree <name>
+  group: configuration-manager
+  disabled: true
+  description: |
+    Display details about a gctree
+
+##############################################################################
+# Writer Commands
+##############################################################################
+create:
+  use: gctree <name> <type>
+  group: configuration-manager
+  description: |
+    Create a new Golden Config tree
+
+    The `create` command takes two required arguments, 'name' and 'type'.  The
+    name argument sets the name of the Golden Config tree.  The type argument
+    must be a valid device type supported by Platform.
+
+delete:
+  use: gctree <name>
+  group: configuration-manager
+  description: |
+    Delete a Golden Config tree
+
+clear:
+  use: gctrees
+  group: configuration-manager
+  disabled: true
+  description: |
+    Delete all configured gctrees
+
+##############################################################################
+# Promoter Commands
+##############################################################################
+import:
+  use: gctree <path>
+  group: configuration-manager
+  disabled: true
+  description: |
+    Import a Golden Config tree
+
+export:
+  use: gctree <name>
+  group: configuration-manager
+  description: |
+    Export a Golden Config tree

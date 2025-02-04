@@ -1,0 +1,6 @@
+---
+get:
+  use: views
+  group: admin-essentials
+  description: |
+    Display one or more allowed views

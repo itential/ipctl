@@ -1,0 +1,25 @@
+{
+  "id": "6795a570a209bf3192120bfb",
+  "created": "2025-01-26T03:01:04.653Z",
+  "createdBy": "admin@pronghorn",
+  "lastUpdated": "2025-01-26T03:01:04.653Z",
+  "lastUpdatedBy": "admin@pronghorn",
+  "name": "test",
+  "description": "",
+  "struct": {
+    "description": "",
+    "items": [],
+    "type": "object"
+  },
+  "schema": {
+    "description": "",
+    "properties": {},
+    "required": [],
+    "title": "test",
+    "type": "object"
+  },
+  "uiSchema": {},
+  "bindingSchema": {},
+  "validationSchema": {},
+  "version": "2020.1"
+}

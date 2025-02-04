@@ -1,0 +1,5 @@
+---
+show-config:
+  use: show-config
+  description: |
+    Display the active configuration

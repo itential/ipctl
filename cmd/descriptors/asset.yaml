@@ -1,0 +1,40 @@
+# Copyright 2024 Itential Inc. All Rights Reserved
+# GNU General Public License v3.0+ (see LICENSES/GPL-3.0-or-later.txt or https://www.gnu.org/licenses/gpl-3.0.txt)
+# SPDX-License-Identifier: GPL-3.0-or-later
+---
+create:
+  description:  |
+    Create a new asset
+  include_groups: true
+
+delete:
+  description: |
+    Delete an existing asset
+  include_groups: true
+
+get:
+  description: |
+    Display one or more assets of a specified type
+  include_groups: true
+
+describe:
+  description: |
+    Display detailed information about a specific asset
+  include_groups: true
+
+copy:
+  description: |
+    Copy an asset from one server to another
+  include_groups: true
+
+edit:
+  description: |
+    Edit an existing asset in the default editor
+  include_groups: true
+  hidden: true
+
+clear:
+  description: |
+    Delete all configured instances of a asset
+  include_groups: true
+  hidden: true

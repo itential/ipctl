@@ -1,0 +1,61 @@
+{
+  "metadata": {
+    "isActive": true,
+    "activeSync": true
+  },
+  "data": {
+    "loggerProps": {
+      "description": "Logging",
+      "log_max_files": 10,
+      "log_max_file_size": 10485760,
+      "log_level": "info",
+      "log_directory": "/opt/itential/logs",
+      "log_filename": "local_aaa.log",
+      "log_timezone_offset": 0,
+      "console_level": "info",
+      "syslog": {
+        "level": "warning",
+        "host": "127.0.0.1",
+        "port": 514,
+        "protocol": "udp4",
+        "facility": "local0",
+        "type": "BSD",
+        "path": "",
+        "pid": "process.pid",
+        "localhost": "",
+        "app_name": "",
+        "eol": ""
+      }
+    },
+    "isEncrypted": true,
+    "model": "@itential/adapter-local_aaa",
+    "name": "local_aaa",
+    "type": "Adapter",
+    "properties": {
+      "id": "local_aaa",
+      "type": "local_aaa",
+      "brokers": [
+        "aaa"
+      ],
+      "groups": [],
+      "properties": {
+        "database": {
+          "credentials": {
+            "dbAuth": false,
+            "user": "itential",
+            "passwd": "password"
+          },
+          "ssl": {
+            "enabled": false,
+            "sslValidate": false,
+            "sslCA": "/opt/itential/config/mongo_ca.crt",
+            "acceptInvalidCerts": true,
+            "checkServerIdentity": false
+          },
+          "db": "LocalAAA",
+          "url": "mongodb://iap.devel.mongo:27017?replicaSet=rs0"
+        }
+      }
+    }
+  }
+}

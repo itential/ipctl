@@ -1,0 +1,66 @@
+// Copyright 2024 Itential Inc. All Rights Reserved
+// Unauthorized copying of this file, via any medium is strictly prohibited
+// Proprietary and confidential
+
+package runners
+
+import (
+	"github.com/itential/ipctl/pkg/client"
+	"github.com/itential/ipctl/pkg/config"
+	"github.com/itential/ipctl/pkg/logger"
+	"github.com/itential/ipctl/pkg/services"
+)
+
+type ServerRunner struct {
+	config  *config.Config
+	service *services.HealthService
+}
+
+func NewServerRunner(c client.Client, cfg *config.Config) *ServerRunner {
+	return &ServerRunner{
+		service: services.NewHealthService(c),
+		config:  cfg,
+	}
+}
+
+func (r *ServerRunner) Inspect(in Request) (*Response, error) {
+	logger.Trace()
+
+	status, err := r.service.GetStatus()
+	if err != nil {
+		return nil, err
+	}
+
+	system, err := r.service.GetSystemHealth()
+	if err != nil {
+		return nil, err
+	}
+
+	server, err := r.service.GetServerHealth()
+	if err != nil {
+		return nil, err
+	}
+
+	app, err := r.service.GetApplicationHealth()
+	if err != nil {
+		return nil, err
+	}
+
+	adapter, err := r.service.GetAdapterHealth()
+	if err != nil {
+		return nil, err
+	}
+
+	res := map[string]interface{}{
+		"status":      status,
+		"system":      system,
+		"server":      server,
+		"application": app,
+		"adapters":    adapter,
+	}
+
+	return NewResponse(
+		"",
+		WithJson(res),
+	), nil
+}

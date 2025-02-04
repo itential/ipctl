@@ -1,0 +1,18 @@
+---
+##############################################################################
+# Reader Commands
+##############################################################################
+
+get:
+  use: adapter-models
+  group: admin-essentials
+
+  description: |
+    Display one or more available adapter models
+
+    The `get adapter-models` command will return the list of adapter models that
+    are available on the server.
+
+  example: |
+    # Display list of adapter models
+    4 ipctl get adapter-models

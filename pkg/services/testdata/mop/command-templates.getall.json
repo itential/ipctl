@@ -1,0 +1,28 @@
+[
+  {
+    "_id": "test",
+    "name": "test",
+    "tags": [],
+    "os": "",
+    "commands": [
+      {
+        "command": "",
+        "passRule": true,
+        "rules": [
+          {
+            "rule": "",
+            "eval": "contains",
+            "severity": "error"
+          }
+        ]
+      }
+    ],
+    "passRule": false,
+    "created": 1737921835182,
+    "createdBy": "",
+    "lastUpdated": 1737921835182,
+    "lastUpdatedBy": "",
+    "description": null,
+    "namespace": null
+  }
+]

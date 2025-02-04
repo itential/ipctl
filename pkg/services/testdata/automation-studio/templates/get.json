@@ -1,0 +1,25 @@
+{
+  "items": [
+    {
+      "_id": "678ec1b5de31ce1ea110af42",
+      "name": "arista_eos_show_version",
+      "group": "arista eos",
+      "command": "show version",
+      "description": "Auto-imported",
+      "template": "Value MODEL (\\S+)\nValue HW_VERSION (\\S+)\nValue SERIAL_NUMBER (\\S+)\nValue SYS_MAC (\\S+)\nValue IMAGE (\\S+)\nValue TOTAL_MEMORY (\\d+)\nValue FREE_MEMORY (\\d+)\n\nStart\n  ^Arista\\s+${MODEL}\n  ^Hardware\\s+version:\\s+${HW_VERSION}\n  ^Serial\\s+number:\\s+${SERIAL_NUMBER}\n  ^System\\s+MAC\\s+address:\\s+${SYS_MAC}\n  ^Software\\s+image\\s+version:\\s+${IMAGE}\n  ^Total\\s+memory:\\s+${TOTAL_MEMORY}\n  ^Free\\s+memory:\\s+${FREE_MEMORY} -> Record\n",
+      "data": "Arista vEOS\nHardware version:    \nSerial number:       \nSystem MAC address:  2803.829a.1347\n\nSoftware image version: 4.14.7M\nArchitecture:           i386\nInternal build version: 4.14.7M-2384414.4147M\nInternal build ID:      92a53fad-f853-42a5-9f57-c3c4ea3c26b3\n\nUptime:                 1 hour and 5 minutes\nTotal memory:           2028860 kB\nFree memory:            301240 kB\n",
+      "type": "textfsm",
+      "created": "2025-01-20T21:35:49.159Z",
+      "lastUpdated": "2025-01-20T21:35:49.159Z",
+      "tags": [],
+      "createdBy": null,
+      "lastUpdatedBy": null
+    }
+  ],
+  "total": 1,
+  "skip": 0,
+  "limit": null,
+  "count": 1,
+  "next": null,
+  "previous": null
+}

@@ -1,0 +1,482 @@
+{
+  "items": [
+    {
+      "_id": "613ed651-a5c5-4541-9564-6d244be89d14",
+      "canvasVersion": 3,
+      "font_size": 12,
+      "groups": [],
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      },
+      "name": "cli-test-1",
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{24}$"
+          },
+          "initiator": {
+            "type": "string"
+          }
+        }
+      },
+      "preAutomationTime": 0,
+      "sla": 0,
+      "tasks": {
+        "workflow_end": {
+          "groups": [],
+          "name": "workflow_end",
+          "nodelocation": {
+            "x": 0,
+            "y": 500
+          },
+          "x": 1,
+          "y": 0.5
+        },
+        "workflow_start": {
+          "groups": [],
+          "name": "workflow_start",
+          "nodelocation": {
+            "x": 0,
+            "y": -500
+          },
+          "x": 0,
+          "y": 0.5
+        }
+      },
+      "transitions": {
+        "workflow_end": {},
+        "workflow_start": {}
+      },
+      "type": "automation",
+      "errors": [
+        {
+          "task": "workflow_end",
+          "name": "workflow_end",
+          "message": "Could not find standard transition path between workflow start and task"
+        }
+      ],
+      "last_updated": "2025-01-21T12:34:28.575Z",
+      "last_updated_by": "678ec2276d849669c6dbe974",
+      "lastUpdatedVersion": "5.55.2-2023.2.13",
+      "created": "2025-01-21T12:34:28.579Z",
+      "created_by": "678ec2276d849669c6dbe974",
+      "createdVersion": "5.55.2-2023.2.13",
+      "encodingVersion": 1
+    },
+    {
+      "_id": "6ac71741-ed3d-4160-a7fa-6ac725e7ccf9",
+      "canvasVersion": 3,
+      "font_size": 12,
+      "groups": [],
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      },
+      "name": "cli-test-2",
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{24}$"
+          },
+          "initiator": {
+            "type": "string"
+          }
+        }
+      },
+      "preAutomationTime": 0,
+      "sla": 0,
+      "tasks": {
+        "workflow_end": {
+          "groups": [],
+          "name": "workflow_end",
+          "nodelocation": {
+            "x": 0,
+            "y": 500
+          },
+          "x": 1,
+          "y": 0.5
+        },
+        "workflow_start": {
+          "groups": [],
+          "name": "workflow_start",
+          "nodelocation": {
+            "x": 0,
+            "y": -500
+          },
+          "x": 0,
+          "y": 0.5
+        }
+      },
+      "transitions": {
+        "workflow_end": {},
+        "workflow_start": {}
+      },
+      "type": "automation",
+      "errors": [
+        {
+          "task": "workflow_end",
+          "name": "workflow_end",
+          "message": "Could not find standard transition path between workflow start and task"
+        }
+      ],
+      "last_updated": "2025-01-22T11:21:33.446Z",
+      "last_updated_by": "678ec2276d849669c6dbe974",
+      "lastUpdatedVersion": "5.55.2-2023.2.13",
+      "created": "2025-01-22T11:21:33.448Z",
+      "created_by": "678ec2276d849669c6dbe974",
+      "createdVersion": "5.55.2-2023.2.13",
+      "encodingVersion": 1
+    },
+    {
+      "_id": "ef3e18f2-5170-43dc-a9df-6824860d0dea",
+      "created": "2024-07-25T18:46:37.823Z",
+      "createdVersion": "5.46.0-2023.1.54",
+      "created_by": "67930a4ce8d23f65f736ff9e",
+      "font_size": 12,
+      "groups": [],
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "input": {
+            "type": [
+              "array",
+              "boolean",
+              "null",
+              "number",
+              "object",
+              "string"
+            ]
+          }
+        },
+        "required": [
+          "input"
+        ]
+      },
+      "lastUpdatedVersion": "4.69.3-2023.2.143",
+      "last_updated": "2025-01-24T03:34:36.502Z",
+      "last_updated_by": "678ec2276d849669c6dbe974",
+      "name": "test-eval",
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "input": {
+            "type": [
+              "array",
+              "boolean",
+              "null",
+              "number",
+              "object",
+              "string"
+            ]
+          },
+          "_id": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{24}$"
+          },
+          "initiator": {
+            "type": "string"
+          }
+        }
+      },
+      "preAutomationTime": 0,
+      "sla": 0,
+      "tasks": {
+        "6288": {
+          "actor": "Pronghorn",
+          "app": "WorkFlowEngine",
+          "canvasName": "stub",
+          "description": "Create a stub for an automated task",
+          "displayName": "Tools",
+          "groups": [],
+          "location": "Application",
+          "locationType": null,
+          "name": "stub",
+          "nodeLocation": {
+            "x": -228,
+            "y": -300
+          },
+          "summary": "Yes",
+          "type": "automatic",
+          "variables": {
+            "incoming": {
+              "delay": "",
+              "response": "Yes",
+              "type": "success"
+            },
+            "outgoing": {
+              "response": ""
+            }
+          }
+        },
+        "9a0a": {
+          "actor": "Pronghorn",
+          "app": "WorkFlowEngine",
+          "canvasName": "stub",
+          "description": "Create a stub for an automated task",
+          "displayName": "Tools",
+          "groups": [],
+          "location": "Application",
+          "locationType": null,
+          "name": "stub",
+          "nodeLocation": {
+            "x": 216,
+            "y": -288
+          },
+          "summary": "No",
+          "type": "automatic",
+          "variables": {
+            "incoming": {
+              "delay": "",
+              "response": "No",
+              "type": "success"
+            },
+            "outgoing": {
+              "response": ""
+            }
+          }
+        },
+        "9f62": {
+          "actor": "Pronghorn",
+          "app": "WorkFlowEngine",
+          "canvasName": "evaluation",
+          "description": "Run an evaluation",
+          "displayName": "WorkFlowEngine",
+          "groups": [],
+          "location": "Application",
+          "locationType": null,
+          "name": "evaluation",
+          "nodeLocation": {
+            "x": 0,
+            "y": -396
+          },
+          "summary": "Run Evaluation Task",
+          "type": "operation",
+          "variables": {
+            "incoming": {
+              "all_true_flag": false,
+              "evaluation_groups": [
+                {
+                  "all_true_flag": false,
+                  "evaluations": [
+                    {
+                      "operand_1": {
+                        "task": "job",
+                        "variable": "input"
+                      },
+                      "operand_2": {
+                        "task": "static",
+                        "variable": "a\\db\\dc\\d\\d"
+                      },
+                      "operator": "contains",
+                      "query": "",
+                      "rightQuery": ""
+                    }
+                  ]
+                }
+              ]
+            },
+            "outgoing": {
+              "return_value": ""
+            }
+          }
+        },
+        "workflow_end": {
+          "groups": [],
+          "name": "workflow_end",
+          "nodeLocation": {
+            "x": 0,
+            "y": -144
+          }
+        },
+        "workflow_start": {
+          "groups": [],
+          "name": "workflow_start",
+          "nodeLocation": {
+            "x": 0,
+            "y": -500
+          }
+        }
+      },
+      "transitions": {
+        "6288": {
+          "workflow_end": {
+            "state": "success",
+            "type": "standard"
+          }
+        },
+        "9a0a": {
+          "workflow_end": {
+            "state": "success",
+            "type": "standard"
+          }
+        },
+        "9f62": {
+          "6288": {
+            "state": "success",
+            "type": "standard"
+          },
+          "9a0a": {
+            "state": "failure",
+            "type": "standard"
+          }
+        },
+        "workflow_end": {},
+        "workflow_start": {
+          "9f62": {
+            "state": "success",
+            "type": "standard"
+          }
+        }
+      },
+      "type": "automation",
+      "canvasVersion": 3,
+      "encodingVersion": 1
+    },
+    {
+      "_id": "38b35a21-24a9-43f9-9147-5c69a216d11b",
+      "canvasVersion": 3,
+      "type": "automation",
+      "font_size": 12,
+      "errorHandler": null,
+      "preAutomationTime": 0,
+      "sla": 0,
+      "groups": [],
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{24}$"
+          },
+          "initiator": {
+            "type": "string"
+          }
+        }
+      },
+      "tasks": {
+        "workflow_start": {
+          "name": "workflow_start",
+          "groups": [],
+          "nodeLocation": {
+            "x": 0,
+            "y": -500
+          },
+          "x": 0,
+          "y": 0.5
+        },
+        "workflow_end": {
+          "name": "workflow_end",
+          "groups": [],
+          "nodeLocation": {
+            "x": 0,
+            "y": 500
+          },
+          "x": 1,
+          "y": 0.5
+        }
+      },
+      "transitions": {
+        "workflow_end": {},
+        "workflow_start": {}
+      },
+      "name": "UI-Test-1",
+      "errors": [
+        {
+          "task": "workflow_end",
+          "name": "workflow_end",
+          "message": "Could not find standard transition path between workflow start and task"
+        }
+      ],
+      "last_updated": "2025-01-21T12:01:44.533Z",
+      "last_updated_by": "678ec2276d849669c6dbe974",
+      "lastUpdatedVersion": "5.55.2-2023.2.13",
+      "created": "2025-01-21T12:01:44.536Z",
+      "created_by": "678ec2276d849669c6dbe974",
+      "createdVersion": "5.55.2-2023.2.13",
+      "encodingVersion": 1
+    },
+    {
+      "_id": "531f3744-54d0-4bf5-91a1-946643000dcd",
+      "canvasVersion": 3,
+      "type": "automation",
+      "font_size": 12,
+      "errorHandler": null,
+      "preAutomationTime": 0,
+      "sla": 0,
+      "groups": [],
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{24}$"
+          },
+          "initiator": {
+            "type": "string"
+          }
+        }
+      },
+      "tasks": {
+        "workflow_start": {
+          "name": "workflow_start",
+          "groups": [],
+          "nodeLocation": {
+            "x": 0,
+            "y": -500
+          },
+          "x": 0,
+          "y": 0.5
+        },
+        "workflow_end": {
+          "name": "workflow_end",
+          "groups": [],
+          "nodeLocation": {
+            "x": 0,
+            "y": 500
+          },
+          "x": 1,
+          "y": 0.5
+        }
+      },
+      "transitions": {
+        "workflow_end": {},
+        "workflow_start": {}
+      },
+      "name": "UI-Test-2",
+      "errors": [
+        {
+          "task": "workflow_end",
+          "name": "workflow_end",
+          "message": "Could not find standard transition path between workflow start and task"
+        }
+      ],
+      "last_updated": "2025-01-21T12:33:10.024Z",
+      "last_updated_by": "678ec2276d849669c6dbe974",
+      "lastUpdatedVersion": "5.55.2-2023.2.13",
+      "created": "2025-01-21T12:33:10.029Z",
+      "created_by": "678ec2276d849669c6dbe974",
+      "createdVersion": "5.55.2-2023.2.13",
+      "encodingVersion": 1
+    }
+  ],
+  "skip": 0,
+  "end": 5,
+  "count": 5,
+  "total": 5,
+  "limit": 25,
+  "previous": null,
+  "next": null
+}

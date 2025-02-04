@@ -1,0 +1,79 @@
+---
+##############################################################################
+# Reader Commands
+##############################################################################
+get:
+  use: templates
+  group: automation-studio
+
+  description: |
+    Display one or more templates
+
+    The `get templates` command will return the list of configured templates
+    availalbe on the server.
+
+  example: |
+    # Get list of all templates
+    $ ipctl get templates
+
+describe:
+  use: template <name>
+  group: automation-studio
+  description: |
+    Display details about a template
+
+##############################################################################
+# Writer Commands
+##############################################################################
+create:
+  use: template <name> --group <name> --type [textfsm, jinja2]
+  group: automation-studio
+
+  description: |
+    Create a template
+
+    The `create template` command will create a new template on the
+    destination server.  If the template already exists, this command
+    will return an error.
+
+    When creating a new template, the `--group` and `--type` options
+    are required.   The `--group` option specifies the temaplate group
+    to associate the new template with.  The `--type` argument defines
+    the type of template.  Valid values are `textfsm` or `jinja2`.
+
+  example: |
+    # Create a new TextFSM template
+    $ ipctl create template ios-show --type textfsm --group cisco-ios
+
+delete:
+  use: template <name>
+  group: automation-studio
+  description: |
+    Delete an existing template
+
+copy:
+  use: template <name> --from <profile> --to <profile>
+  group: automation-studio
+  description: |
+    Copy a template from one server to another
+
+clear:
+  use: templates
+  group: automation-studio
+  description: |
+    Delete all configured templates
+
+##############################################################################
+# Promoter Commands
+##############################################################################
+export:
+  use: template <name>
+  group: automation-studio
+  description: |
+    Export a template
+
+import:
+  use: template <path>
+  group: automation-studio
+  description: |
+    Import a template

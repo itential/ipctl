@@ -1,0 +1,53 @@
+---
+##############################################################################
+# Reader Commands
+##############################################################################
+
+get:
+  use: prebuilts
+  group: admin-essentials
+
+  description: |
+    Display one or more prebuilts
+
+describe:
+  use: prebuilt <name>
+  group: admin-essentials
+
+  description: |
+    Display detailed information about a prebuilt
+
+##############################################################################
+# Writer Commands
+##############################################################################
+
+delete:
+  use: prebuilt <name>
+  group: admin-essentials
+
+  description: |
+    Delete a prebuilt
+
+clear:
+  use: prebuilts
+  group: admin-essentials
+
+  description: |
+    Delete all prebuilts
+
+##############################################################################
+# Promoter Commands
+##############################################################################
+import:
+  use: prebuilt <path>
+  group: admin-essentials
+
+  description: |
+    Import a prebuilt package
+
+export:
+  use: prebuilt <name>
+  group: admin-essentials
+
+  description: |
+    Export a prebuilt package

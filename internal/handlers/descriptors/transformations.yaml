@@ -1,0 +1,73 @@
+---
+###############################################################################
+# Reader commands
+###############################################################################
+get:
+  use: transformations
+  group: automation-studio
+  description: |
+    Display one or more transformations
+
+describe:
+  use: transformation <name>
+  group: automation-studio
+
+  description: |
+    Display details about a transformation
+
+###############################################################################
+# Writer commands
+###############################################################################
+create:
+  use: transformation <name>
+  group: automation-studio
+  description: |
+    Create a transformation
+
+delete:
+  use: transformation <name>
+  group: automation-studio
+  description: |
+    Delete a transformation
+
+clear:
+  use: transformations
+  group: automation-studio
+  description: |
+    Delete all transformations
+
+copy:
+  use: transformation <name>
+  group: automation-studio
+  description: |
+    Copy a transformation from source to destination
+
+###############################################################################
+# Promoter commands
+###############################################################################
+import:
+  use: transformation <path>
+  group: automation-studio
+  description: |
+    Import a transformation
+
+export:
+  use: transformation <name>
+  group: automation-studio
+  description: |
+    Export a transformation
+
+###############################################################################
+# Gitter commands
+###############################################################################
+push:
+  use: transformation <name> <repository>
+  group: automation-studio
+  description: |
+    Push a transformation to a repository
+
+pull:
+  use: transformation <filename> <repository>
+  group: automation-studio
+  description: |
+    Pull a transformation from a repository

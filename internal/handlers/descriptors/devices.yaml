@@ -1,0 +1,16 @@
+---
+##############################################################################
+# Reader commands
+##############################################################################
+#
+get:
+  use: devices
+  group: configuration-manager
+  description: |
+    Dispaly one or more devices
+
+describe:
+  use: device <name>
+  group: configuration-manager
+  description: |
+    Display details about a device

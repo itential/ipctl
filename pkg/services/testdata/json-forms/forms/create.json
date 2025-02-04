@@ -1,0 +1,29 @@
+{
+  "status": "success",
+  "n": 1,
+  "doc": {
+    "id": "6795a570a209bf3192120bfb",
+    "created": "2025-01-26T03:01:04.653Z",
+    "createdBy": "678ec2276d849669c6dbe974",
+    "lastUpdated": "2025-01-26T03:01:04.653Z",
+    "lastUpdatedBy": "678ec2276d849669c6dbe974",
+    "name": "test",
+    "description": "",
+    "struct": {
+      "description": "",
+      "items": [],
+      "type": "object"
+    },
+    "schema": {
+      "description": "",
+      "properties": {},
+      "required": [],
+      "title": "test",
+      "type": "object"
+    },
+    "uiSchema": {},
+    "bindingSchema": {},
+    "validationSchema": {},
+    "version": "2020.1"
+  }
+}

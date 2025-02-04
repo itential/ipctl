@@ -1,0 +1,119 @@
+---
+##############################################################################
+# Reader Commands
+##############################################################################
+get:
+  use: workflows
+  group: automation-studio
+  description: |
+    Display one or more workflows
+
+describe:
+  use: workflow <name>
+  group: automation-studio
+  description: |
+    Display details about a workflow
+
+##############################################################################
+# Writer Commands
+##############################################################################
+create:
+  use: workflow <name>
+  group: automation-studio
+  description: |
+    Create a new workflow
+
+delete:
+  use: workflow <name>
+  group: automation-studio
+
+  description: |
+    Delete a workflow
+
+    The `delete workflow` command will delete an existing workflow from the
+    Itential Platform server.  If the specified workflow does not exist,
+    this command will simply return an error.
+
+copy:
+  use: workflow <name> --from <profile> --to <profile>
+  group: automation-studio
+
+  description: |
+    Copy a workflow from one server to another
+
+    The `copy workflow` command will direclty copy a workflow asset from one
+    server to another.  This command requires three values to work, the `name`
+    argument, the `--from` argument and the `--to` argument.
+
+    The required `name` argument specifies the name of the workflow to copy.  The
+    `--from` argument accepts the name of a configured profile and defines the
+    server to copy the workflow from.  The `--to` argument accepts the name of a
+    configured profile and defines the server to copy the workflow to.
+
+    If the workflow specified by `name` does not exist on the source server, this
+    command will return an error.  Conversely, if the workflow specified by name
+    exists on the target server, this command will return an error.
+
+    If either the `--from` or `--to` profile names do not exist in your
+    configureation file, this command will return an error.
+
+    When copying a workflow asset from the source to target, any dependent assets
+    required by the workflow are not copied over.
+
+
+  example: |
+    # Copy workflow `CLI Test` from source `staging` to target `prod`
+    $ ipctl copy workflow "CLI Test" --from staging --to prod
+
+
+clear:
+  use: workflows
+  group: automation-studio
+  description: |
+    Delete all configured workflows
+
+##############################################################################
+# Promoter Commands
+##############################################################################
+import:
+  use: workflow <path>
+  group: automation-studio
+
+  description: |
+    Import a workflow
+
+    The `import workflow` command will attempt to import a workflow from the
+    specified path.  The required path argument should point to the JSON file
+    containing the worklow
+
+    The `--force` option will import the workflow even if it exists on the
+    desitnation server.  If the workflow exists and `--force` is used, the
+    workflow will be deleted and then imported.
+
+  example: |
+    # Import a workflow
+    $ ipctl import workflow path/to/test.workflow.json
+
+export:
+  use: workflow <name>
+  group: automation-studio
+  description: |
+    Export a workflow
+
+
+##############################################################################
+# Gitter Commands
+##############################################################################
+push:
+  use: workflow <name> <repository>
+  group: automation-studio
+
+  description: |
+    Push a workflow directly to a repository
+
+pull:
+  use: workflow <filename> <repository>
+  group: automation-studio
+
+  description: |
+    Pull a workflow directly from a repository

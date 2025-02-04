@@ -1,0 +1,266 @@
+{
+    "_id": "67341cedfaaef76ad59b308c",
+    "comments": [],
+    "created": "2024-12-03T18:31:11.600Z",
+    "createdBy": {
+        "_id": "668c58df4f234baee4996cfb",
+        "provenance": "local_aaa",
+        "username": "admin@pronghorn"
+    },
+    "description": "",
+    "functions": [],
+    "incoming": [
+        {
+            "$id": "status",
+            "examples": [
+                "active"
+            ],
+            "type": "string"
+        },
+        {
+            "$id": "description",
+            "examples": [
+                "description test"
+            ],
+            "type": "string"
+        },
+        {
+            "$id": "comments",
+            "examples": [
+                "comments test"
+            ],
+            "type": "string"
+        },
+        {
+            "$id": "interfaceID",
+            "examples": [
+                9223372036854776000
+            ],
+            "type": "number"
+        }
+    ],
+    "lastUpdated": "2024-12-03T18:31:11.707Z",
+    "lastUpdatedBy": {
+        "_id": "668c58df4f234baee4996cfb",
+        "provenance": "local_aaa",
+        "username": "admin@pronghorn"
+    },
+    "name": "@67341ceda1c9aed687bfdcdc: IP Assignment",
+    "namespace": {
+        "_id": "67341ceda1c9aed687bfdcdc",
+        "accessControl": {
+            "execute": [
+                "account:668c58df4f234baee4996cfb"
+            ],
+            "manage": [
+                "account:668c58df4f234baee4996cfb"
+            ],
+            "read": [
+                "account:668c58df4f234baee4996cfb"
+            ],
+            "write": [
+                "account:668c58df4f234baee4996cfb"
+            ]
+        },
+        "name": "NetBox",
+        "type": "project"
+    },
+    "outgoing": [
+        {
+            "$id": "payload",
+            "items": {
+                "properties": {
+                    "comments": {
+                        "examples": [
+                            "set from IAP"
+                        ],
+                        "type": "string"
+                    },
+                    "description": {
+                        "examples": [
+                            "management"
+                        ],
+                        "type": "string"
+                    },
+                    "interface": {
+                        "examples": [
+                            9223372036854776000
+                        ],
+                        "type": "number"
+                    },
+                    "status": {
+                        "examples": [
+                            "active"
+                        ],
+                        "type": "string"
+                    }
+                },
+                "required": [],
+                "type": "object"
+            },
+            "type": "array"
+        }
+    ],
+    "steps": [
+        {
+            "context": "#",
+            "from": {
+                "location": "incoming",
+                "name": "status",
+                "ptr": ""
+            },
+            "id": 7,
+            "to": {
+                "location": "template",
+                "name": 6,
+                "ptr": "/args/0/value"
+            },
+            "type": "assign"
+        },
+        {
+            "context": "#",
+            "from": {
+                "location": "incoming",
+                "name": "description",
+                "ptr": ""
+            },
+            "id": 8,
+            "to": {
+                "location": "template",
+                "name": 6,
+                "ptr": "/args/1/value"
+            },
+            "type": "assign"
+        },
+        {
+            "context": "#",
+            "from": {
+                "location": "incoming",
+                "name": "comments",
+                "ptr": ""
+            },
+            "id": 9,
+            "to": {
+                "location": "template",
+                "name": 6,
+                "ptr": "/args/2/value"
+            },
+            "type": "assign"
+        },
+        {
+            "context": "#",
+            "from": {
+                "location": "incoming",
+                "name": "interfaceID",
+                "ptr": ""
+            },
+            "id": 10,
+            "to": {
+                "location": "template",
+                "name": 6,
+                "ptr": "/args/3/value"
+            },
+            "type": "assign"
+        },
+        {
+            "args": [
+                null,
+                null,
+                null,
+                null
+            ],
+            "context": "#",
+            "id": 6,
+            "library": "String",
+            "method": "templateLiteral",
+            "template": "  {\n    \"status\": \"${status}\",\n    \"description\": \"${description}\",\n    \"comments\": \"${comments}\",\n    \"interface\": ${objectid}\n  }\n",
+            "type": "template",
+            "view": {
+                "col": 1,
+                "row": 1
+            }
+        },
+        {
+            "context": "#",
+            "from": {
+                "location": "template",
+                "name": 6,
+                "ptr": "/return"
+            },
+            "id": 15,
+            "to": {
+                "location": "method",
+                "name": 14,
+                "ptr": "/args/0/value"
+            },
+            "type": "assign"
+        },
+        {
+            "args": [
+                null,
+                null
+            ],
+            "context": "#",
+            "id": 14,
+            "library": "JSON",
+            "method": "parse",
+            "type": "method",
+            "view": {
+                "col": 1,
+                "row": 2
+            }
+        },
+        {
+            "context": "#",
+            "from": {
+                "location": "method",
+                "name": 14,
+                "ptr": "/return"
+            },
+            "id": 16,
+            "to": {
+                "location": "method",
+                "name": 11,
+                "ptr": "/args/1/value"
+            },
+            "type": "assign"
+        },
+        {
+            "args": [
+                [],
+                null
+            ],
+            "context": "#",
+            "id": 11,
+            "library": "Array",
+            "method": "push",
+            "type": "method",
+            "view": {
+                "col": 2,
+                "row": 1
+            }
+        },
+        {
+            "context": "#",
+            "from": {
+                "location": "method",
+                "name": 11,
+                "ptr": "/return"
+            },
+            "id": 13,
+            "to": {
+                "location": "outgoing",
+                "name": "payload",
+                "ptr": ""
+            },
+            "type": "assign"
+        }
+    ],
+    "tags": [],
+    "version": "4.3.6-2023.2.2",
+    "view": {
+        "col": 2,
+        "row": 5
+    }
+}
+

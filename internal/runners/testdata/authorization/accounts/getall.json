@@ -1,0 +1,424 @@
+{
+    "results": [
+        {
+            "_id": "66d76ca8732d21feb5868280",
+            "email": "admin@localhost.com",
+            "firstname": "admin@itential",
+            "inactive": true,
+            "loggedIn": false,
+            "provenance": "Local AAA",
+            "username": "admin@itential"
+        },
+        {
+            "_id": "668c58df4f234baee4996cfb",
+            "_meta": {
+                "created": "2024-07-08T21:23:43.598Z",
+                "updated": "2024-10-18T00:23:15.712Z"
+            },
+            "assignedRoles": [
+                {
+                    "roleId": "668c58b6b8af9ce4193b9f02"
+                },
+                {
+                    "roleId": "668c58b6b8af9ce4193b9f03"
+                },
+                {
+                    "roleId": "668c58b04f234baee4996cdb"
+                },
+                {
+                    "roleId": "668c58b4b8af9ce4193b9e6a"
+                },
+                {
+                    "roleId": "668c58b4b8af9ce4193b9e6c"
+                },
+                {
+                    "roleId": "668c58b4b8af9ce4193b9e6e"
+                },
+                {
+                    "roleId": "668c58b4b8af9ce4193b9e76"
+                },
+                {
+                    "roleId": "668c58b7b8af9ce4193b9f14"
+                },
+                {
+                    "roleId": "668c58b7b8af9ce4193b9f17"
+                },
+                {
+                    "roleId": "668c58b7b8af9ce4193b9f18"
+                },
+                {
+                    "roleId": "668c58b7b8af9ce4193b9f15"
+                },
+                {
+                    "roleId": "668c58b7b8af9ce4193b9f16"
+                },
+                {
+                    "roleId": "668c58bab8af9ce4193b9f20"
+                },
+                {
+                    "roleId": "668c58bab8af9ce4193b9f22"
+                },
+                {
+                    "roleId": "668c58bab8af9ce4193b9f23"
+                },
+                {
+                    "roleId": "668c58bab8af9ce4193b9f24"
+                },
+                {
+                    "roleId": "668c58bab8af9ce4193b9f26"
+                },
+                {
+                    "roleId": "668c58bab8af9ce4193b9f21"
+                },
+                {
+                    "roleId": "668c58bab8af9ce4193b9f25"
+                },
+                {
+                    "roleId": "668c58bbb8af9ce4193b9f2f"
+                },
+                {
+                    "roleId": "668c58bbb8af9ce4193b9f30"
+                },
+                {
+                    "roleId": "668c58bbb8af9ce4193b9f31"
+                },
+                {
+                    "roleId": "668c58bbb8af9ce4193b9f32"
+                },
+                {
+                    "roleId": "668c58b4b8af9ce4193b9e78"
+                },
+                {
+                    "roleId": "668c58b4b8af9ce4193b9e91"
+                },
+                {
+                    "roleId": "668c58b4b8af9ce4193b9e7a"
+                },
+                {
+                    "roleId": "668c58b4b8af9ce4193b9e7b"
+                },
+                {
+                    "roleId": "668c58bdb8af9ce4193b9f3a"
+                },
+                {
+                    "roleId": "668c58bdb8af9ce4193b9f3b"
+                },
+                {
+                    "roleId": "668c58bdb8af9ce4193b9f3c"
+                },
+                {
+                    "roleId": "668c58bdb8af9ce4193b9f3f"
+                },
+                {
+                    "roleId": "668c58bdb8af9ce4193b9f3d"
+                },
+                {
+                    "roleId": "668c58bdb8af9ce4193b9f3e"
+                },
+                {
+                    "roleId": "668c58b04f234baee4996ce4"
+                },
+                {
+                    "roleId": "668c58b4b8af9ce4193b9e93"
+                },
+                {
+                    "roleId": "668c58b4b8af9ce4193b9e7e"
+                },
+                {
+                    "roleId": "668c58b4b8af9ce4193b9e81"
+                },
+                {
+                    "roleId": "668c58b04f234baee4996ce0"
+                },
+                {
+                    "roleId": "668c58b4b8af9ce4193b9e70"
+                },
+                {
+                    "roleId": "668c58b4b8af9ce4193b9e72"
+                },
+                {
+                    "roleId": "668c58bfb8af9ce4193b9f45"
+                },
+                {
+                    "roleId": "668c58bfb8af9ce4193b9f48"
+                },
+                {
+                    "roleId": "668c58bfb8af9ce4193b9f49"
+                },
+                {
+                    "roleId": "668c58bfb8af9ce4193b9f4a"
+                },
+                {
+                    "roleId": "668c58bfb8af9ce4193b9f46"
+                },
+                {
+                    "roleId": "668c58bfb8af9ce4193b9f47"
+                },
+                {
+                    "roleId": "668c58c1b8af9ce4193b9f5d"
+                },
+                {
+                    "roleId": "668c58c1b8af9ce4193b9f60"
+                },
+                {
+                    "roleId": "668c58c1b8af9ce4193b9f61"
+                },
+                {
+                    "roleId": "668c58c1b8af9ce4193b9f62"
+                },
+                {
+                    "roleId": "668c58c1b8af9ce4193b9f5e"
+                },
+                {
+                    "roleId": "668c58c1b8af9ce4193b9f5f"
+                },
+                {
+                    "roleId": "668c58c3b8af9ce4193b9f6a"
+                },
+                {
+                    "roleId": "668c58c3b8af9ce4193b9f6b"
+                },
+                {
+                    "roleId": "668c58c3b8af9ce4193b9f6c"
+                },
+                {
+                    "roleId": "668c58c3b8af9ce4193b9f6d"
+                },
+                {
+                    "roleId": "668c58c3b8af9ce4193b9f6e"
+                },
+                {
+                    "roleId": "668c58c5b8af9ce4193b9f78"
+                },
+                {
+                    "roleId": "668c58c5b8af9ce4193b9f7b"
+                },
+                {
+                    "roleId": "668c58c5b8af9ce4193b9f7c"
+                },
+                {
+                    "roleId": "668c58c5b8af9ce4193b9f79"
+                },
+                {
+                    "roleId": "668c58c5b8af9ce4193b9f7a"
+                },
+                {
+                    "roleId": "668c58b4b8af9ce4193b9e80"
+                },
+                {
+                    "roleId": "668c58cbb8af9ce4193b9fa4"
+                },
+                {
+                    "roleId": "668c58cbb8af9ce4193b9fa5"
+                },
+                {
+                    "roleId": "668c58cbb8af9ce4193b9fa6"
+                },
+                {
+                    "roleId": "668c58cbb8af9ce4193b9fa7"
+                },
+                {
+                    "roleId": "668c58cbb8af9ce4193b9fa8"
+                },
+                {
+                    "roleId": "668c58cbb8af9ce4193b9fa9"
+                },
+                {
+                    "roleId": "668c58b04f234baee4996ce3"
+                },
+                {
+                    "roleId": "668c58b4b8af9ce4193b9e83"
+                },
+                {
+                    "roleId": "668c58b04f234baee4996ce2"
+                },
+                {
+                    "roleId": "668c58b4b8af9ce4193b9e85"
+                },
+                {
+                    "roleId": "668c58b04f234baee4996cde"
+                },
+                {
+                    "roleId": "668c58b4b8af9ce4193b9e88"
+                },
+                {
+                    "roleId": "668c58b4b8af9ce4193b9e89"
+                },
+                {
+                    "roleId": "668c58b4b8af9ce4193b9e8a"
+                },
+                {
+                    "roleId": "668c58b4b8af9ce4193b9e8c"
+                },
+                {
+                    "roleId": "668c58b4b8af9ce4193b9e8d"
+                },
+                {
+                    "roleId": "668c58b04f234baee4996ce1"
+                },
+                {
+                    "roleId": "668c58b4b8af9ce4193b9e74"
+                },
+                {
+                    "roleId": "668c58cbb8af9ce4193b9fb4"
+                },
+                {
+                    "roleId": "668c58cbb8af9ce4193b9fb7"
+                },
+                {
+                    "roleId": "668c58cbb8af9ce4193b9fb8"
+                },
+                {
+                    "roleId": "668c58cbb8af9ce4193b9fb5"
+                },
+                {
+                    "roleId": "668c58cbb8af9ce4193b9fb6"
+                },
+                {
+                    "roleId": "668c58cfb8af9ce4193b9fd7"
+                },
+                {
+                    "roleId": "668c58cfb8af9ce4193b9fda"
+                },
+                {
+                    "roleId": "668c58cfb8af9ce4193b9fdb"
+                },
+                {
+                    "roleId": "668c58cfb8af9ce4193b9fd8"
+                },
+                {
+                    "roleId": "668c58cfb8af9ce4193b9fde"
+                },
+                {
+                    "roleId": "668c58cfb8af9ce4193b9fd9"
+                },
+                {
+                    "roleId": "668c58cfb8af9ce4193b9fdc"
+                },
+                {
+                    "roleId": "668c58cfb8af9ce4193b9fdd"
+                },
+                {
+                    "roleId": "668c58d1b8af9ce4193b9fe8"
+                },
+                {
+                    "roleId": "668c58d1b8af9ce4193b9feb"
+                },
+                {
+                    "roleId": "668c58d1b8af9ce4193b9fec"
+                },
+                {
+                    "roleId": "668c58d1b8af9ce4193b9fed"
+                },
+                {
+                    "roleId": "668c58d1b8af9ce4193b9fe9"
+                },
+                {
+                    "roleId": "668c58d1b8af9ce4193b9fea"
+                },
+                {
+                    "roleId": "668c58d3b8af9ce4193b9ff7"
+                },
+                {
+                    "roleId": "668c58d3b8af9ce4193b9ffa"
+                },
+                {
+                    "roleId": "668c58d3b8af9ce4193b9ffb"
+                },
+                {
+                    "roleId": "668c58d3b8af9ce4193b9ff8"
+                },
+                {
+                    "roleId": "668c58d3b8af9ce4193b9ff9"
+                },
+                {
+                    "roleId": "668c58b04f234baee4996ce5"
+                },
+                {
+                    "roleId": "668c58d7b8af9ce4193ba03b"
+                },
+                {
+                    "roleId": "668c58d7b8af9ce4193ba03c"
+                },
+                {
+                    "roleId": "668c58d7b8af9ce4193ba03d"
+                },
+                {
+                    "roleId": "668c58d7b8af9ce4193ba03e"
+                },
+                {
+                    "roleId": "668c58d7b8af9ce4193ba03f"
+                },
+                {
+                    "roleId": "668c58d7b8af9ce4193ba044"
+                },
+                {
+                    "roleId": "668c58d7b8af9ce4193ba047"
+                },
+                {
+                    "roleId": "668c58d7b8af9ce4193ba048"
+                },
+                {
+                    "roleId": "668c58d7b8af9ce4193ba045"
+                },
+                {
+                    "roleId": "668c58d7b8af9ce4193ba046"
+                },
+                {
+                    "roleId": "668ca27eb8af9ce4193d3787"
+                },
+                {
+                    "roleId": "668ca27eb8af9ce4193d3788"
+                },
+                {
+                    "roleId": "668ca27eb8af9ce4193d3786"
+                },
+                {
+                    "roleId": "668cb20db8af9ce4193d90a0"
+                },
+                {
+                    "roleId": "668cb20db8af9ce4193d90a4"
+                },
+                {
+                    "roleId": "668cb20db8af9ce4193d90a1"
+                },
+                {
+                    "roleId": "668cb20db8af9ce4193d90a3"
+                },
+                {
+                    "roleId": "668cb20db8af9ce4193d90a2"
+                },
+                {
+                    "roleId": "668d1202b8af9ce4193f9e3c"
+                },
+                {
+                    "roleId": "668d1202b8af9ce4193f9e3d"
+                },
+                {
+                    "roleId": "668d1202b8af9ce4193f9e3e"
+                },
+                {
+                    "roleId": "66bf628ab8af9ce4195034bf"
+                },
+                {
+                    "roleId": "668c58b6b8af9ce4193b9f01"
+                }
+            ],
+            "firstname": "admin",
+            "gitTokens": {},
+            "inactive": false,
+            "lastLogin": "2024-10-18T00:23:15.713Z",
+            "loggedIn": true,
+            "memberOf": [
+                {
+                    "aaaManaged": true,
+                    "groupId": "668c58b44f234baee4996cfa"
+                }
+            ],
+            "provenance": "local_aaa",
+            "username": "admin@pronghorn"
+        }
+    ],
+    "total": 2
+}
+

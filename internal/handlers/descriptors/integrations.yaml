@@ -1,0 +1,79 @@
+---
+##############################################################################
+# Reader Commands
+##############################################################################
+
+get:
+  use: integrations
+  group: admin-essentials
+
+  description: |
+    Display one or more integrations
+
+    The `get integraions` will display the list of integration models
+    that have been added to the server.  The default output will display
+    the list of the configured integrations and models.
+
+describe:
+  use: integration <name>
+  group: admin-essentials
+
+  description: |
+    Display detailed information about a integration
+
+    The `describe integration` command will return details about the
+    specified integration.   If the integration does not exist, this command
+    will return an error.
+
+##############################################################################
+# Writer Commands
+##############################################################################
+
+create:
+  use: integration <name> --model <string>
+  group: admin-essentials
+
+  description: |
+    Create a new integration
+
+    The `create integration` will create a new instance of an integration
+    model on the server.  If an integration of the same name already exists
+    on the server (regardless of the model type), this command will
+    return an error
+
+    When creating a new integraiton, the `--model` argument is required and
+    must reference an Integration Model already on the server.  To see a list
+    of available Integration Models, use the `get integration-models` command.
+
+  example: |
+    # Create a new integration call `test` from the model `Petstore`
+    $ ipctl create integration test --model Petstore
+
+delete:
+  use: integration <name>
+  group: admin-essentials
+
+  description: |
+    Delete a integration
+
+    The `delete integration` command will delete the specified integration
+    if it exists on the server.  If the specified integration does not
+    exsist, this command will return an error.
+
+  example: |
+    # Delete an integration call `test`
+    $ ipctl delete integration test
+
+clear:
+  use: integrations
+  group: admin-essentials
+
+  description: |
+    Delete all integrations
+
+    The `clear integrations` command will delete all configured integrations
+    for the server.  This is a destructive command and cannot be undone.
+
+  example: |
+    # Delete all configured integrations
+    $ ipctl clear integrations

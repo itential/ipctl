@@ -1,0 +1,36 @@
+---
+#############################################################################
+# Account commands
+#############################################################################
+get-accounts:
+  use: accounts
+  description: |
+    Display one or more Local AAA users
+
+create-account:
+  use: account <username>
+  description: |
+    Create a new local AAA account
+
+delete-account:
+  use: account <username>
+  description: |
+    Delete a local AAA account
+
+#############################################################################
+# Group commands
+#############################################################################
+get-groups:
+  use: groups
+  description: |
+    Display one or more Local AAA groups
+
+create-group:
+  use: group <name>
+  description:
+    Create a new local AAA group
+
+delete-group:
+  use: group <name>
+  description: |
+    Delete a local AAA group

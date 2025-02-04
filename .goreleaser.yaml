@@ -1,0 +1,8 @@
+---
+before:
+  hooks:
+    - make clean
+    - go mod tidy
+
+snapshot:
+  version_template: "{{ .Env.BUILD }}"

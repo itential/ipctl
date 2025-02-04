@@ -1,0 +1,5256 @@
+{
+  "results": [
+    {
+      "provenance": "WorkFlowEngine",
+      "name": "activate",
+      "route": {
+        "path": "/activate",
+        "verb": "POST",
+        "fullPath": "/workflow_engine/activate"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "WorkFlowEngine",
+      "name": "activateJobWorker",
+      "route": {
+        "path": "/jobWorker/activate",
+        "verb": "POST",
+        "fullPath": "/workflow_engine/jobWorker/activate"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "ConfigurationManager",
+      "name": "adapterProxy",
+      "route": {
+        "verb": "GET",
+        "path": "/devices/actions/:device&:origin&:action",
+        "fullPath": "/configuration_manager/devices/actions/:device&:origin&:action"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "AutomationStudio",
+      "name": "addComponentsToProject",
+      "route": {
+        "verb": "POST",
+        "path": "/projects/:projectId/components/add",
+        "fullPath": "/automation-studio/projects/:projectId/components/add"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "ConfigurationManager",
+      "name": "addDevicesToGroup",
+      "route": {
+        "verb": "POST",
+        "path": "/deviceGroups/:id/devices",
+        "fullPath": "/configuration_manager/deviceGroups/:id/devices"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "ConfigurationManager",
+      "name": "addDevicesToGroupByName",
+      "route": {
+        "verb": "POST",
+        "path": "/deviceGroups/devices",
+        "fullPath": "/configuration_manager/deviceGroups/devices"
+      },
+      "deprecated": true
+    },
+    {
+      "provenance": "ConfigurationManager",
+      "name": "addDevicesToNode",
+      "route": {
+        "verb": "POST",
+        "path": "/configs/:treeId/:version/:nodePath(*)/devices",
+        "fullPath": "/configuration_manager/configs/:treeId/:version/:nodePath(*)/devices"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "ConfigurationManager",
+      "name": "addGroupsToNode",
+      "route": {
+        "verb": "POST",
+        "path": "/configs/devices/groups",
+        "fullPath": "/configuration_manager/configs/devices/groups"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "OperationsManager",
+      "name": "addJobGroup",
+      "route": {
+        "verb": "POST",
+        "path": "/jobs/:jobId/groups",
+        "fullPath": "/operations-manager/jobs/:jobId/groups"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "NSOManager",
+      "name": "addLockItem",
+      "route": {
+        "enabled": true,
+        "path": "/lockItem/:adapterId",
+        "verb": "POST",
+        "fullPath": "/nso_manager/lockItem/:adapterId"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "ServiceCatalog",
+      "name": "AddNewServiceToCatalog",
+      "route": {
+        "path": "/AddNewService",
+        "verb": "POST",
+        "fullPath": "/service_catalog/AddNewService"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "ConfigurationManager",
+      "name": "addNodesToCompliancePlan",
+      "route": {
+        "verb": "POST",
+        "path": "/compliance_plans/nodes",
+        "fullPath": "/configuration_manager/compliance_plans/nodes"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "ServiceCog",
+      "name": "addServiceInstance",
+      "route": {
+        "verb": "POST",
+        "path": "/service/instance/:host",
+        "fullPath": "/service_management/service/instance/:host"
+      },
+      "deprecated": true
+    },
+    {
+      "provenance": "ServiceCog",
+      "name": "addServiceInstances",
+      "route": {
+        "verb": "POST",
+        "path": "/service/instances/:host",
+        "fullPath": "/service_management/service/instances/:host"
+      },
+      "deprecated": true
+    },
+    {
+      "provenance": "ConfigurationManager",
+      "name": "addTasksToNode",
+      "route": {
+        "verb": "POST",
+        "path": "/configs/node/tasks",
+        "fullPath": "/configuration_manager/configs/node/tasks"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "OperationsManager",
+      "name": "addWatchersToJob",
+      "route": {
+        "verb": "POST",
+        "path": "/jobs/:jobId/add-watchers",
+        "fullPath": "/operations-manager/jobs/:jobId/add-watchers"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "ConfigurationManager",
+      "name": "advancedPatchDeviceConfiguration",
+      "route": {
+        "verb": "POST",
+        "path": "/patch_device/advanced/:deviceName",
+        "fullPath": "/configuration_manager/patch_device/advanced/:deviceName"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "Tags",
+      "name": "all",
+      "route": {
+        "verb": "GET",
+        "path": "/all",
+        "fullPath": "/tags/all"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "ConfigurationManager",
+      "name": "applyDeviceConfig",
+      "route": {
+        "verb": "POST",
+        "path": "/devices/:deviceName/configuration",
+        "fullPath": "/configuration_manager/devices/:deviceName/configuration"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "ConfigurationManager",
+      "name": "applyDeviceTemplate",
+      "route": {
+        "verb": "POST",
+        "path": "/templates/apply",
+        "fullPath": "/configuration_manager/templates/apply"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "TemplateBuilder",
+      "name": "applyTemplate",
+      "route": {
+        "verb": "POST",
+        "path": "/applyTemplate",
+        "fullPath": "/template_builder/applyTemplate"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "NSOManager",
+      "name": "applyTemplates",
+      "route": {
+        "path": "/applyTemplates",
+        "verb": "POST",
+        "fullPath": "/nso_manager/applyTemplates"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "TemplateBuilder",
+      "name": "applyTemplates",
+      "route": {
+        "verb": "POST",
+        "path": "/applyTemplates",
+        "fullPath": "/template_builder/applyTemplates"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "OperationsManager",
+      "name": "assignTask",
+      "route": {
+        "verb": "POST",
+        "path": "/tasks/:taskId/assign",
+        "fullPath": "/operations-manager/tasks/:taskId/assign"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "ConfigurationManager",
+      "name": "backUpDevice",
+      "route": {
+        "verb": "POST",
+        "path": "/devices/backups",
+        "fullPath": "/configuration_manager/devices/backups"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "ConfigurationManager",
+      "name": "buildSpecLines",
+      "route": {
+        "verb": "POST",
+        "path": "/generate/config_spec",
+        "fullPath": "/configuration_manager/generate/config_spec"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "ConfigurationManager",
+      "name": "cacheOSTypes",
+      "route": {
+        "verb": "POST",
+        "path": "/cache/devices/ostype",
+        "fullPath": "/configuration_manager/cache/devices/ostype"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "OperationsManager",
+      "name": "cancelJobs",
+      "route": {
+        "verb": "POST",
+        "path": "/jobs/cancel",
+        "fullPath": "/operations-manager/jobs/cancel"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "Indexes",
+      "name": "checkIndexes",
+      "route": {
+        "path": "/:collection/status",
+        "verb": "GET",
+        "fullPath": "/indexes/:collection/status"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "Indexes",
+      "name": "checkMultipleIndexes",
+      "route": {
+        "path": "/status",
+        "verb": "GET",
+        "fullPath": "/indexes/status"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "ServiceCog",
+      "name": "checkSync",
+      "route": {
+        "verb": "POST",
+        "path": "/instance/:path/operations/check-sync",
+        "fullPath": "/service_management/instance/:path/operations/check-sync"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "OperationsManager",
+      "name": "claimTask",
+      "route": {
+        "verb": "POST",
+        "path": "/tasks/:taskId/claim",
+        "fullPath": "/operations-manager/tasks/:taskId/claim"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "OperationsManager",
+      "name": "cloneAutomation",
+      "route": {
+        "verb": "POST",
+        "path": "/automations/clone",
+        "fullPath": "/operations-manager/automations/clone"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "ServiceCog",
+      "name": "config",
+      "route": {
+        "verb": "POST",
+        "path": "/instance/:path/operations/config",
+        "fullPath": "/service_management/instance/:path/operations/config"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "OperationsManager",
+      "name": "continueJobFrom",
+      "route": {
+        "verb": "POST",
+        "path": "/jobs/:jobId/continue",
+        "fullPath": "/operations-manager/jobs/:jobId/continue"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "ConfigurationManager",
+      "name": "convertChangesToConfig",
+      "route": {
+        "verb": "POST",
+        "path": "/changes/convert",
+        "fullPath": "/configuration_manager/changes/convert"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "Tags",
+      "name": "create",
+      "route": {
+        "verb": "POST",
+        "path": "/create",
+        "fullPath": "/tags/create"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "Adapters",
+      "name": "createAdapter",
+      "route": {
+        "path": "",
+        "verb": "POST",
+        "fullPath": "/adapters"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "MOP",
+      "name": "createAnalyticTemplate",
+      "route": {
+        "verb": "POST",
+        "path": "/createAnalyticTemplate",
+        "fullPath": "/mop/createAnalyticTemplate"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "AutomationStudio",
+      "name": "createAutomation",
+      "route": {
+        "verb": "POST",
+        "path": "/automations",
+        "fullPath": "/automation-studio/automations"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "OperationsManager",
+      "name": "createAutomation",
+      "route": {
+        "verb": "POST",
+        "path": "/automations",
+        "fullPath": "/operations-manager/automations"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "ConfigurationManager",
+      "name": "createCompliancePlan",
+      "route": {
+        "verb": "POST",
+        "path": "/compliance_plans",
+        "fullPath": "/configuration_manager/compliance_plans"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "AutomationStudio",
+      "name": "createComponentGroup",
+      "route": {
+        "verb": "POST",
+        "path": "/component-groups",
+        "fullPath": "/automation-studio/component-groups"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "ConfigurationManager",
+      "name": "createConfigParser",
+      "route": {
+        "verb": "POST",
+        "path": "/configurations/parser",
+        "fullPath": "/configuration_manager/configurations/parser"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "ConfigurationManager",
+      "name": "createConfigSpec",
+      "route": {
+        "verb": "POST",
+        "path": "/config_specs",
+        "fullPath": "/configuration_manager/config_specs"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "ConfigurationManager",
+      "name": "createDeviceGroup",
+      "route": {
+        "verb": "POST",
+        "path": "/devicegroup",
+        "fullPath": "/configuration_manager/devicegroup"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "ConfigurationManager",
+      "name": "createDeviceTemplate",
+      "route": {
+        "verb": "POST",
+        "path": "/templates",
+        "fullPath": "/configuration_manager/templates"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "JsonForms",
+      "name": "createForm",
+      "route": {
+        "verb": "POST",
+        "path": "/forms",
+        "fullPath": "/json-forms/forms"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "FormBuilder",
+      "name": "createFormGroupEntry",
+      "route": {
+        "verb": "POST",
+        "path": "/forms/:name/groups",
+        "fullPath": "/formbuilder/forms/:name/groups"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "ConfigurationManager",
+      "name": "createGoldenConfigNode",
+      "route": {
+        "verb": "POST",
+        "path": "/configs/:treeId/:version/:parentNodePath(*)",
+        "fullPath": "/configuration_manager/configs/:treeId/:version/:parentNodePath(*)"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "ConfigurationManager",
+      "name": "createGoldenConfigTree",
+      "route": {
+        "verb": "POST",
+        "path": "/configs",
+        "fullPath": "/configuration_manager/configs"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "ConfigurationManager",
+      "name": "createGoldenConfigTreeVersion",
+      "route": {
+        "verb": "POST",
+        "path": "/configs/:treeId",
+        "fullPath": "/configuration_manager/configs/:treeId"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "Authorization",
+      "name": "createGroup",
+      "route": {
+        "path": "/groups",
+        "verb": "POST",
+        "fullPath": "/authorization/groups"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "SSOGroupMappings",
+      "name": "createGroupMapping",
+      "route": {
+        "path": "",
+        "verb": "POST",
+        "fullPath": "/group-mappings"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "Indexes",
+      "name": "createIndexes",
+      "route": {
+        "path": "/:collection",
+        "verb": "POST",
+        "fullPath": "/indexes/:collection"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "Integrations",
+      "name": "createIntegration",
+      "route": {
+        "path": "",
+        "verb": "POST",
+        "fullPath": "/integrations"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "IntegrationModels",
+      "name": "createIntegrationModel",
+      "route": {
+        "path": "",
+        "verb": "POST",
+        "fullPath": "/integration-models"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "ConfigurationManager",
+      "name": "createJSONSpec",
+      "route": {
+        "verb": "POST",
+        "path": "/json_specs/create",
+        "fullPath": "/configuration_manager/json_specs/create"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "ExternalLinks",
+      "name": "createLink",
+      "route": {
+        "path": "",
+        "verb": "POST",
+        "fullPath": "/external-links"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "Profiles",
+      "name": "createProfile",
+      "route": {
+        "path": "",
+        "verb": "POST",
+        "fullPath": "/profiles"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "AutomationStudio",
+      "name": "createProject",
+      "route": {
+        "verb": "POST",
+        "path": "/projects",
+        "fullPath": "/automation-studio/projects"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "Tags",
+      "name": "createReference",
+      "route": {
+        "verb": "POST",
+        "path": "/createReference",
+        "fullPath": "/tags/createReference"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "PrebuiltsRepository",
+      "name": "createRepositoryConfig",
+      "route": {
+        "path": "/configs",
+        "verb": "POST",
+        "fullPath": "/prebuilts-repository/configs"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "LifecycleManager",
+      "name": "createResourceModelHttp",
+      "route": {
+        "verb": "POST",
+        "path": "/resources",
+        "fullPath": "/lifecycle-manager/resources"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "Authorization",
+      "name": "createRole",
+      "route": {
+        "path": "/roles",
+        "verb": "POST",
+        "fullPath": "/authorization/roles"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "OAuth",
+      "name": "createServiceAccount",
+      "route": {
+        "path": "/serviceAccounts",
+        "verb": "POST",
+        "fullPath": "/oauth/serviceAccounts"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "ServiceCog",
+      "name": "createServiceModelForm",
+      "route": {
+        "path": "/model/:service_model_path/form",
+        "verb": "GET",
+        "fullPath": "/service_management/model/:service_model_path/form"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "ServiceCatalog",
+      "name": "CreateServiceOrder",
+      "route": {
+        "verb": "POST",
+        "path": "/createServiceOrder",
+        "fullPath": "/service_catalog/createServiceOrder"
+      },
+      "deprecated": true
+    },
+    {
+      "provenance": "SSO",
+      "name": "createSSOConfig",
+      "route": {
+        "path": "/configs",
+        "verb": "POST",
+        "fullPath": "/sso/configs"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "Tags",
+      "name": "createTags",
+      "route": {
+        "verb": "POST",
+        "path": "/createTags",
+        "fullPath": "/tags/createTags"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "ConfigurationManager",
+      "name": "createTaskInstance",
+      "route": {
+        "verb": "POST",
+        "path": "/tasks/instance",
+        "fullPath": "/configuration_manager/tasks/instance"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "AutomationStudio",
+      "name": "createTemplate",
+      "route": {
+        "verb": "POST",
+        "path": "/templates",
+        "fullPath": "/automation-studio/templates"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "MOP",
+      "name": "createTemplate",
+      "route": {
+        "verb": "POST",
+        "path": "/createTemplate",
+        "fullPath": "/mop/createTemplate"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "Jst",
+      "name": "createTransformation",
+      "route": {
+        "verb": "POST",
+        "path": "/",
+        "fullPath": "/transformations/"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "OperationsManager",
+      "name": "createTrigger",
+      "route": {
+        "verb": "POST",
+        "path": "/triggers",
+        "fullPath": "/operations-manager/triggers"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "WorkflowBuilder",
+      "name": "createWorkflowGroupEntry",
+      "route": {
+        "verb": "POST",
+        "path": "/workflows/:name/groups",
+        "fullPath": "/workflow_builder/workflows/:name/groups"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "WorkFlowEngine",
+      "name": "deactivate",
+      "route": {
+        "path": "/deactivate",
+        "verb": "POST",
+        "fullPath": "/workflow_engine/deactivate"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "WorkFlowEngine",
+      "name": "deactivateJobWorker",
+      "route": {
+        "path": "/jobWorker/deactivate",
+        "verb": "POST",
+        "fullPath": "/workflow_engine/jobWorker/deactivate"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "JsonForms",
+      "name": "decodeSchema",
+      "route": {
+        "verb": "POST",
+        "path": "/decode",
+        "fullPath": "/json-forms/decode"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "Tags",
+      "name": "delete",
+      "route": {
+        "verb": "POST",
+        "path": "/delete",
+        "fullPath": "/tags/delete"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "Adapters",
+      "name": "deleteAdapter",
+      "route": {
+        "path": "/:name",
+        "verb": "DELETE",
+        "fullPath": "/adapters/:name"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "MOP",
+      "name": "deleteAnalyticTemplate",
+      "route": {
+        "verb": "POST",
+        "path": "/deleteAnalyticTemplate/:id",
+        "fullPath": "/mop/deleteAnalyticTemplate/:id"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "OperationsManager",
+      "name": "deleteAutomation",
+      "route": {
+        "verb": "DELETE",
+        "path": "/automations/:id",
+        "fullPath": "/operations-manager/automations/:id"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "AutomationCatalog",
+      "name": "deleteAutomations",
+      "route": {
+        "verb": "DELETE",
+        "path": "/automations",
+        "fullPath": "/automation_catalog/automations"
+      },
+      "deprecated": true
+    },
+    {
+      "provenance": "ConfigurationManager",
+      "name": "deleteCompliancePlans",
+      "route": {
+        "verb": "DELETE",
+        "path": "/compliance_plans",
+        "fullPath": "/configuration_manager/compliance_plans"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "AutomationStudio",
+      "name": "deleteComponentGroup",
+      "route": {
+        "verb": "DELETE",
+        "path": "/component-groups/:id",
+        "fullPath": "/automation-studio/component-groups/:id"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "ConfigurationManager",
+      "name": "deleteConfigParser",
+      "route": {
+        "verb": "DELETE",
+        "path": "/configurations/parser",
+        "fullPath": "/configuration_manager/configurations/parser"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "ConfigurationManager",
+      "name": "deleteConfigParsers",
+      "route": {
+        "verb": "DELETE",
+        "path": "/configurations/parsers",
+        "fullPath": "/configuration_manager/configurations/parsers"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "ConfigurationManager",
+      "name": "deleteDeviceBackups",
+      "route": {
+        "verb": "DELETE",
+        "path": "/backups",
+        "fullPath": "/configuration_manager/backups"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "ConfigurationManager",
+      "name": "deleteDeviceGroups",
+      "route": {
+        "verb": "DELETE",
+        "path": "/deviceGroups",
+        "fullPath": "/configuration_manager/deviceGroups"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "ConfigurationManager",
+      "name": "deleteDeviceGroupsByName",
+      "route": {
+        "verb": "DELETE",
+        "path": "/name/deviceGroups",
+        "fullPath": "/configuration_manager/name/deviceGroups"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "ConfigurationManager",
+      "name": "deleteDevicesFromGroup",
+      "route": {
+        "verb": "DELETE",
+        "path": "/deviceGroups/devices",
+        "fullPath": "/configuration_manager/deviceGroups/devices"
+      },
+      "deprecated": true
+    },
+    {
+      "provenance": "ConfigurationManager",
+      "name": "deleteDeviceTemplates",
+      "route": {
+        "verb": "DELETE",
+        "path": "/templates",
+        "fullPath": "/configuration_manager/templates"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "FormBuilder",
+      "name": "deleteForm",
+      "route": {
+        "verb": "POST",
+        "path": "/deleteForm/:id",
+        "fullPath": "/formbuilder/deleteForm/:id"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "FormBuilder",
+      "name": "deleteFormGroups",
+      "route": {
+        "verb": "DELETE",
+        "path": "/forms/:name/groups",
+        "fullPath": "/formbuilder/forms/:name/groups"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "JsonForms",
+      "name": "deleteForms",
+      "route": {
+        "verb": "DELETE",
+        "path": "/forms",
+        "fullPath": "/json-forms/forms"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "ConfigurationManager",
+      "name": "deleteGoldenConfigNode",
+      "route": {
+        "verb": "DELETE",
+        "path": "/configs/:treeId/:version/:nodePath(*)",
+        "fullPath": "/configuration_manager/configs/:treeId/:version/:nodePath(*)"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "ConfigurationManager",
+      "name": "deleteGoldenConfigTree",
+      "route": {
+        "verb": "DELETE",
+        "path": "/configs/:treeId",
+        "fullPath": "/configuration_manager/configs/:treeId"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "ConfigurationManager",
+      "name": "deleteGoldenConfigTrees",
+      "route": {
+        "verb": "DELETE",
+        "path": "/configs",
+        "fullPath": "/configuration_manager/configs"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "ConfigurationManager",
+      "name": "deleteGoldenConfigTreeVersion",
+      "route": {
+        "verb": "DELETE",
+        "path": "/configs/:treeId/:version",
+        "fullPath": "/configuration_manager/configs/:treeId/:version"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "Authorization",
+      "name": "deleteGroup",
+      "route": {
+        "path": "/groups/:groupId",
+        "verb": "DELETE",
+        "fullPath": "/authorization/groups/:groupId"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "SSOGroupMappings",
+      "name": "deleteGroupMapping",
+      "route": {
+        "path": "/:provenance/:externalGroup",
+        "verb": "DELETE",
+        "fullPath": "/group-mappings/:provenance/:externalGroup"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "ServiceCog",
+      "name": "deleteInstance",
+      "route": {
+        "verb": "DELETE",
+        "path": "/service/instance/delete/:name/:key",
+        "fullPath": "/service_management/service/instance/delete/:name/:key"
+      },
+      "deprecated": true
+    },
+    {
+      "provenance": "ServiceCog",
+      "name": "deleteInstances",
+      "route": {
+        "verb": "POST",
+        "path": "/service/instances/delete/:name",
+        "fullPath": "/service_management/service/instances/delete/:name"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "Integrations",
+      "name": "deleteIntegration",
+      "route": {
+        "path": "/:name",
+        "verb": "DELETE",
+        "fullPath": "/integrations/:name"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "IntegrationModels",
+      "name": "deleteIntegrationModel",
+      "route": {
+        "path": "/:name",
+        "verb": "DELETE",
+        "fullPath": "/integration-models/:name"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "OperationsManager",
+      "name": "deleteJob",
+      "route": {
+        "verb": "DELETE",
+        "path": "/jobs/:jobId",
+        "fullPath": "/operations-manager/jobs/:jobId"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "OperationsManager",
+      "name": "deleteJobGroup",
+      "route": {
+        "verb": "DELETE",
+        "path": "/jobs/:jobId/groups/:groupId",
+        "fullPath": "/operations-manager/jobs/:jobId/groups/:groupId"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "OperationsManager",
+      "name": "deleteJobGroups",
+      "route": {
+        "verb": "DELETE",
+        "path": "/jobs/:jobId/groups",
+        "fullPath": "/operations-manager/jobs/:jobId/groups"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "OperationsManager",
+      "name": "deleteJobs",
+      "route": {
+        "verb": "POST",
+        "path": "/jobs/delete",
+        "fullPath": "/operations-manager/jobs/delete"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "ExternalLinks",
+      "name": "deleteLink",
+      "route": {
+        "path": "/:linkId",
+        "verb": "DELETE",
+        "fullPath": "/external-links/:linkId"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "ConfigurationManager",
+      "name": "deleteOSTypeCache",
+      "route": {
+        "verb": "DELETE",
+        "path": "/cache/devices/ostype",
+        "fullPath": "/configuration_manager/cache/devices/ostype"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "ConfigurationManager",
+      "name": "deletePins",
+      "route": {
+        "verb": "DELETE",
+        "path": "/pins",
+        "fullPath": "/configuration_manager/pins"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "Profiles",
+      "name": "deleteProfile",
+      "route": {
+        "path": "/:id",
+        "verb": "DELETE",
+        "fullPath": "/profiles/:id"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "AutomationStudio",
+      "name": "deleteProject",
+      "route": {
+        "verb": "DELETE",
+        "path": "/projects/:id",
+        "fullPath": "/automation-studio/projects/:id"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "PrebuiltsRepository",
+      "name": "deleteRepositoryConfig",
+      "route": {
+        "path": "/configs/:name",
+        "verb": "DELETE",
+        "fullPath": "/prebuilts-repository/configs/:name"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "LifecycleManager",
+      "name": "deleteResourceModelHttp",
+      "route": {
+        "verb": "DELETE",
+        "path": "/resources/:id",
+        "fullPath": "/lifecycle-manager/resources/:id"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "Authorization",
+      "name": "deleteRole",
+      "route": {
+        "path": "/roles/:roleId",
+        "verb": "DELETE",
+        "fullPath": "/authorization/roles/:roleId"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "ServiceCatalog",
+      "name": "deleteService",
+      "route": {
+        "verb": "POST",
+        "path": "/deleteService/:id",
+        "fullPath": "/service_catalog/deleteService/:id"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "OAuth",
+      "name": "deleteServiceAccount",
+      "route": {
+        "path": "/serviceAccounts/:client_id",
+        "verb": "DELETE",
+        "fullPath": "/oauth/serviceAccounts/:client_id"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "ServiceCog",
+      "name": "deleteServiceModelFromDatabase",
+      "route": {
+        "verb": "DELETE",
+        "path": "/service/model/database/remove/:service",
+        "fullPath": "/service_management/service/model/database/remove/:service"
+      },
+      "deprecated": true
+    },
+    {
+      "provenance": "ServiceCog",
+      "name": "deleteServicePath",
+      "route": {
+        "verb": "DELETE",
+        "path": "/deleteServicePath/:service_path/:host",
+        "fullPath": "/service_management/deleteServicePath/:service_path/:host"
+      },
+      "deprecated": true
+    },
+    {
+      "provenance": "ServiceCog",
+      "name": "deleteServicePathDryRun",
+      "route": {
+        "verb": "DELETE",
+        "path": "/deleteServicePathDryRun/:service_path/:host",
+        "fullPath": "/service_management/deleteServicePathDryRun/:service_path/:host"
+      },
+      "deprecated": true
+    },
+    {
+      "provenance": "ServiceCog",
+      "name": "deleteServicePaths",
+      "route": {
+        "verb": "POST",
+        "path": "/deleteServicePaths/:host",
+        "fullPath": "/service_management/deleteServicePaths/:host"
+      },
+      "deprecated": true
+    },
+    {
+      "provenance": "ServiceCog",
+      "name": "deleteServicePathsDryRun",
+      "route": {
+        "verb": "POST",
+        "path": "/deleteServicePathsDryRun/:host",
+        "fullPath": "/service_management/deleteServicePathsDryRun/:host"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "SSO",
+      "name": "deleteSSOConfig",
+      "route": {
+        "path": "/configs/:name",
+        "verb": "DELETE",
+        "fullPath": "/sso/configs/:name"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "ConfigurationManager",
+      "name": "deleteTaskInstances",
+      "route": {
+        "verb": "DELETE",
+        "path": "/tasks/instance",
+        "fullPath": "/configuration_manager/tasks/instance"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "AutomationStudio",
+      "name": "deleteTemplate",
+      "route": {
+        "verb": "DELETE",
+        "path": "/templates/:id",
+        "fullPath": "/automation-studio/templates/:id"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "MOP",
+      "name": "deleteTemplate",
+      "route": {
+        "verb": "POST",
+        "path": "/deleteTemplate/:id",
+        "fullPath": "/mop/deleteTemplate/:id"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "Jst",
+      "name": "deleteTransformation",
+      "route": {
+        "verb": "DELETE",
+        "path": "/:id",
+        "fullPath": "/transformations/:id"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "OperationsManager",
+      "name": "deleteTrigger",
+      "route": {
+        "verb": "DELETE",
+        "path": "/triggers/:id",
+        "fullPath": "/operations-manager/triggers/:id"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "OperationsManager",
+      "name": "deleteTriggersByActionId",
+      "route": {
+        "verb": "DELETE",
+        "path": "/triggers/action/:id",
+        "fullPath": "/operations-manager/triggers/action/:id"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "ConfigurationManager",
+      "name": "deleteVariables",
+      "route": {
+        "verb": "DELETE",
+        "path": "/configs/variables/:treeId/:version",
+        "fullPath": "/configuration_manager/configs/variables/:treeId/:version"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "WorkflowBuilder",
+      "name": "deleteWorkflow",
+      "route": {
+        "verb": "DELETE",
+        "path": "/workflows/delete/:name",
+        "fullPath": "/workflow_builder/workflows/delete/:name"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "WorkflowBuilder",
+      "name": "deleteWorkflowGroups",
+      "route": {
+        "verb": "DELETE",
+        "path": "/workflows/:name/groups",
+        "fullPath": "/workflow_builder/workflows/:name/groups"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "ServiceCog",
+      "name": "deviceModifications",
+      "route": {
+        "verb": "POST",
+        "path": "/instance/:path/operations/device-modifications",
+        "fullPath": "/service_management/instance/:path/operations/device-modifications"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "WorkFlowEngine",
+      "name": "diffToHTML",
+      "route": {
+        "verb": "POST",
+        "path": "/diffToHTML",
+        "fullPath": "/workflow_engine/diffToHTML"
+      },
+      "deprecated": true
+    },
+    {
+      "provenance": "AGManager",
+      "name": "discoverAll",
+      "route": {
+        "verb": "GET",
+        "path": "/actions",
+        "fullPath": "/ag-manager/actions"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "AGManager",
+      "name": "discoverModules",
+      "route": {
+        "verb": "GET",
+        "path": "/actions/:adapterId",
+        "fullPath": "/ag-manager/actions/:adapterId"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "ServiceCog",
+      "name": "dryrunServiceInstance",
+      "route": {
+        "verb": "POST",
+        "path": "/service/instance/:host/dryrun/:outformat",
+        "fullPath": "/service_management/service/instance/:host/dryrun/:outformat"
+      },
+      "deprecated": true
+    },
+    {
+      "provenance": "ServiceCog",
+      "name": "DryRunServiceWithFlags",
+      "route": {
+        "verb": "POST",
+        "path": "/service/instance/:host/dryrun",
+        "fullPath": "/service_management/service/instance/:host/dryrun"
+      },
+      "deprecated": true
+    },
+    {
+      "provenance": "Tags",
+      "name": "duplicate",
+      "route": {
+        "verb": "POST",
+        "path": "/duplicate",
+        "fullPath": "/tags/duplicate"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "LifecycleManager",
+      "name": "editResourceModelHttp",
+      "route": {
+        "verb": "POST",
+        "path": "/resources/:modelId/edit",
+        "fullPath": "/lifecycle-manager/resources/:modelId/edit"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "NSOManager",
+      "name": "evaluateWhen",
+      "route": {
+        "enabled": true,
+        "path": "/evaluateWhen",
+        "verb": "POST",
+        "fullPath": "/nso_manager/evaluateWhen"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "Adapters",
+      "name": "exportAdapter",
+      "route": {
+        "path": "/:name/export",
+        "verb": "GET",
+        "fullPath": "/adapters/:name/export"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "Authorization",
+      "name": "exportAuthReport",
+      "route": {
+        "path": "/csv/export",
+        "verb": "GET",
+        "fullPath": "/authorization/csv/export"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "OperationsManager",
+      "name": "exportAutomation",
+      "route": {
+        "verb": "GET",
+        "path": "/automations/:id/export",
+        "fullPath": "/operations-manager/automations/:id/export"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "ServiceCatalog",
+      "name": "exportCatalogItem",
+      "route": {
+        "verb": "GET",
+        "path": "/catalog-items/:catalogItemId/export",
+        "fullPath": "/service_catalog/catalog-items/:catalogItemId/export"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "FormBuilder",
+      "name": "exportForm",
+      "route": {
+        "verb": "POST",
+        "path": "/forms/export",
+        "fullPath": "/formbuilder/forms/export"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "ConfigurationManager",
+      "name": "exportGoldenConfigTree",
+      "route": {
+        "verb": "POST",
+        "path": "/export/goldenconfigs",
+        "fullPath": "/configuration_manager/export/goldenconfigs"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "IntegrationModels",
+      "name": "exportIntegrationModel",
+      "route": {
+        "path": "/:name/export",
+        "verb": "GET",
+        "fullPath": "/integration-models/:name/export"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "OperationsManager",
+      "name": "exportLargeData",
+      "route": {
+        "verb": "GET",
+        "path": "/large-data/:id",
+        "fullPath": "/operations-manager/large-data/:id"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "Prebuilts",
+      "name": "exportPrebuilt",
+      "route": {
+        "path": "/:id/export",
+        "verb": "GET",
+        "fullPath": "/prebuilts/:id/export"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "Profiles",
+      "name": "exportProfile",
+      "route": {
+        "path": "/:id/export",
+        "verb": "GET",
+        "fullPath": "/profiles/:id/export"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "AutomationStudio",
+      "name": "exportProject",
+      "route": {
+        "verb": "GET",
+        "path": "/projects/:id/export",
+        "fullPath": "/automation-studio/projects/:id/export"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "LifecycleManager",
+      "name": "exportResourceInstanceHttp",
+      "route": {
+        "verb": "GET",
+        "path": "/resources/:modelIdentifier/instances/:instanceIdentifier/export",
+        "fullPath": "/lifecycle-manager/resources/:modelIdentifier/instances/:instanceIdentifier/export"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "LifecycleManager",
+      "name": "exportResourceModelHttp",
+      "route": {
+        "verb": "GET",
+        "path": "/resources/:modelId/export",
+        "fullPath": "/lifecycle-manager/resources/:modelId/export"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "AutomationStudio",
+      "name": "exportTemplate",
+      "route": {
+        "verb": "GET",
+        "path": "/templates/:id/export",
+        "fullPath": "/automation-studio/templates/:id/export"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "MOP",
+      "name": "exportTemplate",
+      "route": {
+        "verb": "POST",
+        "path": "/export",
+        "fullPath": "/mop/export"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "OperationsManager",
+      "name": "exportTrigger",
+      "route": {
+        "verb": "GET",
+        "path": "/triggers/:id/export",
+        "fullPath": "/operations-manager/triggers/:id/export"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "WorkflowBuilder",
+      "name": "exportWorkflow",
+      "route": {
+        "verb": "POST",
+        "path": "/export",
+        "fullPath": "/workflow_builder/export"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "FormBuilder",
+      "name": "fetchData",
+      "route": {
+        "verb": "POST",
+        "path": "/fetchData",
+        "fullPath": "/formbuilder/fetchData"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "Search",
+      "name": "find",
+      "route": {
+        "verb": "POST",
+        "path": "/find",
+        "fullPath": "/search/find"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "Tags",
+      "name": "find",
+      "route": {
+        "verb": "POST",
+        "path": "/find",
+        "fullPath": "/tags/find"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "OperationsManager",
+      "name": "finishManualTask",
+      "route": {
+        "verb": "POST",
+        "path": "/jobs/:jobId/tasks/:taskId/finish",
+        "fullPath": "/operations-manager/jobs/:jobId/tasks/:taskId/finish"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "Authorization",
+      "name": "forceLogout",
+      "route": {
+        "path": "/accounts/:accountId/forceLogout",
+        "verb": "POST",
+        "fullPath": "/authorization/accounts/:accountId/forceLogout"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "Tags",
+      "name": "get",
+      "route": {
+        "verb": "POST",
+        "path": "/get",
+        "fullPath": "/tags/get"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "Authorization",
+      "name": "getAccount",
+      "route": {
+        "path": "/accounts/:accountId",
+        "verb": "GET",
+        "fullPath": "/authorization/accounts/:accountId"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "Authorization",
+      "name": "getAccounts",
+      "route": {
+        "path": "/accounts",
+        "verb": "GET",
+        "fullPath": "/authorization/accounts"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "LifecycleManager",
+      "name": "getActionExecution",
+      "route": {
+        "verb": "GET",
+        "path": "/action-executions/:id",
+        "fullPath": "/lifecycle-manager/action-executions/:id"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "LifecycleManager",
+      "name": "getActionExecutions",
+      "route": {
+        "verb": "GET",
+        "path": "/action-executions",
+        "fullPath": "/lifecycle-manager/action-executions"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "Adapters",
+      "name": "getAdapter",
+      "route": {
+        "path": "/:name",
+        "verb": "GET",
+        "fullPath": "/adapters/:name"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "Adapters",
+      "name": "getAdapterChangelogs",
+      "route": {
+        "path": "/:name/changelogs",
+        "verb": "GET",
+        "fullPath": "/adapters/:name/changelogs"
+      },
+      "deprecated": true
+    },
+    {
+      "provenance": "Health",
+      "name": "getAdapterHealth",
+      "route": {
+        "path": "/adapters/:name",
+        "verb": "GET",
+        "fullPath": "/health/adapters/:name"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "AdapterModels",
+      "name": "getAdapterModelTypes",
+      "route": {
+        "path": "/types",
+        "verb": "GET",
+        "fullPath": "/adapter-models/types"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "Adapters",
+      "name": "getAdapters",
+      "route": {
+        "path": "",
+        "verb": "GET",
+        "fullPath": "/adapters"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "Schema",
+      "name": "getAdapterSchema",
+      "route": {
+        "path": "/adapters/:name",
+        "verb": "GET",
+        "fullPath": "/schema/adapters/:name"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "Health",
+      "name": "getAdaptersHealth",
+      "route": {
+        "path": "/adapters",
+        "verb": "GET",
+        "fullPath": "/health/adapters"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "ConfigurationManager",
+      "name": "getAdapterTask",
+      "route": {
+        "verb": "POST",
+        "path": "/adaptertasks",
+        "fullPath": "/configuration_manager/adaptertasks"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "ConfigurationManager",
+      "name": "getAdapterTasks",
+      "route": {
+        "verb": "POST",
+        "path": "/adaptertasks/search",
+        "fullPath": "/configuration_manager/adaptertasks/search"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "NSOManager",
+      "name": "getAllAuthGroups",
+      "route": {
+        "verb": "GET",
+        "path": "/allAuthgroups",
+        "fullPath": "/nso_manager/allAuthgroups"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "NSOManager",
+      "name": "getAllNEDs",
+      "route": {
+        "verb": "GET",
+        "path": "/allNeds",
+        "fullPath": "/nso_manager/allNeds"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "Applications",
+      "name": "getApplication",
+      "route": {
+        "path": "/:name",
+        "verb": "GET",
+        "fullPath": "/applications/:name"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "Applications",
+      "name": "getApplicationChangelogs",
+      "route": {
+        "path": "/:name/changelogs",
+        "verb": "GET",
+        "fullPath": "/applications/:name/changelogs"
+      },
+      "deprecated": true
+    },
+    {
+      "provenance": "Health",
+      "name": "getApplicationHealth",
+      "route": {
+        "path": "/applications/:name",
+        "verb": "GET",
+        "fullPath": "/health/applications/:name"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "Applications",
+      "name": "getApplications",
+      "route": {
+        "path": "",
+        "verb": "GET",
+        "fullPath": "/applications"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "Schema",
+      "name": "getApplicationSchema",
+      "route": {
+        "path": "/applications/:name",
+        "verb": "GET",
+        "fullPath": "/schema/applications/:name"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "Health",
+      "name": "getApplicationsHealth",
+      "route": {
+        "path": "/applications",
+        "verb": "GET",
+        "fullPath": "/health/applications"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "AutomationStudio",
+      "name": "getAppsAndAdapters",
+      "route": {
+        "verb": "GET",
+        "path": "/apps/list",
+        "fullPath": "/automation-studio/apps/list"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "NSOManager",
+      "name": "getAuthGroups",
+      "route": {
+        "verb": "GET",
+        "path": "/authgroups/:adapterId",
+        "example": "http://localhost:3000/nso_manager/authgroups/LocalNSO",
+        "fullPath": "/nso_manager/authgroups/:adapterId"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "OperationsManager",
+      "name": "getAutomation",
+      "route": {
+        "verb": "GET",
+        "path": "/automations/:id",
+        "fullPath": "/operations-manager/automations/:id"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "AutomationCatalog",
+      "name": "getAutomationById",
+      "route": {
+        "verb": "GET",
+        "path": "/automations/:id",
+        "fullPath": "/automation_catalog/automations/:id"
+      },
+      "deprecated": true
+    },
+    {
+      "provenance": "AutomationCatalog",
+      "name": "getAutomations",
+      "route": {
+        "verb": "GET",
+        "path": "/automations",
+        "fullPath": "/automation_catalog/automations"
+      },
+      "deprecated": true
+    },
+    {
+      "provenance": "OperationsManager",
+      "name": "getAutomations",
+      "route": {
+        "verb": "GET",
+        "path": "/automations",
+        "fullPath": "/operations-manager/automations"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "ConfigurationManager",
+      "name": "getBackups",
+      "route": {
+        "verb": "POST",
+        "path": "/backups",
+        "fullPath": "/configuration_manager/backups"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "MOP",
+      "name": "GetBootFlash",
+      "route": {
+        "verb": "POST",
+        "path": "/GetBootFlash",
+        "fullPath": "/mop/GetBootFlash"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "Adapters",
+      "name": "getBrokerMap",
+      "route": {
+        "path": "/brokers/mapping",
+        "verb": "GET",
+        "fullPath": "/adapters/brokers/mapping"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "ConfigurationManager",
+      "name": "getCachedOSTypes",
+      "route": {
+        "verb": "GET",
+        "path": "/cache/devices/ostype",
+        "fullPath": "/configuration_manager/cache/devices/ostype"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "AGManager",
+      "name": "getClusterAdapters",
+      "route": {
+        "verb": "GET",
+        "path": "/getClusterAdapters",
+        "fullPath": "/ag-manager/getClusterAdapters"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "ConfigurationManager",
+      "name": "getCompliancePlan",
+      "route": {
+        "verb": "GET",
+        "path": "/compliance_plans/:planId",
+        "fullPath": "/configuration_manager/compliance_plans/:planId"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "ConfigurationManager",
+      "name": "getComplianceReportBackupHistory",
+      "route": {
+        "verb": "POST",
+        "path": "/compliance_reports/history/backups",
+        "fullPath": "/configuration_manager/compliance_reports/history/backups"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "ConfigurationManager",
+      "name": "getComplianceReportDetail",
+      "route": {
+        "verb": "GET",
+        "path": "/compliance_reports/details/:reportId",
+        "fullPath": "/configuration_manager/compliance_reports/details/:reportId"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "ConfigurationManager",
+      "name": "getComplianceReportDeviceHistory",
+      "route": {
+        "verb": "POST",
+        "path": "/compliance_reports/history",
+        "fullPath": "/configuration_manager/compliance_reports/history"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "ConfigurationManager",
+      "name": "getComplianceReportNodeSummary",
+      "route": {
+        "verb": "GET",
+        "path": "/compliance_reports/node/:treeId/:nodePath(*)",
+        "fullPath": "/configuration_manager/compliance_reports/node/:treeId/:nodePath(*)"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "ConfigurationManager",
+      "name": "getComplianceReportsByBatch",
+      "route": {
+        "verb": "GET",
+        "path": "/compliance_reports/batch/:batchId",
+        "fullPath": "/configuration_manager/compliance_reports/batch/:batchId"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "ConfigurationManager",
+      "name": "getComplianceReportsDetail",
+      "route": {
+        "verb": "POST",
+        "path": "/compliance_reports/details",
+        "fullPath": "/configuration_manager/compliance_reports/details"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "ConfigurationManager",
+      "name": "getComplianceReportTaskHistory",
+      "route": {
+        "verb": "POST",
+        "path": "/json_compliance_reports/history",
+        "fullPath": "/configuration_manager/json_compliance_reports/history"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "ConfigurationManager",
+      "name": "getComplianceReportTreeSummary",
+      "route": {
+        "verb": "GET",
+        "path": "/compliance_reports/tree/:treeId",
+        "fullPath": "/configuration_manager/compliance_reports/tree/:treeId"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "AutomationStudio",
+      "name": "getComponentGroup",
+      "route": {
+        "verb": "GET",
+        "path": "/component-groups/:id",
+        "fullPath": "/automation-studio/component-groups/:id"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "AutomationStudio",
+      "name": "getComponentGroups",
+      "route": {
+        "verb": "GET",
+        "path": "/component-groups",
+        "fullPath": "/automation-studio/component-groups"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "ConfigurationManager",
+      "name": "getConfigParser",
+      "route": {
+        "verb": "POST",
+        "path": "/configurations/parser/search",
+        "fullPath": "/configuration_manager/configurations/parser/search"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "ConfigurationManager",
+      "name": "getConfigParsers",
+      "route": {
+        "verb": "GET",
+        "path": "/configurations/parser",
+        "fullPath": "/configuration_manager/configurations/parser"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "ConfigurationManager",
+      "name": "getConfigSpec",
+      "route": {
+        "verb": "GET",
+        "path": "/config_specs/:id",
+        "fullPath": "/configuration_manager/config_specs/:id"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "ConfigurationManager",
+      "name": "getConfigTemplate",
+      "route": {
+        "verb": "POST",
+        "path": "/config_template",
+        "fullPath": "/configuration_manager/config_template"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "ConfigurationManager",
+      "name": "getDevice",
+      "route": {
+        "verb": "GET",
+        "path": "/devices/:name",
+        "fullPath": "/configuration_manager/devices/:name"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "ConfigurationManager",
+      "name": "getDeviceBackupById",
+      "route": {
+        "verb": "GET",
+        "path": "/backups/:id",
+        "fullPath": "/configuration_manager/backups/:id"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "ConfigurationManager",
+      "name": "getDeviceConfig",
+      "route": {
+        "verb": "GET",
+        "path": "/devices/:name/configuration",
+        "fullPath": "/configuration_manager/devices/:name/configuration"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "ConfigurationManager",
+      "name": "getDeviceConfigFormat",
+      "route": {
+        "verb": "GET",
+        "path": "/devices/:name/configuration/:format",
+        "fullPath": "/configuration_manager/devices/:name/configuration/:format"
+      },
+      "deprecated": true
+    },
+    {
+      "provenance": "DeviceCounts",
+      "name": "getDeviceCounts",
+      "route": {
+        "path": "",
+        "verb": "GET",
+        "fullPath": "/device-counts"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "ConfigurationManager",
+      "name": "getDeviceGroupById",
+      "route": {
+        "verb": "GET",
+        "path": "/deviceGroups/:id",
+        "fullPath": "/configuration_manager/deviceGroups/:id"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "ConfigurationManager",
+      "name": "getDeviceGroupByName",
+      "route": {
+        "verb": "GET",
+        "path": "/name/devicegroups",
+        "fullPath": "/configuration_manager/name/devicegroups"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "ConfigurationManager",
+      "name": "getDeviceGroups",
+      "route": {
+        "verb": "GET",
+        "path": "/deviceGroups",
+        "fullPath": "/configuration_manager/deviceGroups"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "MOP",
+      "name": "getDeviceObjectsFiltered",
+      "route": {
+        "path": "/deviceObjects",
+        "verb": "POST",
+        "fullPath": "/mop/deviceObjects"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "ConfigurationManager",
+      "name": "getDevicesFiltered",
+      "route": {
+        "verb": "POST",
+        "path": "/devices",
+        "fullPath": "/configuration_manager/devices"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "MOP",
+      "name": "getDevicesFiltered",
+      "route": {
+        "path": "/devices/:substring",
+        "verb": "GET",
+        "fullPath": "/mop/devices/:substring"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "NSOManager",
+      "name": "getDevicesFiltered",
+      "route": {
+        "path": "/devices/:substring",
+        "verb": "GET",
+        "example": "http://localhost:3000/nso_manager/devices/ios",
+        "fullPath": "/nso_manager/devices/:substring"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "MOP",
+      "name": "getDevicesFilteredDetailedResults",
+      "route": {
+        "path": "/devices/detailed/:substring",
+        "verb": "GET",
+        "fullPath": "/mop/devices/detailed/:substring"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "NSOManager",
+      "name": "getDevicesFilteredForAdapter",
+      "route": {
+        "path": "/devices/:lockedAdapter/:substring",
+        "verb": "GET",
+        "example": "http://localhost:3000/nso_manager/devices/LocalNSO/ios",
+        "fullPath": "/nso_manager/devices/:lockedAdapter/:substring"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "ServiceCog",
+      "name": "getDevicesInServiceInstance",
+      "route": {
+        "verb": "GET",
+        "path": "/service/instance/devices/:name/:key/:host",
+        "fullPath": "/service_management/service/instance/devices/:name/:key/:host"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "ConfigurationManager",
+      "name": "getDevicesOnTree",
+      "route": {
+        "verb": "POST",
+        "path": "/devices/tree",
+        "fullPath": "/configuration_manager/devices/tree"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "ConfigurationManager",
+      "name": "getDeviceTemplates",
+      "route": {
+        "verb": "POST",
+        "path": "/templates/search",
+        "fullPath": "/configuration_manager/templates/search"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "MOP",
+      "name": "getDiff",
+      "route": {
+        "verb": "POST",
+        "path": "/diff",
+        "fullPath": "/mop/diff"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "FormBuilder",
+      "name": "getElementDefinition",
+      "route": {
+        "verb": "GET",
+        "path": "/getElementDefinition/:type/:id",
+        "fullPath": "/formbuilder/getElementDefinition/:type/:id"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "OperationsManager",
+      "name": "getEventDefinition",
+      "route": {
+        "verb": "GET",
+        "path": "/events/:source/:topic",
+        "fullPath": "/operations-manager/events/:source/:topic"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "OperationsManager",
+      "name": "getEvents",
+      "route": {
+        "verb": "GET",
+        "path": "/events",
+        "fullPath": "/operations-manager/events"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "FormBuilder",
+      "name": "getForm",
+      "route": {
+        "verb": "GET",
+        "path": "/getForm/:form_id",
+        "fullPath": "/formbuilder/getForm/:form_id"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "JsonForms",
+      "name": "getFormById",
+      "route": {
+        "verb": "GET",
+        "path": "/forms/:id",
+        "fullPath": "/json-forms/forms/:id"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "FormBuilder",
+      "name": "getFormByName",
+      "route": {
+        "verb": "GET",
+        "path": "/getFormByName/:form_name",
+        "fullPath": "/formbuilder/getFormByName/:form_name"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "ServiceCatalog",
+      "name": "GetFormData",
+      "route": {
+        "path": "/GetFormData/:form_id",
+        "verb": "GET",
+        "fullPath": "/service_catalog/GetFormData/:form_id"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "ServiceCatalog",
+      "name": "GetFormId",
+      "route": {
+        "path": "/GetFormId/:service_id",
+        "verb": "GET",
+        "fullPath": "/service_catalog/GetFormId/:service_id"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "JsonForms",
+      "name": "getForms",
+      "route": {
+        "verb": "GET",
+        "path": "/forms",
+        "fullPath": "/json-forms/forms"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "ServiceCatalog",
+      "name": "GetForms",
+      "route": {
+        "path": "/GetForms",
+        "verb": "GET",
+        "fullPath": "/service_catalog/GetForms"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "ConfigurationManager",
+      "name": "getGoldenConfigTree",
+      "route": {
+        "verb": "GET",
+        "path": "/configs/:treeId",
+        "fullPath": "/configuration_manager/configs/:treeId"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "ConfigurationManager",
+      "name": "getGoldenConfigTrees",
+      "route": {
+        "verb": "GET",
+        "path": "/configs",
+        "fullPath": "/configuration_manager/configs"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "ConfigurationManager",
+      "name": "getGoldenConfigTreeVersion",
+      "route": {
+        "verb": "GET",
+        "path": "/configs/:treeId/:version",
+        "fullPath": "/configuration_manager/configs/:treeId/:version"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "Authorization",
+      "name": "getGroup",
+      "route": {
+        "path": "/groups/:groupId",
+        "verb": "GET",
+        "fullPath": "/authorization/groups/:groupId"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "SSOGroupMappings",
+      "name": "getGroupMapping",
+      "route": {
+        "path": "/:provenance/:externalGroup",
+        "verb": "GET",
+        "fullPath": "/group-mappings/:provenance/:externalGroup"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "SSOGroupMappings",
+      "name": "getGroupMappings",
+      "route": {
+        "path": "",
+        "verb": "GET",
+        "fullPath": "/group-mappings"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "Authorization",
+      "name": "getGroups",
+      "route": {
+        "path": "/groups",
+        "verb": "GET",
+        "fullPath": "/authorization/groups"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "ServiceCatalog",
+      "name": "getGroups",
+      "route": {
+        "path": "/getGroups",
+        "verb": "GET",
+        "fullPath": "/service_catalog/getGroups"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "ConfigurationManager",
+      "name": "getGroupsForDevice",
+      "route": {
+        "verb": "GET",
+        "path": "/groups/device/:deviceName",
+        "fullPath": "/configuration_manager/groups/device/:deviceName"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "Indexes",
+      "name": "getIndexes",
+      "route": {
+        "path": "",
+        "verb": "GET",
+        "fullPath": "/indexes"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "ServiceCog",
+      "name": "getInstance",
+      "route": {
+        "path": "/getInstance/:model/:value",
+        "verb": "GET",
+        "fullPath": "/service_management/getInstance/:model/:value"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "ServiceCog",
+      "name": "getInstancesOfService",
+      "route": {
+        "verb": "GET",
+        "path": "/service/instance/:name",
+        "fullPath": "/service_management/service/instance/:name"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "Integrations",
+      "name": "getIntegration",
+      "route": {
+        "path": "/:name",
+        "verb": "GET",
+        "fullPath": "/integrations/:name"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "IntegrationModels",
+      "name": "getIntegrationModel",
+      "route": {
+        "path": "/:name",
+        "verb": "GET",
+        "fullPath": "/integration-models/:name"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "IntegrationModels",
+      "name": "getIntegrationModels",
+      "route": {
+        "path": "",
+        "verb": "GET",
+        "fullPath": "/integration-models"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "Integrations",
+      "name": "getIntegrations",
+      "route": {
+        "path": "",
+        "verb": "GET",
+        "fullPath": "/integrations"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "Schema",
+      "name": "getIntegrationSchema",
+      "route": {
+        "path": "/integrations/:name",
+        "verb": "GET",
+        "fullPath": "/schema/integrations/:name"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "OperationsManager",
+      "name": "getJob",
+      "route": {
+        "verb": "GET",
+        "path": "/jobs/:id",
+        "fullPath": "/operations-manager/jobs/:id"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "WorkFlowEngine",
+      "name": "getJobMetrics",
+      "route": {
+        "path": "/jobs/metrics",
+        "verb": "GET",
+        "fullPath": "/workflow_engine/jobs/metrics"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "OperationsManager",
+      "name": "getJobs",
+      "route": {
+        "verb": "GET",
+        "path": "/jobs",
+        "fullPath": "/operations-manager/jobs"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "ConfigurationManager",
+      "name": "getJSONComplianceReportDetail",
+      "route": {
+        "verb": "GET",
+        "path": "/json_compliance_reports/details/:reportId",
+        "fullPath": "/configuration_manager/json_compliance_reports/details/:reportId"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "ConfigurationManager",
+      "name": "getJSONComplianceReportsByBatch",
+      "route": {
+        "verb": "GET",
+        "path": "/json_compliance_reports/batch/:batchId",
+        "fullPath": "/configuration_manager/json_compliance_reports/batch/:batchId"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "ConfigurationManager",
+      "name": "getJSONSpec",
+      "route": {
+        "verb": "GET",
+        "path": "/json_specs/:id",
+        "fullPath": "/configuration_manager/json_specs/:id"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "ConfigurationManager",
+      "name": "getJSONSpecWithInheritance",
+      "route": {
+        "verb": "POST",
+        "path": "/json_specs",
+        "fullPath": "/configuration_manager/json_specs"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "NSOManager",
+      "name": "getLeafrefValues",
+      "route": {
+        "enabled": true,
+        "path": "/getLeafrefValues",
+        "verb": "POST",
+        "fullPath": "/nso_manager/getLeafrefValues"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "ExternalLinks",
+      "name": "getLink",
+      "route": {
+        "path": "/:linkId",
+        "verb": "GET",
+        "fullPath": "/external-links/:linkId"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "ExternalLinks",
+      "name": "getLinks",
+      "route": {
+        "path": "",
+        "verb": "GET",
+        "fullPath": "/external-links"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "OperationsManager",
+      "name": "getManualTaskController",
+      "route": {
+        "verb": "GET",
+        "path": "/jobs/:jobId/tasks/:taskId/manual-controller",
+        "fullPath": "/operations-manager/jobs/:jobId/tasks/:taskId/manual-controller"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "AutomationStudio",
+      "name": "getMethodOptions",
+      "route": {
+        "verb": "GET",
+        "path": "/json-forms/method-options",
+        "fullPath": "/automation-studio/json-forms/method-options"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "Authorization",
+      "name": "getMethods",
+      "route": {
+        "path": "/methods",
+        "verb": "GET",
+        "fullPath": "/authorization/methods"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "AutomationStudio",
+      "name": "getMultipleTaskDetails",
+      "route": {
+        "verb": "POST",
+        "path": "/multipleTaskDetails",
+        "fullPath": "/automation-studio/multipleTaskDetails"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "NSOManager",
+      "name": "getNEDs",
+      "route": {
+        "verb": "GET",
+        "path": "/neds/:adapterId",
+        "example": "http://localhost:3000/nso_manager/neds/LocalNSO",
+        "fullPath": "/nso_manager/neds/:adapterId"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "NSOManager",
+      "name": "getNEDsDeep",
+      "route": {
+        "verb": "GET",
+        "path": "/neds/deep/:adapterId",
+        "example": "http://localhost:3000/nso_manager/neds/deep/LocalNSO",
+        "fullPath": "/nso_manager/neds/deep/:adapterId"
+      },
+      "deprecated": true
+    },
+    {
+      "provenance": "ConfigurationManager",
+      "name": "getOperationalData",
+      "route": {
+        "verb": "POST",
+        "path": "/devices/:deviceName/operationaldata",
+        "fullPath": "/configuration_manager/devices/:deviceName/operationaldata"
+      },
+      "deprecated": true
+    },
+    {
+      "provenance": "ConfigurationManager",
+      "name": "getPins",
+      "route": {
+        "verb": "POST",
+        "path": "/pins/fetch",
+        "fullPath": "/configuration_manager/pins/fetch"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "Prebuilts",
+      "name": "getPrebuilt",
+      "route": {
+        "path": "/:id",
+        "verb": "GET",
+        "fullPath": "/prebuilts/:id"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "Prebuilts",
+      "name": "getPrebuilts",
+      "route": {
+        "path": "",
+        "verb": "GET",
+        "fullPath": "/prebuilts"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "Profiles",
+      "name": "getProfile",
+      "route": {
+        "path": "/:id",
+        "verb": "GET",
+        "fullPath": "/profiles/:id"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "Profiles",
+      "name": "getProfiles",
+      "route": {
+        "path": "",
+        "verb": "GET",
+        "fullPath": "/profiles"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "Schema",
+      "name": "getProfileSchema",
+      "route": {
+        "path": "/profiles",
+        "verb": "GET",
+        "fullPath": "/schema/profiles"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "AutomationStudio",
+      "name": "getProject",
+      "route": {
+        "verb": "GET",
+        "path": "/projects/:projectId",
+        "fullPath": "/automation-studio/projects/:projectId"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "AutomationStudio",
+      "name": "getProjects",
+      "route": {
+        "verb": "GET",
+        "path": "/projects",
+        "fullPath": "/automation-studio/projects"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "AutomationStudio",
+      "name": "getProjectThumbnail",
+      "route": {
+        "verb": "GET",
+        "path": "/projects/:projectId/thumbnail",
+        "fullPath": "/automation-studio/projects/:projectId/thumbnail"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "AutomationStudio",
+      "name": "getReferencesTo",
+      "route": {
+        "verb": "GET",
+        "path": "/references-to",
+        "fullPath": "/automation-studio/references-to"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "PrebuiltsRepository",
+      "name": "getRepositoryConfigs",
+      "route": {
+        "path": "/configs",
+        "verb": "GET",
+        "fullPath": "/prebuilts-repository/configs"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "PrebuiltsRepository",
+      "name": "getRepositoryPrebuilts",
+      "route": {
+        "path": "",
+        "verb": "GET",
+        "fullPath": "/prebuilts-repository"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "LifecycleManager",
+      "name": "getResourceInstanceHttp",
+      "route": {
+        "verb": "GET",
+        "path": "/resources/:modelId/instances/:instanceId",
+        "fullPath": "/lifecycle-manager/resources/:modelId/instances/:instanceId"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "LifecycleManager",
+      "name": "getResourceInstancesHttp",
+      "route": {
+        "verb": "GET",
+        "path": "/resources/:modelId/instances",
+        "fullPath": "/lifecycle-manager/resources/:modelId/instances"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "LifecycleManager",
+      "name": "getResourceModelHttp",
+      "route": {
+        "verb": "GET",
+        "path": "/resources/:id",
+        "fullPath": "/lifecycle-manager/resources/:id"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "LifecycleManager",
+      "name": "getResourceModelsHttp",
+      "route": {
+        "verb": "GET",
+        "path": "/resources",
+        "fullPath": "/lifecycle-manager/resources"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "Authorization",
+      "name": "getRole",
+      "route": {
+        "path": "/roles/:roleId",
+        "verb": "GET",
+        "fullPath": "/authorization/roles/:roleId"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "Authorization",
+      "name": "getRoles",
+      "route": {
+        "path": "/roles",
+        "verb": "GET",
+        "fullPath": "/authorization/roles"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "NSOManager",
+      "name": "getRollbackFiles",
+      "route": {
+        "enabled": true,
+        "path": "/getRollbackFiles",
+        "verb": "POST",
+        "fullPath": "/nso_manager/getRollbackFiles"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "WorkflowBuilder",
+      "name": "getSchemas",
+      "route": {
+        "verb": "POST",
+        "path": "/workflows/schemas",
+        "fullPath": "/workflow_builder/workflows/schemas"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "Health",
+      "name": "getServerHealth",
+      "route": {
+        "path": "/server",
+        "verb": "GET",
+        "fullPath": "/health/server"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "OAuth",
+      "name": "getServiceAccounts",
+      "route": {
+        "path": "/serviceAccounts",
+        "verb": "GET",
+        "fullPath": "/oauth/serviceAccounts"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "ServiceCog",
+      "name": "getServiceInstanceMap",
+      "route": {
+        "verb": "GET",
+        "path": "/service/instances",
+        "fullPath": "/service_management/service/instances"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "ServiceCog",
+      "name": "getServiceModel",
+      "route": {
+        "verb": "GET",
+        "path": "/model/:service_model_path",
+        "fullPath": "/service_management/model/:service_model_path"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "ServiceCog",
+      "name": "getServiceModelDatabase",
+      "route": {
+        "verb": "GET",
+        "path": "/service/model/database",
+        "fullPath": "/service_management/service/model/database"
+      },
+      "deprecated": true
+    },
+    {
+      "provenance": "ServiceCog",
+      "name": "getServiceModelMap",
+      "route": {
+        "verb": "GET",
+        "path": "/service/models",
+        "fullPath": "/service_management/service/models"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "NSOManager",
+      "name": "getServiceModelSchemas",
+      "route": {
+        "enabled": true,
+        "path": "/serviceModel/schemas",
+        "verb": "POST",
+        "fullPath": "/nso_manager/serviceModel/schemas"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "ServiceCog",
+      "name": "getServicesDetails",
+      "route": {
+        "verb": "GET",
+        "path": "/service/details",
+        "fullPath": "/service_management/service/details"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "SSO",
+      "name": "getSSOConfig",
+      "route": {
+        "path": "/configs/:name",
+        "verb": "GET",
+        "fullPath": "/sso/configs/:name"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "SSO",
+      "name": "getSSOConfigs",
+      "route": {
+        "path": "/configs",
+        "verb": "GET",
+        "fullPath": "/sso/configs"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "Health",
+      "name": "getSystemHealth",
+      "route": {
+        "path": "/system",
+        "verb": "GET",
+        "fullPath": "/health/system"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "Tags",
+      "name": "getTagReferences",
+      "route": {
+        "verb": "POST",
+        "path": "/getTagReferences",
+        "fullPath": "/tags/getTagReferences"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "Tags",
+      "name": "getTagsByReference",
+      "route": {
+        "verb": "POST",
+        "path": "/getTagsByReference",
+        "fullPath": "/tags/getTagsByReference"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "OperationsManager",
+      "name": "getTask",
+      "route": {
+        "verb": "GET",
+        "path": "/tasks/:id",
+        "fullPath": "/operations-manager/tasks/:id"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "AutomationStudio",
+      "name": "getTaskDetails",
+      "route": {
+        "verb": "GET",
+        "path": "/locations/:location/packages/:pckg/tasks/:method",
+        "fullPath": "/automation-studio/locations/:location/packages/:pckg/tasks/:method"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "WorkflowBuilder",
+      "name": "getTaskDetails",
+      "route": {
+        "verb": "GET",
+        "path": "/getTaskDetails/:app/:task",
+        "fullPath": "/workflow_builder/getTaskDetails/:app/:task"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "ConfigurationManager",
+      "name": "getTaskInstances",
+      "route": {
+        "verb": "POST",
+        "path": "/tasks/instances",
+        "fullPath": "/configuration_manager/tasks/instances"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "WorkFlowEngine",
+      "name": "getTaskMetrics",
+      "route": {
+        "path": "/tasks/metrics",
+        "verb": "GET",
+        "fullPath": "/workflow_engine/tasks/metrics"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "OperationsManager",
+      "name": "getTasks",
+      "route": {
+        "verb": "GET",
+        "path": "/tasks",
+        "fullPath": "/operations-manager/tasks"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "WorkflowBuilder",
+      "name": "getTasksList",
+      "route": {
+        "verb": "GET",
+        "path": "/tasks/list",
+        "fullPath": "/workflow_builder/tasks/list"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "AutomationStudio",
+      "name": "getTemplate",
+      "route": {
+        "verb": "GET",
+        "path": "/templates/:id",
+        "fullPath": "/automation-studio/templates/:id"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "AutomationStudio",
+      "name": "getTemplates",
+      "route": {
+        "verb": "GET",
+        "path": "/templates",
+        "fullPath": "/automation-studio/templates"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "ConfigurationManager",
+      "name": "getTopIssues",
+      "route": {
+        "verb": "POST",
+        "path": "/compliance_reports/topissues",
+        "fullPath": "/configuration_manager/compliance_reports/topissues"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "ConfigurationManager",
+      "name": "getTopIssuesJson",
+      "route": {
+        "verb": "POST",
+        "path": "/json_compliance_reports/topissues",
+        "fullPath": "/configuration_manager/json_compliance_reports/topissues"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "Jst",
+      "name": "getTransformation",
+      "route": {
+        "verb": "GET",
+        "path": "/:id",
+        "fullPath": "/transformations/:id"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "ConfigurationManager",
+      "name": "getTreesForDevice",
+      "route": {
+        "verb": "POST",
+        "path": "/devices/device/trees",
+        "fullPath": "/configuration_manager/devices/device/trees"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "OperationsManager",
+      "name": "getTrigger",
+      "route": {
+        "verb": "GET",
+        "path": "/triggers/:id",
+        "fullPath": "/operations-manager/triggers/:id"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "OperationsManager",
+      "name": "getTriggers",
+      "route": {
+        "verb": "GET",
+        "path": "/triggers",
+        "fullPath": "/operations-manager/triggers"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "ServiceCatalog",
+      "name": "GetUserObject",
+      "route": {
+        "path": "/GetUserObject",
+        "verb": "GET",
+        "fullPath": "/service_catalog/GetUserObject"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "Authorization",
+      "name": "getViews",
+      "route": {
+        "path": "/views",
+        "verb": "GET",
+        "fullPath": "/authorization/views"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "WorkFlowEngine",
+      "name": "getWorkerStatuses",
+      "route": {
+        "path": "/workers/status",
+        "verb": "GET",
+        "fullPath": "/workflow_engine/workers/status"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "AutomationStudio",
+      "name": "getWorkflowDetailedByName",
+      "route": {
+        "verb": "GET",
+        "path": "/workflows/detailed/:name",
+        "fullPath": "/automation-studio/workflows/detailed/:name"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "AutomationStudio",
+      "name": "getWorkflows",
+      "route": {
+        "verb": "GET",
+        "path": "/workflows",
+        "fullPath": "/automation-studio/workflows"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "ServiceCatalog",
+      "name": "GetWorkflows",
+      "route": {
+        "path": "/GetWorkflows",
+        "verb": "GET",
+        "fullPath": "/service_catalog/GetWorkflows"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "ConfigurationManager",
+      "name": "gradeComplianceReport",
+      "route": {
+        "verb": "POST",
+        "path": "/compliance_reports/grade/single",
+        "fullPath": "/configuration_manager/compliance_reports/grade/single"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "ConfigurationManager",
+      "name": "gradeComplianceReports",
+      "route": {
+        "verb": "POST",
+        "path": "/compliance_reports/grade",
+        "fullPath": "/configuration_manager/compliance_reports/grade"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "ConfigurationManager",
+      "name": "gradeDeviceComplianceHistory",
+      "route": {
+        "verb": "POST",
+        "path": "/compliance_reports/grade/history",
+        "fullPath": "/configuration_manager/compliance_reports/grade/history"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "ConfigurationManager",
+      "name": "gradeTaskComplianceHistory",
+      "route": {
+        "verb": "POST",
+        "path": "/json_compliance_reports/grade/history",
+        "fullPath": "/configuration_manager/json_compliance_reports/grade/history"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "ConfigurationManager",
+      "name": "handlePin",
+      "route": {
+        "verb": "POST",
+        "path": "/pins",
+        "fullPath": "/configuration_manager/pins"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "Tags",
+      "name": "handleReferences",
+      "route": {
+        "verb": "POST",
+        "path": "/handleReferences",
+        "fullPath": "/tags/handleReferences"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "Adapters",
+      "name": "importAdapter",
+      "route": {
+        "path": "/import",
+        "verb": "POST",
+        "fullPath": "/adapters/import"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "AutomationStudio",
+      "name": "importAutomations",
+      "route": {
+        "verb": "POST",
+        "path": "/automations/import",
+        "fullPath": "/automation-studio/automations/import"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "OperationsManager",
+      "name": "importAutomations",
+      "route": {
+        "verb": "PUT",
+        "path": "/automations",
+        "fullPath": "/operations-manager/automations"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "ConfigurationManager",
+      "name": "importBackup",
+      "route": {
+        "verb": "POST",
+        "path": "/import/backups",
+        "fullPath": "/configuration_manager/import/backups"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "ServiceCatalog",
+      "name": "importCatalogItems",
+      "route": {
+        "verb": "POST",
+        "path": "/catalog-items/import",
+        "fullPath": "/service_catalog/catalog-items/import"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "ConfigurationManager",
+      "name": "importCompliancePlan",
+      "route": {
+        "verb": "POST",
+        "path": "/import/plans",
+        "fullPath": "/configuration_manager/import/plans"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "AutomationStudio",
+      "name": "importComponentGroups",
+      "route": {
+        "verb": "POST",
+        "path": "/component-groups/import",
+        "fullPath": "/automation-studio/component-groups/import"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "ConfigurationManager",
+      "name": "importDeviceTemplates",
+      "route": {
+        "verb": "POST",
+        "path": "/import/templates",
+        "fullPath": "/configuration_manager/import/templates"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "FormBuilder",
+      "name": "importForm",
+      "route": {
+        "verb": "POST",
+        "path": "/forms/import",
+        "fullPath": "/formbuilder/forms/import"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "JsonForms",
+      "name": "importForms",
+      "route": {
+        "verb": "POST",
+        "path": "/import/forms",
+        "fullPath": "/json-forms/import/forms"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "ConfigurationManager",
+      "name": "importGoldenConfigTree",
+      "route": {
+        "verb": "POST",
+        "path": "/import/goldenconfigs",
+        "fullPath": "/configuration_manager/import/goldenconfigs"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "ConfigurationManager",
+      "name": "importGroup",
+      "route": {
+        "verb": "POST",
+        "path": "/import/groups",
+        "fullPath": "/configuration_manager/import/groups"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "ConfigurationManager",
+      "name": "importParsers",
+      "route": {
+        "verb": "POST",
+        "path": "/import/parsers",
+        "fullPath": "/configuration_manager/import/parsers"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "Prebuilts",
+      "name": "importPrebuilt",
+      "route": {
+        "path": "/import",
+        "verb": "POST",
+        "fullPath": "/prebuilts/import"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "Profiles",
+      "name": "importProfile",
+      "route": {
+        "path": "/import",
+        "verb": "POST",
+        "fullPath": "/profiles/import"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "AutomationStudio",
+      "name": "importProject",
+      "route": {
+        "verb": "POST",
+        "path": "/projects/import",
+        "fullPath": "/automation-studio/projects/import"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "LifecycleManager",
+      "name": "importResourceInstanceHttp",
+      "route": {
+        "verb": "POST",
+        "path": "/resources/:modelIdentifier/instances/import",
+        "fullPath": "/lifecycle-manager/resources/:modelIdentifier/instances/import"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "LifecycleManager",
+      "name": "importResourceModelHttp",
+      "route": {
+        "verb": "POST",
+        "path": "/resources/import",
+        "fullPath": "/lifecycle-manager/resources/import"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "MOP",
+      "name": "importTemplate",
+      "route": {
+        "verb": "POST",
+        "path": "/import",
+        "fullPath": "/mop/import"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "AutomationStudio",
+      "name": "importTemplates",
+      "route": {
+        "verb": "POST",
+        "path": "/templates/import",
+        "fullPath": "/automation-studio/templates/import"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "Jst",
+      "name": "importTransformation",
+      "route": {
+        "verb": "POST",
+        "path": "/import",
+        "fullPath": "/transformations/import"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "OperationsManager",
+      "name": "importTriggers",
+      "route": {
+        "verb": "PUT",
+        "path": "/triggers",
+        "fullPath": "/operations-manager/triggers"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "WorkflowBuilder",
+      "name": "importWorkflow",
+      "route": {
+        "verb": "POST",
+        "path": "/import",
+        "fullPath": "/workflow_builder/import"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "ServiceCatalog",
+      "name": "invokeServiceOrder",
+      "route": {
+        "verb": "POST",
+        "path": "/invokeServiceOrder",
+        "fullPath": "/service_catalog/invokeServiceOrder"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "WorkFlowEngine",
+      "name": "isActive",
+      "route": {
+        "path": "/active",
+        "verb": "GET",
+        "fullPath": "/workflow_engine/active"
+      },
+      "deprecated": true
+    },
+    {
+      "provenance": "ConfigurationManager",
+      "name": "isAlive",
+      "route": {
+        "verb": "GET",
+        "path": "/devices/:name/isAlive",
+        "fullPath": "/configuration_manager/devices/:name/isAlive"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "NSOManager",
+      "name": "isAlive",
+      "route": {
+        "path": "/isAlive",
+        "verb": "POST",
+        "fullPath": "/nso_manager/isAlive"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "ConfigurationManager",
+      "name": "isMaintenance",
+      "route": {
+        "verb": "GET",
+        "path": "/ismaintenance",
+        "fullPath": "/configuration_manager/ismaintenance"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "MOP",
+      "name": "listAnalyticTemplates",
+      "route": {
+        "verb": "GET",
+        "path": "/listAnalyticTemplates",
+        "fullPath": "/mop/listAnalyticTemplates"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "MOP",
+      "name": "listAnAnalyticTemplate",
+      "route": {
+        "verb": "GET",
+        "path": "/listAnAnalyticTemplate/:name",
+        "fullPath": "/mop/listAnAnalyticTemplate/:name"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "MOP",
+      "name": "listATemplate",
+      "route": {
+        "verb": "GET",
+        "path": "/listATemplate/:name",
+        "fullPath": "/mop/listATemplate/:name"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "FormBuilder",
+      "name": "listElements",
+      "route": {
+        "verb": "GET",
+        "path": "/listElements",
+        "fullPath": "/formbuilder/listElements"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "FormBuilder",
+      "name": "listFormGroups",
+      "route": {
+        "verb": "GET",
+        "path": "/forms/:name/groups",
+        "fullPath": "/formbuilder/forms/:name/groups"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "FormBuilder",
+      "name": "listForms",
+      "route": {
+        "verb": "GET",
+        "path": "/listForms",
+        "fullPath": "/formbuilder/listForms"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "ServiceCog",
+      "name": "listServiceModels",
+      "route": {
+        "verb": "GET",
+        "path": "/service/models/list",
+        "fullPath": "/service_management/service/models/list"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "MOP",
+      "name": "listTemplates",
+      "route": {
+        "verb": "GET",
+        "path": "/listTemplates",
+        "fullPath": "/mop/listTemplates"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "WorkflowBuilder",
+      "name": "listWorkflowGroups",
+      "route": {
+        "verb": "GET",
+        "path": "/workflows/:name/groups",
+        "fullPath": "/workflow_builder/workflows/:name/groups"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "NSOManager",
+      "name": "liveStatus",
+      "route": {
+        "path": "/liveStatus",
+        "verb": "POST",
+        "example": "https://{{host}}:{{port}}/nso_manager/liveStatus",
+        "fullPath": "/nso_manager/liveStatus"
+      },
+      "deprecated": true
+    },
+    {
+      "provenance": "ConfigurationManager",
+      "name": "lookupDiff",
+      "route": {
+        "verb": "PUT",
+        "path": "/lookup_diff",
+        "fullPath": "/configuration_manager/lookup_diff"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "ServiceCog",
+      "name": "mapInstanceDataToModel",
+      "route": {
+        "verb": "POST",
+        "path": "/mapInstanceDataToModel",
+        "fullPath": "/service_management/mapInstanceDataToModel"
+      },
+      "deprecated": true
+    },
+    {
+      "provenance": "AutomationCatalog",
+      "name": "migrateAgendaJobs",
+      "route": {
+        "verb": "POST",
+        "path": "/automations/migration",
+        "fullPath": "/automation_catalog/automations/migration"
+      },
+      "deprecated": true
+    },
+    {
+      "provenance": "TemplateBuilder",
+      "name": "parseTemplate",
+      "route": {
+        "verb": "POST",
+        "path": "/parseTemplate",
+        "fullPath": "/template_builder/parseTemplate"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "MOP",
+      "name": "passThru",
+      "route": {
+        "verb": "POST",
+        "path": "/passThru/:device",
+        "fullPath": "/mop/passThru/:device"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "ConfigurationManager",
+      "name": "patchDeviceConfiguration",
+      "route": {
+        "verb": "POST",
+        "path": "/patch_device/:deviceName",
+        "fullPath": "/configuration_manager/patch_device/:deviceName"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "OperationsManager",
+      "name": "pauseJobs",
+      "route": {
+        "verb": "POST",
+        "path": "/jobs/pause",
+        "fullPath": "/operations-manager/jobs/pause"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "FormBuilder",
+      "name": "preserveFormData",
+      "route": {
+        "verb": "POST",
+        "path": "/preserveFormData",
+        "fullPath": "/formbuilder/preserveFormData"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "WorkFlowEngine",
+      "name": "query",
+      "route": {
+        "verb": "POST",
+        "path": "/query",
+        "fullPath": "/workflow_engine/query"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "ConfigurationManager",
+      "name": "queryGradedComplianceHistory",
+      "route": {
+        "verb": "POST",
+        "path": "/compliance_reports/query/history",
+        "fullPath": "/configuration_manager/compliance_reports/query/history"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "ServiceCog",
+      "name": "reactiveRedeploy",
+      "route": {
+        "verb": "POST",
+        "path": "/instance/:path/operations/reactive-redeploy",
+        "fullPath": "/service_management/instance/:path/operations/reactive-redeploy"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "MOP",
+      "name": "reattempt",
+      "route": {
+        "path": "/reattempt",
+        "verb": "POST",
+        "fullPath": "/mop/reattempt"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "OAuth",
+      "name": "regenerateSecret",
+      "route": {
+        "path": "/serviceAccounts/:client_id/regenerate",
+        "verb": "PATCH",
+        "fullPath": "/oauth/serviceAccounts/:client_id/regenerate"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "OperationsManager",
+      "name": "releaseTask",
+      "route": {
+        "verb": "POST",
+        "path": "/tasks/:taskId/release",
+        "fullPath": "/operations-manager/tasks/:taskId/release"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "AutomationStudio",
+      "name": "removeComponentFromProject",
+      "route": {
+        "verb": "DELETE",
+        "path": "/projects/:projectId/components/:componentId",
+        "fullPath": "/automation-studio/projects/:projectId/components/:componentId"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "ConfigurationManager",
+      "name": "removeDevicesFromGroup",
+      "route": {
+        "verb": "DELETE",
+        "path": "/deviceGroups/:id/devices",
+        "fullPath": "/configuration_manager/deviceGroups/:id/devices"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "ConfigurationManager",
+      "name": "removeDevicesFromNode",
+      "route": {
+        "verb": "DELETE",
+        "path": "/configs/:treeId/:version/:nodePath(*)/devices",
+        "fullPath": "/configuration_manager/configs/:treeId/:version/:nodePath(*)/devices"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "FormBuilder",
+      "name": "removeFormGroup",
+      "route": {
+        "verb": "DELETE",
+        "path": "/forms/:name/groups/:group",
+        "fullPath": "/formbuilder/forms/:name/groups/:group"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "ConfigurationManager",
+      "name": "removeGroupsFromNode",
+      "route": {
+        "verb": "DELETE",
+        "path": "/configs/devices/groups",
+        "fullPath": "/configuration_manager/configs/devices/groups"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "ConfigurationManager",
+      "name": "removeNodesFromCompliancePlan",
+      "route": {
+        "verb": "DELETE",
+        "path": "/compliance_plans/nodes",
+        "fullPath": "/configuration_manager/compliance_plans/nodes"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "Prebuilts",
+      "name": "removePrebuilt",
+      "route": {
+        "path": "/:id",
+        "verb": "DELETE",
+        "fullPath": "/prebuilts/:id"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "ConfigurationManager",
+      "name": "removeTasksFromNode",
+      "route": {
+        "verb": "DELETE",
+        "path": "/configs/node/tasks",
+        "fullPath": "/configuration_manager/configs/node/tasks"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "WorkflowBuilder",
+      "name": "removeWorkflowGroup",
+      "route": {
+        "verb": "DELETE",
+        "path": "/workflows/:name/groups/:group",
+        "fullPath": "/workflow_builder/workflows/:name/groups/:group"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "WorkflowBuilder",
+      "name": "renameWorkflow",
+      "route": {
+        "verb": "POST",
+        "path": "/workflows/rename",
+        "fullPath": "/workflow_builder/workflows/rename"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "ConfigurationManager",
+      "name": "renderJinja2",
+      "route": {
+        "verb": "POST",
+        "path": "/jinja2",
+        "fullPath": "/configuration_manager/jinja2"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "TemplateBuilder",
+      "name": "renderJinjaTemplate",
+      "route": {
+        "verb": "POST",
+        "path": "/templates/:name/renderJinja",
+        "fullPath": "/template_builder/templates/:name/renderJinja"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "FormBuilder",
+      "name": "replaceFormGroups",
+      "route": {
+        "verb": "PUT",
+        "path": "/forms/:name/groups",
+        "fullPath": "/formbuilder/forms/:name/groups"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "OperationsManager",
+      "name": "replaceJobGroups",
+      "route": {
+        "verb": "PUT",
+        "path": "/jobs/:jobId/groups",
+        "fullPath": "/operations-manager/jobs/:jobId/groups"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "WorkflowBuilder",
+      "name": "replaceWorkflowGroups",
+      "route": {
+        "verb": "PUT",
+        "path": "/workflows/:name/groups",
+        "fullPath": "/workflow_builder/workflows/:name/groups"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "NSOManager",
+      "name": "restAction",
+      "route": {
+        "enabled": true,
+        "path": "/restAction/:adapterId",
+        "verb": "POST",
+        "fullPath": "/nso_manager/restAction/:adapterId"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "Adapters",
+      "name": "restartAdapter",
+      "route": {
+        "path": "/:name/restart",
+        "verb": "PUT",
+        "fullPath": "/adapters/:name/restart"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "Applications",
+      "name": "restartApplication",
+      "route": {
+        "path": "/:name/restart",
+        "verb": "PUT",
+        "fullPath": "/applications/:name/restart"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "NSOManager",
+      "name": "restQuery",
+      "route": {
+        "enabled": true,
+        "path": "/restQuery/:adapterId",
+        "verb": "POST",
+        "fullPath": "/nso_manager/restQuery/:adapterId"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "OperationsManager",
+      "name": "resumeJobs",
+      "route": {
+        "verb": "POST",
+        "path": "/jobs/resume",
+        "fullPath": "/operations-manager/jobs/resume"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "OperationsManager",
+      "name": "retryTask",
+      "route": {
+        "verb": "POST",
+        "path": "/jobs/:jobId/tasks/:taskId/retry",
+        "fullPath": "/operations-manager/jobs/:jobId/tasks/:taskId/retry"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "OperationsManager",
+      "name": "revertJob",
+      "route": {
+        "verb": "POST",
+        "path": "/jobs/:jobId/revert",
+        "fullPath": "/operations-manager/jobs/:jobId/revert"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "NSOManager",
+      "name": "runAction",
+      "route": {
+        "path": "/runAction/:adapterId",
+        "verb": "POST",
+        "fullPath": "/nso_manager/runAction/:adapterId"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "LifecycleManager",
+      "name": "runActionHttp",
+      "route": {
+        "verb": "POST",
+        "path": "/resources/:modelId/run-action",
+        "fullPath": "/lifecycle-manager/resources/:modelId/run-action"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "ConfigurationManager",
+      "name": "runAdapterTask",
+      "route": {
+        "verb": "POST",
+        "path": "/tasks/run",
+        "fullPath": "/configuration_manager/tasks/run"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "MOP",
+      "name": "runAnalyticsTemplate",
+      "route": {
+        "verb": "POST",
+        "path": "/runAnalyticsTemplate",
+        "fullPath": "/mop/runAnalyticsTemplate"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "MOP",
+      "name": "runAnalyticsTemplateDevices",
+      "route": {
+        "verb": "POST",
+        "path": "/runAnalyticsTemplateDevices",
+        "fullPath": "/mop/runAnalyticsTemplateDevices"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "MOP",
+      "name": "RunCommand",
+      "route": {
+        "verb": "POST",
+        "path": "/RunCommand",
+        "fullPath": "/mop/RunCommand"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "NSOManager",
+      "name": "runCommand",
+      "route": {
+        "path": "/runCommand",
+        "verb": "POST",
+        "fullPath": "/nso_manager/runCommand"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "MOP",
+      "name": "RunCommandDevices",
+      "route": {
+        "verb": "POST",
+        "path": "/RunCommandDevices",
+        "fullPath": "/mop/RunCommandDevices"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "NSOManager",
+      "name": "runCommands",
+      "route": {
+        "path": "/runCommands",
+        "verb": "POST",
+        "fullPath": "/nso_manager/runCommands"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "MOP",
+      "name": "RunCommandTemplate",
+      "route": {
+        "verb": "POST",
+        "path": "/RunCommandTemplate",
+        "fullPath": "/mop/RunCommandTemplate"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "MOP",
+      "name": "RunCommandTemplateSingleCommand",
+      "route": {
+        "verb": "POST",
+        "path": "/RunCommandTemplateSingleCommand",
+        "fullPath": "/mop/RunCommandTemplateSingleCommand"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "ConfigurationManager",
+      "name": "runCompliance",
+      "route": {
+        "verb": "POST",
+        "path": "/compliance_reports",
+        "fullPath": "/configuration_manager/compliance_reports"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "ConfigurationManager",
+      "name": "runComplianceOnBackups",
+      "route": {
+        "verb": "POST",
+        "path": "/compliance_reports/backups",
+        "fullPath": "/configuration_manager/compliance_reports/backups"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "ConfigurationManager",
+      "name": "runCompliancePlan",
+      "route": {
+        "verb": "POST",
+        "path": "/compliance_plans/run",
+        "fullPath": "/configuration_manager/compliance_plans/run"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "ConfigurationManager",
+      "name": "runConfigCompliance",
+      "route": {
+        "verb": "POST",
+        "path": "/compliance_reports/config",
+        "fullPath": "/configuration_manager/compliance_reports/config"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "OperationsManager",
+      "name": "runEndpointTriggerWithPost",
+      "route": {
+        "verb": "POST",
+        "path": "/triggers/endpoint/:routeName",
+        "fullPath": "/operations-manager/triggers/endpoint/:routeName"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "WorkFlowEngine",
+      "name": "runEvaluationGroup",
+      "route": {
+        "path": "/runEvaluationGroup",
+        "verb": "POST",
+        "fullPath": "/workflow_engine/runEvaluationGroup"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "WorkFlowEngine",
+      "name": "runEvaluationGroups",
+      "route": {
+        "path": "/runEvaluationGroups",
+        "verb": "POST",
+        "fullPath": "/workflow_engine/runEvaluationGroups"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "OperationsManager",
+      "name": "runManualTrigger",
+      "route": {
+        "verb": "POST",
+        "path": "/triggers/manual/:id/run",
+        "fullPath": "/operations-manager/triggers/manual/:id/run"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "ConfigurationManager",
+      "name": "runTaskInstance",
+      "route": {
+        "verb": "POST",
+        "path": "/tasks/instance/run",
+        "fullPath": "/configuration_manager/tasks/instance/run"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "MOP",
+      "name": "runTemplatesDiffArray",
+      "route": {
+        "verb": "POST",
+        "path": "/runTemplatesDiffArray",
+        "fullPath": "/mop/runTemplatesDiffArray"
+      },
+      "deprecated": true
+    },
+    {
+      "provenance": "Jst",
+      "name": "runTransformation",
+      "route": {
+        "verb": "POST",
+        "path": "/:id",
+        "fullPath": "/transformations/:id"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "FormBuilder",
+      "name": "saveForm",
+      "route": {
+        "verb": "POST",
+        "path": "/saveForm",
+        "fullPath": "/formbuilder/saveForm"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "ServiceCog",
+      "name": "saveInstance",
+      "route": {
+        "path": "/saveInstance",
+        "verb": "POST",
+        "fullPath": "/service_management/saveInstance"
+      },
+      "deprecated": true
+    },
+    {
+      "provenance": "ServiceCog",
+      "name": "saveInstances",
+      "route": {
+        "path": "/saveInstances",
+        "verb": "POST",
+        "fullPath": "/service_management/saveInstances"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "WorkflowBuilder",
+      "name": "saveWorkflow",
+      "route": {
+        "verb": "POST",
+        "path": "/workflows/save",
+        "fullPath": "/workflow_builder/workflows/save"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "ConfigurationManager",
+      "name": "searchCompliancePlanInstances",
+      "route": {
+        "verb": "POST",
+        "path": "/search/compliance_plan_instances",
+        "fullPath": "/configuration_manager/search/compliance_plan_instances"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "ConfigurationManager",
+      "name": "searchCompliancePlans",
+      "route": {
+        "verb": "POST",
+        "path": "/search/compliance_plans",
+        "fullPath": "/configuration_manager/search/compliance_plans"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "ConfigurationManager",
+      "name": "searchDeviceGroups",
+      "route": {
+        "verb": "POST",
+        "path": "/deviceGroups/search",
+        "fullPath": "/configuration_manager/deviceGroups/search"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "FormBuilder",
+      "name": "searchForms",
+      "route": {
+        "verb": "POST",
+        "path": "/forms/search",
+        "fullPath": "/formbuilder/forms/search"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "ConfigurationManager",
+      "name": "searchGoldenConfigTrees",
+      "route": {
+        "verb": "POST",
+        "path": "/search/configs",
+        "fullPath": "/configuration_manager/search/configs"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "ConfigurationManager",
+      "name": "searchGroups",
+      "route": {
+        "verb": "POST",
+        "path": "/deviceGroups/query",
+        "fullPath": "/configuration_manager/deviceGroups/query"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "ConfigurationManager",
+      "name": "searchTaskInstances",
+      "route": {
+        "verb": "POST",
+        "path": "/tasks/instances/search",
+        "fullPath": "/configuration_manager/tasks/instances/search"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "Jst",
+      "name": "searchTransformations",
+      "route": {
+        "verb": "GET",
+        "path": "/",
+        "fullPath": "/transformations/"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "ServiceCatalog",
+      "name": "ServiceCatalogStore",
+      "route": {
+        "path": "/ServiceCatalogStore/:filter",
+        "verb": "GET",
+        "fullPath": "/service_catalog/ServiceCatalogStore/:filter"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "ServiceCatalog",
+      "name": "ServiceModels",
+      "route": {
+        "path": "/ServiceModels",
+        "verb": "GET",
+        "fullPath": "/service_catalog/ServiceModels"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "NSOManager",
+      "name": "setItemNacmGroup",
+      "route": {
+        "path": "/setItemNacmGroup/:adapterId",
+        "verb": "POST",
+        "examples": [
+          "http://localhost:3000/nso_manager/setItemNacmGroup/LocalNSO",
+          "https://{{host}}:{{port}}/nso_manager/setItemNacmGroup/LocalhostNSO"
+        ],
+        "fullPath": "/nso_manager/setItemNacmGroup/:adapterId"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "NSOManager",
+      "name": "setLeaf",
+      "route": {
+        "enabled": true,
+        "path": "/setLeaf/:adapterId",
+        "verb": "POST",
+        "example": "https://{{host}}:{{port}}/nso_manager/setLeaf/LocalhostNSO",
+        "fullPath": "/nso_manager/setLeaf/:adapterId"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "ServiceCog",
+      "name": "setServiceInstanceTenant",
+      "route": {
+        "verb": "POST",
+        "path": "/service/setTenant",
+        "fullPath": "/service_management/service/setTenant"
+      },
+      "deprecated": true
+    },
+    {
+      "provenance": "Adapters",
+      "name": "startAdapter",
+      "route": {
+        "path": "/:name/start",
+        "verb": "PUT",
+        "fullPath": "/adapters/:name/start"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "Applications",
+      "name": "startApplication",
+      "route": {
+        "path": "/:name/start",
+        "verb": "PUT",
+        "fullPath": "/applications/:name/start"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "OperationsManager",
+      "name": "startJob",
+      "route": {
+        "verb": "POST",
+        "path": "/jobs/start",
+        "fullPath": "/operations-manager/jobs/start"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "Adapters",
+      "name": "stopAdapter",
+      "route": {
+        "path": "/:name/stop",
+        "verb": "PUT",
+        "fullPath": "/adapters/:name/stop"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "Applications",
+      "name": "stopApplication",
+      "route": {
+        "path": "/:name/stop",
+        "verb": "PUT",
+        "fullPath": "/applications/:name/stop"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "Profiles",
+      "name": "switchActiveProfile",
+      "route": {
+        "path": "/:id/active",
+        "verb": "PUT",
+        "fullPath": "/profiles/:id/active"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "ServiceCog",
+      "name": "testInstance",
+      "route": {
+        "path": "/testInstance",
+        "verb": "POST",
+        "fullPath": "/service_management/testInstance"
+      },
+      "deprecated": true
+    },
+    {
+      "provenance": "ServiceCog",
+      "name": "testInstances",
+      "route": {
+        "path": "/testInstances",
+        "verb": "POST",
+        "fullPath": "/service_management/testInstances"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "ConfigurationManager",
+      "name": "translateConfigSpec",
+      "route": {
+        "verb": "POST",
+        "path": "/translate/config_spec",
+        "fullPath": "/configuration_manager/translate/config_spec"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "AGManager",
+      "name": "undiscoverAll",
+      "route": {
+        "verb": "DELETE",
+        "path": "/actions",
+        "fullPath": "/ag-manager/actions"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "AGManager",
+      "name": "undiscoverModules",
+      "route": {
+        "verb": "DELETE",
+        "path": "/actions/:adapterId",
+        "fullPath": "/ag-manager/actions/:adapterId"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "OperationsManager",
+      "name": "unwatchJob",
+      "route": {
+        "verb": "POST",
+        "path": "/jobs/:jobId/unwatch",
+        "fullPath": "/operations-manager/jobs/:jobId/unwatch"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "OperationsManager",
+      "name": "unwatchJobs",
+      "route": {
+        "verb": "POST",
+        "path": "/jobs/unwatch",
+        "fullPath": "/operations-manager/jobs/unwatch"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "Tags",
+      "name": "update",
+      "route": {
+        "verb": "POST",
+        "path": "/update",
+        "fullPath": "/tags/update"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "Authorization",
+      "name": "updateAccount",
+      "route": {
+        "path": "/accounts/:accountId",
+        "verb": "PATCH",
+        "fullPath": "/authorization/accounts/:accountId"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "Adapters",
+      "name": "updateAdapter",
+      "route": {
+        "path": "/:name",
+        "verb": "PUT",
+        "fullPath": "/adapters/:name"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "Adapters",
+      "name": "updateAdapterLogging",
+      "route": {
+        "path": "/:name/loglevel",
+        "verb": "PUT",
+        "fullPath": "/adapters/:name/loglevel"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "Adapters",
+      "name": "updateAdapterProperties",
+      "route": {
+        "path": "/:name/properties",
+        "verb": "PUT",
+        "fullPath": "/adapters/:name/properties"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "MOP",
+      "name": "updateAnalyticTemplate",
+      "route": {
+        "verb": "POST",
+        "path": "/updateAnalyticTemplate/:mopID",
+        "fullPath": "/mop/updateAnalyticTemplate/:mopID"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "Applications",
+      "name": "updateApplication",
+      "route": {
+        "path": "/:name",
+        "verb": "PUT",
+        "fullPath": "/applications/:name"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "Applications",
+      "name": "updateApplicationLogging",
+      "route": {
+        "path": "/:name/loglevel",
+        "verb": "PUT",
+        "fullPath": "/applications/:name/loglevel"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "Applications",
+      "name": "updateApplicationProperties",
+      "route": {
+        "path": "/:name/properties",
+        "verb": "PUT",
+        "fullPath": "/applications/:name/properties"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "AutomationStudio",
+      "name": "updateAutomation",
+      "route": {
+        "verb": "PUT",
+        "path": "/automations/:id",
+        "fullPath": "/automation-studio/automations/:id"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "OperationsManager",
+      "name": "updateAutomation",
+      "route": {
+        "verb": "PATCH",
+        "path": "/automations/:id",
+        "fullPath": "/operations-manager/automations/:id"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "Customization",
+      "name": "updateBanner",
+      "route": {
+        "path": "/banner",
+        "verb": "PUT",
+        "fullPath": "/customization/banner"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "ConfigurationManager",
+      "name": "updateCompliancePlan",
+      "route": {
+        "verb": "PUT",
+        "path": "/compliance_plans",
+        "fullPath": "/configuration_manager/compliance_plans"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "AutomationStudio",
+      "name": "updateComponentGroup",
+      "route": {
+        "verb": "PUT",
+        "path": "/component-groups/:id",
+        "fullPath": "/automation-studio/component-groups/:id"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "ConfigurationManager",
+      "name": "updateConfigParser",
+      "route": {
+        "verb": "PUT",
+        "path": "/configurations/parser",
+        "fullPath": "/configuration_manager/configurations/parser"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "ConfigurationManager",
+      "name": "updateConfigSpec",
+      "route": {
+        "verb": "PUT",
+        "path": "/config_specs/:id",
+        "fullPath": "/configuration_manager/config_specs/:id"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "ConfigurationManager",
+      "name": "updateDeviceBackupById",
+      "route": {
+        "verb": "PUT",
+        "path": "/backups/:id",
+        "fullPath": "/configuration_manager/backups/:id"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "ConfigurationManager",
+      "name": "updateDeviceGroups",
+      "route": {
+        "verb": "PUT",
+        "path": "/deviceGroups/:id",
+        "fullPath": "/configuration_manager/deviceGroups/:id"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "ConfigurationManager",
+      "name": "updateDeviceTemplate",
+      "route": {
+        "verb": "PUT",
+        "path": "/templates",
+        "fullPath": "/configuration_manager/templates"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "JsonForms",
+      "name": "updateForm",
+      "route": {
+        "verb": "PUT",
+        "path": "/forms/:id",
+        "fullPath": "/json-forms/forms/:id"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "ConfigurationManager",
+      "name": "updateGoldenConfigNode",
+      "route": {
+        "verb": "PUT",
+        "path": "/configs/:treeId/:version/:nodePath(*)",
+        "fullPath": "/configuration_manager/configs/:treeId/:version/:nodePath(*)"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "ConfigurationManager",
+      "name": "updateGoldenConfigTree",
+      "route": {
+        "verb": "PUT",
+        "path": "/configs/:treeId",
+        "fullPath": "/configuration_manager/configs/:treeId"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "ConfigurationManager",
+      "name": "updateGoldenConfigTreeVersion",
+      "route": {
+        "verb": "PUT",
+        "path": "/configs/:treeId/:version",
+        "fullPath": "/configuration_manager/configs/:treeId/:version"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "Authorization",
+      "name": "updateGroup",
+      "route": {
+        "path": "/groups/:groupId",
+        "verb": "PATCH",
+        "fullPath": "/authorization/groups/:groupId"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "SSOGroupMappings",
+      "name": "updateGroupMapping",
+      "route": {
+        "path": "/:provenance/:externalGroup",
+        "verb": "PATCH",
+        "fullPath": "/group-mappings/:provenance/:externalGroup"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "LifecycleManager",
+      "name": "updateInstanceMetadataHttp",
+      "route": {
+        "verb": "PUT",
+        "path": "/resources/:modelId/instances/:instanceId",
+        "fullPath": "/lifecycle-manager/resources/:modelId/instances/:instanceId"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "Integrations",
+      "name": "updateIntegration",
+      "route": {
+        "path": "/:name",
+        "verb": "PUT",
+        "fullPath": "/integrations/:name"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "IntegrationModels",
+      "name": "updateIntegrationModel",
+      "route": {
+        "path": "",
+        "verb": "PUT",
+        "fullPath": "/integration-models"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "Integrations",
+      "name": "updateIntegrationProperties",
+      "route": {
+        "path": "/:name/properties",
+        "verb": "PUT",
+        "fullPath": "/integrations/:name/properties"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "ConfigurationManager",
+      "name": "updateJSONConfigRules",
+      "route": {
+        "verb": "PUT",
+        "path": "/configurations/rules",
+        "fullPath": "/configuration_manager/configurations/rules"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "ConfigurationManager",
+      "name": "updateJSONSpec",
+      "route": {
+        "verb": "PUT",
+        "path": "/json_specs/:id",
+        "fullPath": "/configuration_manager/json_specs/:id"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "ExternalLinks",
+      "name": "updateLink",
+      "route": {
+        "path": "/:linkId",
+        "verb": "PATCH",
+        "fullPath": "/external-links/:linkId"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "ConfigurationManager",
+      "name": "updateNodeConfig",
+      "route": {
+        "verb": "PUT",
+        "path": "/node/config",
+        "fullPath": "/configuration_manager/node/config"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "ServiceCog",
+      "name": "updateNSOData",
+      "route": {
+        "verb": "POST",
+        "path": "/service/models/update",
+        "fullPath": "/service_management/service/models/update"
+      },
+      "deprecated": true
+    },
+    {
+      "provenance": "Prebuilts",
+      "name": "updatePrebuilt",
+      "route": {
+        "path": "/:id",
+        "verb": "PUT",
+        "fullPath": "/prebuilts/:id"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "Profiles",
+      "name": "updateProfile",
+      "route": {
+        "path": "/:id",
+        "verb": "PUT",
+        "fullPath": "/profiles/:id"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "AutomationStudio",
+      "name": "updateProject",
+      "route": {
+        "verb": "PATCH",
+        "path": "/projects/:projectId",
+        "fullPath": "/automation-studio/projects/:projectId"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "PrebuiltsRepository",
+      "name": "updateRepositoryConfig",
+      "route": {
+        "path": "/configs/:name",
+        "verb": "PATCH",
+        "fullPath": "/prebuilts-repository/configs/:name"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "LifecycleManager",
+      "name": "updateResourceModelHttp",
+      "route": {
+        "verb": "PUT",
+        "path": "/resources/:id",
+        "fullPath": "/lifecycle-manager/resources/:id"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "Authorization",
+      "name": "updateRole",
+      "route": {
+        "path": "/roles/:roleId",
+        "verb": "PATCH",
+        "fullPath": "/authorization/roles/:roleId"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "OAuth",
+      "name": "updateServiceAccount",
+      "route": {
+        "path": "/serviceAccounts/:client_id",
+        "verb": "PATCH",
+        "fullPath": "/oauth/serviceAccounts/:client_id"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "ServiceCatalog",
+      "name": "UpdateServiceInCatalog",
+      "route": {
+        "path": "/UpdateService",
+        "verb": "POST",
+        "fullPath": "/service_catalog/UpdateService"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "ServiceCog",
+      "name": "updateServiceModelDatabase",
+      "route": {
+        "verb": "POST",
+        "path": "/service/model/database",
+        "fullPath": "/service_management/service/model/database"
+      },
+      "deprecated": true
+    },
+    {
+      "provenance": "SSO",
+      "name": "updateSSOConfig",
+      "route": {
+        "path": "/configs/:name",
+        "verb": "PUT",
+        "fullPath": "/sso/configs/:name"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "ConfigurationManager",
+      "name": "updateTaskInstance",
+      "route": {
+        "verb": "PUT",
+        "path": "/tasks/instance",
+        "fullPath": "/configuration_manager/tasks/instance"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "AutomationStudio",
+      "name": "updateTemplate",
+      "route": {
+        "verb": "PUT",
+        "path": "/templates/:id",
+        "fullPath": "/automation-studio/templates/:id"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "MOP",
+      "name": "updateTemplate",
+      "route": {
+        "verb": "POST",
+        "path": "/updateTemplate/:mopID",
+        "fullPath": "/mop/updateTemplate/:mopID"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "Jst",
+      "name": "updateTransformation",
+      "route": {
+        "verb": "PUT",
+        "path": "/:id",
+        "fullPath": "/transformations/:id"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "OperationsManager",
+      "name": "updateTrigger",
+      "route": {
+        "verb": "PATCH",
+        "path": "/triggers/:id",
+        "fullPath": "/operations-manager/triggers/:id"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "AutomationStudio",
+      "name": "uploadProjectThumbnail",
+      "route": {
+        "verb": "PUT",
+        "path": "/projects/:projectId/thumbnail",
+        "fullPath": "/automation-studio/projects/:projectId/thumbnail"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "LifecycleManager",
+      "name": "validateActionsHttp",
+      "route": {
+        "path": "/resources/:modelId/actions/validate",
+        "verb": "POST",
+        "fullPath": "/lifecycle-manager/resources/:modelId/actions/validate"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "NSOManager",
+      "name": "validateCommit",
+      "route": {
+        "enabled": true,
+        "path": "/validateCommit",
+        "verb": "POST",
+        "fullPath": "/nso_manager/validateCommit"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "JsonForms",
+      "name": "validateData",
+      "route": {
+        "verb": "POST",
+        "path": "/validate-data",
+        "fullPath": "/json-forms/validate-data"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "JsonForms",
+      "name": "validateForm",
+      "route": {
+        "verb": "POST",
+        "path": "/validate-form/:id",
+        "fullPath": "/json-forms/validate-form/:id"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "IntegrationModels",
+      "name": "validateIntegrationModel",
+      "route": {
+        "path": "/validation",
+        "verb": "PUT",
+        "fullPath": "/integration-models/validation"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "Prebuilts",
+      "name": "validatePrebuilt",
+      "route": {
+        "path": "/import/validation",
+        "verb": "PUT",
+        "fullPath": "/prebuilts/import/validation"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "AutomationStudio",
+      "name": "validateWorkflow",
+      "route": {
+        "verb": "POST",
+        "path": "/workflows/validate",
+        "fullPath": "/automation-studio/workflows/validate"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "NSOManager",
+      "name": "verifyConfig",
+      "route": {
+        "enabled": true,
+        "path": "/verifyConfig/:adapter/:nedid",
+        "verb": "POST",
+        "fullPath": "/nso_manager/verifyConfig/:adapter/:nedid"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "OperationsManager",
+      "name": "watchJob",
+      "route": {
+        "verb": "POST",
+        "path": "/jobs/:jobId/watch",
+        "fullPath": "/operations-manager/jobs/:jobId/watch"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "OperationsManager",
+      "name": "watchJobs",
+      "route": {
+        "verb": "POST",
+        "path": "/jobs/watch",
+        "fullPath": "/operations-manager/jobs/watch"
+      },
+      "deprecated": false
+    },
+    {
+      "provenance": "JsonForms",
+      "name": "yangToSchema",
+      "route": {
+        "verb": "POST",
+        "path": "/yangToSchema",
+        "fullPath": "/json-forms/yangToSchema"
+      },
+      "deprecated": false
+    }
+  ],
+  "total": 523
+}

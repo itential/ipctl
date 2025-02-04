@@ -1,0 +1,5 @@
+---
+inspect:
+  use: server
+  description: |
+    Show server status

@@ -1,0 +1,6 @@
+---
+get:
+  use: methods
+  group: admin-essentials
+  description: |
+    Display one or more allowed methods

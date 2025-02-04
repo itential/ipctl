@@ -1,0 +1,174 @@
+---
+##############################################################################
+# Reader commands
+##############################################################################
+
+get:
+  use: jsonforms
+  group: automation-studio
+
+  description: |
+    Display one or more jsonforms
+
+    The `get jsonforms` command will retreive all of the configured JSON
+    forms from the instance of Platform and display them.  When the output
+    is set to `human` (default) this command will display the results in
+    table format.
+
+    To see the JSON output for this command use the `--output=json` optional
+    argument.
+
+  example: |
+    # Display list of all configured jsonforms
+    $ ipctl get jsonforms
+
+describe:
+  use: jsonform <name>
+  group: automation-studio
+
+  description: |
+    Display details about a jsonform
+
+    The describe command will retrieve the specified jsonform by name and
+    display details about the asset.  If the specified jsonform does not
+    exist, this command will return an error.
+
+    To see the jsonform output as JSON use the `--output json` optional
+    argument.
+
+  example: |
+    # Display a jsonform call `CLI test`
+    $ ipctl describe jsonform "ClI test"
+
+
+##############################################################################
+# Writer commands
+##############################################################################
+
+create:
+  use: jsonform <name>
+  group: automation-studio
+
+  description: |
+    Create a new jsonform
+
+    Use the `create jsonform` command to create a new jsonform on the
+    server. This command has one required argument `name` which will
+    configure the name of the jsonform.  If a form with the same name
+    already exists, this command will return an error.
+
+    Use the `--description` optional argument to assign a short
+    description to the new jsonform.
+
+    Use the `--replace` optional argument to replace an existing JSON
+    form of the same name with this command.  If the form exists, it will be
+    deleted and re-created.  If the form does not exist, it will simply
+    be created.
+
+  example: |
+    # Create a new jsonform
+    $ ipctl create jsonform devel-test --description "This is a test form"
+
+delete:
+  use: jsonform <name>
+  group: automation-studio
+
+  description: |
+    Delete a jsonform
+
+    The delete command will delete the specifie jsonform from the instance
+    of Itential Platform.  This is a destructive operation and cannot be
+    recovered.  If the specified jsonform does not exist on the server,
+    this command will return an error.
+
+    The `delete jsonform` command only returns a string message output.
+
+  example: |
+    # Delete a jsonform called `CLI test`
+    $ ipctl delete jsonform "CLI test"
+
+clear:
+  use: jsonforms
+  group: automation-studio
+
+  description: |
+    Delete all jsonforms
+
+    The `clear jsonforms` command will delete all configured jsonforms
+    from the server.  This is a destructive action that cannot be undone.
+
+  example: |
+    # Clear all jsonforms
+    $ ipctl clear jsonforms
+
+copy:
+  use: jsonform <name> --from <profile> --to <profile>
+  group: automation-studio
+
+  description: |
+    Copy jsonform from source to destination server
+
+    The `copy jsonform` command will copy the specific JSON from from the
+    source server to the destination server.  If the jsonform does not
+    exist on the source server or the jsonform does exist on the
+    destination server, an error will be returned.
+
+    Use the required `--from` argument to specify the source server and use
+    the required `--to` argument to specify the destination server.
+
+  example: |
+    # Copy JSON from "CLI Test" from dev to staging
+    $ ipctl copy jsonform "CLI Test" --from dev --to staging
+
+##############################################################################
+# Promoter commands
+##############################################################################
+
+import:
+  use: jsonform <path>
+  group: automation-studio
+
+  description: |
+    Import a jsonform
+
+    The `import jsonform` command will import a jsonform defined in a file.
+    If the jsonform already exists on the server, this command will produce
+    an error.
+
+  example: |
+    # Import a jsonform from a JSON file
+    $ ipctl import jsonform path/to/form.json
+
+
+export:
+  use: jsonform <name>
+  group: automation-studio
+
+  description: |
+    Export a jsonform
+
+    Use the `export jsonform <name>` command to export a jsonform from the
+    server in JSON format.  The exported asset can be immported into the same
+    or another server.  If specified jsonform does not exist, an error is
+    returned.
+
+  example: |
+    # Export a jsonform named `testform`
+    $ ipctl export jsonform testform
+
+
+##############################################################################
+# Gitter commands
+##############################################################################
+push:
+  use: jsonform <name> <repository>
+  group: automation-studio
+  description: |
+    Push a JSON Form to a repository
+
+pull:
+  use: jsonform <path> <repository>
+  group: automation-studio
+  description: |
+    Pull a JSON Form from a repository
+

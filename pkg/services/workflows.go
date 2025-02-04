@@ -1,0 +1,302 @@
+// Copyright 2024 Itential Inc. All Rights Reserved
+// Unauthorized copying of this file, via any medium is strictly prohibited
+// Proprietary and confidential
+
+package services
+
+import (
+	"errors"
+	"fmt"
+	"net/http"
+
+	"github.com/itential/ipctl/pkg/client"
+	"github.com/itential/ipctl/pkg/logger"
+)
+
+const (
+	defaultWorkflowType          = "automation"
+	defaultWorkflowCanvasVersion = 3
+	defaultWorkflowFontSize      = 12
+)
+
+type getWorkflowsResponse struct {
+	Items    []Workflow `json:"items"`
+	Count    int        `json:"count"`
+	End      int        `json:"end"`
+	Limit    int        `json:"limit"`
+	Next     string     `json:"next"`
+	Previous string     `json:"previous"`
+	Skip     int        `json:"skip"`
+	Total    int        `json:"total"`
+}
+
+type Workflow struct {
+	Id                 string                 `json:"_id,omitempty"`
+	Description        string                 `json:"description,omitempty"`
+	CanvasVersion      float64                `json:"canvasVersion"`
+	Created            string                 `json:"created,omitempty"`
+	CreatedVersion     string                 `json:"createdVersion,omitempty"`
+	CreatedBy          interface{}            `json:"created_by,omitempty"`
+	EncodingVersion    int                    `json:"encodingVersion,omitempty"`
+	ErrorHandler       string                 `json:"errorHandler,omitempty"`
+	FontSize           int                    `json:"font_size"`
+	Groups             []interface{}          `json:"groups"`
+	InputSchema        map[string]interface{} `json:"inputSchema"`
+	LastUpdatedVersion string                 `json:"lastUpdatedVersion,omitempty"`
+	LastUpdated        string                 `json:"last_updated,omitempty"`
+	LastUpdatedBy      interface{}            `json:"last_updated_by,omitempty"`
+	Name               string                 `json:"name"`
+	OutputSchema       map[string]interface{} `json:"outputSchema"`
+	PreAutomationTime  int                    `json:"preAutomationTime"`
+	Sla                int                    `json:"sla"`
+	Tasks              map[string]interface{} `json:"tasks"`
+	Transitions        map[string]interface{} `json:"transitions"`
+	Type               string                 `json:"type"`
+}
+
+type WorkflowService struct {
+	client *ServiceClient
+}
+
+func NewWorkflowService(iapClient client.Client) *WorkflowService {
+	return &WorkflowService{client: NewServiceClient(iapClient)}
+}
+
+// NewWorkflow returns a minimum viable workflow struct.
+func NewWorkflow(name string) Workflow {
+
+	wfstart := map[string]interface{}{
+		"groups": []any{},
+		"name":   "workflow_start",
+		"nodelocation": map[string]int{
+			"x": 0,
+			"y": -500,
+		},
+		"x": 0,
+		"y": 0.5,
+	}
+
+	wfend := map[string]interface{}{
+		"groups": []any{},
+		"name":   "workflow_end",
+		"nodelocation": map[string]int{
+			"x": 0,
+			"y": 500,
+		},
+		"x": 1,
+		"y": 0.5,
+	}
+
+	ioschema := map[string]interface{}{
+		"properties": map[string]interface{}{
+			"_id": map[string]interface{}{
+				"pattern": "^[0-9a-f]{24}$",
+				"type":    "string",
+			},
+			"initiator": map[string]interface{}{
+				"type": "string",
+			},
+		},
+		"required": []any{},
+		"type":     "object",
+	}
+
+	return Workflow{
+		Name:          name,
+		Type:          defaultWorkflowType,
+		InputSchema:   ioschema,
+		OutputSchema:  ioschema,
+		CanvasVersion: defaultWorkflowCanvasVersion,
+		FontSize:      defaultWorkflowFontSize,
+		Groups:        []any{},
+		Transitions: map[string]interface{}{
+			"workflow_start": map[string]interface{}{},
+			"workflow_end":   map[string]interface{}{},
+		},
+		Tasks: map[string]interface{}{
+			"workflow_start": wfstart,
+			"workflow_end":   wfend,
+		},
+	}
+}
+
+// GetAll will retrieve all of the currently configured workflows available on the
+// server.  If there are no configured workflows, this function will return an
+// empty array.
+func (svc *WorkflowService) GetAll() ([]Workflow, error) {
+	logger.Trace()
+
+	var res getWorkflowsResponse
+	var workflows []Workflow
+
+	var limit = 100
+	var skip = 0
+
+	for {
+		if err := svc.client.GetRequest(&Request{
+			uri:    "/automation-studio/workflows",
+			params: &QueryParams{Limit: limit, Skip: skip},
+		}, &res); err != nil {
+			return nil, err
+		}
+
+		for _, ele := range res.Items {
+			workflows = append(workflows, ele)
+		}
+
+		if len(workflows) == res.Total {
+			break
+		}
+
+		skip += limit
+	}
+
+	logger.Info("Found %v workflow(s)", len(workflows))
+
+	return workflows, nil
+
+}
+
+// Get retrieves the workflow as specified by the name argument.  If the
+// specified workflow does not exist, this function will return an error with
+// the message 'workflow not found'.   This function uses a query string per
+// the API to find the worklow by name.  In some cases, more than one workflow
+// could be returned from the server.  In this case, this function will return
+// an error with message 'unable to find workflow'
+func (svc *WorkflowService) Get(name string) (*Workflow, error) {
+	logger.Trace()
+
+	var res getWorkflowsResponse
+
+	if err := svc.client.GetRequest(&Request{
+		uri:   "/automation-studio/workflows",
+		query: map[string]string{"equals[name]": name},
+	}, &res); err != nil {
+		return nil, err
+	}
+
+	if res.Total == 0 {
+		return nil, errors.New("workflow not found")
+	}
+
+	if res.Total > 1 {
+		logger.Debug("Get() workflows returned more than one workflow.  This is due to more than one workflow with the same name")
+		return nil, errors.New("unable to find workflow")
+	}
+
+	return &res.Items[0], nil
+}
+
+// Create will add a new workflow asset to the Itential Platform server.  The
+// workflow will always be created even if another workflow by the same name
+// already exists.
+func (svc *WorkflowService) Create(in Workflow) (*Workflow, error) {
+	logger.Trace()
+
+	type Response struct {
+		Created *Workflow `json:"created"`
+		Edit    string    `json:"edit"`
+	}
+
+	var res Response
+
+	if err := svc.client.PostRequest(&Request{
+		uri:                "/automation-studio/automations",
+		body:               map[string]interface{}{"automation": in},
+		expectedStatusCode: http.StatusOK,
+	}, &res); err != nil {
+		return nil, err
+	}
+
+	return res.Created, nil
+}
+
+// Delete removes an existing workflow from the set of configured workflows on
+// the server.  If the workflow does not exist, this function will return an
+// error.
+func (svc *WorkflowService) Delete(name string) error {
+	logger.Trace()
+	return svc.client.Delete(
+		fmt.Sprintf("/workflow_builder/workflows/delete/%s", name),
+	)
+}
+
+// Import will import a workflow into the current server.  If a workflow with
+// the same name already exists on the server, this function will return an
+// error.
+func (svc *WorkflowService) Import(in Workflow) (*Workflow, error) {
+	logger.Trace()
+
+	body := map[string]interface{}{
+		"automations": []interface{}{in},
+	}
+
+	var res *Workflow
+
+	if err := svc.client.PostRequest(&Request{
+		uri:                "/automation-studio/automations/import",
+		body:               &body,
+		expectedStatusCode: http.StatusOK,
+	}, &res); err != nil {
+		return nil, err
+	}
+
+	return res, nil
+}
+
+// Export returns an exported workflow from the server.  An exported workflow
+// differents from a Get in that the CreateBy and UpdatedBy fields are
+// expanded.
+func (svc *WorkflowService) Export(name string) (*Workflow, error) {
+	logger.Trace()
+
+	body := map[string]interface{}{
+		"options": map[string]interface{}{
+			"name": name,
+		},
+	}
+
+	var res Workflow
+
+	if err := svc.client.PostRequest(&Request{
+		uri:                "/workflow_builder/export",
+		body:               &body,
+		expectedStatusCode: http.StatusOK,
+	}, &res); err != nil {
+		return nil, err
+	}
+
+	return &res, nil
+}
+
+func (svc *WorkflowService) Clear() error {
+	logger.Trace()
+
+	workflows, err := svc.GetAll()
+	if err != nil {
+		return err
+	}
+	for _, ele := range workflows {
+		if err := svc.Delete(ele.Name); err != nil {
+			return err
+		}
+	}
+	return nil
+
+}
+
+func (svc *WorkflowService) Update(in Workflow) (*Workflow, error) {
+	logger.Trace()
+
+	var res *Workflow
+
+	if err := svc.client.PutRequest(&Request{
+		uri:                fmt.Sprintf("/automation-studio/automations/%s", in.Id),
+		body:               map[string]interface{}{"update": in},
+		expectedStatusCode: http.StatusOK,
+	}, &res); err != nil {
+		return nil, err
+	}
+
+	return res, nil
+}

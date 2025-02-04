@@ -1,0 +1,12 @@
+{
+  "adapterModels": [
+    "AutomationGateway",
+    "azure_aaa",
+    "Email",
+    "LDAP",
+    "local_aaa",
+    "NSO",
+    "RADIUS"
+  ],
+  "total": 7
+}

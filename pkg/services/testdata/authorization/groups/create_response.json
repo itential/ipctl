@@ -1,0 +1,17 @@
+{
+  "status": "OK",
+  "message": "Successfully created group 6793b31af6324eedfade07df.",
+  "data": {
+    "_id": "6793b31af6324eedfade07df",
+    "assignedRoles": [],
+    "description": "",
+    "inactive": false,
+    "memberOf": [],
+    "name": "test",
+    "provenance": "Pronghorn",
+    "_meta": {
+      "created": "2025-01-24T15:34:50.712Z",
+      "updated": "2025-01-24T15:34:50.712Z"
+    }
+  }
+}

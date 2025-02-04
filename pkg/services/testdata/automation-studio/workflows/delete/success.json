@@ -1,0 +1,84 @@
+{
+  "lastErrorObject": {
+    "n": 1
+  },
+  "value": {
+    "_id": "9f241b73-fbf2-4497-9562-7292bf8bc058",
+    "canvasVersion": 3,
+    "font_size": 12,
+    "groups": [],
+    "inputSchema": {
+      "type": "object",
+      "properties": {}
+    },
+    "name": "test",
+    "outputSchema": {
+      "type": "object",
+      "properties": {
+        "_id": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{24}$"
+        },
+        "initiator": {
+          "type": "string"
+        }
+      }
+    },
+    "preAutomationTime": 0,
+    "sla": 0,
+    "tasks": {
+      "workflow_end": {
+        "groups": [],
+        "name": "workflow_end",
+        "nodelocation": {
+          "x": 0,
+          "y": 500
+        },
+        "x": 1,
+        "y": 0.5
+      },
+      "workflow_start": {
+        "groups": [],
+        "name": "workflow_start",
+        "nodelocation": {
+          "x": 0,
+          "y": -500
+        },
+        "x": 0,
+        "y": 0.5
+      }
+    },
+    "transitions": {
+      "workflow_end": {},
+      "workflow_start": {}
+    },
+    "type": "automation",
+    "errors": [
+      {
+        "task": "workflow_end",
+        "name": "workflow_end",
+        "message": "Could not find standard transition path between workflow start and task"
+      }
+    ],
+    "last_updated": "2025-01-24T20:46:02.862Z",
+    "last_updated_by": "678ec2276d849669c6dbe974",
+    "lastUpdatedVersion": "5.55.2-2023.2.13",
+    "created": "2025-01-24T20:46:02.863Z",
+    "created_by": "678ec2276d849669c6dbe974",
+    "createdVersion": "5.55.2-2023.2.13",
+    "encodingVersion": 1
+  },
+  "ok": 1,
+  "$clusterTime": {
+    "clusterTime": {
+      "$timestamp": "7463824425033400322"
+    },
+    "signature": {
+      "hash": "AAAAAAAAAAAAAAAAAAAAAAAAAAA=",
+      "keyId": 0
+    }
+  },
+  "operationTime": {
+    "$timestamp": "7463824425033400322"
+  }
+}

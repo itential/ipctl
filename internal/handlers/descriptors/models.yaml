@@ -1,0 +1,107 @@
+---
+##############################################################################
+# Reader Commands
+##############################################################################
+get:
+  use: models
+  group: lifecycle-manager
+
+  description: |
+    Dispaly one or more models
+
+    The `get models` command will retrieve all configured resource models from
+    the server and display them in table format by default.
+
+  exmaple: |
+    # Get all configured models
+    $ ipctl get models
+
+describe:
+  use: model <name>
+  group: lifecycle-manager
+
+  description: |
+    Display details about a model
+
+
+##############################################################################
+# Reader Commands
+##############################################################################
+create:
+  use: model <name>
+  group: lifecycle-manager
+  description: |
+    Create a new model
+
+delete:
+  use: model <name>
+  group: lifecycle-manager
+  description: |
+    Delete a model
+
+copy:
+  use: model <name> --from <profile> --to <profile
+  group: lifecycle-manager
+  description: |
+    Copy a resource model from one server to another
+
+clear:
+  use: models
+  group: lifecycle-manager
+  description: |
+    Delete all configured models
+
+
+##############################################################################
+# Promoter Commands
+##############################################################################
+import:
+  use: model <path>
+  group: lifecycle-manager
+
+  description: |
+    Import resource model
+
+    The `import model` command will import a resource model that has been
+    exported from the same or another server.  This command accepts a single
+    required argument `path` which specifies the path to the file where the
+    exported model resides.
+
+    Models can be imported direclty from Git repositories using the ``--repository`
+    otional argument.
+
+  example: |
+    # Import a resource model from a file
+    $ ipctl import model path/to/model.json
+
+
+export:
+  use: model <name>
+  group: lifecycle-manager
+
+  description: |
+    Export resource model
+
+    The `export model` command will export a resource model from the Itential
+    Platform server.   If exported model will be written to a file.   If the
+    model name specified by the `name` argument does not exist, this command
+    will return an error.
+
+  exmaple: |
+    # Export a resource model called `CLI Test`
+    $ ipctl export model "CLI Test"
+
+##############################################################################
+# Gitter Commands
+##############################################################################
+push:
+  use: model <name> <repository>
+  group: lifecycle-manager
+  description: |
+    Push a lifecycle manager model to a repository
+
+pull:
+  use: model <filename> <repository>
+  group: lifecycle-manager
+  description: |
+    Pull a lifecycle manager mode from a repository

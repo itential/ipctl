@@ -1,0 +1,863 @@
+{
+  "message": "Successfully retrieved projects",
+  "data": [
+    {
+      "_id": "66aba9be41f8aad085ca0ee3",
+      "components": [
+        {
+          "iid": 1,
+          "reference": "@66aba9be41f8aad085ca0ee3: Port Turn Up - Post Checks",
+          "type": "mopCommandTemplate",
+          "folder": "/Command Templates"
+        },
+        {
+          "iid": 2,
+          "reference": "@66aba9be41f8aad085ca0ee3: Port Turn Up - Pre Checks",
+          "type": "mopCommandTemplate",
+          "folder": "/Command Templates"
+        },
+        {
+          "iid": 10,
+          "reference": "@66aba9be41f8aad085ca0ee3: Show Logging",
+          "type": "mopCommandTemplate",
+          "folder": "/Command Templates"
+        },
+        {
+          "iid": 3,
+          "reference": "66abaa4741f8aad085ca0ee5",
+          "type": "jsonForm",
+          "folder": "/Forms"
+        },
+        {
+          "iid": 4,
+          "reference": "66abaa5b41f8aad085ca0ee6",
+          "type": "template",
+          "folder": "/Jinja2 Templates"
+        },
+        {
+          "iid": 5,
+          "reference": "66abaa7441f8aad085ca0ee7",
+          "type": "transformation",
+          "folder": "/Transformations"
+        },
+        {
+          "iid": 6,
+          "reference": "9343cf05-c442-4731-b4ff-2a973e5a0952",
+          "type": "workflow",
+          "folder": "/Workflows"
+        },
+        {
+          "iid": 7,
+          "reference": "c4a1ed13-d306-4594-b3f6-ed3905341b8f",
+          "type": "workflow",
+          "folder": "/Workflows"
+        },
+        {
+          "iid": 8,
+          "reference": "60fe805e-ca6d-4f34-bfb7-e26e27116f91",
+          "type": "workflow",
+          "folder": "/Workflows"
+        },
+        {
+          "iid": 9,
+          "reference": "2b347168-7b7f-478b-a2d4-d61c8ac67a7a",
+          "type": "workflow",
+          "folder": "/Workflows"
+        }
+      ],
+      "created": "2024-08-01T15:29:02.452Z",
+      "createdBy": {
+        "_id": "6729410a113f9679380359e5",
+        "provenance": "CloudAAA",
+        "username": "jerry.dollens@itential.com"
+      },
+      "description": "",
+      "folders": [
+        {
+          "nodeType": "folder",
+          "name": "Command Templates",
+          "children": [
+            {
+              "iid": 1,
+              "nodeType": "component"
+            },
+            {
+              "iid": 2,
+              "nodeType": "component"
+            },
+            {
+              "iid": 10,
+              "nodeType": "component"
+            }
+          ]
+        },
+        {
+          "nodeType": "folder",
+          "name": "Forms",
+          "children": [
+            {
+              "iid": 3,
+              "nodeType": "component"
+            }
+          ]
+        },
+        {
+          "nodeType": "folder",
+          "name": "Jinja2 Templates",
+          "children": [
+            {
+              "iid": 4,
+              "nodeType": "component"
+            }
+          ]
+        },
+        {
+          "nodeType": "folder",
+          "name": "Transformations",
+          "children": [
+            {
+              "iid": 5,
+              "nodeType": "component"
+            }
+          ]
+        },
+        {
+          "nodeType": "folder",
+          "name": "Workflows",
+          "children": [
+            {
+              "iid": 8,
+              "nodeType": "component"
+            },
+            {
+              "iid": 9,
+              "nodeType": "component"
+            },
+            {
+              "iid": 6,
+              "nodeType": "component"
+            },
+            {
+              "iid": 7,
+              "nodeType": "component"
+            }
+          ]
+        }
+      ],
+      "lastUpdated": "2024-11-04T21:49:21.969Z",
+      "lastUpdatedBy": {
+        "_id": "668c58df4f234baee4996cfb",
+        "provenance": "local_aaa",
+        "username": "admin@pronghorn"
+      },
+      "name": "Port/VLAN Configuration - IOS",
+      "iid": 150,
+      "componentIidIndex": 11,
+      "members": [
+        {
+          "type": "account",
+          "reference": "66d76ca8732d21feb5868280",
+          "role": "owner"
+        },
+        {
+          "type": "account",
+          "reference": "668c58df4f234baee4996cfb",
+          "role": "owner"
+        }
+      ],
+      "accessControl": {
+        "manage": [
+          "account:66d76ca8732d21feb5868280",
+          "account:668c58df4f234baee4996cfb"
+        ],
+        "write": [
+          "account:66d76ca8732d21feb5868280",
+          "account:668c58df4f234baee4996cfb"
+        ],
+        "execute": [
+          "account:66d76ca8732d21feb5868280",
+          "account:668c58df4f234baee4996cfb"
+        ],
+        "read": [
+          "account:66d76ca8732d21feb5868280",
+          "account:668c58df4f234baee4996cfb"
+        ]
+      }
+    },
+    {
+      "_id": "6725418b113f9679380359e2",
+      "iid": 146,
+      "name": "clitest",
+      "description": "",
+      "componentIidIndex": 0,
+      "components": [],
+      "folders": [],
+      "members": [
+        {
+          "type": "account",
+          "reference": "668c58df4f234baee4996cfb",
+          "role": "owner"
+        }
+      ],
+      "accessControl": {
+        "manage": [
+          "account:668c58df4f234baee4996cfb"
+        ],
+        "write": [
+          "account:668c58df4f234baee4996cfb"
+        ],
+        "execute": [
+          "account:668c58df4f234baee4996cfb"
+        ],
+        "read": [
+          "account:668c58df4f234baee4996cfb"
+        ]
+      },
+      "created": "2024-11-01T21:00:59.426Z",
+      "createdBy": {
+        "_id": "668c58df4f234baee4996cfb",
+        "provenance": "local_aaa",
+        "username": "admin@pronghorn"
+      },
+      "lastUpdated": "2024-11-01T21:00:59.426Z",
+      "lastUpdatedBy": {
+        "_id": "668c58df4f234baee4996cfb",
+        "provenance": "local_aaa",
+        "username": "admin@pronghorn"
+      }
+    },
+    {
+      "_id": "670d8dac113f9679380359de",
+      "components": [
+        {
+          "iid": 0,
+          "reference": "e8ff8f58-024d-4347-bbc4-41f6c9c5a425",
+          "type": "workflow",
+          "folder": "/"
+        }
+      ],
+      "created": "2024-10-14T21:31:24.178Z",
+      "createdBy": {
+        "_id": "668c58df4f234baee4996cfb",
+        "provenance": "local_aaa",
+        "username": "admin@pronghorn"
+      },
+      "description": "this is just a simple test project that really doesn't do anything.  It is used for testing the ipctl tool and its table based output with long description strings",
+      "folders": [
+        {
+          "iid": 0,
+          "nodeType": "component"
+        }
+      ],
+      "lastUpdated": "2024-10-25T11:59:07.560Z",
+      "lastUpdatedBy": {
+        "_id": "668c58df4f234baee4996cfb",
+        "provenance": "local_aaa",
+        "username": "admin@pronghorn"
+      },
+      "name": "Untitled-Project",
+      "iid": 139,
+      "componentIidIndex": 1,
+      "members": [
+        {
+          "type": "account",
+          "reference": "66d76ca8732d21feb5868280",
+          "role": "editor"
+        },
+        {
+          "type": "account",
+          "reference": "668c58df4f234baee4996cfb",
+          "role": "owner"
+        },
+        {
+          "type": "group",
+          "reference": "67128d07d9818a48b1958e40",
+          "role": "editor"
+        }
+      ],
+      "accessControl": {
+        "manage": [
+          "account:668c58df4f234baee4996cfb"
+        ],
+        "write": [
+          "account:66d76ca8732d21feb5868280",
+          "account:668c58df4f234baee4996cfb",
+          "group:67128d07d9818a48b1958e40"
+        ],
+        "execute": [
+          "account:66d76ca8732d21feb5868280",
+          "account:668c58df4f234baee4996cfb",
+          "group:67128d07d9818a48b1958e40"
+        ],
+        "read": [
+          "account:66d76ca8732d21feb5868280",
+          "account:668c58df4f234baee4996cfb",
+          "group:67128d07d9818a48b1958e40"
+        ]
+      }
+    },
+    {
+      "_id": "67293a51113f9679380359e4",
+      "components": [
+        {
+          "iid": 0,
+          "reference": "cd63d3c2-5277-47af-a67b-b986b96af88f",
+          "type": "workflow",
+          "folder": "/"
+        }
+      ],
+      "created": "2024-10-14T21:31:24.178Z",
+      "createdBy": {
+        "_id": "668c58df4f234baee4996cfb",
+        "provenance": "local_aaa",
+        "username": "admin@pronghorn"
+      },
+      "description": "this is just a simple test project that really doesn't do anything.  It is used for testing the ipctl tool and its table based output with long description strings",
+      "folders": [
+        {
+          "iid": 0,
+          "nodeType": "component"
+        }
+      ],
+      "lastUpdated": "2024-10-25T11:59:07.560Z",
+      "lastUpdatedBy": {
+        "_id": "668c58df4f234baee4996cfb",
+        "provenance": "local_aaa",
+        "username": "admin@pronghorn"
+      },
+      "name": "Untitled-Project",
+      "iid": 147,
+      "componentIidIndex": 1,
+      "members": [
+        {
+          "type": "account",
+          "reference": "668c58df4f234baee4996cfb",
+          "role": "owner"
+        }
+      ],
+      "accessControl": {
+        "manage": [
+          "account:668c58df4f234baee4996cfb"
+        ],
+        "write": [
+          "account:668c58df4f234baee4996cfb"
+        ],
+        "execute": [
+          "account:668c58df4f234baee4996cfb"
+        ],
+        "read": [
+          "account:668c58df4f234baee4996cfb"
+        ]
+      }
+    },
+    {
+      "_id": "6716dafd113f9679380359e0",
+      "components": [
+        {
+          "iid": 1,
+          "reference": "ae00d127-617d-4dda-af18-c059c5ab1836",
+          "type": "workflow",
+          "folder": "/Provision VPC with Networking"
+        },
+        {
+          "iid": 2,
+          "reference": "aa8a5999-215f-4078-9764-77743be42b09",
+          "type": "workflow",
+          "folder": "/Provision VPC with Networking"
+        },
+        {
+          "iid": 3,
+          "reference": "b0a2d17a-741d-49e1-8857-57d504a2276b",
+          "type": "workflow",
+          "folder": "/Destroy VPC and EC2 Instance"
+        },
+        {
+          "iid": 4,
+          "reference": "83b32605-521d-46a7-aea0-88c7cc31983d",
+          "type": "workflow",
+          "folder": "/Destroy VPC and EC2 Instance/Delete Security Groups"
+        },
+        {
+          "iid": 5,
+          "reference": "2c7b889b-e42e-49c5-bdde-164a668b553e",
+          "type": "workflow",
+          "folder": "/Provision VPC with Networking"
+        },
+        {
+          "iid": 6,
+          "reference": "d5053efa-02ec-497e-b3f3-8fc943cf4571",
+          "type": "workflow",
+          "folder": "/Provision VPC with Networking/Create VPC"
+        },
+        {
+          "iid": 7,
+          "reference": "ec7f96f5-7623-4175-8b14-f7afb70e4916",
+          "type": "workflow",
+          "folder": "/Provision VPC with Networking/Create Route"
+        },
+        {
+          "iid": 8,
+          "reference": "b00455d4-4d65-4aa9-b04c-8a3447cdeef7",
+          "type": "workflow",
+          "folder": "/Destroy VPC and EC2 Instance/Delete Subnets"
+        },
+        {
+          "iid": 9,
+          "reference": "23505533-8a79-4caf-823f-b239d5907a9c",
+          "type": "workflow",
+          "folder": "/Destroy VPC and EC2 Instance"
+        },
+        {
+          "iid": 10,
+          "reference": "a5babd02-b8da-4612-922a-af7e2f3c667f",
+          "type": "workflow",
+          "folder": "/Provision VPC with Networking"
+        },
+        {
+          "iid": 11,
+          "reference": "4d2e7e77-6144-439b-ba89-f99c1651d418",
+          "type": "workflow",
+          "folder": "/Provision VPC with Networking"
+        },
+        {
+          "iid": 12,
+          "reference": "892a0458-61fe-4c17-8f56-65303d821631",
+          "type": "workflow",
+          "folder": "/Create EC2 Instance"
+        },
+        {
+          "iid": 13,
+          "reference": "6716dafdd1a3e0115acac3a1",
+          "type": "transformation",
+          "folder": "/Create EC2 Instance"
+        },
+        {
+          "iid": 14,
+          "reference": "6716dafdd1a3e0115acac3a3",
+          "type": "transformation",
+          "folder": "/Provision VPC with Networking"
+        },
+        {
+          "iid": 15,
+          "reference": "6716dafdd1a3e0115acac3a2",
+          "type": "transformation",
+          "folder": "/Provision VPC with Networking"
+        },
+        {
+          "iid": 16,
+          "reference": "6716dafdd1a3e0115acac3a4",
+          "type": "transformation",
+          "folder": "/Destroy VPC and EC2 Instance/Delete Security Groups"
+        },
+        {
+          "iid": 17,
+          "reference": "6716dafdd1a3e0115acac3a5",
+          "type": "transformation",
+          "folder": "/Destroy VPC and EC2 Instance/Delete Subnets"
+        },
+        {
+          "iid": 18,
+          "reference": "6716dafdd1a3e0115acac3a6",
+          "type": "transformation",
+          "folder": "/Provision VPC with Networking/Create Route"
+        },
+        {
+          "iid": 19,
+          "reference": "6716dafdd1a3e0115acac3a9",
+          "type": "transformation",
+          "folder": "/Provision VPC with Networking/Create VPC"
+        },
+        {
+          "iid": 20,
+          "reference": "6716dafdd1a3e0115acac3a7",
+          "type": "transformation",
+          "folder": "/Destroy VPC and EC2 Instance"
+        },
+        {
+          "iid": 21,
+          "reference": "6716dafdd1a3e0115acac3a8",
+          "type": "transformation",
+          "folder": "/Destroy VPC and EC2 Instance"
+        },
+        {
+          "iid": 22,
+          "reference": "6716dafdd1a3e0115acac3aa",
+          "type": "transformation",
+          "folder": "/Create EC2 Instance"
+        }
+      ],
+      "created": "2024-08-27T16:44:20.189Z",
+      "createdBy": {
+        "_id": "66d76ca8732d21feb5868280",
+        "provenance": "Local AAA",
+        "username": "admin@itential"
+      },
+      "description": "",
+      "folders": [
+        {
+          "nodeType": "folder",
+          "name": "Provision VPC with Networking",
+          "children": [
+            {
+              "iid": 11,
+              "nodeType": "component"
+            },
+            {
+              "nodeType": "folder",
+              "name": "Create VPC",
+              "children": [
+                {
+                  "iid": 6,
+                  "nodeType": "component"
+                },
+                {
+                  "iid": 19,
+                  "nodeType": "component"
+                }
+              ]
+            },
+            {
+              "iid": 1,
+              "nodeType": "component"
+            },
+            {
+              "iid": 10,
+              "nodeType": "component"
+            },
+            {
+              "nodeType": "folder",
+              "name": "Create Route",
+              "children": [
+                {
+                  "iid": 7,
+                  "nodeType": "component"
+                },
+                {
+                  "iid": 18,
+                  "nodeType": "component"
+                }
+              ]
+            },
+            {
+              "iid": 15,
+              "nodeType": "component"
+            },
+            {
+              "iid": 2,
+              "nodeType": "component"
+            },
+            {
+              "iid": 14,
+              "nodeType": "component"
+            },
+            {
+              "iid": 5,
+              "nodeType": "component"
+            }
+          ]
+        },
+        {
+          "nodeType": "folder",
+          "name": "Create EC2 Instance",
+          "children": [
+            {
+              "iid": 12,
+              "nodeType": "component"
+            },
+            {
+              "iid": 13,
+              "nodeType": "component"
+            },
+            {
+              "iid": 22,
+              "nodeType": "component"
+            }
+          ]
+        },
+        {
+          "nodeType": "folder",
+          "name": "Destroy VPC and EC2 Instance",
+          "children": [
+            {
+              "iid": 3,
+              "nodeType": "component"
+            },
+            {
+              "iid": 20,
+              "nodeType": "component"
+            },
+            {
+              "iid": 21,
+              "nodeType": "component"
+            },
+            {
+              "nodeType": "folder",
+              "name": "Delete Security Groups",
+              "children": [
+                {
+                  "iid": 4,
+                  "nodeType": "component"
+                },
+                {
+                  "iid": 16,
+                  "nodeType": "component"
+                }
+              ]
+            },
+            {
+              "nodeType": "folder",
+              "name": "Delete Subnets",
+              "children": [
+                {
+                  "iid": 8,
+                  "nodeType": "component"
+                },
+                {
+                  "iid": 17,
+                  "nodeType": "component"
+                }
+              ]
+            },
+            {
+              "iid": 9,
+              "nodeType": "component"
+            }
+          ]
+        }
+      ],
+      "lastUpdated": "2024-10-21T15:38:22.844Z",
+      "lastUpdatedBy": {
+        "_id": "668c58df4f234baee4996cfb",
+        "provenance": "local_aaa",
+        "username": "admin@pronghorn"
+      },
+      "name": "AWS EC2",
+      "iid": 145,
+      "componentIidIndex": 23,
+      "members": [
+        {
+          "type": "account",
+          "reference": "668c58df4f234baee4996cfb",
+          "role": "owner"
+        }
+      ],
+      "accessControl": {
+        "manage": [
+          "account:668c58df4f234baee4996cfb"
+        ],
+        "write": [
+          "account:668c58df4f234baee4996cfb"
+        ],
+        "execute": [
+          "account:668c58df4f234baee4996cfb"
+        ],
+        "read": [
+          "account:668c58df4f234baee4996cfb"
+        ]
+      }
+    },
+    {
+      "_id": "670d6148113f9679380359dc",
+      "iid": 119,
+      "name": "Test/Project with Slash",
+      "description": "",
+      "componentIidIndex": 1,
+      "components": [
+        {
+          "iid": 0,
+          "type": "workflow",
+          "folder": "/",
+          "reference": "ea027827-f187-4984-bfc1-814bcb1e78bb"
+        }
+      ],
+      "folders": [
+        {
+          "nodeType": "component",
+          "iid": 0
+        }
+      ],
+      "members": [
+        {
+          "type": "account",
+          "reference": "668c58df4f234baee4996cfb",
+          "role": "owner"
+        }
+      ],
+      "accessControl": {
+        "manage": [
+          "account:668c58df4f234baee4996cfb"
+        ],
+        "write": [
+          "account:668c58df4f234baee4996cfb"
+        ],
+        "execute": [
+          "account:668c58df4f234baee4996cfb"
+        ],
+        "read": [
+          "account:668c58df4f234baee4996cfb"
+        ]
+      },
+      "created": "2024-10-14T18:22:00.251Z",
+      "createdBy": {
+        "_id": "668c58df4f234baee4996cfb",
+        "provenance": "local_aaa",
+        "username": "admin@pronghorn"
+      },
+      "lastUpdated": "2024-10-14T18:22:29.099Z",
+      "lastUpdatedBy": {
+        "_id": "668c58df4f234baee4996cfb",
+        "provenance": "local_aaa",
+        "username": "admin@pronghorn"
+      }
+    },
+    {
+      "_id": "66d0b71121161b4df271749b",
+      "components": [
+        {
+          "iid": 0,
+          "reference": "9b12a21a-2900-4a7c-bdc6-d7a04b0cee5b",
+          "type": "workflow",
+          "folder": "/Create Prefix"
+        },
+        {
+          "iid": 1,
+          "reference": "2fc6972e-fca6-461f-8712-a6478f8a9dbd",
+          "type": "workflow",
+          "folder": "/Delete Prefix"
+        },
+        {
+          "iid": 2,
+          "reference": "bf7f87cd-70be-4a72-afc1-a8dfe7a6ae2d",
+          "type": "workflow",
+          "folder": "/"
+        },
+        {
+          "iid": 3,
+          "reference": "edd3516d-10a9-4007-8f16-c8799ff710e5",
+          "type": "workflow",
+          "folder": "/"
+        },
+        {
+          "iid": 4,
+          "reference": "f17a2bad-b4e6-4a59-a419-92cdb2837551",
+          "type": "workflow",
+          "folder": "/Assign Next IP (in Prefix)"
+        },
+        {
+          "iid": 5,
+          "reference": "61b0ed26df69ba016dffc480",
+          "type": "transformation",
+          "folder": "/Assign Next IP (in Prefix)"
+        },
+        {
+          "iid": 6,
+          "reference": "61b0c093df69ba016dffc47f",
+          "type": "transformation",
+          "folder": "/Create Prefix"
+        },
+        {
+          "iid": 7,
+          "reference": "61b22fdadf69ba016dffc481",
+          "type": "transformation",
+          "folder": "/Delete Prefix"
+        }
+      ],
+      "created": "2024-08-29T17:59:45.726Z",
+      "createdBy": {
+        "_id": "66d76ca8732d21feb5868280",
+        "provenance": "Local AAA",
+        "username": "admin@itential"
+      },
+      "description": "",
+      "folders": [
+        {
+          "nodeType": "folder",
+          "name": "Create Prefix",
+          "children": [
+            {
+              "iid": 0,
+              "nodeType": "component"
+            },
+            {
+              "iid": 6,
+              "nodeType": "component"
+            }
+          ]
+        },
+        {
+          "nodeType": "folder",
+          "name": "Delete Prefix",
+          "children": [
+            {
+              "iid": 1,
+              "nodeType": "component"
+            },
+            {
+              "iid": 7,
+              "nodeType": "component"
+            }
+          ]
+        },
+        {
+          "iid": 2,
+          "nodeType": "component"
+        },
+        {
+          "iid": 3,
+          "nodeType": "component"
+        },
+        {
+          "nodeType": "folder",
+          "name": "Assign Next IP (in Prefix)",
+          "children": [
+            {
+              "iid": 5,
+              "nodeType": "component"
+            },
+            {
+              "iid": 4,
+              "nodeType": "component"
+            }
+          ]
+        }
+      ],
+      "lastUpdated": "2024-08-30T00:24:58.052Z",
+      "lastUpdatedBy": {
+        "_id": "66d76ca8732d21feb5868280",
+        "provenance": "Local AAA",
+        "username": "admin@itential"
+      },
+      "name": "NetBox",
+      "iid": 151,
+      "componentIidIndex": 8,
+      "members": [
+        {
+          "type": "account",
+          "reference": "668c58df4f234baee4996cfb",
+          "role": "owner"
+        }
+      ],
+      "accessControl": {
+        "manage": [
+          "account:668c58df4f234baee4996cfb"
+        ],
+        "write": [
+          "account:668c58df4f234baee4996cfb"
+        ],
+        "execute": [
+          "account:668c58df4f234baee4996cfb"
+        ],
+        "read": [
+          "account:668c58df4f234baee4996cfb"
+        ]
+      }
+    }
+  ],
+  "metadata": {
+    "skip": 0,
+    "limit": 100,
+    "total": 7,
+    "nextPageSkip": null,
+    "previousPageSkip": null
+  }
+}

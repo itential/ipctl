@@ -1,0 +1,635 @@
+{
+  "results": [
+    {
+      "metadata": {
+        "isActive": true,
+        "activeSync": true
+      },
+      "data": {
+        "loggerProps": {
+          "description": "Logging",
+          "log_max_files": 10,
+          "log_max_file_size": 10485760,
+          "log_level": "info",
+          "log_directory": "/opt/itential/logs",
+          "log_filename": "AGManager.log",
+          "console_level": "info",
+          "syslog": {
+            "level": "warning",
+            "host": "127.0.0.1",
+            "port": 514,
+            "protocol": "udp4",
+            "facility": "local0",
+            "type": "BSD",
+            "path": "",
+            "pid": "process.pid",
+            "localhost": "",
+            "app_name": "",
+            "eol": ""
+          }
+        },
+        "properties": {},
+        "model": "@itential/app-ag_manager",
+        "name": "AGManager",
+        "type": "Application",
+        "isEncrypted": true
+      }
+    },
+    {
+      "metadata": {
+        "isActive": true,
+        "activeSync": true
+      },
+      "data": {
+        "loggerProps": {
+          "description": "Logging",
+          "log_max_files": 10,
+          "log_max_file_size": 10485760,
+          "log_level": "info",
+          "log_directory": "/opt/itential/logs",
+          "log_filename": "AutomationCatalog.log",
+          "console_level": "info",
+          "syslog": {
+            "level": "warning",
+            "host": "127.0.0.1",
+            "port": 514,
+            "protocol": "udp4",
+            "facility": "local0",
+            "type": "BSD",
+            "path": "",
+            "pid": "process.pid",
+            "localhost": "",
+            "app_name": "",
+            "eol": ""
+          }
+        },
+        "properties": {},
+        "model": "@itential/app-automation_catalog",
+        "name": "AutomationCatalog",
+        "type": "Application",
+        "isEncrypted": true
+      }
+    },
+    {
+      "metadata": {
+        "isActive": true,
+        "activeSync": true
+      },
+      "data": {
+        "loggerProps": {
+          "description": "Logging",
+          "log_max_files": 10,
+          "log_max_file_size": 10485760,
+          "log_level": "info",
+          "log_directory": "/opt/itential/logs",
+          "log_filename": "AutomationStudio.log",
+          "console_level": "info",
+          "syslog": {
+            "level": "warning",
+            "host": "127.0.0.1",
+            "port": 514,
+            "protocol": "udp4",
+            "facility": "local0",
+            "type": "BSD",
+            "path": "",
+            "pid": "process.pid",
+            "localhost": "",
+            "app_name": "",
+            "eol": ""
+          }
+        },
+        "properties": {},
+        "model": "@itential/app-automation_studio",
+        "name": "AutomationStudio",
+        "type": "Application",
+        "isEncrypted": true
+      }
+    },
+    {
+      "metadata": {
+        "isActive": true,
+        "activeSync": true
+      },
+      "data": {
+        "loggerProps": {
+          "description": "Logging",
+          "log_max_files": 10,
+          "log_max_file_size": 10485760,
+          "log_level": "info",
+          "log_directory": "/opt/itential/logs",
+          "log_filename": "ConfigurationManager.log",
+          "console_level": "info",
+          "syslog": {
+            "level": "warning",
+            "host": "127.0.0.1",
+            "port": 514,
+            "protocol": "udp4",
+            "facility": "local0",
+            "type": "BSD",
+            "path": "",
+            "pid": "process.pid",
+            "localhost": "",
+            "app_name": "",
+            "eol": ""
+          }
+        },
+        "properties": {},
+        "model": "@itential/app-configuration_manager",
+        "name": "ConfigurationManager",
+        "type": "Application",
+        "isEncrypted": true
+      }
+    },
+    {
+      "metadata": {
+        "isActive": true,
+        "activeSync": true
+      },
+      "data": {
+        "loggerProps": {
+          "description": "Logging",
+          "log_max_files": 10,
+          "log_max_file_size": 10485760,
+          "log_level": "info",
+          "log_directory": "/opt/itential/logs",
+          "log_filename": "FormBuilder.log",
+          "console_level": "info",
+          "syslog": {
+            "level": "warning",
+            "host": "127.0.0.1",
+            "port": 514,
+            "protocol": "udp4",
+            "facility": "local0",
+            "type": "BSD",
+            "path": "",
+            "pid": "process.pid",
+            "localhost": "",
+            "app_name": "",
+            "eol": ""
+          }
+        },
+        "properties": {},
+        "model": "@itential/app-form_builder",
+        "name": "FormBuilder",
+        "type": "Application",
+        "isEncrypted": true
+      }
+    },
+    {
+      "metadata": {
+        "isActive": true,
+        "activeSync": true
+      },
+      "data": {
+        "loggerProps": {
+          "description": "Logging",
+          "log_max_files": 10,
+          "log_max_file_size": 10485760,
+          "log_level": "info",
+          "log_directory": "/opt/itential/logs",
+          "log_filename": "JsonForms.log",
+          "console_level": "info",
+          "syslog": {
+            "level": "warning",
+            "host": "127.0.0.1",
+            "port": 514,
+            "protocol": "udp4",
+            "facility": "local0",
+            "type": "BSD",
+            "path": "",
+            "pid": "process.pid",
+            "localhost": "",
+            "app_name": "",
+            "eol": ""
+          }
+        },
+        "properties": {},
+        "model": "@itential/app-json_forms",
+        "name": "JsonForms",
+        "type": "Application",
+        "isEncrypted": true
+      }
+    },
+    {
+      "metadata": {
+        "isActive": true,
+        "activeSync": true
+      },
+      "data": {
+        "loggerProps": {
+          "description": "Logging",
+          "log_max_files": 10,
+          "log_max_file_size": 10485760,
+          "log_level": "info",
+          "log_directory": "/opt/itential/logs",
+          "log_filename": "Jst.log",
+          "console_level": "info",
+          "syslog": {
+            "level": "warning",
+            "host": "127.0.0.1",
+            "port": 514,
+            "protocol": "udp4",
+            "facility": "local0",
+            "type": "BSD",
+            "path": "",
+            "pid": "process.pid",
+            "localhost": "",
+            "app_name": "",
+            "eol": ""
+          }
+        },
+        "properties": {},
+        "model": "@itential/app-jst",
+        "name": "Jst",
+        "type": "Application",
+        "isEncrypted": true
+      }
+    },
+    {
+      "metadata": {
+        "isActive": true,
+        "activeSync": true
+      },
+      "data": {
+        "loggerProps": {
+          "description": "Logging",
+          "log_max_files": 10,
+          "log_max_file_size": 10485760,
+          "log_level": "info",
+          "log_directory": "/opt/itential/logs",
+          "log_filename": "LifecycleManager.log",
+          "console_level": "info",
+          "syslog": {
+            "level": "warning",
+            "host": "127.0.0.1",
+            "port": 514,
+            "protocol": "udp4",
+            "facility": "local0",
+            "type": "BSD",
+            "path": "",
+            "pid": "process.pid",
+            "localhost": "",
+            "app_name": "",
+            "eol": ""
+          }
+        },
+        "properties": {},
+        "model": "@itential/app-lifecycle_manager",
+        "name": "LifecycleManager",
+        "type": "Application",
+        "isEncrypted": true
+      }
+    },
+    {
+      "metadata": {
+        "isActive": true,
+        "activeSync": true
+      },
+      "data": {
+        "loggerProps": {
+          "description": "Logging",
+          "log_max_files": 10,
+          "log_max_file_size": 10485760,
+          "log_level": "info",
+          "log_directory": "/opt/itential/logs",
+          "log_filename": "MOP.log",
+          "console_level": "info",
+          "syslog": {
+            "level": "warning",
+            "host": "127.0.0.1",
+            "port": 514,
+            "protocol": "udp4",
+            "facility": "local0",
+            "type": "BSD",
+            "path": "",
+            "pid": "process.pid",
+            "localhost": "",
+            "app_name": "",
+            "eol": ""
+          }
+        },
+        "properties": {},
+        "model": "@itential/app-mop",
+        "name": "MOP",
+        "type": "Application",
+        "isEncrypted": true
+      }
+    },
+    {
+      "metadata": {
+        "isActive": true,
+        "activeSync": true
+      },
+      "data": {
+        "loggerProps": {
+          "description": "Logging",
+          "log_max_files": 10,
+          "log_max_file_size": 10485760,
+          "log_level": "info",
+          "log_directory": "/opt/itential/logs",
+          "log_filename": "NSOManager.log",
+          "console_level": "info",
+          "syslog": {
+            "level": "warning",
+            "host": "127.0.0.1",
+            "port": 514,
+            "protocol": "udp4",
+            "facility": "local0",
+            "type": "BSD",
+            "path": "",
+            "pid": "process.pid",
+            "localhost": "",
+            "app_name": "",
+            "eol": ""
+          }
+        },
+        "properties": {},
+        "model": "@itential/app-nso_manager",
+        "name": "NSOManager",
+        "type": "Application",
+        "isEncrypted": true
+      }
+    },
+    {
+      "metadata": {
+        "isActive": true,
+        "activeSync": true
+      },
+      "data": {
+        "loggerProps": {
+          "description": "Logging",
+          "log_max_files": 10,
+          "log_max_file_size": 10485760,
+          "log_level": "info",
+          "log_directory": "/opt/itential/logs",
+          "log_filename": "OperationsManager.log",
+          "console_level": "info",
+          "syslog": {
+            "level": "warning",
+            "host": "127.0.0.1",
+            "port": 514,
+            "protocol": "udp4",
+            "facility": "local0",
+            "type": "BSD",
+            "path": "",
+            "pid": "process.pid",
+            "localhost": "",
+            "app_name": "",
+            "eol": ""
+          }
+        },
+        "properties": {},
+        "model": "@itential/app-operations_manager",
+        "name": "OperationsManager",
+        "type": "Application",
+        "isEncrypted": true
+      }
+    },
+    {
+      "metadata": {
+        "isActive": true,
+        "activeSync": true
+      },
+      "data": {
+        "loggerProps": {
+          "description": "Logging",
+          "log_max_files": 10,
+          "log_max_file_size": 10485760,
+          "log_level": "info",
+          "log_directory": "/opt/itential/logs",
+          "log_filename": "Search.log",
+          "console_level": "info",
+          "syslog": {
+            "level": "warning",
+            "host": "127.0.0.1",
+            "port": 514,
+            "protocol": "udp4",
+            "facility": "local0",
+            "type": "BSD",
+            "path": "",
+            "pid": "process.pid",
+            "localhost": "",
+            "app_name": "",
+            "eol": ""
+          }
+        },
+        "properties": {},
+        "model": "@itential/search",
+        "name": "Search",
+        "type": "Application",
+        "isEncrypted": true
+      }
+    },
+    {
+      "metadata": {
+        "isActive": true,
+        "activeSync": true
+      },
+      "data": {
+        "loggerProps": {
+          "description": "Logging",
+          "log_max_files": 10,
+          "log_max_file_size": 10485760,
+          "log_level": "info",
+          "log_directory": "/opt/itential/logs",
+          "log_filename": "ServiceCatalog.log",
+          "console_level": "info",
+          "syslog": {
+            "level": "warning",
+            "host": "127.0.0.1",
+            "port": 514,
+            "protocol": "udp4",
+            "facility": "local0",
+            "type": "BSD",
+            "path": "",
+            "pid": "process.pid",
+            "localhost": "",
+            "app_name": "",
+            "eol": ""
+          }
+        },
+        "properties": {},
+        "model": "@itential/app-service_catalog",
+        "name": "ServiceCatalog",
+        "type": "Application",
+        "isEncrypted": true
+      }
+    },
+    {
+      "metadata": {
+        "isActive": true,
+        "activeSync": true
+      },
+      "data": {
+        "loggerProps": {
+          "description": "Logging",
+          "log_max_files": 10,
+          "log_max_file_size": 10485760,
+          "log_level": "info",
+          "log_directory": "/opt/itential/logs",
+          "log_filename": "ServiceCog.log",
+          "console_level": "info",
+          "syslog": {
+            "level": "warning",
+            "host": "127.0.0.1",
+            "port": 514,
+            "protocol": "udp4",
+            "facility": "local0",
+            "type": "BSD",
+            "path": "",
+            "pid": "process.pid",
+            "localhost": "",
+            "app_name": "",
+            "eol": ""
+          }
+        },
+        "properties": {},
+        "model": "@itential/app-service_management",
+        "name": "ServiceCog",
+        "type": "Application",
+        "isEncrypted": true
+      }
+    },
+    {
+      "metadata": {
+        "isActive": true,
+        "activeSync": true
+      },
+      "data": {
+        "loggerProps": {
+          "description": "Logging",
+          "log_max_files": 10,
+          "log_max_file_size": 10485760,
+          "log_level": "info",
+          "log_directory": "/opt/itential/logs",
+          "log_filename": "Tags.log",
+          "console_level": "info",
+          "syslog": {
+            "level": "warning",
+            "host": "127.0.0.1",
+            "port": 514,
+            "protocol": "udp4",
+            "facility": "local0",
+            "type": "BSD",
+            "path": "",
+            "pid": "process.pid",
+            "localhost": "",
+            "app_name": "",
+            "eol": ""
+          }
+        },
+        "properties": {},
+        "model": "@itential/tags",
+        "name": "Tags",
+        "type": "Application",
+        "isEncrypted": true
+      }
+    },
+    {
+      "metadata": {
+        "isActive": true,
+        "activeSync": true
+      },
+      "data": {
+        "loggerProps": {
+          "description": "Logging",
+          "log_max_files": 10,
+          "log_max_file_size": 10485760,
+          "log_level": "info",
+          "log_directory": "/opt/itential/logs",
+          "log_filename": "TemplateBuilder.log",
+          "console_level": "info",
+          "syslog": {
+            "level": "warning",
+            "host": "127.0.0.1",
+            "port": 514,
+            "protocol": "udp4",
+            "facility": "local0",
+            "type": "BSD",
+            "path": "",
+            "pid": "process.pid",
+            "localhost": "",
+            "app_name": "",
+            "eol": ""
+          }
+        },
+        "properties": {},
+        "model": "@itential/app-template_builder",
+        "name": "TemplateBuilder",
+        "type": "Application",
+        "isEncrypted": true
+      }
+    },
+    {
+      "metadata": {
+        "isActive": true,
+        "activeSync": true
+      },
+      "data": {
+        "loggerProps": {
+          "description": "Logging",
+          "log_max_files": 10,
+          "log_max_file_size": 10485760,
+          "log_level": "info",
+          "log_directory": "/opt/itential/logs",
+          "log_filename": "WorkflowBuilder.log",
+          "console_level": "info",
+          "syslog": {
+            "level": "warning",
+            "host": "127.0.0.1",
+            "port": 514,
+            "protocol": "udp4",
+            "facility": "local0",
+            "type": "BSD",
+            "path": "",
+            "pid": "process.pid",
+            "localhost": "",
+            "app_name": "",
+            "eol": ""
+          }
+        },
+        "properties": {},
+        "model": "@itential/app-workflow_builder",
+        "name": "WorkflowBuilder",
+        "type": "Application",
+        "isEncrypted": true
+      }
+    },
+    {
+      "metadata": {
+        "isActive": true,
+        "activeSync": true
+      },
+      "data": {
+        "loggerProps": {
+          "description": "Logging",
+          "log_max_files": 10,
+          "log_max_file_size": 10485760,
+          "log_level": "info",
+          "log_directory": "/opt/itential/logs",
+          "log_filename": "WorkFlowEngine.log",
+          "console_level": "info",
+          "syslog": {
+            "level": "warning",
+            "host": "127.0.0.1",
+            "port": 514,
+            "protocol": "udp4",
+            "facility": "local0",
+            "type": "BSD",
+            "path": "",
+            "pid": "process.pid",
+            "localhost": "",
+            "app_name": "",
+            "eol": ""
+          }
+        },
+        "properties": {},
+        "model": "@itential/app-workflow_engine",
+        "name": "WorkFlowEngine",
+        "type": "Application",
+        "isEncrypted": true
+      }
+    }
+  ],
+  "total": 18
+}

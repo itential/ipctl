@@ -1,0 +1,34 @@
+{
+  "results": [
+    {
+      "_id": "678ec1ae6d849669c6dbe973",
+      "provenance": "local_aaa",
+      "name": "pronghorn_admin",
+      "description": "Group seeded by authenticationProps",
+      "memberOf": [],
+      "assignedRoles": [
+        {
+          "roleId": "678ec1ab6d849669c6dbe952"
+        },
+        {
+          "roleId": "678ec1ab6d849669c6dbe953"
+        },
+        {
+          "roleId": "678ec1ab6d849669c6dbe955"
+        },
+        {
+          "roleId": "678ec1ab6d849669c6dbe956"
+        },
+        {
+          "roleId": "678ec1ab6d849669c6dbe958"
+        }
+      ],
+      "inactive": false,
+      "_meta": {
+        "created": 1737408942949,
+        "updated": 1737408942949
+      }
+    }
+  ],
+  "total": 1
+}

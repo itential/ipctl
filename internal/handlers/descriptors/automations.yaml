@@ -1,0 +1,61 @@
+---
+##############################################################################
+# Reader commands
+##############################################################################
+
+get:
+  use: automations
+  group: operations-manager
+  description: |
+    Display one or more automations
+
+describe:
+  use: automation
+  group: operations-manager
+  description: |
+    Display detailed details about an automation
+
+##############################################################################
+# Writer commands
+##############################################################################
+
+create:
+  use: automation <name>
+  group: operations-manager
+  description: |
+    Create a new automation
+
+delete:
+  use: automation <name>
+  group: operations-manager
+  description: |
+    Delete an automation
+
+copy:
+  use: automation <name> <dst>
+  group: operations-manager
+  description: |
+    Copy automation to another server
+
+clear:
+  use: automations
+  group: operations-manager
+  description: |
+    Delete all configured automations
+
+##############################################################################
+# Promotoer commands
+##############################################################################
+
+import:
+  use: automation
+  group: operations-manager
+  description: |
+    Import an automation (including triggers)
+
+export:
+  use: automation
+  group: operations-manager
+  description: |
+    Export an automation (including triggers)
+

@@ -1,0 +1,12 @@
+---
+get:
+  use: accounts
+  group: admin-essentials
+  description: |
+    Display one or more accounts
+
+describe:
+  use: account <name>
+  group: admin-essentials
+  description: |
+    Display detailed information about an account

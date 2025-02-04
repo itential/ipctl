@@ -1,0 +1,19 @@
+---
+load:
+  use: load <path>
+  description: |
+    Load a dataset
+
+dump:
+  use: dump <path>
+  description: |
+    Dump a dataset
+
+    The dataset dump command will connect to the running instance of Platform
+    and dump all of the configred assests into the specified path.
+
+  example: |
+    # Dump all assets to `assets`
+    $ ipctl dump assets
+
+

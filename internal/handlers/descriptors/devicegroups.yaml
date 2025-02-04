@@ -1,0 +1,16 @@
+---
+##############################################################################
+# Reader commands
+##############################################################################
+#
+get:
+  use: device-groups
+  group: configuration-manager
+  description: |
+    Display one or more device groups
+
+describe:
+  use: device-group <name>
+  group: configuration-manager
+  description: |
+    Display details about a device group

@@ -1,0 +1,209 @@
+{
+  "results": [
+    {
+      "provenance": "AdminEssentials",
+      "path": "/admin/"
+    },
+    {
+      "provenance": "AutomationStudio",
+      "path": "/automation-studio/"
+    },
+    {
+      "provenance": "AutomationCatalog",
+      "path": "/automation_catalog/"
+    },
+    {
+      "provenance": "ConfigurationManager",
+      "path": "/configuration_manager/"
+    },
+    {
+      "provenance": "ConfigurationManager",
+      "path": "/configuration_manager/task/DiffViewer"
+    },
+    {
+      "provenance": "ConfigurationManager",
+      "path": "/configuration_manager/task/ManualRemediation"
+    },
+    {
+      "provenance": "ConfigurationManager",
+      "path": "/configuration_manager/task/ManualRemediationResults"
+    },
+    {
+      "provenance": "FormBuilder",
+      "path": "/formbuilder/dialog/about"
+    },
+    {
+      "provenance": "FormBuilder",
+      "path": "/formbuilder/dialog/confirmDeleteWorkflowGroup"
+    },
+    {
+      "provenance": "FormBuilder",
+      "path": "/formbuilder/edit"
+    },
+    {
+      "provenance": "FormBuilder",
+      "path": "/formbuilder/editWorkflowGroup"
+    },
+    {
+      "provenance": "FormBuilder",
+      "path": "/formbuilder/task/ProviderForm"
+    },
+    {
+      "provenance": "FormBuilder",
+      "path": "/formbuilder/task/ShowFormByName"
+    },
+    {
+      "provenance": "FormBuilder",
+      "path": "/formbuilder/task/ShowFormPreserveData"
+    },
+    {
+      "provenance": "JsonForms",
+      "path": "/json-forms/"
+    },
+    {
+      "provenance": "JsonForms",
+      "path": "/json-forms/task/RenderJsonSchema"
+    },
+    {
+      "provenance": "JsonForms",
+      "path": "/json-forms/task/RenderYangForm"
+    },
+    {
+      "provenance": "JsonForms",
+      "path": "/json-forms/task/ShowJsonForm"
+    },
+    {
+      "provenance": "LifecycleManager",
+      "path": "/lifecycle-manager/"
+    },
+    {
+      "provenance": "MOP",
+      "path": "/mop/analytic"
+    },
+    {
+      "provenance": "MOP",
+      "path": "/mop/task/chooseDevice"
+    },
+    {
+      "provenance": "MOP",
+      "path": "/mop/task/diffConfig"
+    },
+    {
+      "provenance": "MOP",
+      "path": "/mop/task/reloadFailed"
+    },
+    {
+      "provenance": "MOP",
+      "path": "/mop/task/reviewSummary"
+    },
+    {
+      "provenance": "MOP",
+      "path": "/mop/task/runTemplatesDiff"
+    },
+    {
+      "provenance": "MOP",
+      "path": "/mop/task/verifyConfig"
+    },
+    {
+      "provenance": "MOP",
+      "path": "/mop/task/viewTemplateResults"
+    },
+    {
+      "provenance": "MOP",
+      "path": "/mop/template"
+    },
+    {
+      "provenance": "NSOManager",
+      "path": "/nso_manager/task/addDeviceForm"
+    },
+    {
+      "provenance": "NSOManager",
+      "path": "/nso_manager/task/SetDeviceConfiguration"
+    },
+    {
+      "provenance": "OperationsManager",
+      "path": "/operations-manager/"
+    },
+    {
+      "provenance": "OperationsManager",
+      "path": "/operations-manager/task-renderer"
+    },
+    {
+      "provenance": "ServiceCatalog",
+      "path": "/service_catalog/"
+    },
+    {
+      "provenance": "ServiceCatalog",
+      "path": "/service_catalog/edit"
+    },
+    {
+      "provenance": "ServiceCatalog",
+      "path": "/service_catalog/manage"
+    },
+    {
+      "provenance": "ServiceCog",
+      "path": "/service_management/task/ViewDryRunService"
+    },
+    {
+      "provenance": "ServiceCog",
+      "path": "/service_management/task/ViewServiceModelForm"
+    },
+    {
+      "provenance": "ServiceCog",
+      "path": "/service_management/task/ViewTestService"
+    },
+    {
+      "provenance": "Jst",
+      "path": "/transformations/edit/jst"
+    },
+    {
+      "provenance": "WorkflowBuilder",
+      "path": "/workflow_builder/edit"
+    },
+    {
+      "provenance": "WorkflowBuilder",
+      "path": "/workflow_builder/task/TestTask"
+    },
+    {
+      "provenance": "WorkFlowEngine",
+      "path": "/workflow_engine/"
+    },
+    {
+      "provenance": "WorkFlowEngine",
+      "path": "/workflow_engine/job"
+    },
+    {
+      "provenance": "WorkFlowEngine",
+      "path": "/workflow_engine/jobs"
+    },
+    {
+      "provenance": "WorkFlowEngine",
+      "path": "/workflow_engine/manager"
+    },
+    {
+      "provenance": "WorkFlowEngine",
+      "path": "/workflow_engine/manual_tasks"
+    },
+    {
+      "provenance": "WorkFlowEngine",
+      "path": "/workflow_engine/task/ErrorHandling"
+    },
+    {
+      "provenance": "WorkFlowEngine",
+      "path": "/workflow_engine/task/ViewData"
+    },
+    {
+      "provenance": "WorkFlowEngine",
+      "path": "/workflow_engine/task/ViewDiff"
+    },
+    {
+      "provenance": "WorkFlowEngine",
+      "path": "/workflow_engine/task/ViewHTML"
+    },
+    {
+      "provenance": "WorkFlowEngine",
+      "path": "/workflow_engine/viewer"
+    }
+  ],
+  "total": 51
+}

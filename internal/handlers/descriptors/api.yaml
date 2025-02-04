@@ -1,0 +1,25 @@
+---
+get:
+  use: get <url>
+  description: |
+    Send a HTTP GET request
+
+delete:
+  use: delete <url>
+  description: |
+    Send a HTTP DELETE request
+
+put:
+  use: put <url>
+  description: |
+    Send a HTTP PUT request
+
+post:
+  use: post <url>
+  description: |
+    Send a HTTP POST request
+
+patch:
+  use: patch <url>
+  description: |
+    Send a HTTP PATCH request
