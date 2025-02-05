@@ -132,7 +132,7 @@ func repoCommands(h handlers.Handler, id string) []*cobra.Command {
 
 func pluginCommands(h handlers.Handler, id string) []*cobra.Command {
 	return makeGroupCommand([]GroupCommand{
-		//GroupCommand{"local-aaa", id, h.LocalAAACommands, "localaaa"},
+		GroupCommand{"local-aaa", id, h.LocalAAACommands, "localaaa"},
 		GroupCommand{"client", id, h.LocalClientCommands, "localclient"},
 	})
 }

@@ -68,12 +68,12 @@ func NewHandler(iapClient client.Client, cfg *config.Config) Handler {
 
 		NewServerHandler(iapClient, cfg, descriptors),
 
-		NewLocalAAAHandler(iapClient, cfg, descriptors),
 		NewLocalClientHandler(iapClient, cfg, descriptors),
-
-		// Dataset Handlers
-		//NewDatasetHandler(iapClient, descriptors),
 	)
+
+	if cfg.MongoUri != "" {
+		NewLocalAAAHandler(iapClient, cfg, descriptors)
+	}
 
 	return Handler{
 		Runtime: &Runtime{
@@ -275,13 +275,16 @@ func (h Handler) PullCommands() []*cobra.Command {
 //////////////////////////////////////////////////////////////////
 
 func (h Handler) LocalAAACommands() []*cobra.Command {
-	handler := NewLocalAAAHandler(h.Client, h.Config, h.Descriptors)
-	var commands = []*cobra.Command{
-		handler.Get(h.Runtime),
-		handler.Create(h.Runtime),
-		handler.Delete(h.Runtime),
+	if h.Config.MongoUri != "" {
+		handler := NewLocalAAAHandler(h.Client, h.Config, h.Descriptors)
+		logger.Info("adding LocalAAA commands")
+		return []*cobra.Command{
+			handler.Get(h.Runtime),
+			handler.Create(h.Runtime),
+			handler.Delete(h.Runtime),
+		}
 	}
-	return commands
+	return nil
 }
 
 func (h Handler) LocalClientCommands() []*cobra.Command {
