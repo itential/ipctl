@@ -275,7 +275,7 @@ func (r *RoleRunner) Import(in Request) (*Response, error) {
 		return nil, err
 	}
 
-	if common.Force {
+	if common.Replace {
 		existing, err := GetByName(r.service, role.Name)
 		if err != nil {
 			return nil, err

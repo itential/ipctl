@@ -250,7 +250,7 @@ func (r *PrebuiltRunner) Import(in Request) (*Response, error) {
 	var pkg services.PrebuiltPackage
 	utils.UnmarshalData(data, &pkg)
 
-	if !common.Force {
+	if !common.Replace {
 		if err := r.validatePackage(pkg); err != nil {
 			return nil, err
 		}
@@ -259,7 +259,7 @@ func (r *PrebuiltRunner) Import(in Request) (*Response, error) {
 	var prebuilt map[string]interface{}
 	utils.UnmarshalData(data, &prebuilt)
 
-	imported, err := r.service.ImportRaw(prebuilt, common.Force)
+	imported, err := r.service.ImportRaw(prebuilt, common.Replace)
 	if err != nil {
 		return nil, err
 	}

@@ -291,7 +291,7 @@ func (r *WorkflowRunner) Import(in Request) (*Response, error) {
 	var workflow services.Workflow
 	utils.UnmarshalData(data, &workflow)
 
-	if err := r.importWorkflow(workflow, common.Force); err != nil {
+	if err := r.importWorkflow(workflow, common.Replace); err != nil {
 		return nil, err
 	}
 
