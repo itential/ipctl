@@ -317,7 +317,7 @@ func (r *ProjectRunner) Import(in Request) (*Response, error) {
 
 	for _, ele := range projects {
 		if ele.Name == project.Name {
-			if common.Force {
+			if common.Replace {
 				r.service.Delete(ele.Id)
 			} else {
 				return nil, errors.New(fmt.Sprintf("project `%s` already exists", project.Name))

@@ -100,6 +100,40 @@ type ManualTrigger struct {
 	MigrationVersion int                    `json:"migrationVersion"`
 }
 
+func (t ManualTrigger) MarshalJSON() ([]byte, error) {
+	res := map[string]interface{}{
+		"_id":              t.Id,
+		"name":             t.Name,
+		"description":      t.Description,
+		"type":             t.Type,
+		"enabled":          t.Enabled,
+		"actionType":       t.ActionType,
+		"actionId":         t.ActionId,
+		"created":          t.Created,
+		"createdBy":        t.CreatedBy,
+		"lastUpdated":      t.LastUpdated,
+		"lastUpdatedBy":    t.LastUpdatedBy,
+		"legacyWrapper":    t.LegacyWrapper,
+		"migrationVersion": t.MigrationVersion,
+		"formData":         t.FormData,
+		"formSchemaHash":   t.FormSchemaHash,
+	}
+
+	if t.FormId == "" {
+		res["formId"] = nil
+	} else {
+		res["formId"] = t.FormId
+	}
+
+	if t.FormSchemaHash == "" {
+		res["formScheamHash"] = nil
+	} else {
+		res["formScheamHash"] = t.FormSchemaHash
+	}
+
+	return json.Marshal(res)
+}
+
 type TriggerService struct {
 	client *ServiceClient
 }

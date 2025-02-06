@@ -235,7 +235,7 @@ func (r *JsonFormRunner) Import(in Request) (*Response, error) {
 	var jsonform services.JsonForm
 	utils.UnmarshalData(data, &jsonform)
 
-	if err := r.importJsonForm(jsonform, common.Force); err != nil {
+	if err := r.importJsonForm(jsonform, common.Replace); err != nil {
 		return nil, err
 	}
 

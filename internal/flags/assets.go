@@ -9,12 +9,10 @@ import (
 )
 
 type AssetImportCommon struct {
-	Force   bool
 	Replace bool
 }
 
 func (o *AssetImportCommon) Flags(cmd *cobra.Command) {
-	cmd.Flags().BoolVar(&o.Force, "force", o.Force, "Force overwriting existing assets")
 	cmd.Flags().BoolVar(&o.Replace, "replace", o.Replace, "Replace an existing asset (if it exists)")
 }
 
