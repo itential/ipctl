@@ -234,10 +234,6 @@ func (r *AutomationRunner) Import(in Request) (*Response, error) {
 	var data map[string]interface{}
 	utils.UnmarshalData(content, &data)
 
-	if r.Exists(data["name"].(string)) {
-		return nil, errors.New(fmt.Sprintf("automation `%s` already exists", data["name"].(string)))
-	}
-
 	var automation services.Automation
 
 	if err := json.Unmarshal(content, &automation); err != nil {
@@ -374,6 +370,23 @@ func (r *AutomationRunner) Import(in Request) (*Response, error) {
 	}
 
 	automation.Triggers = triggers
+
+	existing, err := r.service.GetByName(automation.Name)
+	if existing != nil {
+		if common.Replace {
+			if err := r.service.Delete(existing.Id); err != nil {
+				return nil, err
+			}
+		} else {
+			return nil, errors.New(fmt.Sprintf("automation `%s` already exists", data["name"].(string)))
+		}
+
+	}
+	if err != nil {
+		if err.Error() != "automation not found" {
+			return nil, err
+		}
+	}
 
 	res, err := r.service.Import(&automation)
 	if err != nil {
