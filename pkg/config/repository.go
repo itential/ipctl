@@ -17,6 +17,8 @@ type Repository struct {
 	PrivateKey     string `json:"private_key"`
 	PrivateKeyFile string `json:"private_key_file"`
 	Reference      string `json:"reference"`
+	Name           string `json:"name"`
+	Email          string `json:"email"`
 }
 
 func getRepositoryFields() []string {
@@ -62,6 +64,10 @@ func loadRepository(values, overrides map[string]interface{}) *Repository {
 			r.PrivateKeyFile = privateKeyFile
 		case "reference":
 			r.Reference = v
+		case "name":
+			r.Name = v
+		case "email":
+			r.Email = v
 		}
 	}
 

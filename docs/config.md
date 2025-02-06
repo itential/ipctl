@@ -157,9 +157,15 @@ The default value for `password` is `admin`
 
 #### reference
 
+#### name
+
+#### email
+
 ### Mongo Settings
 
 #### url
+
+
 
 
 

@@ -19,6 +19,8 @@ type Repository struct {
 	Url            string
 	PrivateKeyFile string
 	Reference      string
+	Name           string
+	Email          string
 }
 
 func GetRepository(name string, config *config.Config) (*Repository, error) {
@@ -31,6 +33,8 @@ func GetRepository(name string, config *config.Config) (*Repository, error) {
 		Url:            repo.Url,
 		PrivateKeyFile: repo.PrivateKeyFile,
 		Reference:      repo.Reference,
+		Name:           repo.Name,
+		Email:          repo.Email,
 	}, nil
 }
 
@@ -81,8 +85,8 @@ func CommitAndPushRepo(in *Repository, path, msg string) error {
 	if !status.IsClean() {
 		commit, err := w.Commit(msg, &git.CommitOptions{
 			Author: &object.Signature{
-				Name:  "ipctl",
-				Email: "ipctl@localhost",
+				Name:  in.Name,
+				Email: in.Email,
 				When:  time.Now(),
 			},
 		})
