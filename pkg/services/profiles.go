@@ -5,7 +5,6 @@
 package services
 
 import (
-	"encoding/json"
 	"fmt"
 	"net/http"
 
@@ -182,34 +181,13 @@ func (svc *ProfileService) Import(in Profile) (*Profile, error) {
 	return res.Data, nil
 }
 
-func (svc *ProfileService) ExportAsset(id string) (map[string]interface{}, error) {
-	logger.Trace()
-
-	res, err := svc.Export(id)
-	if err != nil {
-		return nil, err
-	}
-
-	b, err := json.Marshal(res)
-	if err != nil {
-		return nil, err
-	}
-
-	var m map[string]interface{}
-	if err := json.Unmarshal(b, &m); err != nil {
-		return nil, err
-	}
-
-	return m, nil
-}
-
 func (svc *ProfileService) Export(name string) (*Profile, error) {
 	logger.Trace()
 
 	var res Profile
 	var uri = fmt.Sprintf("/profiles/%s/export", name)
 
-	if err := svc.client.Put(uri, nil, &res); err != nil {
+	if err := svc.client.Get(uri, &res); err != nil {
 		return nil, err
 	}
 

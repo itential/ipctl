@@ -224,7 +224,8 @@ func (r *ProfileRunner) Push(in Request) (*Response, error) {
 	var common flags.AssetPushCommon
 	utils.LoadObject(in.Common, &common)
 
-	res, err := r.service.Export(in.Args[0])
+	//res, err := r.service.Export(in.Args[0])
+	res, err := r.service.Get(in.Args[0])
 	if err != nil {
 		return nil, err
 	}
