@@ -166,3 +166,74 @@ func (r *GroupRunner) GetByName(name string) (*services.Group, error) {
 
 	return nil, errors.New(fmt.Sprintf("group with name `%s` does not exist", name))
 }
+
+func (r *GroupRunner) Export(in Request) (*Response, error) {
+	logger.Trace()
+
+	name := in.Args[0]
+
+	var common flags.AssetExportCommon
+	utils.LoadObject(in.Common, &common)
+
+	res, err := r.service.GetByName(name)
+	if err != nil {
+		return nil, err
+	}
+
+	fn := fmt.Sprintf("%s.group.json", name)
+
+	if err := utils.WriteJsonToDisk(res, fn, common.Path); err != nil {
+		return nil, err
+	}
+
+	return NewResponse(
+		fmt.Sprintf("Successfully exported group `%s` to `%s`", res.Name, fn),
+	), nil
+
+	return NewResponse(
+		"",
+		WithJson(res),
+	), nil
+}
+
+func (r *GroupRunner) Import(in Request) (*Response, error) {
+	logger.Trace()
+
+	var common flags.AssetImportCommon
+	utils.LoadObject(in.Common, &common)
+
+	var group services.Group
+
+	if err := importFile(in, &group); err != nil {
+		return nil, err
+	}
+
+	existing, err := r.service.GetByName(group.Name)
+
+	if err != nil {
+		if err.Error() != "group does not exist" {
+			return nil, err
+		}
+	}
+
+	if existing != nil {
+		if common.Replace {
+			if err := r.service.Delete(existing.Id); err != nil {
+				return nil, err
+			}
+		} else {
+			return nil, errors.New(
+				fmt.Sprintf("group `%` already exists, use --replace to overwrite it"),
+			)
+		}
+	}
+
+	_, err = r.service.Create(group)
+	if err != nil {
+		return nil, err
+	}
+
+	return NewResponse(
+		fmt.Sprintf("Successfully imported group `%s`", group.Name),
+	), nil
+}
