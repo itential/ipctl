@@ -38,3 +38,15 @@ clear:
   group: admin-essentials
   description: |
     Delete all local groups
+
+export:
+  use: group <name>
+  group: admin-essentials
+  description: |
+    Export a group
+
+import:
+  use: group <name>
+  group: admin-essentials
+  description: |
+    Import a group

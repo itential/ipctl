@@ -136,6 +136,15 @@ func (svc *GroupService) GetByName(name string) (*Group, error) {
 func (svc *GroupService) Create(in Group) (*Group, error) {
 	logger.Trace()
 
+	body := map[string]interface{}{
+		"name":          in.Name,
+		"description":   in.Description,
+		"provenance":    in.Provenance,
+		"assignedRoles": in.AssignedRoles,
+		"inactive":      in.Inactive,
+		"memberOf":      in.MemberOf,
+	}
+
 	type Response struct {
 		Status  string `json:"status"`
 		Message string `json:"message"`
@@ -146,7 +155,7 @@ func (svc *GroupService) Create(in Group) (*Group, error) {
 
 	if err := svc.client.PostRequest(&Request{
 		uri:                "/authorization/groups",
-		body:               map[string]interface{}{"group": in},
+		body:               map[string]interface{}{"group": body},
 		expectedStatusCode: http.StatusOK,
 	}, &res); err != nil {
 		return nil, err
