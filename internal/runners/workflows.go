@@ -7,7 +7,6 @@ package runners
 import (
 	"errors"
 	"fmt"
-	"os"
 	"strings"
 
 	"github.com/itential/ipctl/internal/flags"
@@ -278,18 +277,10 @@ func (r *WorkflowRunner) Import(in Request) (*Response, error) {
 	var common flags.AssetImportCommon
 	utils.LoadObject(in.Common, &common)
 
-	path, err := NormalizePath(in)
-	if err != nil {
-		return nil, err
-	}
-
-	data, err := os.ReadFile(path)
-	if err != nil {
-		return nil, err
-	}
-
 	var workflow services.Workflow
-	utils.UnmarshalData(data, &workflow)
+	if err := importFile(in, &workflow); err != nil {
+		return nil, err
+	}
 
 	if err := r.importWorkflow(workflow, common.Replace); err != nil {
 		return nil, err
