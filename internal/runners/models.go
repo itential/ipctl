@@ -176,27 +176,13 @@ func (r *ModelRunner) Clear(in Request) (*Response, error) {
 func (r *ModelRunner) Copy(in Request) (*Response, error) {
 	logger.Trace()
 
-	name := in.Args[0]
-
-	var common *flags.AssetCopyCommon
-	utils.LoadObject(in.Common, &common)
-
-	if common.From == common.To {
-		return nil, errors.New("source and destination servers must be different values")
-	}
-
-	src, err := r.CopyFrom(common.From, name)
-	if err != nil {
-		return nil, err
-	}
-
-	_, err = r.CopyTo(common.To, *src)
+	res, err := Copy(CopyRequest{Request: in, Type: "model"}, r)
 	if err != nil {
 		return nil, err
 	}
 
 	return NewResponse(
-		fmt.Sprintf("Successfully copied model `%s` from `%s` to `%s`", name, common.From, common.To),
+		fmt.Sprintf("Successfully copied model `%s` from `%s` to `%s`", res.Name, res.From, res.To),
 	), nil
 }
 
@@ -285,7 +271,7 @@ func (r *ModelRunner) importModel(in services.Model, replace bool) error {
 	return nil
 }
 
-func (r *ModelRunner) CopyFrom(profile, name string) (*services.Model, error) {
+func (r *ModelRunner) CopyFrom(profile, name string) (any, error) {
 	logger.Trace()
 
 	client, cancel, err := NewClient(profile, r.config)
@@ -296,15 +282,20 @@ func (r *ModelRunner) CopyFrom(profile, name string) (*services.Model, error) {
 
 	svc := services.NewModelService(client)
 
-	res, err := svc.GetByName(name)
+	p, err := svc.GetByName(name)
 	if err != nil {
 		return nil, err
 	}
 
-	return svc.Export(res.Id)
+	res, err := svc.Export(p.Id)
+	if err != nil {
+		return nil, err
+	}
+
+	return *res, err
 }
 
-func (r *ModelRunner) CopyTo(profile string, in services.Model) (*services.Model, error) {
+func (r *ModelRunner) CopyTo(profile string, in any, replace bool) (any, error) {
 	logger.Trace()
 
 	client, cancel, err := NewClient(profile, r.config)
@@ -315,11 +306,23 @@ func (r *ModelRunner) CopyTo(profile string, in services.Model) (*services.Model
 
 	svc := services.NewModelService(client)
 
-	if _, err := svc.GetByName(in.Name); err != nil {
-		if err.Error() != "model not found" {
-			return nil, errors.New(fmt.Sprintf("model `%s` already exists on the destination server", in.Name))
+	name := in.(services.Model).Name
+
+	if exists, err := svc.GetByName(name); exists != nil {
+		if !replace {
+			return nil, errors.New(fmt.Sprintf("model `%s` exists on the destination server, use --replace to overwrite", name))
+		} else if err != nil {
+			return nil, err
+		}
+		if err := svc.Delete(name); err != nil {
+			return nil, err
 		}
 	}
 
-	return svc.Import(in)
+	res, err := svc.Import(in.(services.Model))
+	if err != nil {
+		return nil, err
+	}
+
+	return res, nil
 }
