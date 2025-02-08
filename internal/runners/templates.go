@@ -28,6 +28,10 @@ func NewTemplateRunner(c client.Client, cfg *config.Config) *TemplateRunner {
 	}
 }
 
+//////////////////////////////////////////////////////////////////////////////
+// Reader Interface
+//
+
 // Get implements the `get command-templates` command
 func (r *TemplateRunner) Get(in Request) (*Response, error) {
 	logger.Trace()
@@ -73,6 +77,10 @@ func (r *TemplateRunner) Describe(in Request) (*Response, error) {
 		WithJson(template),
 	), nil
 }
+
+//////////////////////////////////////////////////////////////////////////////
+// Writer Interface
+//
 
 // Create implements the `create template ...` command
 func (r *TemplateRunner) Create(in Request) (*Response, error) {
@@ -147,6 +155,10 @@ func (r *TemplateRunner) Clear(in Request) (*Response, error) {
 	return NewResponse(fmt.Sprintf("Deleted %v template(s)", len(elements))), nil
 }
 
+//////////////////////////////////////////////////////////////////////////////
+// Copier Interface
+//
+
 func (r *TemplateRunner) Copy(in Request) (*Response, error) {
 	logger.Trace()
 
@@ -158,54 +170,6 @@ func (r *TemplateRunner) Copy(in Request) (*Response, error) {
 	return NewResponse(
 		fmt.Sprintf("Successfully copied template `%s` from `%s` to `%s`", res.Name, res.From, res.To),
 	), nil
-}
-
-func (r *TemplateRunner) Import(in Request) (*Response, error) {
-	logger.Trace()
-
-	var template services.Template
-	if err := ReadImportFromFile(in, &template); err != nil {
-		return nil, err
-	}
-
-	res, err := r.service.Import(template)
-	if err != nil {
-		return nil, err
-	}
-
-	return NewResponse(
-		fmt.Sprintf("Successfully imported command template `%s`", res.Name),
-	), nil
-}
-
-func (r *TemplateRunner) Export(in Request) (*Response, error) {
-	logger.Trace()
-
-	name := in.Args[0]
-
-	var common flags.AssetExportCommon
-	utils.LoadObject(in.Common, &common)
-
-	res, err := r.service.GetByName(name)
-	if err != nil {
-		return nil, err
-	}
-
-	exported, err := r.service.Export(res.Id)
-	if err != nil {
-		return nil, err
-	}
-
-	fn := fmt.Sprintf("%s.template.json", exported.Name)
-
-	if err := utils.WriteJsonToDisk(exported, fn, common.Path); err != nil {
-		return nil, err
-	}
-
-	return NewResponse(
-		fmt.Sprintf("Successfully exported template `%s`", exported.Name),
-	), nil
-
 }
 
 func (r *TemplateRunner) CopyFrom(profile, name string) (any, error) {
@@ -256,5 +220,61 @@ func (r *TemplateRunner) CopyTo(profile string, in any, replace bool) (any, erro
 	}
 
 	return res, nil
+
+}
+
+//////////////////////////////////////////////////////////////////////////////
+// Importer Interface
+//
+
+func (r *TemplateRunner) Import(in Request) (*Response, error) {
+	logger.Trace()
+
+	var template services.Template
+	if err := ReadImportFromFile(in, &template); err != nil {
+		return nil, err
+	}
+
+	res, err := r.service.Import(template)
+	if err != nil {
+		return nil, err
+	}
+
+	return NewResponse(
+		fmt.Sprintf("Successfully imported command template `%s`", res.Name),
+	), nil
+}
+
+//////////////////////////////////////////////////////////////////////////////
+// Exporter Interface
+//
+
+func (r *TemplateRunner) Export(in Request) (*Response, error) {
+	logger.Trace()
+
+	name := in.Args[0]
+
+	var common flags.AssetExportCommon
+	utils.LoadObject(in.Common, &common)
+
+	res, err := r.service.GetByName(name)
+	if err != nil {
+		return nil, err
+	}
+
+	exported, err := r.service.Export(res.Id)
+	if err != nil {
+		return nil, err
+	}
+
+	fn := fmt.Sprintf("%s.template.json", exported.Name)
+
+	if err := utils.WriteJsonToDisk(exported, fn, common.Path); err != nil {
+		return nil, err
+	}
+
+	return NewResponse(
+		fmt.Sprintf("Successfully exported template `%s`", exported.Name),
+	), nil
 
 }
