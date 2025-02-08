@@ -40,6 +40,7 @@ type AssetHandler struct {
 	Runner       runners.Runner
 	isReader     bool
 	isWriter     bool
+	isCopier     bool
 	isEditor     bool
 	isImporter   bool
 	isExporter   bool
@@ -63,6 +64,7 @@ func NewAssetHandler(r runners.Runner, dm DescriptorMap, flags *AssetHandlerFlag
 
 	assetHandler.isReader = implements(r, (*runners.Reader)(nil))
 	assetHandler.isWriter = implements(r, (*runners.Writer)(nil))
+	assetHandler.isCopier = implements(r, (*runners.Copier)(nil))
 	assetHandler.isEditor = implements(r, (*runners.Editor)(nil))
 	assetHandler.isImporter = implements(r, (*runners.Importer)(nil))
 	assetHandler.isExporter = implements(r, (*runners.Exporter)(nil))
@@ -148,9 +150,9 @@ func (h AssetHandler) Delete(runtime *Runtime) *cobra.Command {
 
 func (h AssetHandler) Copy(runtime *Runtime) *cobra.Command {
 	var cmd *cobra.Command
-	if h.isWriter {
+	if h.isCopier {
 		common := &flags.AssetCopyCommon{}
-		cmd = h.newCommand("copy", runtime, h.Runner.(runners.Writer).Copy, common)
+		cmd = h.newCommand("copy", runtime, h.Runner.(runners.Copier).Copy, common)
 		if cmd != nil {
 			cmd.Args = cobra.ExactArgs(1)
 			common.Flags(cmd)

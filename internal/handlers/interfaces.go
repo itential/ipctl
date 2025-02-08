@@ -16,8 +16,11 @@ type Reader interface {
 type Writer interface {
 	Create(*Runtime) *cobra.Command
 	Delete(*Runtime) *cobra.Command
-	Copy(*Runtime) *cobra.Command
 	Clear(*Runtime) *cobra.Command
+}
+
+type Copier interface {
+	Copy(*Runtime) *cobra.Command
 }
 
 type Editor interface {

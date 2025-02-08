@@ -38,6 +38,17 @@ func Writers() []Writer {
 	return resources
 }
 
+func Copiers() []Copier {
+	resource := reflect.TypeOf((*Copier)(nil)).Elem()
+	var resources []Copier
+	for _, ele := range registry {
+		if reflect.TypeOf(ele).Implements(resource) {
+			resources = append(resources, ele.(Copier))
+		}
+	}
+	return resources
+}
+
 func Editors() []Editor {
 	resource := reflect.TypeOf((*Editor)(nil)).Elem()
 	var resources []Editor
