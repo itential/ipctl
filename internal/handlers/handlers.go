@@ -139,7 +139,7 @@ func (h Handler) DeleteCommands() []*cobra.Command {
 
 func (h Handler) CopyCommands() []*cobra.Command {
 	var commands []*cobra.Command
-	for _, ele := range Writers() {
+	for _, ele := range Copiers() {
 		cmd := ele.Copy(h.Runtime)
 		if cmd != nil {
 			commands = append(commands, cmd)
