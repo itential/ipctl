@@ -25,6 +25,7 @@ type TransformationRunner struct {
 func NewTransformationRunner(c client.Client, cfg *config.Config) *TransformationRunner {
 	return &TransformationRunner{
 		service: services.NewTransformationService(c),
+		config:  cfg,
 	}
 }
 
@@ -114,25 +115,16 @@ func (r *TransformationRunner) Delete(in Request) (*Response, error) {
 
 	name := in.Args[0]
 
-	elements, err := r.service.GetAll()
+	res, err := r.service.GetByName(name)
 	if err != nil {
 		return nil, err
 	}
 
-	var trans *services.Transformation
-
-	for _, ele := range elements {
-		if ele.Name == name {
-			trans = &ele
-			break
-		}
-	}
-
-	if trans == nil {
+	if res == nil {
 		return nil, errors.New(fmt.Sprintf("transformation not found"))
 	}
 
-	if err := r.service.Delete(trans.Id); err != nil {
+	if err := r.service.Delete(res.Id); err != nil {
 		return nil, err
 	}
 
@@ -163,7 +155,65 @@ func (r *TransformationRunner) Clear(in Request) (*Response, error) {
 
 func (r *TransformationRunner) Copy(in Request) (*Response, error) {
 	logger.Trace()
-	return NotImplemented(in)
+
+	res, err := Copy(CopyRequest{Request: in, Type: "transformation"}, r)
+	if err != nil {
+		return nil, err
+	}
+
+	return NewResponse(
+		fmt.Sprintf("Successfully copied transformation `%s` from `%s` to `%s`", res.Name, res.From, res.To),
+	), nil
+
+}
+
+func (r *TransformationRunner) CopyFrom(profile, name string) (any, error) {
+	logger.Trace()
+
+	client, cancel, err := NewClient(profile, r.config)
+	if err != nil {
+		return nil, err
+	}
+	defer cancel()
+
+	res, err := services.NewTransformationService(client).GetByName(name)
+	if err != nil {
+		return nil, err
+	}
+
+	return *res, err
+}
+
+func (r *TransformationRunner) CopyTo(profile string, in any, replace bool) (any, error) {
+	logger.Trace()
+
+	client, cancel, err := NewClient(profile, r.config)
+	if err != nil {
+		return nil, err
+	}
+	defer cancel()
+
+	svc := services.NewTransformationService(client)
+
+	name := in.(services.Transformation).Name
+
+	if exists, err := svc.GetByName(name); exists != nil {
+		if !replace {
+			return nil, errors.New(fmt.Sprintf("transformation `%s` exists on the destination server, use --replace to overwrite", name))
+		} else if err != nil {
+			return nil, err
+		}
+		if err := svc.Delete(name); err != nil {
+			return nil, err
+		}
+	}
+
+	res, err := svc.Import(in.(services.Transformation))
+	if err != nil {
+		return nil, err
+	}
+
+	return res, nil
 }
 
 func (r *TransformationRunner) importTransformation(in services.Transformation, replace bool) error {
