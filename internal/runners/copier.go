@@ -43,6 +43,9 @@ func Copy(in CopyRequest, r Copier) (*CopyResponse, error) {
 	}
 
 	_, err = r.CopyTo(common.To, src, common.Replace)
+	if err != nil {
+		return nil, err
+	}
 
 	return &CopyResponse{
 		Name: name,
