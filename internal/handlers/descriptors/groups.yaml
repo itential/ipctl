@@ -50,3 +50,16 @@ import:
   group: admin-essentials
   description: |
     Import a group
+
+push:
+  use: group <name> <repository>
+  group: admin-essentials
+  description: |
+    Push a group to a repository
+
+pull:
+  use: group <filename> <repository>
+  group: admin-essentials
+  description: |
+    Pull a group from a repository
+

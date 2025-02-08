@@ -24,6 +24,7 @@ type GroupRunner struct {
 func NewGroupRunner(c client.Client, cfg *config.Config) *GroupRunner {
 	return &GroupRunner{
 		service: services.NewGroupService(c),
+		config:  cfg,
 	}
 }
 
@@ -196,6 +197,35 @@ func (r *GroupRunner) Export(in Request) (*Response, error) {
 	), nil
 }
 
+func (r *GroupRunner) importGroup(in services.Group, replace bool) error {
+	logger.Trace()
+
+	existing, err := r.service.GetByName(in.Name)
+
+	if err != nil {
+		if err.Error() != "group does not exist" {
+			return err
+		}
+	}
+
+	if existing != nil {
+		if replace {
+			if err := r.service.Delete(existing.Id); err != nil {
+				return err
+			}
+		} else {
+			return errors.New(
+				fmt.Sprintf("group `%` already exists, use --replace to overwrite it", in.Name),
+			)
+		}
+	}
+
+	_, err = r.service.Create(in)
+
+	return err
+
+}
+
 func (r *GroupRunner) Import(in Request) (*Response, error) {
 	logger.Trace()
 
@@ -208,32 +238,71 @@ func (r *GroupRunner) Import(in Request) (*Response, error) {
 		return nil, err
 	}
 
-	existing, err := r.service.GetByName(group.Name)
-
-	if err != nil {
-		if err.Error() != "group does not exist" {
-			return nil, err
-		}
-	}
-
-	if existing != nil {
-		if common.Replace {
-			if err := r.service.Delete(existing.Id); err != nil {
-				return nil, err
-			}
-		} else {
-			return nil, errors.New(
-				fmt.Sprintf("group `%` already exists, use --replace to overwrite it"),
-			)
-		}
-	}
-
-	_, err = r.service.Create(group)
-	if err != nil {
+	if err := r.importGroup(group, common.Replace); err != nil {
 		return nil, err
 	}
 
 	return NewResponse(
 		fmt.Sprintf("Successfully imported group `%s`", group.Name),
+	), nil
+}
+
+// Pull implements the command `pull profile <repo>`
+func (r *GroupRunner) Pull(in Request) (*Response, error) {
+	logger.Trace()
+
+	var common flags.AssetPullCommon
+	utils.LoadObject(in.Common, &common)
+
+	pull := PullAction{
+		Name:     in.Args[1],
+		Filename: in.Args[0],
+		Config:   r.config,
+		Options:  common,
+	}
+
+	data, err := pull.Do()
+	if err != nil {
+		return nil, err
+	}
+
+	var group services.Group
+	utils.UnmarshalData(data, &group)
+
+	if err := r.importGroup(group, common.Replace); err != nil {
+		return nil, err
+	}
+
+	return NewResponse(
+		fmt.Sprintf("Successfully pulled group `%s`", group.Name),
+	), nil
+}
+
+// Push implements the command `push profile <repo>`
+func (r *GroupRunner) Push(in Request) (*Response, error) {
+	logger.Trace()
+
+	var common flags.AssetPushCommon
+	utils.LoadObject(in.Common, &common)
+
+	res, err := r.service.GetByName(in.Args[0])
+	if err != nil {
+		return nil, err
+	}
+
+	push := PushAction{
+		Name:     in.Args[1],
+		Filename: fmt.Sprintf("%s.group.json", in.Args[0]),
+		Options:  common,
+		Config:   r.config,
+		Data:     res,
+	}
+
+	if err := push.Do(); err != nil {
+		return nil, err
+	}
+
+	return NewResponse(
+		fmt.Sprintf("Successfully pushed group `%s` to `%s`", in.Args[0], in.Args[1]),
 	), nil
 }
