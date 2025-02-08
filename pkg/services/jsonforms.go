@@ -26,6 +26,7 @@ type JsonForm struct {
 	CreatedBy        string                 `json:"createdBy"`
 	LastUpdated      string                 `json:"lastUpdated"`
 	LastUpdatedBy    string                 `json:"lastUpdatedBy"`
+	Version          string                 `json:"version"`
 }
 
 type JsonFormService struct {
@@ -186,6 +187,8 @@ func (svc *JsonFormService) Clear() error {
 	return nil
 }
 
+// Import will call the Itential Platform import API and import the specified
+// JSON Form to the server.
 func (svc *JsonFormService) Import(in JsonForm) error {
 	logger.Trace()
 

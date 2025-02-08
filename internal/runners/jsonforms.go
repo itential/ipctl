@@ -30,6 +30,10 @@ func NewJsonFormRunner(c client.Client, cfg *config.Config) *JsonFormRunner {
 	}
 }
 
+//////////////////////////////////////////////////////////////////////////////
+// Reader Interface
+//
+
 // Get implements the `get json_forms` command
 func (r *JsonFormRunner) Get(in Request) (*Response, error) {
 	logger.Trace()
@@ -75,6 +79,10 @@ func (r *JsonFormRunner) Describe(in Request) (*Response, error) {
 		WithJson(json_form),
 	), nil
 }
+
+//////////////////////////////////////////////////////////////////////////////
+// Writer Interface
+//
 
 // Create implements the `create jsonform <name>` command
 func (r *JsonFormRunner) Create(in Request) (*Response, error) {
@@ -165,55 +173,70 @@ func (r *JsonFormRunner) Clear(in Request) (*Response, error) {
 	return NewResponse(fmt.Sprintf("Deleted %v jsonform(s)", len(ids))), nil
 }
 
+//////////////////////////////////////////////////////////////////////////////
+// Copier Interface
+//
+
 // Copy implements the `copy jsonform <name>` command
 func (r *JsonFormRunner) Copy(in Request) (*Response, error) {
 	logger.Trace()
 
-	name := in.Args[0]
-
-	var common *flags.AssetCopyCommon
-	utils.LoadObject(in.Common, &common)
-
-	if common.From == common.To {
-		return nil, errors.New("source and destination servers must be different values")
-	}
-
-	fromClient, cancel, err := NewClient(common.From, r.config)
-	if err != nil {
-		return nil, err
-	}
-	defer cancel()
-
-	fromService := services.NewJsonFormService(fromClient)
-
-	jf, err := fromService.GetByName(name)
-	if err != nil {
-		return nil, err
-	}
-
-	toClient, cancel, err := NewClient(common.To, r.config)
-	if err != nil {
-		return nil, err
-	}
-	defer cancel()
-
-	toService := services.NewJsonFormService(toClient)
-
-	if _, err := toService.GetByName(name); err != nil {
-		if err.Error() != "jsonform not found" {
-			return nil, errors.New(fmt.Sprintf("jsonform `%s` already exists on the destination server", name))
-		}
-	}
-
-	_, err = toService.Create(*jf)
+	res, err := Copy(CopyRequest{Request: in, Type: "jsonform"}, r)
 	if err != nil {
 		return nil, err
 	}
 
 	return NewResponse(
-		fmt.Sprintf("Successfully copied jsonform `%s` from `%s` to `%s`", name, common.From, common.To),
+		fmt.Sprintf("Successfully copied jsonform `%s` from `%s` to `%s`", res.Name, res.From, res.To),
 	), nil
 }
+
+func (r *JsonFormRunner) CopyFrom(profile, name string) (any, error) {
+	logger.Trace()
+
+	client, cancel, err := NewClient(profile, r.config)
+	if err != nil {
+		return nil, err
+	}
+	defer cancel()
+
+	res, err := services.NewJsonFormService(client).GetByName(name)
+	if err != nil {
+		return nil, err
+	}
+
+	return *res, err
+}
+
+func (r *JsonFormRunner) CopyTo(profile string, in any, replace bool) (any, error) {
+	logger.Trace()
+
+	client, cancel, err := NewClient(profile, r.config)
+	if err != nil {
+		return nil, err
+	}
+	defer cancel()
+
+	svc := services.NewJsonFormService(client)
+
+	name := in.(services.JsonForm).Name
+
+	if exists, err := svc.GetByName(name); exists != nil {
+		if !replace {
+			return nil, errors.New(fmt.Sprintf("jsonform `%s` exists on the destination server, use --replace to overwrite"))
+		} else if err != nil {
+			return nil, err
+		}
+	}
+
+	err = svc.Import(in.(services.JsonForm))
+
+	return nil, err
+}
+
+//////////////////////////////////////////////////////////////////////////////
+// Importer Interface
+//
 
 // Import implements the command `import jsonform <path>`
 func (r *JsonFormRunner) Import(in Request) (*Response, error) {
@@ -244,6 +267,10 @@ func (r *JsonFormRunner) Import(in Request) (*Response, error) {
 	), nil
 }
 
+//////////////////////////////////////////////////////////////////////////////
+// Exporter Interface
+//
+
 // Export is the implementation of the command `export jsonform <name>`
 func (r *JsonFormRunner) Export(in Request) (*Response, error) {
 	logger.Trace()
@@ -268,6 +295,10 @@ func (r *JsonFormRunner) Export(in Request) (*Response, error) {
 		fmt.Sprintf("Successfully exported jsonform `%s`", jsonform.Name),
 	), nil
 }
+
+//////////////////////////////////////////////////////////////////////////////
+// Gitter Interface
+//
 
 // Pull implements the command `pull jsonform <repo>`
 func (r *JsonFormRunner) Pull(in Request) (*Response, error) {
@@ -328,6 +359,10 @@ func (r *JsonFormRunner) Push(in Request) (*Response, error) {
 		fmt.Sprintf("Successfully pushed jsonform `%s` to `%s`", in.Args[0], in.Args[1]),
 	), nil
 }
+
+//////////////////////////////////////////////////////////////////////////////
+// Private functions
+//
 
 func (r JsonFormRunner) importJsonForm(in services.JsonForm, replace bool) error {
 	logger.Trace()
