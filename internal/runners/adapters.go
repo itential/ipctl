@@ -96,50 +96,85 @@ func (r *AdapterRunner) Clear(in Request) (*Response, error) {
 func (r *AdapterRunner) Copy(in Request) (*Response, error) {
 	logger.Trace()
 
-	name := in.Args[0]
-
-	var common *flags.AssetCopyCommon
-	utils.LoadObject(in.Common, &common)
-
-	if common.From == common.To {
-		return nil, errors.New("source and destination servers must be different values")
-	}
-
-	fromClient, cancel, err := NewClient(common.From, r.config)
-	if err != nil {
-		return nil, err
-	}
-	defer cancel()
-
-	fromService := services.NewAdapterService(fromClient)
-
-	adapter, err := fromService.Export(name)
-	if err != nil {
-		return nil, err
-	}
-
-	toClient, cancel, err := NewClient(common.To, r.config)
-	if err != nil {
-		return nil, err
-	}
-	defer cancel()
-
-	toService := services.NewAdapterService(toClient)
-
-	if _, err := toService.Get(name); err != nil {
-		return nil, errors.New(fmt.Sprintf("adapter `%s` already exists on the target server", name))
-	}
-
-	_, err = toService.Import(*adapter)
+	res, err := Copy(CopyRequest{Request: in, Type: "adapter"}, r)
 	if err != nil {
 		return nil, err
 	}
 
 	return NewResponse(
-		fmt.Sprintf("Successfully copied adapter configuration `%s` from `%s` to `%s`", name, common.From, common.To),
+		fmt.Sprintf("Successfully copied adapter `%s` from `%s` to `%s`", res.Name, res.From, res.To),
 	), nil
 }
 
+func (r *AdapterRunner) CopyFrom(profile, name string) (any, error) {
+	logger.Trace()
+
+	client, cancel, err := NewClient(profile, r.config)
+	if err != nil {
+		return nil, err
+	}
+	defer cancel()
+
+	res, err := services.NewAdapterService(client).Get(name)
+	if err != nil {
+		return nil, err
+	}
+
+	return *res, err
+}
+
+func (r *AdapterRunner) CopyTo(profile string, in any, replace bool) (any, error) {
+	logger.Trace()
+
+	client, cancel, err := NewClient(profile, r.config)
+	if err != nil {
+		return nil, err
+	}
+	defer cancel()
+
+	models, err := services.NewAdapterModelService(client).GetAll()
+	if err != nil {
+		return nil, err
+	}
+
+	exists := func(model string) bool {
+		for _, ele := range models {
+			if strings.ToLower(ele) == strings.ToLower(model) {
+				return true
+			}
+		}
+		return false
+	}
+
+	modelName := strings.Split(in.(services.Adapter).Model, "-")[1]
+
+	if !exists(modelName) {
+		return nil, errors.New("adapter model does not exist on destination server")
+	}
+
+	svc := services.NewAdapterService(client)
+
+	name := in.(services.Adapter).Name
+
+	if exists, err := svc.Get(name); exists != nil {
+		if !replace {
+			return nil, errors.New(fmt.Sprintf("adapter `%s` exists on the destination server, use --replace to overwrite", name))
+		} else if err != nil {
+			return nil, err
+		}
+		if err := svc.Delete(name); err != nil {
+			return nil, err
+		}
+	}
+
+	res, err := svc.Create(in.(services.Adapter))
+	if err != nil {
+		return nil, err
+	}
+
+	return res, nil
+
+}
 func (r *AdapterRunner) Create(in Request) (*Response, error) {
 	logger.Trace()
 
