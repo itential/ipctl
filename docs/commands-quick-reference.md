@@ -24,7 +24,7 @@ support for which assets.
 | jsonforms                          | *   | *        | *      | *      | *    | *     | *      | *      | *    | *    |
 | projects                           | *   | *        | *      | *      | *    | *     | *      | *      | *    | *    |
 | templates                          | *   | *        | *      | *      | *    | *     | *      | *      |      |      |
-| transformations                    | *   | *        | *      | *      | *    | *     | *      | *      |      |      |
+| transformations                    | *   | *        | *      | *      | *    | *     | *      | *      | *    | *    |
 | workflows                          | *   | *        | *      | *      | *    | *     | *      | *      | *    | *    |
 | **Configuration Manager Commands** |     |          |        |        |      |       |        |        |      |      |
 | device-groups                      | *   | *        |        |        |      | -     |        |        |      |      |

@@ -7,6 +7,8 @@ import (
 	"github.com/itential/ipctl/pkg/logger"
 )
 
+// importFile will take a Request object and attempt to load the data from disk
+// and unmarshal it into `ptr`
 func importFile(in Request, ptr any) error {
 	logger.Trace()
 
