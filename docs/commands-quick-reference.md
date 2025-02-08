@@ -19,13 +19,13 @@ support for which assets.
 | tags                               | *   | *        | *      | *      | *    | *     |        |        |      |      |
 | views                              | *   |          | -      |        |      | -     |        |        |      |      |
 | **Automation Studio Commands**     |     |          |        |        |      |       |        |        |      |      |
-| analytic-templates                 | *   | *        | *      | *      | *    | x     | *      | *      |      |      |
-| command-templates                  | *   | *        | *      | *      | *    | *     | *      | *      |      |      |
-| jsonforms                          | *   | *        | *      | *      | *    | *     | *      | *      |      |      |
+| analytic-templates                 | *   | *        | *      | *      | *    | x     | *      | *      | *    | *    |
+| command-templates                  | *   | *        | *      | *      | *    | *     | *      | *      | *    | *    |
+| jsonforms                          | *   | *        | *      | *      | *    | *     | *      | *      | *    | *    |
 | projects                           | *   | *        | *      | *      | *    | *     | *      | *      | *    | *    |
 | templates                          | *   | *        | *      | *      | *    | *     | *      | *      |      |      |
 | transformations                    | *   | *        | *      | *      | *    | *     | *      | *      |      |      |
-| workflows                          | *   | *        | *      | *      | *    | *     | *      | *      |      |      |
+| workflows                          | *   | *        | *      | *      | *    | *     | *      | *      | *    | *    |
 | **Configuration Manager Commands** |     |          |        |        |      |       |        |        |      |      |
 | device-groups                      | *   | *        |        |        |      | -     |        |        |      |      |
 | devices                            | *   | *        |        |        |      |       |        |        |      |      |
