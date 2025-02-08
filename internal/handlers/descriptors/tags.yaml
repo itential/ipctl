@@ -1,4 +1,8 @@
 ---
+##############################################################################
+# Reader Commands
+##############################################################################
+
 get:
   use: tags
   group: admin-essentials
@@ -10,3 +14,36 @@ describe:
   group: admin-essentials
   description: |
     Display details about a tag
+
+##############################################################################
+# Writer Commands
+##############################################################################
+
+create:
+  use: tag <name>
+  group: admin-essentials
+  description: |
+    Create a new tag
+
+delete:
+  use: tag <name>
+  group: admin-essentials
+  description: |
+    Delete an existing tag
+
+clear:
+  use: tags
+  groups: admin-essentials
+  description: |
+    Delete all configured tags
+
+##############################################################################
+# Copeir Commands
+##############################################################################
+
+copy:
+  use: tag <name> --from <profile> --to <profile>
+  group: admin-essentials
+  description: |
+    Copy a tag from one server to another server
+
