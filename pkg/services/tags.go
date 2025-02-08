@@ -22,6 +22,12 @@ type TagService struct {
 	client *ServiceClient
 }
 
+func NewTag(name, desc string) Tag {
+	logger.Trace()
+	return Tag{Name: name, Description: desc}
+
+}
+
 func NewTagService(iapClient client.Client) *TagService {
 	return &TagService{client: NewServiceClient(iapClient)}
 }
@@ -101,4 +107,35 @@ func (svc *TagService) GetTagsForReference(id string) ([]Tag, error) {
 	}
 
 	return res, nil
+}
+
+func (svc *TagService) Create(in Tag) (*Tag, error) {
+	logger.Trace()
+
+	body := map[string]interface{}{
+		"name":        in.Name,
+		"description": in.Description,
+	}
+
+	var res *Tag
+
+	if err := svc.client.PostRequest(&Request{
+		uri:                "/tags/create",
+		body:               map[string]interface{}{"data": body},
+		expectedStatusCode: 200,
+	}, &res); err != nil {
+		return nil, err
+	}
+
+	return res, nil
+}
+
+func (svc *TagService) Delete(id string) error {
+	logger.Trace()
+	return svc.client.PostRequest(&Request{
+		uri:                "/tags/delete",
+		body:               map[string]interface{}{"_id": id},
+		expectedStatusCode: 200,
+	}, nil)
+
 }
