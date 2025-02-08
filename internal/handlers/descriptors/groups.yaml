@@ -33,6 +33,13 @@ describe:
   description: |
     Display details about a group
 
+copy:
+  use: group <name> --from <profile> --to <profile>
+  group: admin-essentials
+
+  description: |
+    Copy a group from one server to another server
+
 clear:
   use: groups
   group: admin-essentials

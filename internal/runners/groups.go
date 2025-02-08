@@ -146,7 +146,66 @@ func (r *GroupRunner) Clear(in Request) (*Response, error) {
 }
 
 func (r *GroupRunner) Copy(in Request) (*Response, error) {
-	return NotImplemented(in)
+	logger.Trace()
+
+	res, err := Copy(CopyRequest{Request: in, Type: "group"}, r)
+	if err != nil {
+		return nil, err
+	}
+
+	return NewResponse(
+		fmt.Sprintf("Successfully copied group `%s` from `%s` to `%s`", res.Name, res.From, res.To),
+	), nil
+}
+
+func (r *GroupRunner) CopyFrom(profile, name string) (any, error) {
+	logger.Trace()
+
+	client, cancel, err := NewClient(profile, r.config)
+	if err != nil {
+		return nil, err
+	}
+	defer cancel()
+
+	res, err := services.NewGroupService(client).GetByName(name)
+	if err != nil {
+		return nil, err
+	}
+
+	return *res, err
+}
+
+func (r *GroupRunner) CopyTo(profile string, in any, replace bool) (any, error) {
+	logger.Trace()
+
+	client, cancel, err := NewClient(profile, r.config)
+	if err != nil {
+		return nil, err
+	}
+	defer cancel()
+
+	svc := services.NewGroupService(client)
+
+	name := in.(services.Group).Name
+
+	if exists, err := svc.GetByName(name); exists != nil {
+		if !replace {
+			return nil, errors.New(fmt.Sprintf("group `%s` exists on the destination server, use --replace to overwrite", name))
+		} else if err != nil {
+			return nil, err
+		}
+		if err := svc.Delete(name); err != nil {
+			return nil, err
+		}
+	}
+
+	res, err := svc.Create(in.(services.Group))
+	if err != nil {
+		return nil, err
+	}
+
+	return res, nil
+
 }
 
 // GetByName will retrive the group from the server by name.  If the gorup does
