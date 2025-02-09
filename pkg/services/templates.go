@@ -25,8 +25,8 @@ type Template struct {
 	Created       string                 `json:"created"`
 	CreatedBy     any                    `json:"createdBy"`
 	LastUpdated   string                 `json:"lastUpdated"`
-	LastUpdatedBy any                    `json:"lastUpdateBy"`
-	Namespace     map[string]interface{} `json:"namespace"`
+	LastUpdatedBy any                    `json:"lastUpdateBy,omitempty"`
+	Namespace     map[string]interface{} `json:"namespace,omitempty"`
 	Tags          []string               `json:"tags"`
 }
 
