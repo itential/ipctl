@@ -69,9 +69,15 @@ licenses:
 snapshot:
 	BUILD=$$(git rev-parse --short HEAD) goreleaser release --snapshot --clean
 
+# the install target will download the required go modules to the local cache
+# and add and remove any missing or unused modules.
+install:
+	go mod download
+	@go mod tidy
+
 # The build target will build the application binary and place it into the bin/
 # folder.  If the folder does not exist, it will be created.
-build:
+build: install
 	go build \
 		-v \
 		-o bin/ipctl \
