@@ -25,6 +25,7 @@ type TemplateRunner struct {
 func NewTemplateRunner(c client.Client, cfg *config.Config) *TemplateRunner {
 	return &TemplateRunner{
 		service: services.NewTemplateService(c),
+		config:  cfg,
 	}
 }
 
@@ -230,13 +231,14 @@ func (r *TemplateRunner) CopyTo(profile string, in any, replace bool) (any, erro
 func (r *TemplateRunner) Import(in Request) (*Response, error) {
 	logger.Trace()
 
-	var template services.Template
-	if err := ReadImportFromFile(in, &template); err != nil {
+	common := in.Common.(flags.AssetImportCommon)
+
+	var res services.Template
+	if err := ReadImportFromFile(in, &res); err != nil {
 		return nil, err
 	}
 
-	res, err := r.service.Import(template)
-	if err != nil {
+	if err := r.importTemplate(res, common.Replace); err != nil {
 		return nil, err
 	}
 
@@ -276,5 +278,90 @@ func (r *TemplateRunner) Export(in Request) (*Response, error) {
 	return NewResponse(
 		fmt.Sprintf("Successfully exported template `%s`", exported.Name),
 	), nil
+}
 
+//////////////////////////////////////////////////////////////////////////////
+// Gitter Interface
+//
+
+// Pull implements the command `pull template <repo>`
+func (r *TemplateRunner) Pull(in Request) (*Response, error) {
+	logger.Trace()
+
+	common := in.Common.(*flags.AssetPullCommon)
+
+	pull := PullAction{
+		Name:     in.Args[1],
+		Filename: in.Args[0],
+		Config:   r.config,
+		Options:  *common,
+	}
+
+	data, err := pull.Do()
+	if err != nil {
+		return nil, err
+	}
+
+	var res services.Template
+	utils.UnmarshalData(data, &res)
+
+	if err := r.importTemplate(res, common.Replace); err != nil {
+		return nil, err
+	}
+
+	return NewResponse(
+		fmt.Sprintf("Successfully pulled template `%s`", res.Name),
+	), nil
+}
+
+// Push implements the command `push template <repo>`
+func (r *TemplateRunner) Push(in Request) (*Response, error) {
+	logger.Trace()
+
+	common := in.Common.(*flags.AssetPushCommon)
+
+	res, err := r.service.GetByName(in.Args[0])
+	if err != nil {
+		return nil, err
+	}
+
+	push := PushAction{
+		Name:     in.Args[1],
+		Filename: fmt.Sprintf("%s.template.json", in.Args[0]),
+		Options:  *common,
+		Config:   r.config,
+		Data:     res,
+	}
+
+	if err := push.Do(); err != nil {
+		return nil, err
+	}
+
+	return NewResponse(
+		fmt.Sprintf("Successfully pushed template `%s` to `%s`", in.Args[0], in.Args[1]),
+	), nil
+}
+
+//////////////////////////////////////////////////////////////////////////////
+// Private functions
+//
+
+func (r TemplateRunner) importTemplate(in services.Template, replace bool) error {
+	logger.Trace()
+
+	p, err := r.service.GetByName(in.Name)
+	if err == nil {
+		if replace {
+			r.service.Delete(p.Id)
+		} else {
+			return errors.New(fmt.Sprintf("template with name `%s` already exists", p.Name))
+		}
+	}
+
+	_, err = r.service.Import(in)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

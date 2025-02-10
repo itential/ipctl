@@ -23,7 +23,7 @@ support for which assets.
 | command-templates                  | *   | *        | *      | *      | *    | *     | *      | *      | *    | *    |
 | jsonforms                          | *   | *        | *      | *      | *    | *     | *      | *      | *    | *    |
 | projects                           | *   | *        | *      | *      | *    | *     | *      | *      | *    | *    |
-| templates                          | *   | *        | *      | *      | *    | *     | *      | *      |      |      |
+| templates                          | *   | *        | *      | *      | *    | *     | *      | *      | *    | *    |
 | transformations                    | *   | *        | *      | *      | *    | *     | *      | *      | *    | *    |
 | workflows                          | *   | *        | *      | *      | *    | *     | *      | *      | *    | *    |
 | **Configuration Manager Commands** |     |          |        |        |      |       |        |        |      |      |
