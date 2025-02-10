@@ -6,6 +6,7 @@ package services
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 
@@ -43,6 +44,13 @@ type ProjectMember struct {
 	Name       string `json:"name,omitempty"`
 }
 
+type ProjectAccessControl struct {
+	Manage  []string `json:"manage"`
+	Write   []string `json:"write"`
+	Execute []string `json:"execute"`
+	Read    []string `json:"read"`
+}
+
 type Project struct {
 	Id              string             `json:"_id"`
 	Name            string             `json:"name"`
@@ -53,10 +61,33 @@ type Project struct {
 	Description     string             `json:"description"`
 	Folders         []ProjectFolder    `json:"folders"`
 	Iid             int                `json:"iid"`
-	LastUpdated     string             `json:"lastUpdated"`
-	LastUpdatedBy   any                `json:"lastUpdatedBy"`
-	Thumbnail       string             `json:"thumbnail,omitempty"`
-	Members         []ProjectMember    `json:"members,omitempty"`
+	// Not supported for import
+	ComponentIidIndex int    `json:"componentIidIndex"`
+	LastUpdated       string `json:"lastUpdated"`
+	LastUpdatedBy     any    `json:"lastUpdatedBy"`
+	Thumbnail         string `json:"thumbnail,omitempty"`
+	// NOt supported for import
+	Members []ProjectMember `json:"members"`
+	// Not supported for import
+	AccessControl ProjectAccessControl `json:"accessControl"`
+}
+
+func (p Project) Import() map[string]interface{} {
+	logger.Trace()
+	return map[string]interface{}{
+		"_id":             p.Id,
+		"name":            p.Name,
+		"backgroundColor": p.BackgroundColor,
+		"components":      p.Components,
+		"created":         p.Created,
+		"createdBy":       p.CreatedBy,
+		"description":     p.Description,
+		"folders":         p.Folders,
+		"iid":             p.Iid,
+		"lastUpdated":     p.LastUpdated,
+		"lastUpdatedBy":   p.LastUpdatedBy,
+		"thumbnail":       p.Thumbnail,
+	}
 }
 
 type ProjectService struct {
@@ -69,28 +100,50 @@ func NewProjectService(iapClient client.Client) *ProjectService {
 	}
 }
 
-// GetAll will return all configured projects from the server
-func (svc *ProjectService) GetAll() ([]*Project, error) {
+// GetAll will retrieve all of the configured projects from the server and
+// return them as an array of Projects.  If there are no configured projects on
+// the server, this function will return an empty array.
+func (svc *ProjectService) GetAll() ([]Project, error) {
 	logger.Trace()
 
 	type Response struct {
-		Message  string     `json:"message"`
-		Data     []*Project `json:"data"`
-		Metadata Metadata   `json:"metadata"`
+		Message  string    `json:"message"`
+		Data     []Project `json:"data"`
+		Metadata Metadata  `json:"metadata"`
 	}
 
 	var res Response
+	var projects []Project
 
-	if err := svc.client.Get("/automation-studio/projects", &res); err != nil {
-		return nil, err
+	var limit = 100
+	var skip = 0
+
+	for {
+		if err := svc.client.GetRequest(&Request{
+			uri:    "/automation-studio/projects",
+			params: &QueryParams{Limit: limit, Skip: skip},
+		}, &res); err != nil {
+			return nil, err
+		}
+
+		for _, ele := range res.Data {
+			projects = append(projects, ele)
+		}
+
+		if len(projects) == res.Metadata.Total {
+			break
+		}
+
+		skip += limit
 	}
 
-	logger.Info(res.Message)
+	logger.Info("Found %v project(s)", len(projects))
 
-	return res.Data, nil
+	return projects, nil
 }
 
-// Get implements `http.MethodGet /automation-studio/projects/{id}`
+// Get will attempt to retreive the project by its identifier.  If the project
+// does not exist, this function will return an error.
 func (svc *ProjectService) Get(id string) (*Project, error) {
 	logger.Trace()
 
@@ -111,6 +164,32 @@ func (svc *ProjectService) Get(id string) (*Project, error) {
 	logger.Info(res.Message)
 
 	return res.Data, nil
+}
+
+// GetByName will attempt to get a project wiht the specified name.  If the
+// project does not exist, this function will return an error
+func (svc *ProjectService) GetByName(name string) (*Project, error) {
+	logger.Trace()
+
+	projects, err := svc.GetAll()
+	if err != nil {
+		return nil, err
+	}
+
+	var res *Project
+
+	for _, ele := range projects {
+		if ele.Name == name {
+			res = &ele
+			break
+		}
+	}
+
+	if res == nil {
+		return nil, errors.New("project not found")
+	}
+
+	return res, nil
 }
 
 // Create implement `http.MethodPost /automation-studio/projects`
@@ -177,7 +256,7 @@ func (svc *ProjectService) Import(in Project) (*Project, error) {
 
 	body := map[string]interface{}{
 		"conflictMode": "insert-new",
-		"project":      in,
+		"project":      in.Import(),
 	}
 
 	b, _ := json.Marshal(body)

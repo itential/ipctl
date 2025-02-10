@@ -1,0 +1,48 @@
+{
+  "message": "Successfully imported project",
+  "data": {
+    "_id": "67951ad545c79ba1ead0fb74",
+    "name": "test",
+    "description": "",
+    "components": [],
+    "folders": [],
+    "created": "2025-01-25T17:09:41.205Z",
+    "createdBy": {
+      "_id": "678ec2276d849669c6dbe974",
+      "provenance": "local_aaa",
+      "username": "admin@pronghorn"
+    },
+    "lastUpdated": "2025-01-25T17:09:41.205Z",
+    "lastUpdatedBy": {
+      "_id": "678ec2276d849669c6dbe974",
+      "provenance": "local_aaa",
+      "username": "admin@pronghorn"
+    },
+    "iid": 5,
+    "componentIidIndex": 0,
+    "members": [
+      {
+        "type": "account",
+        "reference": "678ec2276d849669c6dbe974",
+        "role": "owner"
+      }
+    ],
+    "accessControl": {
+      "manage": [
+        "account:678ec2276d849669c6dbe974"
+      ],
+      "write": [
+        "account:678ec2276d849669c6dbe974"
+      ],
+      "execute": [
+        "account:678ec2276d849669c6dbe974"
+      ],
+      "read": [
+        "account:678ec2276d849669c6dbe974"
+      ]
+    }
+  },
+  "metadata": {
+    "failedComponents": []
+  }
+}
