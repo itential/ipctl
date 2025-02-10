@@ -7,7 +7,7 @@ installed  and available on in your local environment.
 To get started, first install `golang` 1.22 on your local system.  Installation
 instruction can be found [here](https://go.dev/doc/install).
 
-# Running from source
+## Running from source
 
 The repository includes a `Makefile` with targets to allow installing and
 building the application.  Be sure to install `make` into your local
