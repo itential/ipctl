@@ -126,9 +126,9 @@ func (t ManualTrigger) MarshalJSON() ([]byte, error) {
 	}
 
 	if t.FormSchemaHash == "" {
-		res["formScheamHash"] = nil
+		res["formSchemaHash"] = nil
 	} else {
-		res["formScheamHash"] = t.FormSchemaHash
+		res["formSchemaHash"] = t.FormSchemaHash
 	}
 
 	return json.Marshal(res)
