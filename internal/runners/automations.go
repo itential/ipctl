@@ -9,7 +9,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"os"
 	"strings"
 	"time"
 
@@ -398,47 +397,31 @@ func (r *AutomationRunner) Import(in Request) (*Response, error) {
 	), nil
 }
 
+//////////////////////////////////////////////////////////////////////////////
+// Exporter Interface
+//
+
 // Export implements the `export automation <name>` command
 func (r *AutomationRunner) Export(in Request) (*Response, error) {
 	logger.Trace()
 
-	var options map[string]interface{}
-	utils.LoadObject(in.Options, &options)
+	common := in.Common.(*flags.AssetExportCommon)
 
-	automations, err := r.service.GetAll()
+	name := in.Args[0]
+
+	automation, err := r.service.GetByName(name)
 	if err != nil {
 		return nil, err
 	}
 
-	name := in.Args[0]
-
-	var automation *services.Automation
-	for _, ele := range automations {
-		if ele.Name == name {
-			automation = ele
-		}
-	}
-
-	if automation == nil {
-		return nil, errors.New(fmt.Sprintf("automation `%s` does not exist", name))
-	}
-
-	response, err := r.service.Export(automation.Id)
+	res, err := r.service.Export(automation.Id)
 	if err != nil {
 		return nil, err
 	}
 
 	fn := fmt.Sprintf("%s.automation.json", name)
 
-	var path string
-	if value, exists := options["PATH"]; exists {
-		path = value.(string)
-	} else {
-		wd, _ := os.Getwd()
-		path = wd
-	}
-
-	if err := utils.WriteJsonToDisk(response, fn, path); err != nil {
+	if err := utils.WriteJsonToDisk(res, fn, common.Path); err != nil {
 		return nil, err
 	}
 
