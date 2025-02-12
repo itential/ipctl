@@ -6,6 +6,7 @@ package runners
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"time"
 
@@ -31,21 +32,6 @@ func GetProfile(name string, cfg *config.Config) (*config.Profile, error) {
 
 	return profile, nil
 }
-
-/*
-func NewServiceClient(name string, cfg *config.Config, f services.NewClientFunc) (services.Service, context.CancelFunc, error) {
-	logger.Trace()
-
-	c, cancel, err := NewClient(name, cfg)
-	if err != nil {
-		return nil, cancel, err
-	}
-
-	svc := f(c)
-
-	return svc, cancel, nil
-}
-*/
 
 func NewClient(name string, cfg *config.Config) (client.Client, context.CancelFunc, error) {
 	logger.Trace()
@@ -73,4 +59,24 @@ func NormalizePath(in Request) (string, error) {
 	}
 
 	return path, nil
+}
+
+// toMap will take any object and attempt to convert it into a map.   This
+// function is primarily used to convert a struct into a map structure.  The
+// function accepts a single argument `in` which is the struct to convert into
+// a map.
+func toMap(in any) (map[string]interface{}, error) {
+	logger.Trace()
+
+	b, err := json.Marshal(in)
+	if err != nil {
+		return nil, err
+	}
+
+	var res map[string]interface{}
+	if err := json.Unmarshal(b, &res); err != nil {
+		return nil, err
+	}
+
+	return res, nil
 }

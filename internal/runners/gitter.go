@@ -26,19 +26,25 @@ type PushAction struct {
 	Options  flags.AssetPushCommon
 }
 
-func (p PushAction) Do() error {
+func (p PushAction) Clone() (string, error) {
 	logger.Trace()
 
 	repo, err := GetRepository(p.Name, p.Config)
 	if err != nil {
-		return err
+		return "", err
 	}
 
 	if p.Options.Reference != "" {
 		repo.Reference = p.Options.Reference
 	}
 
-	repoPath, err := CloneRepository(repo)
+	return CloneRepository(repo)
+}
+
+func (p PushAction) Do() error {
+	logger.Trace()
+
+	repoPath, err := p.Clone()
 	if err != nil {
 		return err
 	}
@@ -54,12 +60,27 @@ func (p PushAction) Do() error {
 		return err
 	}
 
+	if err := p.Commit(repoPath); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (p PushAction) Commit(path string) error {
+	logger.Trace()
+
+	repo, err := GetRepository(p.Name, p.Config)
+	if err != nil {
+		return err
+	}
+
 	msg := p.Options.Message
 	if msg == "" {
 		msg = defaultCommitMessage
 	}
 
-	if err := CommitAndPushRepo(repo, repoPath, msg); err != nil {
+	if err := CommitAndPushRepo(repo, path, msg); err != nil {
 		return err
 	}
 
@@ -74,19 +95,25 @@ type PullAction struct {
 	Options  flags.AssetPullCommon
 }
 
-func (p PullAction) Do() ([]byte, error) {
+func (p PullAction) Clone() (string, error) {
 	logger.Trace()
 
 	repo, err := GetRepository(p.Name, p.Config)
 	if err != nil {
-		return nil, err
+		return "", err
 	}
 
 	if p.Options.Reference != "" {
 		repo.Reference = p.Options.Reference
 	}
 
-	path, err := CloneRepository(repo)
+	return CloneRepository(repo)
+}
+
+func (p PullAction) Do() ([]byte, error) {
+	logger.Trace()
+
+	path, err := p.Clone()
 	if err != nil {
 		return nil, err
 	}

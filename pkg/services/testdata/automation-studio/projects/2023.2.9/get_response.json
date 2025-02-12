@@ -1,0 +1,83 @@
+{
+  "message": "Successfully retrieved project",
+  "data": {
+    "_id": "670d8dac113f9679380359de",
+    "components": [
+      {
+        "iid": 0,
+        "reference": "e8ff8f58-024d-4347-bbc4-41f6c9c5a425",
+        "type": "workflow",
+        "folder": "/",
+        "name": "@670d8dac113f9679380359de: Hello-World"
+      }
+    ],
+    "created": "2024-10-14T21:31:24.178Z",
+    "createdBy": {
+      "_id": "668c58df4f234baee4996cfb",
+      "provenance": "local_aaa",
+      "username": "admin@pronghorn"
+    },
+    "description": "this is just a simple test project that really doesn't do anything.  It is used for testing the ipctl tool and its table based output with long description strings",
+    "folders": [
+      {
+        "iid": 0,
+        "nodeType": "component",
+        "reference": "e8ff8f58-024d-4347-bbc4-41f6c9c5a425",
+        "type": "workflow"
+      }
+    ],
+    "lastUpdated": "2024-10-25T11:59:07.560Z",
+    "lastUpdatedBy": {
+      "_id": "668c58df4f234baee4996cfb",
+      "provenance": "local_aaa",
+      "username": "admin@pronghorn"
+    },
+    "name": "Untitled-Project",
+    "iid": 139,
+    "componentIidIndex": 1,
+    "members": [
+      {
+        "type": "account",
+        "role": "editor",
+        "reference": "66d76ca8732d21feb5868280",
+        "username": "admin@itential",
+        "provenance": "Local AAA"
+      },
+      {
+        "type": "account",
+        "role": "owner",
+        "reference": "668c58df4f234baee4996cfb",
+        "username": "admin@pronghorn",
+        "provenance": "local_aaa"
+      },
+      {
+        "type": "group",
+        "role": "editor",
+        "reference": "67128d07d9818a48b1958e40",
+        "name": "Test Group",
+        "provenance": "Pronghorn"
+      }
+    ],
+    "accessControl": {
+      "manage": [
+        "account:668c58df4f234baee4996cfb"
+      ],
+      "write": [
+        "account:66d76ca8732d21feb5868280",
+        "account:668c58df4f234baee4996cfb",
+        "group:67128d07d9818a48b1958e40"
+      ],
+      "execute": [
+        "account:66d76ca8732d21feb5868280",
+        "account:668c58df4f234baee4996cfb",
+        "group:67128d07d9818a48b1958e40"
+      ],
+      "read": [
+        "account:66d76ca8732d21feb5868280",
+        "account:668c58df4f234baee4996cfb",
+        "group:67128d07d9818a48b1958e40"
+      ]
+    }
+  },
+  "metadata": {}
+}
