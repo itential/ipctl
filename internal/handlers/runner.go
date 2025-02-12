@@ -126,7 +126,7 @@ func NewCommand(c *CommandRunner) *cobra.Command {
 			resp, err := c.Run(req)
 			checkError(err, c.Runtime)
 
-			if c.Runtime.Config.DefaultOutput == "json" {
+			if c.Runtime.Config.TerminalDefaultOutput == "json" {
 				if resp.Json != nil {
 					terminal.Display(string(resp.Json))
 				} else {
@@ -134,7 +134,7 @@ func NewCommand(c *CommandRunner) *cobra.Command {
 				}
 				terminal.Display("")
 
-			} else if c.Runtime.Config.DefaultOutput == "url" && resp.Url != "" {
+			} else if c.Runtime.Config.TerminalDefaultOutput == "url" && resp.Url != "" {
 				profile, _ := c.Runtime.Config.ActiveProfile()
 
 				var u string
@@ -160,7 +160,7 @@ func NewCommand(c *CommandRunner) *cobra.Command {
 				terminal.Display(u)
 
 			} else if len(resp.Lines) > 0 {
-				if c.Runtime.Config.Pager {
+				if c.Runtime.Config.TerminalPager {
 					terminal.DisplayTabWriterStringWithPager(resp.Lines, 3, 3, true)
 				} else {
 					terminal.DisplayTabWriterString(resp.Lines, 3, 3, true)

@@ -27,6 +27,7 @@ help:
 	@echo "  clean      - Cleans the development environment"
 	@echo "  config     - Display the runtime config"
 	@echo "  coverage   - Run test coverage report"
+	@ehco "  install    - Install application dependencies"
 	@echo "  licenses   - Ensures that licenses exist on every code file and update license-attributions.md"
 	@echo "  snapshot   - Create a development snapshot build"
 	@echo "  test       - Run test suite"

@@ -21,8 +21,6 @@ const (
 
 	defaultAppWorkingDir     = "~/.platform.d"
 	defaultAppDefaultProfile = ""
-	defaultAppDefaultOutput  = "human"
-	defaultAppPager          = true
 
 	defaultLogLevel             = "INFO"
 	defaultLogFileJson          = false
@@ -30,16 +28,15 @@ const (
 	defaultLogFileEnabled       = false
 	defaultLogTimestampTimezone = "utc"
 
-	defaultTerminalNoColor           = false
-	defaultTerminalTimestampTimezone = "utc"
+	defaultTerminalNoColor       = false
+	defaultTerminalDefaultOutput = "human"
+	defaultTerminalPager         = true
 )
 
 type Config struct {
 	// Application settings
 	WorkingDir     string `json:"working_dir"`
 	DefaultProfile string `json:"default_profile"`
-	DefaultOutput  string `json:"default_output"`
-	Pager          bool   `json:"pager"`
 
 	// Profiles
 	profileName string
@@ -56,8 +53,9 @@ type Config struct {
 	LogTimestampTimezone *time.Location `json:"log_timestamp_timezone"`
 
 	// Terminal settings
-	TerminalNoColor           bool           `json:"terminal_no_color"`
-	TerminalTimestampTimezone *time.Location `json:"terminal_timestamp_timezone"`
+	TerminalNoColor       bool   `json:"terminal_no_color"`
+	TerminalDefaultOutput string `json:"terminal_default_output"`
+	TerminalPager         bool   `json:"terminal_pager"`
 
 	// Mongo settings
 	MongoUri string `json:"mongo_uri"`
@@ -90,6 +88,12 @@ func NewConfig(defaults map[string]interface{}, envBinding map[string]string, ap
 func (ac *Config) DumpConfig() string {
 	bs, _ := json.Marshal(ac)
 	return string(bs)
+}
+
+// HasRepositories will return true if there are any configured repositories in
+// the configuration file and false if there are no configured repositories.
+func (ac *Config) HasRepositories() bool {
+	return len(ac.repositories) > 0
 }
 
 func (ac *Config) initConfig(defaultsVariables map[string]interface{}, environmentBindings map[string]string, appWorkingDir, sysConfigPath, fileName string) {
@@ -176,8 +180,6 @@ func (ac *Config) initConfig(defaultsVariables map[string]interface{}, environme
 func (ac *Config) populateFields() {
 	ac.WorkingDir = GetAndExpandDirectory("application.working_dir")
 	ac.DefaultProfile = viper.GetString("application.default_profile")
-	ac.Pager = viper.GetBool("application.pager")
-	ac.DefaultOutput = viper.GetString("application.default_output")
 
 	ac.LogLevel = viper.GetString("log.level")
 	ac.LogFileJSON = viper.GetBool("log.file_json")
@@ -186,7 +188,8 @@ func (ac *Config) populateFields() {
 	ac.LogTimestampTimezone = getTzLocation("log.timestamp_timezone")
 
 	ac.TerminalNoColor = viper.GetBool("terminal.no_color")
-	ac.TerminalTimestampTimezone = getTzLocation("terminal.timestamp_timezone")
+	ac.TerminalPager = viper.GetBool("termminal.pager")
+	ac.TerminalDefaultOutput = viper.GetString("terminal.default_output")
 
 	ac.MongoUri = viper.GetString("mongo.uri")
 }
@@ -194,8 +197,6 @@ func (ac *Config) populateFields() {
 var defaultValues = map[string]interface{}{
 	"application.working_dir":     defaultAppWorkingDir,
 	"application.default_profile": defaultAppDefaultProfile,
-	"application.default_output":  defaultAppDefaultOutput,
-	"application.pager":           defaultAppPager,
 
 	"log.level":              defaultLogLevel,
 	"log.file_json":          defaultLogFileJson,
@@ -203,15 +204,14 @@ var defaultValues = map[string]interface{}{
 	"log.file_enabled":       defaultLogFileEnabled,
 	"log.timestamp_timezone": defaultLogTimestampTimezone,
 
-	"terminal.no_color":           defaultTerminalNoColor,
-	"terminal.timestamp_timezone": defaultTerminalTimestampTimezone,
+	"terminal.no_color":       defaultTerminalNoColor,
+	"terminal.default_output": defaultTerminalDefaultOutput,
+	"terminal.pager":          defaultTerminalPager,
 }
 
 var defaultEnvVarBindings = map[string]string{
 	"application.working_dir":     "IPCTL_APPLICATION_WORKING_DIR",
 	"application.default_profile": "IPCTL_APPLICATION_DEFAULT_PROFILE",
-	"applicationd.default_output": "IPCTL_APPLICATION_DEFAULT_OUTPUT",
-	"application.pager":           "IPCTL_APPLICATION_PAGER",
 
 	"log.level":              "IPCTL_LOG_LEVEL",
 	"log.file_json":          "IPCTL_LOG_FILE_JSON",
@@ -219,8 +219,9 @@ var defaultEnvVarBindings = map[string]string{
 	"log.file_enabled":       "IPCTL_LOG_FILE_ENABLED",
 	"log.timestamp_timezone": "IPCTL_LOG_TIMESTAMP_TIMEZONE",
 
-	"terminal.no_color":           "IPCTL_TERMINAL_NO_COLOR",
-	"terminal.timestamp_timezone": "IPCTL_TERMINAL_TIMESTAMP_TIMEZONE",
+	"terminal.no_color":       "IPCTL_TERMINAL_NO_COLOR",
+	"terminal.default_output": "IPCTL_TERMINAL_DEFAULT_OUTPUT",
+	"termial.pager":           "IPCTL_TERMINAL_PAGER",
 
 	"mongo.uri": "IPCTL_MONGO_URI",
 }
