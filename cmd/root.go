@@ -31,14 +31,18 @@ func loadCommands(cmd *cobra.Command, h handlers.Handler, cfg *config.Config) {
 	addCommandGroup(cmd, h, "Application Commands:", applicationCommands)
 	addCommandGroup(cmd, h, "Import/Export Commands:", importExportCommands)
 	addCommandGroup(cmd, h, "Platform Commands:", platformCommands)
-	addCommandGroup(cmd, h, "Repository Commands:", repoCommands)
+
+	if cfg.HasRepositories() {
+		addCommandGroup(cmd, h, "Repository Commands:", repoCommands)
+	}
+
 	addCommandGroup(cmd, h, "Plugin Commands:", pluginCommands)
 }
 
 func versionCommand() *cobra.Command {
 	var cmd = &cobra.Command{
 		Use:   "version",
-		Short: "Print the client version information",
+		Short: "Print the version information",
 		Run: func(cmd *cobra.Command, args []string) {
 			terminal.Display("version: %s", metadata.Version)
 			terminal.Display("commit: %s", metadata.Sha)
@@ -63,7 +67,7 @@ func Do(iapClient *client.IapClient, cfg *config.Config) *cobra.Command {
 	h := handlers.NewHandler(iapClient, cfg)
 
 	cmd.PersistentFlags().BoolVar(&h.Runtime.Verbose, "verbose", h.Runtime.Verbose, "Enable verbose output")
-	cmd.PersistentFlags().StringVar(&h.Runtime.Config.DefaultOutput, "output", h.Runtime.Config.DefaultOutput, "Output format")
+	cmd.PersistentFlags().StringVar(&h.Runtime.Config.TerminalDefaultOutput, "output", h.Runtime.Config.TerminalDefaultOutput, "Output format")
 
 	// Note: Values are read during /pkg/config's initialization
 	cmd.PersistentFlags().String("config", "", "Path to the configuration file")
