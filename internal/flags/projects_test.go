@@ -13,3 +13,15 @@ func TestProjectImportOptions(t *testing.T) {
 func TestProjectExportOptions(t *testing.T) {
 	checkFlags(t, &ProjectExportOptions{}, []string{"expand"})
 }
+
+func TestProjectCopyOptions(t *testing.T) {
+	checkFlags(t, &ProjectCopyOptions{}, []string{"member"})
+}
+
+func TestProjectPullOptions(t *testing.T) {
+	checkFlags(t, &ProjectPullOptions{}, []string{"member"})
+}
+
+func TestProjectPushOptions(t *testing.T) {
+	checkFlags(t, &ProjectPushOptions{}, []string{"expand"})
+}
