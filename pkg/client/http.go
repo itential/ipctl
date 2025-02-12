@@ -16,11 +16,12 @@ import (
 	"strconv"
 
 	"github.com/itential/ipctl/pkg/logger"
+	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/clientcredentials"
 )
 
 const (
-	hubTokenUrl = "oauth/token"
+	tokenUrl = "oauth/token"
 )
 
 type HttpClient struct {
@@ -79,6 +80,8 @@ func (c *HttpClient) authenticate() {
 }
 
 func (c *HttpClient) send(method string, request *Request) (*Response, error) {
+	logger.Trace()
+
 	var scheme string
 
 	if c.UseTls {
@@ -123,26 +126,7 @@ func (c *HttpClient) send(method string, request *Request) (*Response, error) {
 		logger.Debug("Request body is empty")
 	}
 
-	req, _ := http.NewRequestWithContext(c.context, method, u.String(), bytes.NewBuffer(request.Body))
-
-	req.Header.Set("Content-Type", "application/json")
-	req.Header.Set("Accept", "application/json")
-	req.Header.Set("Content-Length", strconv.Itoa(len(string(request.Body))))
-
-	var client *http.Client
-
-	if !c.authenticated && c.ClientId != "" && c.ClientSecret != "" {
-		logger.Debug("attempting to authenticate using client id")
-		cfg := &clientcredentials.Config{
-			ClientID:     c.ClientId,
-			ClientSecret: c.ClientSecret,
-			Scopes:       []string{},
-			TokenURL:     fmt.Sprintf("%s://%s/%s", scheme, c.Host, hubTokenUrl),
-		}
-		client = cfg.Client(c.context)
-	} else {
-		client = &http.Client{Jar: c.jar}
-	}
+	client := &http.Client{Jar: c.jar}
 
 	if c.UseTls && !c.Verify {
 		logger.Debug("Disabling client certificate verification")
@@ -150,6 +134,35 @@ func (c *HttpClient) send(method string, request *Request) (*Response, error) {
 			TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
 		}
 	}
+
+	if !c.authenticated && c.ClientId != "" && c.ClientSecret != "" {
+		logger.Debug("attempting to authenticate using client id")
+
+		cfg := &clientcredentials.Config{
+			ClientID:     c.ClientId,
+			ClientSecret: c.ClientSecret,
+			Scopes:       []string{},
+			TokenURL:     fmt.Sprintf("%s://%s/%s", scheme, remoteHost, tokenUrl),
+			AuthStyle:    1,
+		}
+
+		client = cfg.Client(context.WithValue(
+			c.context,
+			oauth2.HTTPClient,
+			client,
+		))
+	}
+
+	req, _ := http.NewRequestWithContext(
+		c.context,
+		method,
+		u.String(),
+		bytes.NewBuffer(request.Body),
+	)
+
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Accept", "application/json")
+	req.Header.Set("Content-Length", strconv.Itoa(len(string(request.Body))))
 
 	resp, err := client.Do(req)
 	if err != nil {
