@@ -7,10 +7,6 @@ package runners
 type Runner interface {
 }
 
-type Commander interface {
-	Reader
-}
-
 type RunnerFunc func(Request) (*Response, error)
 
 type Copier interface {

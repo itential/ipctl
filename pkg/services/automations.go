@@ -204,7 +204,7 @@ func (svc *AutomationService) Clear() error {
 }
 
 // Import implements the `PUT /operations-manager/automations` requuest
-func (svc *AutomationService) Import(in *Automation) (*Automation, error) {
+func (svc *AutomationService) Import(in Automation) (*Automation, error) {
 	logger.Trace()
 
 	if len(in.Gbac.Read) > 0 && len(in.Gbac.Write) == 0 {
