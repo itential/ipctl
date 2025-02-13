@@ -33,8 +33,40 @@ describe:
   description: |
     Display details about a group
 
+copy:
+  use: group <name> --from <profile> --to <profile>
+  group: admin-essentials
+
+  description: |
+    Copy a group from one server to another server
+
 clear:
   use: groups
   group: admin-essentials
   description: |
     Delete all local groups
+
+export:
+  use: group <name>
+  group: admin-essentials
+  description: |
+    Export a group
+
+import:
+  use: group <name>
+  group: admin-essentials
+  description: |
+    Import a group
+
+push:
+  use: group <name> <repository>
+  group: admin-essentials
+  description: |
+    Push a group to a repository
+
+pull:
+  use: group <filename> <repository>
+  group: admin-essentials
+  description: |
+    Pull a group from a repository
+

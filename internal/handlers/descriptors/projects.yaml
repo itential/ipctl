@@ -132,7 +132,7 @@ clear:
     $ ipctl clear projects
 
 ##############################################################################
-# Promoter commands
+# Import/Export commands
 ##############################################################################
 
 import:
@@ -178,15 +178,13 @@ export:
 
 pull:
   use: project <repo>
-  gorup: automation-studio
-
+  group: automation-studio
   description: |
     Pull a project from a repository
 
 push:
   use: project <name> <repo>
   group: automation-studio
-
   description: |
     Push a project to a repository
 

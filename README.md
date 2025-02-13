@@ -101,7 +101,7 @@ The `verify`  setting enables or disables the certificate verification.  When co
 
 The default value for `verify` is `true`
 
-### `usernam`
+### `username`
 
 The `username` setting configures the name of the account to use when authenticating to an Itential Platform server.
 

@@ -8,7 +8,6 @@ import (
 	"errors"
 
 	"github.com/itential/ipctl/internal/flags"
-	"github.com/itential/ipctl/internal/utils"
 	"github.com/itential/ipctl/pkg/logger"
 )
 
@@ -18,9 +17,11 @@ type CopyRequest struct {
 }
 
 type CopyResponse struct {
-	Name string
-	From string
-	To   string
+	Name         string
+	From         string
+	CopyFromData any
+	To           string
+	CopyToData   any
 }
 
 func Copy(in CopyRequest, r Copier) (*CopyResponse, error) {
@@ -28,8 +29,7 @@ func Copy(in CopyRequest, r Copier) (*CopyResponse, error) {
 
 	name := in.Request.Args[0]
 
-	var common *flags.AssetCopyCommon
-	utils.LoadObject(in.Request.Common, &common)
+	common := in.Request.Common.(*flags.AssetCopyCommon)
 
 	if common.From == common.To {
 		return nil, errors.New("source (--from) and destination (--to) servers must be different values")
@@ -42,11 +42,16 @@ func Copy(in CopyRequest, r Copier) (*CopyResponse, error) {
 		return nil, err
 	}
 
-	_, err = r.CopyTo(common.To, src, common.Replace)
+	res, err := r.CopyTo(common.To, src, common.Replace)
+	if err != nil {
+		return nil, err
+	}
 
 	return &CopyResponse{
-		Name: name,
-		From: common.From,
-		To:   common.To,
+		Name:         name,
+		From:         common.From,
+		CopyFromData: src,
+		To:           common.To,
+		CopyToData:   res,
 	}, nil
 }

@@ -5,13 +5,10 @@
 package runners
 
 import (
-	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
-	"os"
 	"strings"
-	"time"
 
 	"github.com/itential/ipctl/internal/flags"
 	"github.com/itential/ipctl/internal/utils"
@@ -38,6 +35,10 @@ func NewAutomationRunner(c client.Client, cfg *config.Config) *AutomationRunner 
 		triggers:  services.NewTriggerService(c),
 	}
 }
+
+//////////////////////////////////////////////////////////////////////////////
+// Reader Interface
+//
 
 // Get is the implementation of the command `get automations`
 func (r *AutomationRunner) Get(in Request) (*Response, error) {
@@ -77,101 +78,9 @@ func (r *AutomationRunner) Describe(in Request) (*Response, error) {
 	), nil
 }
 
-// Clear implements the `clear automations` command
-func (r *AutomationRunner) Clear(in Request) (*Response, error) {
-	logger.Trace()
-
-	automations, err := r.service.GetAll()
-	if err != nil {
-		return nil, err
-	}
-
-	for _, ele := range automations {
-		if err := r.service.Delete(ele.Id); err != nil {
-			return nil, err
-		}
-	}
-
-	return NewResponse(
-		fmt.Sprintf("Deleted %v automations(s)", len(automations)),
-	), nil
-}
-
-func (r *AutomationRunner) Delete(in Request) (*Response, error) {
-	logger.Trace()
-
-	name := in.Args[0]
-
-	automations, err := r.service.GetAll()
-	if err != nil {
-		return nil, err
-	}
-
-	var selected *services.Automation
-
-	for _, ele := range automations {
-		if ele.Name == name {
-			selected = ele
-			break
-		}
-	}
-
-	if selected != nil {
-		if err := r.service.Delete(selected.Id); err != nil {
-			return nil, err
-		}
-	}
-
-	return NewResponse(
-		fmt.Sprintf("Successfully deleted automation `%s`", name),
-	), nil
-}
-
-func (r *AutomationRunner) Copy(in Request) (*Response, error) {
-	logger.Trace()
-
-	name := in.Args[0]
-
-	existing, err := r.service.GetAll()
-	for err != nil {
-		return nil, err
-	}
-
-	var srcId string
-
-	for _, ele := range existing {
-		if ele.Name == name {
-			srcId = ele.Id
-			break
-		}
-	}
-
-	src, err := r.service.Export(srcId)
-	if err != nil {
-		return nil, err
-	}
-
-	profile, err := r.config.GetProfile(in.Args[1])
-	if err != nil {
-		return nil, err
-	}
-
-	ctx, cancel := context.WithTimeout(context.Background(), time.Duration(profile.Timeout)*time.Second)
-	defer cancel()
-
-	dst := client.New(ctx, profile)
-
-	svc := services.NewAutomationService(dst)
-
-	_, err = svc.Import(src)
-	if err != nil {
-		return nil, err
-	}
-
-	return NewResponse(
-		fmt.Sprintf("Successfully copied automation `%s` to `%s`", name, in.Args[1]),
-	), nil
-}
+//////////////////////////////////////////////////////////////////////////////
+// Writer Interface
+//
 
 func (r *AutomationRunner) Create(in Request) (*Response, error) {
 	logger.Trace()
@@ -206,6 +115,124 @@ func (r *AutomationRunner) Create(in Request) (*Response, error) {
 	), nil
 }
 
+func (r *AutomationRunner) Delete(in Request) (*Response, error) {
+	logger.Trace()
+
+	name := in.Args[0]
+
+	automations, err := r.service.GetAll()
+	if err != nil {
+		return nil, err
+	}
+
+	var selected *services.Automation
+
+	for _, ele := range automations {
+		if ele.Name == name {
+			selected = ele
+			break
+		}
+	}
+
+	if selected != nil {
+		if err := r.service.Delete(selected.Id); err != nil {
+			return nil, err
+		}
+	}
+
+	return NewResponse(
+		fmt.Sprintf("Successfully deleted automation `%s`", name),
+	), nil
+}
+
+// Clear implements the `clear automations` command
+func (r *AutomationRunner) Clear(in Request) (*Response, error) {
+	logger.Trace()
+
+	automations, err := r.service.GetAll()
+	if err != nil {
+		return nil, err
+	}
+
+	for _, ele := range automations {
+		if err := r.service.Delete(ele.Id); err != nil {
+			return nil, err
+		}
+	}
+
+	return NewResponse(
+		fmt.Sprintf("Deleted %v automations(s)", len(automations)),
+	), nil
+}
+
+//////////////////////////////////////////////////////////////////////////////
+// Copier Interface
+//
+
+func (r *AutomationRunner) Copy(in Request) (*Response, error) {
+	logger.Trace()
+
+	res, err := Copy(CopyRequest{Request: in, Type: "automation"}, r)
+	if err != nil {
+		return nil, err
+	}
+
+	return NewResponse(
+		fmt.Sprintf("Successfully copied automation `%s` from `%s` to `%s`", res.Name, res.From, res.To),
+	), nil
+}
+
+func (r *AutomationRunner) CopyFrom(profile, name string) (any, error) {
+	logger.Trace()
+
+	client, cancel, err := NewClient(profile, r.config)
+	if err != nil {
+		return nil, err
+	}
+	defer cancel()
+
+	res, err := services.NewAutomationService(client).GetByName(name)
+	if err != nil {
+		return nil, err
+	}
+
+	return *res, err
+}
+
+func (r *AutomationRunner) CopyTo(profile string, in any, replace bool) (any, error) {
+	logger.Trace()
+
+	client, cancel, err := NewClient(profile, r.config)
+	if err != nil {
+		return nil, err
+	}
+	defer cancel()
+
+	svc := services.NewAutomationService(client)
+
+	name := in.(services.Automation).Name
+
+	if exists, err := svc.GetByName(name); exists != nil {
+		if !replace {
+			return nil, errors.New(fmt.Sprintf("automation `%s` exists on the destination server, use --replace to overwrite"))
+		} else if err != nil {
+			return nil, err
+		}
+	}
+
+	res, err := svc.Import(in.(services.Automation))
+
+	if err != nil {
+		return nil, errors.New(r.formatImportErrorMessage(err))
+	}
+
+	return res, err
+}
+
+//////////////////////////////////////////////////////////////////////////////
+// Importer Interface
+//
+
 // Import implements the `import automation <name>` command
 func (r *AutomationRunner) Import(in Request) (*Response, error) {
 	logger.Trace()
@@ -233,10 +260,6 @@ func (r *AutomationRunner) Import(in Request) (*Response, error) {
 
 	var data map[string]interface{}
 	utils.UnmarshalData(content, &data)
-
-	if r.Exists(data["name"].(string)) {
-		return nil, errors.New(fmt.Sprintf("automation `%s` already exists", data["name"].(string)))
-	}
 
 	var automation services.Automation
 
@@ -375,7 +398,24 @@ func (r *AutomationRunner) Import(in Request) (*Response, error) {
 
 	automation.Triggers = triggers
 
-	res, err := r.service.Import(&automation)
+	existing, err := r.service.GetByName(automation.Name)
+	if existing != nil {
+		if common.Replace {
+			if err := r.service.Delete(existing.Id); err != nil {
+				return nil, err
+			}
+		} else {
+			return nil, errors.New(fmt.Sprintf("automation `%s` already exists", data["name"].(string)))
+		}
+
+	}
+	if err != nil {
+		if err.Error() != "automation not found" {
+			return nil, err
+		}
+	}
+
+	res, err := r.service.Import(automation)
 	if err != nil {
 		return nil, err
 	}
@@ -385,47 +425,31 @@ func (r *AutomationRunner) Import(in Request) (*Response, error) {
 	), nil
 }
 
+//////////////////////////////////////////////////////////////////////////////
+// Exporter Interface
+//
+
 // Export implements the `export automation <name>` command
 func (r *AutomationRunner) Export(in Request) (*Response, error) {
 	logger.Trace()
 
-	var options map[string]interface{}
-	utils.LoadObject(in.Options, &options)
+	common := in.Common.(*flags.AssetExportCommon)
 
-	automations, err := r.service.GetAll()
+	name := in.Args[0]
+
+	automation, err := r.service.GetByName(name)
 	if err != nil {
 		return nil, err
 	}
 
-	name := in.Args[0]
-
-	var automation *services.Automation
-	for _, ele := range automations {
-		if ele.Name == name {
-			automation = ele
-		}
-	}
-
-	if automation == nil {
-		return nil, errors.New(fmt.Sprintf("automation `%s` does not exist", name))
-	}
-
-	response, err := r.service.Export(automation.Id)
+	res, err := r.service.Export(automation.Id)
 	if err != nil {
 		return nil, err
 	}
 
 	fn := fmt.Sprintf("%s.automation.json", name)
 
-	var path string
-	if value, exists := options["PATH"]; exists {
-		path = value.(string)
-	} else {
-		wd, _ := os.Getwd()
-		path = wd
-	}
-
-	if err := utils.WriteJsonToDisk(response, fn, path); err != nil {
+	if err := utils.WriteJsonToDisk(res, fn, common.Path); err != nil {
 		return nil, err
 	}
 
@@ -458,4 +482,37 @@ func (r *AutomationRunner) WorkflowExists(name string) bool {
 		return false
 	}
 	return true
+}
+
+func (r *AutomationRunner) formatImportErrorMessage(e error) string {
+	logger.Trace()
+
+	type ResponseError struct {
+		Message  string `json:"message"`
+		Data     any    `json:"data"`
+		Metadata struct {
+			Errors []struct {
+				Success bool                   `json:"success"`
+				Reason  string                 `json:"reason"`
+				Data    map[string]interface{} `json:"data"`
+			} `json:"errors"`
+		} `json:"metadata"`
+	}
+
+	var res ResponseError
+
+	if err := json.Unmarshal([]byte(e.Error()), &res); err != nil {
+		logger.Fatal(err, "failed to unmarshal error message")
+	}
+
+	var output = []string{
+		fmt.Sprintf("%s (See details below)", res.Message),
+	}
+
+	for _, ele := range res.Metadata.Errors {
+		output = append(output, fmt.Sprintf("- %s", ele.Reason))
+	}
+
+	return strings.Join(output, "\n")
+
 }

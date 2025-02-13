@@ -5,20 +5,18 @@
 package runners
 
 import (
-	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
-	"time"
 
 	"github.com/itential/ipctl/internal/flags"
 	"github.com/itential/ipctl/internal/utils"
 	"github.com/itential/ipctl/pkg/client"
 	"github.com/itential/ipctl/pkg/config"
 	"github.com/itential/ipctl/pkg/logger"
-	"github.com/itential/ipctl/pkg/repositories"
 	"github.com/itential/ipctl/pkg/services"
 )
 
@@ -39,6 +37,10 @@ func NewProjectRunner(client client.Client, cfg *config.Config) *ProjectRunner {
 		userSettings: services.NewUserSettingsService(client),
 	}
 }
+
+//////////////////////////////////////////////////////////////////////////////
+// Reader Interface
+//
 
 // GetProjects() is the implementation of the command `get projects`
 func (r *ProjectRunner) Get(in Request) (*Response, error) {
@@ -71,19 +73,20 @@ func (r *ProjectRunner) Describe(in Request) (*Response, error) {
 	var project *services.Project
 	var err error
 
-	project, err = r.service.Get(name)
+	project, err = r.service.GetByName(name)
 	if err != nil {
-		project, err = r.GetByName(name)
-		if err != nil {
-			return nil, err
-		}
+		return nil, err
 	}
 
 	return NewResponse(
-		fmt.Sprintf("Name: %s", project.Name),
+		fmt.Sprintf("Name: %s (%s)", project.Name, project.Id),
 		WithJson(project),
 	), nil
 }
+
+//////////////////////////////////////////////////////////////////////////////
+// Writer Interface
+//
 
 // Create is the implementation of the command `ccreate project <name>`
 func (r *ProjectRunner) Create(in Request) (*Response, error) {
@@ -91,8 +94,13 @@ func (r *ProjectRunner) Create(in Request) (*Response, error) {
 
 	name := in.Args[0]
 
-	_, err := r.GetByName(name)
-	if err == nil {
+	existing, err := r.service.GetByName(name)
+	if err != nil {
+		if err.Error() != "project not found" {
+			return nil, errors.New(fmt.Sprintf("project `%s` already exists", name))
+		}
+	}
+	if existing != nil {
 		return nil, errors.New(fmt.Sprintf("project `%s` already exists", name))
 	}
 
@@ -113,7 +121,7 @@ func (r *ProjectRunner) Delete(in Request) (*Response, error) {
 
 	name := in.Args[0]
 
-	project, err := r.GetByName(name)
+	project, err := r.service.GetByName(name)
 	if err != nil {
 		return nil, err
 	}
@@ -144,68 +152,29 @@ func (r *ProjectRunner) Clear(in Request) (*Response, error) {
 	return NewResponse(fmt.Sprintf("Deleted %v project(s)", cnt)), nil
 }
 
+//////////////////////////////////////////////////////////////////////////////
+// Copier Interface
+//
+
 // Copy implements the `copy project <name> <dst>` command
 func (r *ProjectRunner) Copy(in Request) (*Response, error) {
 	logger.Trace()
 
-	name := in.Args[0]
-
-	var common *flags.AssetCopyCommon
-	utils.LoadObject(in.Common, &common)
-
-	var options *flags.ProjectImportOptions
-	utils.LoadObject(in.Options, &options)
-
-	if common.From == common.To {
-		return nil, errors.New("source and destination servers must be different values")
+	res, err := Copy(CopyRequest{Request: in, Type: "project"}, r)
+	if err != nil {
+		return nil, err
 	}
 
-	from, cancel, err := newClient(common.From, r.config)
+	client, cancel, err := NewClient(in.Common.(*flags.AssetCopyCommon).To, r.config)
 	if err != nil {
 		return nil, err
 	}
 	defer cancel()
 
-	fromService := services.NewProjectService(from)
-
-	fromProjects, err := fromService.GetAll()
-	if err != nil {
-		return nil, err
-	}
-
-	var projectId string
-
-	for _, ele := range fromProjects {
-		if ele.Name == name {
-			projectId = ele.Id
-		}
-	}
-
-	if projectId == "" {
-		return nil, errors.New(fmt.Sprintf("could not find project named `%s`", name))
-	}
-
-	project, err := fromService.Export(projectId)
-	if err != nil {
-		return nil, err
-	}
-
-	to, cancel, err := newClient(common.To, r.config)
-	if err != nil {
-		return nil, err
-	}
-	defer cancel()
-
-	toService := services.NewProjectService(to)
-
-	importedProject, err := toService.Import(*project)
-	if err != nil {
-		return nil, err
-	}
-
-	accounts := services.NewAccountService(to)
-	groups := services.NewGroupService(to)
-	userSettings := services.NewUserSettingsService(to)
+	projectsvc := services.NewProjectService(client)
+	accounts := services.NewAccountService(client)
+	groups := services.NewGroupService(client)
+	userSettings := services.NewUserSettingsService(client)
 
 	var members []services.ProjectMember
 
@@ -214,7 +183,7 @@ func (r *ProjectRunner) Copy(in Request) (*Response, error) {
 		return nil, err
 	}
 
-	for _, ele := range options.Members {
+	for _, ele := range in.Options.(*flags.ProjectCopyOptions).Members {
 		member, err := parseMember(ele)
 		if err != nil {
 			return nil, err
@@ -254,42 +223,286 @@ func (r *ProjectRunner) Copy(in Request) (*Response, error) {
 	}
 
 	if len(members) > 0 {
-		if err := toService.AddMembers(importedProject.Id, members); err != nil {
+		if err := projectsvc.AddMembers(res.CopyToData.(services.Project).Id, members); err != nil {
 			return nil, err
 		}
 	}
 
 	return NewResponse(
-		fmt.Sprintf("Successfully copied project `%s` from `%s` to `%s`", name, common.From, common.To),
+		fmt.Sprintf("Successfully copied project `%s` from `%s` to `%s`", res.Name, res.From, res.To),
 	), nil
 }
+
+func (r *ProjectRunner) CopyFrom(profile, name string) (any, error) {
+	logger.Trace()
+
+	client, cancel, err := NewClient(profile, r.config)
+	if err != nil {
+		return nil, err
+	}
+	defer cancel()
+
+	svc := services.NewProjectService(client)
+
+	project, err := svc.GetByName(name)
+	if err != nil {
+		return nil, err
+	}
+
+	res, err := svc.Export(project.Id)
+	if err != nil {
+		return nil, err
+	}
+
+	return *res, err
+}
+
+func (r *ProjectRunner) CopyTo(profile string, in any, replace bool) (any, error) {
+	logger.Trace()
+
+	client, cancel, err := NewClient(profile, r.config)
+	if err != nil {
+		return nil, err
+	}
+	defer cancel()
+
+	svc := services.NewProjectService(client)
+
+	name := in.(services.Project).Name
+
+	if exists, err := svc.GetByName(name); exists != nil {
+		if !replace {
+			return nil, errors.New(fmt.Sprintf("project `%s` exists on the destination server, use --replace to overwrite"))
+		} else if err != nil {
+			return nil, err
+		}
+	}
+
+	return svc.Import(in.(services.Project))
+}
+
+//////////////////////////////////////////////////////////////////////////////
+// Importer Interface
+//
 
 // Import implements the command `import project <path>`
 func (r *ProjectRunner) Import(in Request) (*Response, error) {
 	logger.Trace()
 
-	var common flags.AssetImportCommon
-	utils.LoadObject(in.Common, &common)
+	// Handle loading the file from disk
+	var project services.Project
+	if err := importFile(in, &project); err != nil {
+		return nil, err
+	}
 
-	var options flags.ProjectImportOptions
-	utils.LoadObject(in.Options, &options)
+	common := in.Common.(*flags.AssetImportCommon)
 
 	path, err := NormalizePath(in)
 	if err != nil {
 		return nil, err
 	}
 
-	data, err := utils.ReadFromFile(path)
+	imported, err := r.importProject(project, path, common.Replace)
 	if err != nil {
 		return nil, err
 	}
 
-	///////
-	var projectMap map[string]interface{}
-	utils.UnmarshalData(data, &projectMap)
+	options := in.Options.(*flags.ProjectImportOptions)
 
-	var project services.Project
-	utils.UnmarshalData(data, &project)
+	if err := r.updateMembers(imported.Id, options.Members); err != nil {
+		// Delete the project
+		return nil, err
+	}
+
+	return NewResponse(
+		fmt.Sprintf("Successfully imported project `%s`", project.Name),
+	), nil
+}
+
+//////////////////////////////////////////////////////////////////////////////
+// Exporter Interface
+//
+
+// Export is the implementation of the command `export project <name>`
+func (r *ProjectRunner) Export(in Request) (*Response, error) {
+	logger.Trace()
+
+	common := in.Common.(*flags.AssetExportCommon)
+	options := in.Options.(*flags.ProjectExportOptions)
+
+	name := in.Args[0]
+
+	p, err := r.service.GetByName(name)
+	if err != nil {
+		return nil, err
+	}
+
+	project, err := r.service.Export(p.Id)
+	if err != nil {
+		return nil, err
+	}
+
+	if options.Expand {
+		if err := expandProject(project, common.Path); err != nil {
+			return nil, err
+		}
+	} else {
+		b, err := json.Marshal(project)
+		if err != nil {
+			return nil, err
+		}
+
+		var exported map[string]interface{}
+		if err := json.Unmarshal(b, &exported); err != nil {
+			return nil, err
+		}
+
+		// NOTE (privateip) need to remove these fields to comply with the same
+		// export format returned from the UI
+		delete(exported, "members")
+		delete(exported, "accessControl")
+
+		fn := fmt.Sprintf("%s.project.json", strings.Replace(name, "/", "_", -1))
+		if err := utils.WriteJsonToDisk(exported, fn, common.Path); err != nil {
+			return nil, err
+		}
+	}
+
+	return NewResponse(
+		fmt.Sprintf("Successfully exported project `%s`", project.Name),
+	), nil
+}
+
+//////////////////////////////////////////////////////////////////////////////
+// Gitter functions
+//
+
+// Pull implements the command `pull jsonform <repo>`
+func (r *ProjectRunner) Pull(in Request) (*Response, error) {
+	logger.Trace()
+
+	common := in.Common.(*flags.AssetPullCommon)
+
+	pull := PullAction{
+		Name:     in.Args[1],
+		Filename: in.Args[0],
+		Config:   r.config,
+		Options:  *common,
+	}
+
+	path, err := pull.Clone()
+	if err != nil {
+		return nil, err
+	}
+	defer os.Remove(path)
+
+	file := filepath.Join(path, common.Path, in.Args[0])
+
+	b, err := utils.ReadFromFile(file)
+	if err != nil {
+		return nil, err
+	}
+
+	var res services.Project
+	utils.UnmarshalData(b, &res)
+
+	imported, err := r.importProject(res, filepath.Join(path, common.Path), common.Replace)
+	if err != nil {
+		return nil, err
+	}
+
+	options := in.Options.(*flags.ProjectPullOptions)
+
+	if err := r.updateMembers(imported.Id, options.Members); err != nil {
+		return nil, err
+	}
+
+	return NewResponse(
+		fmt.Sprintf("Successfully pulled project `%s`", res.Name),
+	), nil
+}
+
+// Push implements the command `push jsonform <repo>`
+func (r *ProjectRunner) Push(in Request) (*Response, error) {
+	logger.Trace()
+
+	name := in.Args[0]
+
+	common := in.Common.(*flags.AssetPushCommon)
+	options := in.Options.(*flags.ProjectPushOptions)
+
+	project, err := r.service.GetByName(name)
+	if err != nil {
+		return nil, err
+	}
+
+	res, err := r.service.Export(project.Id)
+	if err != nil {
+		return nil, err
+	}
+
+	push := PushAction{
+		Name:    in.Args[1],
+		Options: *common,
+		Config:  r.config,
+	}
+
+	if options.Expand {
+		path, err := push.Clone()
+		if err != nil {
+			return nil, err
+		}
+
+		if err := expandProject(res, filepath.Join(path, common.Path)); err != nil {
+			return nil, err
+		}
+
+		if err := push.Commit(path); err != nil {
+			return nil, err
+		}
+
+	} else {
+		b, err := json.Marshal(res)
+		if err != nil {
+			return nil, err
+		}
+
+		var exported map[string]interface{}
+		if err := json.Unmarshal(b, &exported); err != nil {
+			return nil, err
+		}
+
+		// NOTE (privateip) need to remove these fields to comply with the same
+		// export format returned from the UI
+		delete(exported, "members")
+		delete(exported, "accessControl")
+
+		push.Data = exported
+		push.Filename = fmt.Sprintf("%s.project.json", strings.Replace(name, "/", "_", -1))
+	}
+
+	return NewResponse(
+		fmt.Sprintf("Successfully pushed project `%s` to `%s`", in.Args[0], in.Args[1]),
+	), nil
+}
+
+//////////////////////////////////////////////////////////////////////////////
+// Private functions
+//
+
+type Member struct {
+	Type   string
+	Name   string
+	Access string
+}
+
+func (r *ProjectRunner) importProject(project services.Project, path string, replace bool) (*services.Project, error) {
+	logger.Trace()
+
+	projectMap, err := toMap(project)
+	if err != nil {
+		return nil, err
+	}
 
 	components := projectMap["components"].([]interface{})
 
@@ -317,30 +530,31 @@ func (r *ProjectRunner) Import(in Request) (*Response, error) {
 
 	for _, ele := range projects {
 		if ele.Name == project.Name {
-			if common.Force {
+			if replace {
 				r.service.Delete(ele.Id)
 			} else {
-				return nil, errors.New(fmt.Sprintf("project `%s` already exists", project.Name))
+				return nil, errors.New(fmt.Sprintf("project `%s` already exists, use `--replace` to overwrite it", project.Name))
 			}
 		}
 	}
 
-	imported, err := r.service.Import(project)
-	if err != nil {
-		return nil, err
-	}
+	return r.service.Import(project)
+}
+
+func (r *ProjectRunner) updateMembers(projectId string, projectMembers []string) error {
+	logger.Trace()
 
 	var members []services.ProjectMember
 
 	activeUser, err := r.userSettings.Get()
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	for _, ele := range options.Members {
+	for _, ele := range projectMembers {
 		member, err := parseMember(ele)
 		if err != nil {
-			return nil, err
+			return err
 		}
 
 		logger.Info("checking member %v", member)
@@ -349,7 +563,7 @@ func (r *ProjectRunner) Import(in Request) (*Response, error) {
 			if member.Type == "account" {
 				account, err := r.accounts.GetByName(member.Name)
 				if err != nil {
-					return nil, err
+					return err
 				}
 
 				members = append(members, services.ProjectMember{
@@ -362,7 +576,7 @@ func (r *ProjectRunner) Import(in Request) (*Response, error) {
 			} else {
 				group, err := r.groups.GetByName(member.Name)
 				if err != nil {
-					return nil, err
+					return err
 				}
 
 				members = append(members, services.ProjectMember{
@@ -379,157 +593,13 @@ func (r *ProjectRunner) Import(in Request) (*Response, error) {
 	}
 
 	if len(members) > 0 {
-		if err := r.service.AddMembers(imported.Id, members); err != nil {
-			return nil, err
-		}
-	}
-	//////
-
-	return NewResponse(
-		fmt.Sprintf("Successfully imported project `%s`", imported.Name),
-	), nil
-}
-
-// Export is the implementation of the command `export project <name>`
-func (r *ProjectRunner) Export(in Request) (*Response, error) {
-	logger.Trace()
-
-	var common flags.AssetExportCommon
-	utils.LoadObject(in.Common, &common)
-
-	var options flags.ProjectExportOptions
-	utils.LoadObject(in.Options, &options)
-
-	if common.Path != "" {
-		utils.EnsurePathExists(common.Path)
-	}
-
-	name := in.Args[0]
-
-	projects, err := r.service.GetAll()
-	if err != nil {
-		return nil, err
-	}
-
-	var id string
-	for _, ele := range projects {
-		if ele.Name == name {
-			id = ele.Id
+		if err := r.service.AddMembers(projectId, members); err != nil {
+			return err
 		}
 	}
 
-	if id == "" {
-		return nil, errors.New(fmt.Sprintf("Unable to find project with name %s", name))
-	}
+	return nil
 
-	project, err := r.service.Export(id)
-	if err != nil {
-		return nil, err
-	}
-
-	if options.Expand {
-		for _, ele := range project.Folders {
-			if ele.NodeType == "folder" {
-				makeFolder(common.Path, ele)
-			}
-		}
-
-		var projectMap map[string]interface{}
-		if err := utils.ToMap(project, &projectMap); err != nil {
-			return nil, err
-		}
-
-		components := projectMap["components"].([]interface{})
-
-		for idx, ele := range project.Components {
-			p := common.Path
-			if ele.Folder != "/" {
-				p = filepath.Join(common.Path, ele.Folder[1:len(ele.Folder)])
-			}
-
-			docName := strings.Replace(ele.Document["name"].(string), "/", "_", -1)
-			fn := fmt.Sprintf("%s.%s.json", docName, strings.ToLower(ele.Type))
-			if err := utils.WriteJsonToDisk(ele.Document, fn, p); err != nil {
-				return nil, err
-			}
-
-			delete(components[idx].(map[string]interface{}), "document")
-			components[idx].(map[string]interface{})["filename"] = fn
-		}
-
-		fn := fmt.Sprintf("%s.project.json", strings.Replace(name, "/", "_", -1))
-		if err := utils.WriteJsonToDisk(projectMap, fn, common.Path); err != nil {
-			return nil, err
-		}
-	} else {
-		fn := fmt.Sprintf("%s.project.json", strings.Replace(name, "/", "_", -1))
-		if err := utils.WriteJsonToDisk(project, fn, common.Path); err != nil {
-			return nil, err
-		}
-	}
-
-	return NewResponse(
-		fmt.Sprintf("Successfully exported project `%s`", project.Name),
-	), nil
-}
-
-// This function will attempt to get a project wiht the specified name.  If the
-// project does not exist, this function will return an error
-func (r *ProjectRunner) GetByName(name string) (*services.Project, error) {
-	logger.Trace()
-
-	projects, err := r.service.GetAll()
-	if err != nil {
-		return nil, err
-	}
-
-	var projectId string
-	for _, ele := range projects {
-		if ele.Name == name {
-			projectId = ele.Id
-		}
-	}
-
-	if projectId == "" {
-		return nil, errors.New(fmt.Sprintf("project `%s` does not exist", name))
-	}
-
-	project, err := r.service.Get(projectId)
-	if err != nil {
-		return nil, err
-	}
-
-	return project, nil
-}
-
-type Member struct {
-	Type   string
-	Name   string
-	Access string
-}
-
-func cloneRepository(in *Repository) (string, error) {
-	logger.Trace()
-
-	r := repositories.Repository{
-		Url: in.Url,
-	}
-	if in.PrivateKeyFile != "" {
-		pk, err := utils.ReadStringFromFile(in.PrivateKeyFile)
-		if err != nil {
-			return "", err
-		}
-		r.PrivateKey = pk
-	}
-	if in.Reference != "" {
-		r.Reference = in.Reference
-	}
-	p, err := r.Clone()
-	if err != nil {
-		return "", err
-	}
-
-	return p, nil
 }
 
 func stringInSlice(a string, list []string) bool {
@@ -575,18 +645,44 @@ func parseMember(member string) (*Member, error) {
 	return m, nil
 }
 
-func newClient(name string, cfg *config.Config) (client.Client, context.CancelFunc, error) {
+func expandProject(project *services.Project, path string) error {
 	logger.Trace()
 
-	profile, err := cfg.GetProfile(name)
-	if err != nil {
-		return nil, nil, err
+	for _, ele := range project.Folders {
+		if ele.NodeType == "folder" {
+			makeFolder(path, ele)
+		}
 	}
 
-	ctx, cancel := context.WithTimeout(
-		context.Background(),
-		time.Duration(profile.Timeout)*time.Second,
-	)
+	var projectMap map[string]interface{}
+	if err := utils.ToMap(project, &projectMap); err != nil {
+		return err
+	}
 
-	return client.New(ctx, profile), cancel, nil
+	// NOTE (privateip) need to remove these fields to comply with the same
+	// export format returned from the UI
+	delete(projectMap, "members")
+	delete(projectMap, "accessControl")
+
+	components := projectMap["components"].([]interface{})
+
+	for idx, ele := range project.Components {
+		p := path
+		if ele.Folder != "/" {
+			p = filepath.Join(path, ele.Folder[1:len(ele.Folder)])
+		}
+
+		docName := strings.Replace(ele.Document["name"].(string), "/", "_", -1)
+		fn := fmt.Sprintf("%s.%s.json", docName, strings.ToLower(ele.Type))
+		if err := utils.WriteJsonToDisk(ele.Document, fn, p); err != nil {
+			return err
+		}
+
+		delete(components[idx].(map[string]interface{}), "document")
+		components[idx].(map[string]interface{})["filename"] = fn
+	}
+
+	fn := fmt.Sprintf("%s.project.json", strings.Replace(project.Name, "/", "_", -1))
+
+	return utils.WriteJsonToDisk(projectMap, fn, path)
 }

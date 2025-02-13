@@ -9,12 +9,10 @@ import (
 )
 
 type AssetImportCommon struct {
-	Force   bool
 	Replace bool
 }
 
 func (o *AssetImportCommon) Flags(cmd *cobra.Command) {
-	cmd.Flags().BoolVar(&o.Force, "force", o.Force, "Force overwriting existing assets")
 	cmd.Flags().BoolVar(&o.Replace, "replace", o.Replace, "Replace an existing asset (if it exists)")
 }
 
@@ -44,28 +42,24 @@ func (o *AssetCopyCommon) Flags(cmd *cobra.Command) {
 
 type AssetPullCommon struct {
 	Path      string
-	Name      string
 	Replace   bool
 	Reference string
 }
 
 func (o *AssetPullCommon) Flags(cmd *cobra.Command) {
 	cmd.Flags().StringVar(&o.Path, "path", o.Path, "Path to the file in the repository")
-	cmd.Flags().StringVar(&o.Name, "name", o.Name, "Name of the file in the repository")
 	cmd.Flags().BoolVar(&o.Replace, "replace", o.Replace, "Replace an existing asset (if it exists)")
 	cmd.Flags().StringVar(&o.Reference, "reference", o.Reference, "Git reference")
 }
 
 type AssetPushCommon struct {
 	Path      string
-	Name      string
 	Message   string
 	Reference string
 }
 
 func (o *AssetPushCommon) Flags(cmd *cobra.Command) {
 	cmd.Flags().StringVar(&o.Path, "path", o.Path, "Path to the file in the repository")
-	cmd.Flags().StringVar(&o.Name, "name", o.Name, "Name of the file in the repository")
 	cmd.Flags().StringVar(&o.Message, "message", o.Message, "Commit message")
 	cmd.Flags().StringVar(&o.Reference, "reference", o.Reference, "Git reference")
 }

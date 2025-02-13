@@ -173,7 +173,8 @@ func (svc *TransformationService) Create(in Transformation) (*Transformation, er
 func (svc *TransformationService) Delete(id string) error {
 	logger.Trace()
 	return svc.client.DeleteRequest(&Request{
-		uri: fmt.Sprintf("/transformations/%s", id),
+		uri:                fmt.Sprintf("/transformations/%s", id),
+		expectedStatusCode: http.StatusNoContent,
 	}, nil)
 }
 

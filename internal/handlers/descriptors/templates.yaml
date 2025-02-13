@@ -64,7 +64,7 @@ clear:
     Delete all configured templates
 
 ##############################################################################
-# Promoter Commands
+# Import/Export Commands
 ##############################################################################
 export:
   use: template <name>
@@ -77,3 +77,20 @@ import:
   group: automation-studio
   description: |
     Import a template
+
+##############################################################################
+# Gitter commands
+##############################################################################
+
+push:
+  use: template <name> <repository>
+  group: automation-studio
+  description: |
+    Push a template to a repository
+
+pull:
+  use: template <path> <repository>
+  group: automation-studio
+  description: |
+    Pull a template from a repository
+

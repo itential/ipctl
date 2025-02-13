@@ -7,13 +7,10 @@ package runners
 type Runner interface {
 }
 
-type Commander interface {
-	Reader
-}
-
 type RunnerFunc func(Request) (*Response, error)
 
 type Copier interface {
+	Copy(Request) (*Response, error)
 	CopyFrom(string, string) (any, error)
 	CopyTo(string, any, bool) (any, error)
 }
@@ -27,7 +24,6 @@ type Writer interface {
 	Create(Request) (*Response, error)
 	Delete(Request) (*Response, error)
 	Clear(Request) (*Response, error)
-	Copy(Request) (*Response, error)
 }
 
 type Editor interface {

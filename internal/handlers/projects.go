@@ -18,7 +18,9 @@ func NewProjectHandler(iapClient client.Client, cfg *config.Config, desc Descrip
 		&AssetHandlerFlags{
 			Import: &flags.ProjectImportOptions{},
 			Export: &flags.ProjectExportOptions{},
-			Copy:   &flags.ProjectImportOptions{},
+			Copy:   &flags.ProjectCopyOptions{},
+			Push:   &flags.ProjectPushOptions{},
+			Pull:   &flags.ProjectPullOptions{},
 		},
 	)
 }
