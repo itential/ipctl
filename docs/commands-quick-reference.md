@@ -7,6 +7,7 @@ support for which assets.
 | Asset                              | get | describe | create | delete | copy | clear | import | export | push | pull |
 |------------------------------------|-----|----------|--------|--------|------|-------|--------|--------|------|------|
 | **Admin Essentials Commands**      |     |          |        |        |      |       |        |        |      |      |
+| accounts                           | *   | *        | -      |        |      | -     |        |        |      |      |
 | adapter-models                     | *   |          | -      |        |      | -     |        |        |      |      |
 | adapters                           | *   | *        |        | *      | *    |       | *      | *      | *    | *    |
 | groups                             | *   | *        | *      | *      | *    | *     | *      | *      | *    | *    |
@@ -14,12 +15,13 @@ support for which assets.
 | integrations                       | *   | *        | *      | *      |      | *     |        |        |      |      |
 | methods                            | *   |          | -      |        |      | -     |        |        |      |      |
 | prebuilts                          | *   | *        | -      | *      |      | *     | *      | *      |      |      |
-| profiles                           | *   | *        | *      | *      |      |       |        |        |      |      |
-| roles                              | *   | *        | *      | *      | *    | *     | *      | *      |      |      |
+| profiles                           | *   | *        | *      | *      |      |       | *      | *      | *    | *    |
+| role-types                         | *   |          |        |        |      |       |        |        |      |      |
+| roles                              | *   | *        | *      | *      |      | *     | *      | *      |      |      |
 | tags                               | *   | *        | *      | *      | *    | *     |        |        |      |      |
-| views                              | *   |          | -      |        |      | -     |        |        |      |      |
+| views                              | *   |          | -      |        |      |       |        |        |      |      |
 | **Automation Studio Commands**     |     |          |        |        |      |       |        |        |      |      |
-| analytic-templates                 | *   | *        | *      | *      | *    | x     | *      | *      | *    | *    |
+| analytic-templates                 | *   | *        | *      | *      | *    | *     | *      | *      | *    | *    |
 | command-templates                  | *   | *        | *      | *      | *    | *     | *      | *      | *    | *    |
 | jsonforms                          | *   | *        | *      | *      | *    | *     | *      | *      | *    | *    |
 | projects                           | *   | *        | *      | *      | *    | *     | *      | *      | *    | *    |
@@ -27,12 +29,13 @@ support for which assets.
 | transformations                    | *   | *        | *      | *      | *    | *     | *      | *      | *    | *    |
 | workflows                          | *   | *        | *      | *      | *    | *     | *      | *      | *    | *    |
 | **Configuration Manager Commands** |     |          |        |        |      |       |        |        |      |      |
-| device-groups                      | *   | *        |        |        |      | -     |        |        |      |      |
-| devices                            | *   | *        |        |        |      |       |        |        |      |      |
 | configuration-parsers              | *   |          |        |        |      |       |        |        |      |      |
+| device-groups                      | *   | *        |        |        |      |       |        |        |      |      |
+| devices                            | *   | *        |        |        |      |       |        |        |      |      |
 | gctrees                            | *   |          | *      | *      |      |       |        | *      |      |      |
 | **Operations Manager Commands**    |     |          |        |        |      |       |        |        |      |      |
 | automations                        | *   | *        | *      | *      | *    | *     | *      | *      |      |      |
+| **Lifecycle Manager Commands**     |     |          |        |        |      |       |        |        |      |      |
 | models                             | *   | *        | *      | *      | *    | *     | *      | *      |      |      |
 
 
