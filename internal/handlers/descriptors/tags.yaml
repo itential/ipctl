@@ -33,7 +33,7 @@ delete:
 
 clear:
   use: tags
-  groups: admin-essentials
+  group: admin-essentials
   description: |
     Delete all configured tags
 
