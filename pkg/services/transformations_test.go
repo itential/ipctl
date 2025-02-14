@@ -114,7 +114,7 @@ func TestTransformationDelete(t *testing.T) {
 	svc := setupTransformationService()
 	defer testlib.Teardown()
 
-	testlib.AddDeleteResponseToMux("/transformations/679629d71190db2bc5752df2", transformationsDeleteResponse, 0)
+	testlib.AddDeleteResponseToMux("/transformations/679629d71190db2bc5752df2", transformationsDeleteResponse, http.StatusNoContent)
 
 	err := svc.Delete("679629d71190db2bc5752df2")
 

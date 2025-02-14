@@ -223,7 +223,7 @@ func (r *JsonFormRunner) CopyTo(profile string, in any, replace bool) (any, erro
 
 	if exists, err := svc.GetByName(name); exists != nil {
 		if !replace {
-			return nil, errors.New(fmt.Sprintf("jsonform `%s` exists on the destination server, use --replace to overwrite"))
+			return nil, errors.New(fmt.Sprintf("jsonform `%s` exists on the destination server, use --replace to overwrite", name))
 		} else if err != nil {
 			return nil, err
 		}
