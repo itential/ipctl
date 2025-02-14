@@ -6,10 +6,6 @@ api:
   description: |
     Send raw API requests to the server
 
-show:
-  description: |
-    Show status information
-
 inspect:
   description: |
     Display status information
