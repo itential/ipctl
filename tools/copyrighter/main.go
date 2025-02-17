@@ -7,8 +7,10 @@ package main
 import (
 	"bufio"
 	"bytes"
+	"errors"
 	"fmt"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"strings"
 )
@@ -23,6 +25,7 @@ func main() {
 	err := filepath.Walk(".", processFile)
 	if err != nil {
 		fmt.Printf("Error walking through files: %v\n", err)
+		os.Exit(1)
 	}
 }
 
@@ -35,11 +38,24 @@ func processFile(path string, info os.FileInfo, err error) error {
 		return filepath.SkipDir
 	}
 	if !info.IsDir() && strings.HasSuffix(info.Name(), ".go") {
+		fmt.Printf("checking %s\n", path)
 		err = checkAndFixFile(path)
 		if err != nil {
 			fmt.Printf("Error processing file %s: %v\n", path, err)
 		}
 	}
+	out, err := exec.Command("git", "status", "-s").Output()
+	if err != nil {
+		return err
+	}
+
+	for _, ele := range strings.Split(string(out), "\n") {
+		if strings.HasPrefix(ele, " M") {
+			fmt.Printf("%s\n", out)
+			return errors.New("source files missing license header")
+		}
+	}
+
 	return nil
 }
 
