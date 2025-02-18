@@ -53,7 +53,7 @@ func (svc LocalAAAService) GetGroups() ([]Group, error) {
 
 func (svc LocalAAAService) CreateGroup(in Group) error {
 	logger.Trace()
-	_, err := svc.accounts.InsertOne(context.TODO(), in)
+	_, err := svc.groups.InsertOne(context.TODO(), in)
 	return err
 
 }
@@ -61,7 +61,7 @@ func (svc LocalAAAService) CreateGroup(in Group) error {
 func (svc LocalAAAService) DeleteGroup(name string) error {
 	logger.Trace()
 
-	_, err := svc.accounts.DeleteOne(
+	_, err := svc.groups.DeleteOne(
 		context.TODO(),
 		bson.D{{Key: "name", Value: name}},
 	)
