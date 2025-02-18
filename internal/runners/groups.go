@@ -249,11 +249,6 @@ func (r *GroupRunner) Export(in Request) (*Response, error) {
 	return NewResponse(
 		fmt.Sprintf("Successfully exported group `%s` to `%s`", res.Name, fn),
 	), nil
-
-	return NewResponse(
-		"",
-		WithJson(res),
-	), nil
 }
 
 func (r *GroupRunner) importGroup(in services.Group, replace bool) error {
@@ -274,7 +269,7 @@ func (r *GroupRunner) importGroup(in services.Group, replace bool) error {
 			}
 		} else {
 			return errors.New(
-				fmt.Sprintf("group `%` already exists, use --replace to overwrite it", in.Name),
+				fmt.Sprintf("group `%s` already exists, use --replace to overwrite it", in.Name),
 			)
 		}
 	}
