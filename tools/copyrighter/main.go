@@ -7,10 +7,10 @@ package main
 import (
 	"bufio"
 	"bytes"
-	"errors"
+	"flag"
 	"fmt"
+	"log"
 	"os"
-	"os/exec"
 	"path/filepath"
 	"strings"
 )
@@ -21,12 +21,13 @@ const header = `// Copyright 2024 Itential Inc. All Rights Reserved
 
 `
 
+var checkOnly bool
+
 func main() {
-	err := filepath.Walk(".", processFile)
-	if err != nil {
-		fmt.Printf("Error walking through files: %v\n", err)
-		os.Exit(1)
-	}
+	flag.BoolVar(&checkOnly, "check", false, "Only check files")
+	flag.Parse()
+
+	filepath.Walk(".", processFile)
 }
 
 func processFile(path string, info os.FileInfo, err error) error {
@@ -37,22 +38,12 @@ func processFile(path string, info os.FileInfo, err error) error {
 	if info.IsDir() && info.Name() == "vendor" {
 		return filepath.SkipDir
 	}
+
 	if !info.IsDir() && strings.HasSuffix(info.Name(), ".go") {
 		fmt.Printf("checking %s\n", path)
 		err = checkAndFixFile(path)
 		if err != nil {
 			fmt.Printf("Error processing file %s: %v\n", path, err)
-		}
-	}
-	out, err := exec.Command("git", "status", "-s").Output()
-	if err != nil {
-		return err
-	}
-
-	for _, ele := range strings.Split(string(out), "\n") {
-		if strings.HasPrefix(ele, " M") {
-			fmt.Printf("%s\n", out)
-			return errors.New("source files missing license header")
 		}
 	}
 
@@ -64,56 +55,63 @@ func checkAndFixFile(path string) error {
 	if err != nil {
 		return err
 	}
-	reader := bufio.NewReader(bytes.NewReader(content))
-	var restOfFile bytes.Buffer
 
-	inCopyrightBlock := false
-	foundPackage := false
+	if checkOnly {
+		if !strings.HasPrefix(string(content), header) {
+			log.Fatalf("missing or invalid source header: %s\n", path)
+		}
+	} else {
+		reader := bufio.NewReader(bytes.NewReader(content))
+		var restOfFile bytes.Buffer
 
-	for {
-		line, err := reader.ReadString('\n')
-		if err != nil {
-			if err.Error() == "EOF" {
+		inCopyrightBlock := false
+		foundPackage := false
+
+		for {
+			line, err := reader.ReadString('\n')
+			if err != nil {
+				if err.Error() == "EOF" {
+					restOfFile.WriteString(line)
+					break
+				}
+				return err
+			}
+			if strings.HasPrefix(strings.TrimSpace(line), "package ") {
+				foundPackage = true
 				restOfFile.WriteString(line)
 				break
 			}
-			return err
-		}
-		if strings.HasPrefix(strings.TrimSpace(line), "package ") {
-			foundPackage = true
-			restOfFile.WriteString(line)
-			break
-		}
-		if strings.HasPrefix(strings.TrimSpace(line), "// Copyright") {
-			inCopyrightBlock = true
-		}
-		if inCopyrightBlock {
-			if strings.TrimSpace(line) == "" {
-				inCopyrightBlock = false
+			if strings.HasPrefix(strings.TrimSpace(line), "// Copyright") {
+				inCopyrightBlock = true
 			}
-		} else {
-			restOfFile.WriteString(line)
-		}
-	}
-
-	// Read the rest of the file in so we can write back
-	for {
-		line, err := reader.ReadString('\n')
-		if err != nil {
-			if err.Error() == "EOF" {
+			if inCopyrightBlock {
+				if strings.TrimSpace(line) == "" {
+					inCopyrightBlock = false
+				}
+			} else {
 				restOfFile.WriteString(line)
-				break
 			}
-			return err
 		}
-		restOfFile.WriteString(line)
-	}
 
-	if foundPackage {
-		newContent := append([]byte(header), restOfFile.Bytes()...)
-		err = os.WriteFile(path, newContent, os.ModePerm)
-		if err != nil {
-			return err
+		// Read the rest of the file in so we can write back
+		for {
+			line, err := reader.ReadString('\n')
+			if err != nil {
+				if err.Error() == "EOF" {
+					restOfFile.WriteString(line)
+					break
+				}
+				return err
+			}
+			restOfFile.WriteString(line)
+		}
+
+		if foundPackage {
+			newContent := append([]byte(header), restOfFile.Bytes()...)
+			err = os.WriteFile(path, newContent, os.ModePerm)
+			if err != nil {
+				return err
+			}
 		}
 	}
 
