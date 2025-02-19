@@ -21,5 +21,11 @@ jobs:
         with:
           go-version: stable
 
+      - name: Install go-licenses
+        run: go install github.com/google/go-licenses@latest
+
       - name: Run make test
         run: make test
+
+      - name: Run make licenses
+        run: make licenses
