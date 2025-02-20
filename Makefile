@@ -88,4 +88,5 @@ build: install
 # based on mock data for the various services it connects to.  The target
 # should run without error before making any pull requests to this project.
 test:
+	@go run ./tools/copyrighter/main.go -check
 	@scripts/test.sh unittest
