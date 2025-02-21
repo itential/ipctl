@@ -16,6 +16,7 @@ import (
 	"github.com/itential/ipctl/pkg/config"
 	"github.com/itential/ipctl/pkg/logger"
 	"github.com/itential/ipctl/pkg/services"
+	"github.com/itential/ipctl/pkg/validators"
 )
 
 type AutomationRunner struct {
@@ -191,12 +192,19 @@ func (r *AutomationRunner) CopyFrom(profile, name string) (any, error) {
 	}
 	defer cancel()
 
-	res, err := services.NewAutomationService(client).GetByName(name)
+	svc := services.NewAutomationService(client)
+
+	res, err := svc.GetByName(name)
 	if err != nil {
 		return nil, err
 	}
 
-	return *res, err
+	automation, err := svc.Export(res.Id)
+	if err != nil {
+		return nil, err
+	}
+
+	return *automation, err
 }
 
 func (r *AutomationRunner) CopyTo(profile string, in any, replace bool) (any, error) {
@@ -210,17 +218,15 @@ func (r *AutomationRunner) CopyTo(profile string, in any, replace bool) (any, er
 
 	svc := services.NewAutomationService(client)
 
-	name := in.(services.Automation).Name
+	automation := in.(services.Automation)
 
-	if exists, err := svc.GetByName(name); exists != nil {
-		if !replace {
-			return nil, errors.New(fmt.Sprintf("automation `%s` exists on the destination server, use --replace to overwrite", name))
-		} else if err != nil {
+	if err := validators.NewAutomationValidator(r.client).CanImport(automation); err != nil {
+		if err := r.checkImportValidationError(err, automation.Name, replace); err != nil {
 			return nil, err
 		}
 	}
 
-	res, err := svc.Import(in.(services.Automation))
+	res, err := svc.Import(automation)
 
 	if err != nil {
 		return nil, errors.New(r.formatImportErrorMessage(err))
@@ -237,121 +243,174 @@ func (r *AutomationRunner) CopyTo(profile string, in any, replace bool) (any, er
 func (r *AutomationRunner) Import(in Request) (*Response, error) {
 	logger.Trace()
 
-	var common *flags.AssetImportCommon
-	utils.LoadObject(in.Common, &common)
-
-	var options *flags.AutomationImportOptions
-	utils.LoadObject(in.Options, &options)
-
-	currentUser, err := services.GetCurrentUser(r.client)
-	if err != nil {
-		return nil, err
-	}
-
-	path, err := NormalizePath(in)
-	if err != nil {
-		return nil, err
-	}
-
-	content, err := utils.ReadFromFile(path)
-	if err != nil {
-		return nil, err
-	}
-
-	var data map[string]interface{}
-	utils.UnmarshalData(content, &data)
+	common := in.Common.(flags.AssetImportCommon)
 
 	var automation services.Automation
 
-	if err := json.Unmarshal(content, &automation); err != nil {
+	if err := ReadImportFromFile(in, &automation); err != nil {
 		return nil, err
 	}
 
-	if !options.DisableComponentCheck && automation.ComponentType == "workflows" {
-		if !r.WorkflowExists(automation.ComponentName) {
-			return nil, errors.New(
-				fmt.Sprintf(
-					"worklow `%s` does not exist, cannot import automation", automation.ComponentName,
-				),
-			)
-		}
-	}
-
-	if !options.DisableGroupExistsCheck {
-		logger.Info("Starting group exists check")
-
-		groupService := services.NewGroupService(r.client)
-
-		groups, err := groupService.GetAll()
-		if err != nil {
+	if err := validators.NewAutomationValidator(r.client).CanImport(automation); err != nil {
+		if err := r.checkImportValidationError(err, automation.Name, common.Replace); err != nil {
 			return nil, err
 		}
-
-		var readExists bool = true
-		var writeExists bool = true
-
-		var name string
-
-		for _, ele := range automation.Gbac.Read {
-			name = ele.(map[string]interface{})["name"].(string)
-			for _, g := range groups {
-				readExists = g.Name == name
-				if readExists {
-					break
-				}
-			}
-		}
-
-		for _, ele := range automation.Gbac.Write {
-			name = ele.(map[string]interface{})["name"].(string)
-			for _, g := range groups {
-				writeExists = g.Name == name
-				if writeExists {
-					break
-				}
-			}
-		}
-
-		if !readExists {
-			return nil, errors.New("configured read group not found on the server")
-		}
-
-		if !writeExists {
-			return nil, errors.New("configured write group not found on the server")
-		}
-
-		logger.Info("Group exists check completely successfully")
 	}
 
-	var readMember bool = true
-	var writeMember bool = true
+	triggers, err := r.updateTriggers(automation)
+	if err != nil {
+		return nil, err
+	}
+	automation.Triggers = triggers
 
-	if !options.DisableGroupReadCheck {
-		for _, ele := range automation.Gbac.Read {
-			for _, grp := range currentUser.Groups {
-				readMember = grp.Name == ele.(map[string]interface{})["name"].(string)
-				if readMember {
-					break
-				}
+	res, err := r.service.Import(automation)
+	if err != nil {
+		return nil, err
+	}
+
+	return NewResponse(
+		fmt.Sprintf("Successfully imported automation `%s` with %v trigger(s)", res.Name, len(automation.Triggers)),
+	), nil
+}
+
+//////////////////////////////////////////////////////////////////////////////
+// Exporter Interface
+//
+
+// Export implements the `export automation <name>` command
+func (r *AutomationRunner) Export(in Request) (*Response, error) {
+	logger.Trace()
+
+	common := in.Common.(*flags.AssetExportCommon)
+
+	name := in.Args[0]
+
+	automation, err := r.service.GetByName(name)
+	if err != nil {
+		return nil, err
+	}
+
+	res, err := r.service.Export(automation.Id)
+	if err != nil {
+		return nil, err
+	}
+
+	fn := fmt.Sprintf("%s.automation.json", name)
+
+	if err := utils.WriteJsonToDisk(res, fn, common.Path); err != nil {
+		return nil, err
+	}
+
+	return NewResponse(
+		fmt.Sprintf("Successfully exported automation `%s`", name),
+	), nil
+
+}
+
+//////////////////////////////////////////////////////////////////////////////
+// Private functions
+//
+
+/*
+func (r *AutomationRunner) WorkflowExists(name string) bool {
+	logger.Trace()
+	_, err := r.workflows.Get(name)
+	if err != nil {
+		return false
+	}
+	return true
+}
+*/
+
+func (r *AutomationRunner) formatImportErrorMessage(e error) string {
+	logger.Trace()
+
+	type ResponseError struct {
+		Message  string `json:"message"`
+		Data     any    `json:"data"`
+		Metadata struct {
+			Errors []struct {
+				Success bool                   `json:"success"`
+				Reason  string                 `json:"reason"`
+				Data    map[string]interface{} `json:"data"`
+			} `json:"errors"`
+		} `json:"metadata"`
+	}
+
+	var res ResponseError
+
+	if err := json.Unmarshal([]byte(e.Error()), &res); err != nil {
+		logger.Fatal(err, "failed to unmarshal error message")
+	}
+
+	var output = []string{
+		fmt.Sprintf("%s (See details below)", res.Message),
+	}
+
+	for _, ele := range res.Metadata.Errors {
+		output = append(output, fmt.Sprintf("- %s", ele.Reason))
+	}
+
+	return strings.Join(output, "\n")
+
+}
+
+/*
+func (r *AutomationRunner) checkAutomationGroups(automation services.Automation) error {
+	logger.Info("Starting group exists check")
+
+	groupService := services.NewGroupService(r.client)
+
+	groups, err := groupService.GetAll()
+	if err != nil {
+		return err
+	}
+
+	var readExists bool = true
+	var writeExists bool = true
+
+	var name string
+
+	for _, ele := range automation.Gbac.Read {
+		name = ele.(map[string]interface{})["name"].(string)
+		for _, g := range groups {
+			readExists = g.Name == name
+			if readExists {
+				break
 			}
 		}
 	}
 
-	if !options.DisableGroupWriteCheck {
-		for _, ele := range automation.Gbac.Write {
-			for _, grp := range currentUser.Groups {
-				writeMember = grp.Name == ele.(map[string]interface{})["name"].(string)
-				if writeMember {
-					break
-				}
+	for _, ele := range automation.Gbac.Write {
+		name = ele.(map[string]interface{})["name"].(string)
+		for _, g := range groups {
+			writeExists = g.Name == name
+			if writeExists {
+				break
 			}
 		}
 	}
 
-	if !writeMember {
-		if !readMember {
-			return nil, errors.New("current user must have read or write access to the automation")
-		}
+	if !readExists {
+		return errors.New("configured read group not found on the server")
+	}
+
+	if !writeExists {
+		return errors.New("configured write group not found on the server")
+	}
+
+	logger.Info("Group exists check completely successfully")
+
+	return nil
+}
+*/
+
+func (r *AutomationRunner) updateTriggers(in services.Automation) ([]services.Trigger, error) {
+	logger.Trace()
+
+	data, err := ToMap(in)
+	if err != nil {
+		return nil, err
 	}
 
 	var triggers []services.Trigger
@@ -395,124 +454,24 @@ func (r *AutomationRunner) Import(in Request) (*Response, error) {
 			}
 		}
 	}
+	return triggers, nil
+}
 
-	automation.Triggers = triggers
-
-	existing, err := r.service.GetByName(automation.Name)
-	if existing != nil {
-		if common.Replace {
+func (r *AutomationRunner) checkImportValidationError(e error, name string, replace bool) error {
+	if e.Error() == "automation already exists" {
+		if replace {
+			existing, err := r.service.GetByName(name)
+			if err != nil {
+				return err
+			}
 			if err := r.service.Delete(existing.Id); err != nil {
-				return nil, err
+				return err
 			}
 		} else {
-			return nil, errors.New(fmt.Sprintf("automation `%s` already exists", data["name"].(string)))
-		}
-
-	}
-	if err != nil {
-		if err.Error() != "automation not found" {
-			return nil, err
+			return errors.New(
+				fmt.Sprintf("automation `%s` already exists on the server, use --replace to overwrite", name),
+			)
 		}
 	}
-
-	res, err := r.service.Import(automation)
-	if err != nil {
-		return nil, err
-	}
-
-	return NewResponse(
-		fmt.Sprintf("Successfully imported automation `%s` with %v trigger(s)", res.Name, len(triggers)),
-	), nil
-}
-
-//////////////////////////////////////////////////////////////////////////////
-// Exporter Interface
-//
-
-// Export implements the `export automation <name>` command
-func (r *AutomationRunner) Export(in Request) (*Response, error) {
-	logger.Trace()
-
-	common := in.Common.(*flags.AssetExportCommon)
-
-	name := in.Args[0]
-
-	automation, err := r.service.GetByName(name)
-	if err != nil {
-		return nil, err
-	}
-
-	res, err := r.service.Export(automation.Id)
-	if err != nil {
-		return nil, err
-	}
-
-	fn := fmt.Sprintf("%s.automation.json", name)
-
-	if err := utils.WriteJsonToDisk(res, fn, common.Path); err != nil {
-		return nil, err
-	}
-
-	return NewResponse(
-		fmt.Sprintf("Successfully exported automation `%s`", name),
-	), nil
-
-}
-
-func (r *AutomationRunner) Exists(name string) bool {
-	logger.Trace()
-	res, err := r.service.GetAll()
-	if err != nil {
-		logger.Fatal(err, "error attempting to get all automations")
-	}
-
-	for _, ele := range res {
-		if ele.Name == name {
-			return true
-		}
-	}
-
-	return false
-}
-
-func (r *AutomationRunner) WorkflowExists(name string) bool {
-	logger.Trace()
-	_, err := r.workflows.Get(name)
-	if err != nil {
-		return false
-	}
-	return true
-}
-
-func (r *AutomationRunner) formatImportErrorMessage(e error) string {
-	logger.Trace()
-
-	type ResponseError struct {
-		Message  string `json:"message"`
-		Data     any    `json:"data"`
-		Metadata struct {
-			Errors []struct {
-				Success bool                   `json:"success"`
-				Reason  string                 `json:"reason"`
-				Data    map[string]interface{} `json:"data"`
-			} `json:"errors"`
-		} `json:"metadata"`
-	}
-
-	var res ResponseError
-
-	if err := json.Unmarshal([]byte(e.Error()), &res); err != nil {
-		logger.Fatal(err, "failed to unmarshal error message")
-	}
-
-	var output = []string{
-		fmt.Sprintf("%s (See details below)", res.Message),
-	}
-
-	for _, ele := range res.Metadata.Errors {
-		output = append(output, fmt.Sprintf("- %s", ele.Reason))
-	}
-
-	return strings.Join(output, "\n")
-
+	return nil
 }
