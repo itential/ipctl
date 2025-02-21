@@ -333,7 +333,9 @@ func (r *WorkflowRunner) Clear(in Request) (*Response, error) {
 	}
 
 	for _, ele := range workflows {
-		r.service.Delete(ele.Id)
+		if err := r.service.Delete(ele.Name); err != nil {
+			return nil, err
+		}
 		cnt++
 	}
 
