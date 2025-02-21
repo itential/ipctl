@@ -16,7 +16,7 @@ func NewAutomationHandler(c client.Client, cfg *config.Config, desc Descriptors)
 		runners.NewAutomationRunner(c, cfg),
 		desc[automationsDescriptor],
 		&AssetHandlerFlags{
-			Import: &flags.AutomationImportOptions{},
+			Create: &flags.AutomationCreateOptions{},
 		},
 	)
 }

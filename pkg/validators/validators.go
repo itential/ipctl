@@ -2,10 +2,13 @@
 // Unauthorized copying of this file, via any medium is strictly prohibited
 // Proprietary and confidential
 
-package flags
+package validators
 
-import "testing"
-
-func TestAutomationCreateOptions(t *testing.T) {
-	checkFlags(t, &AutomationCreateOptions{}, []string{"description", "replace"})
+func StringInSlice(s string, elements []string) bool {
+	for _, ele := range elements {
+		if ele == s {
+			return true
+		}
+	}
+	return false
 }

@@ -16,6 +16,22 @@ import (
 	"github.com/itential/ipctl/pkg/logger"
 )
 
+func ToMap(in any) (map[string]interface{}, error) {
+	logger.Trace()
+
+	b, err := json.Marshal(in)
+	if err != nil {
+		return nil, err
+	}
+
+	var m map[string]interface{}
+	if err := json.Unmarshal(b, &m); err != nil {
+		return nil, err
+	}
+
+	return m, nil
+}
+
 func GetProfile(name string, cfg *config.Config) (*config.Profile, error) {
 	logger.Trace()
 
