@@ -8,6 +8,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"strings"
 	"time"
 
 	"github.com/itential/ipctl/internal/utils"
@@ -15,6 +16,13 @@ import (
 	"github.com/itential/ipctl/pkg/config"
 	"github.com/itential/ipctl/pkg/logger"
 )
+
+// normalizeFilename will take a string argument for a filename and normalize
+// it by replacing characters that will otherwise cause problems.
+func normalizeFilename(s string) string {
+	logger.Trace()
+	return strings.Replace(s, "/", "_", -1)
+}
 
 func ToMap(in any) (map[string]interface{}, error) {
 	logger.Trace()
