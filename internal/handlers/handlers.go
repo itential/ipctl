@@ -160,17 +160,6 @@ func (h Handler) ClearCommands() []*cobra.Command {
 	return commands
 }
 
-func (h Handler) EditCommands() []*cobra.Command {
-	var commands []*cobra.Command
-	for _, ele := range Editors() {
-		cmd := ele.Edit(h.Runtime)
-		if cmd != nil {
-			commands = append(commands, cmd)
-		}
-	}
-	return commands
-}
-
 func (h Handler) ImportCommands() []*cobra.Command {
 	var commands []*cobra.Command
 	for _, ele := range Importers() {
@@ -245,6 +234,39 @@ func (h Handler) ApiCommands() []*cobra.Command {
 		handler.Delete(h.Runtime),
 		handler.Put(h.Runtime),
 		handler.Post(h.Runtime),
+	}
+	return commands
+}
+
+func (h Handler) EditCommands() []*cobra.Command {
+	var commands []*cobra.Command
+	for _, ele := range Editors() {
+		cmd := ele.Edit(h.Runtime)
+		if cmd != nil {
+			commands = append(commands, cmd)
+		}
+	}
+	return commands
+}
+
+func (h Handler) DumpCommands() []*cobra.Command {
+	var commands []*cobra.Command
+	for _, ele := range Dumpers() {
+		cmd := ele.Dump(h.Runtime)
+		if cmd != nil {
+			commands = append(commands, cmd)
+		}
+	}
+	return commands
+}
+
+func (h Handler) LoadCommands() []*cobra.Command {
+	var commands []*cobra.Command
+	for _, ele := range Loaders() {
+		cmd := ele.Load(h.Runtime)
+		if cmd != nil {
+			commands = append(commands, cmd)
+		}
 	}
 	return commands
 }

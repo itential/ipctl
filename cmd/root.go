@@ -28,6 +28,7 @@ const description = `Manage Itential Platform
 
 func loadCommands(cmd *cobra.Command, h handlers.Handler, cfg *config.Config) {
 	addCommandGroup(cmd, h, "Asset Commands:", assetCommands)
+	addCommandGroup(cmd, h, "Dataset Commands:", datasetCommands)
 	addCommandGroup(cmd, h, "Platform Commands:", platformCommands)
 	addCommandGroup(cmd, h, "Plugin Commands:", pluginCommands)
 }

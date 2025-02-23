@@ -36,5 +36,3 @@ support for which assets.
 | automations                        | *   | *        | *      | *      | *    | *     | *      | *      |
 | **Lifecycle Manager Commands**     |     |          |        |        |      |       |        |        |
 | models                             | *   | *        | *      | *      | *    | *     | *      | *      |
-
-

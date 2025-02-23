@@ -114,6 +114,13 @@ func platformCommands(h handlers.Handler, id string) []*cobra.Command {
 	})
 }
 
+func datasetCommands(h handlers.Handler, id string) []*cobra.Command {
+	return makeGroupCommand([]GroupCommand{
+		GroupCommand{"load", id, h.LoadCommands, "dataset"},
+		GroupCommand{"dump", id, h.DumpCommands, "dataset"},
+	})
+}
+
 func pluginCommands(h handlers.Handler, id string) []*cobra.Command {
 	return makeGroupCommand([]GroupCommand{
 		GroupCommand{"local-aaa", id, h.LocalAAACommands, "localaaa"},

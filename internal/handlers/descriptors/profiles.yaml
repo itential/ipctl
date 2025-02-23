@@ -62,3 +62,15 @@ export:
   group: admin-essentials
   description: |
     Export a profile
+
+dump:
+  use: profiles
+  group: admin-essentials
+  description: |
+    Dump all profiles to path
+
+load:
+  use: profiles <path>
+  group: admin-essentials
+  description: |
+    Load all profiles from path
