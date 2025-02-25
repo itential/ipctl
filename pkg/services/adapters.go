@@ -155,6 +155,28 @@ func (svc *AdapterService) Import(in Adapter) (*Adapter, error) {
 	return res.Data, nil
 }
 
+func (svc *AdapterService) Update(in Adapter) (*Adapter, error) {
+	logger.Trace()
+
+	type Response struct {
+		Status  string   `json:"status"`
+		Message string   `json:"message"`
+		Data    *Adapter `json:"data"`
+	}
+
+	var res Response
+	var body = map[string]interface{}{"properties": in}
+	var uri = fmt.Sprintf("/adapters/%s", in.Name)
+
+	if err := svc.client.Put(uri, body, &res); err != nil {
+		return nil, err
+	}
+
+	logger.Info(res.Message)
+
+	return res.Data, nil
+}
+
 func (svc *AdapterService) Export(name string) (*Adapter, error) {
 	logger.Trace()
 	return svc.Get(name)

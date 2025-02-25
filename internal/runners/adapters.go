@@ -16,6 +16,7 @@ import (
 	"github.com/itential/ipctl/internal/utils"
 	"github.com/itential/ipctl/pkg/client"
 	"github.com/itential/ipctl/pkg/config"
+	"github.com/itential/ipctl/pkg/editor"
 	"github.com/itential/ipctl/pkg/logger"
 	"github.com/itential/ipctl/pkg/services"
 )
@@ -91,6 +92,32 @@ func (r *AdapterRunner) Delete(in Request) (*Response, error) {
 
 func (r *AdapterRunner) Clear(in Request) (*Response, error) {
 	return NotImplemented(in)
+}
+
+// Edit implements the `edti adapter ...` command
+func (r *AdapterRunner) Edit(in Request) (*Response, error) {
+	logger.Trace()
+
+	name := in.Args[0]
+
+	current, err := r.service.Get(name)
+	if err != nil {
+		return nil, err
+	}
+
+	var updated services.Adapter
+
+	if err := editor.Run(current, &updated); err != nil {
+		return nil, err
+	}
+
+	if _, err := r.service.Update(updated); err != nil {
+		return nil, err
+	}
+
+	return NewResponse(
+		fmt.Sprintf("Successfully updated adapter `%s`", name),
+	), nil
 }
 
 func (r *AdapterRunner) Copy(in Request) (*Response, error) {
