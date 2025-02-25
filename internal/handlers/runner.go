@@ -78,10 +78,6 @@ func withOptions(f *AssetHandlerFlags) CommandRunnerOption {
 			c.Options = f.Import
 		case "export":
 			c.Options = f.Export
-		case "push":
-			c.Options = f.Push
-		case "pull":
-			c.Options = f.Pull
 		}
 	}
 }
@@ -125,6 +121,7 @@ func NewCommand(c *CommandRunner) *cobra.Command {
 				Options: c.Options,
 				Common:  c.Common,
 				Runner:  c.Runner,
+				Config:  c.Runtime.Config,
 			}
 
 			resp, err := c.Run(req)

@@ -1,6 +1,6 @@
 ---
 ###############################################################################
-# Reader commands
+# Asset commands
 ###############################################################################
 get:
   use: transformations
@@ -15,9 +15,6 @@ describe:
   description: |
     Display details about a transformation
 
-###############################################################################
-# Writer commands
-###############################################################################
 create:
   use: transformation <name>
   group: automation-studio
@@ -42,9 +39,6 @@ copy:
   description: |
     Copy a transformation from source to destination
 
-###############################################################################
-# Promoter commands
-###############################################################################
 import:
   use: transformation <path>
   group: automation-studio
@@ -56,18 +50,3 @@ export:
   group: automation-studio
   description: |
     Export a transformation
-
-###############################################################################
-# Gitter commands
-###############################################################################
-push:
-  use: transformation <name> <repository>
-  group: automation-studio
-  description: |
-    Push a transformation to a repository
-
-pull:
-  use: transformation <filename> <repository>
-  group: automation-studio
-  description: |
-    Pull a transformation from a repository

@@ -1,8 +1,4 @@
 ---
-##############################################################################
-# Reader commands
-##############################################################################
-
 get:
   use: projects
   group: automation-studio
@@ -32,11 +28,6 @@ describe:
   example: |
     # Display details about a project called `cli test`
     $ ipctl describe project "cli test"
-
-
-##############################################################################
-# Writer commands
-##############################################################################
 
 create:
   use: project <name>
@@ -131,10 +122,6 @@ clear:
     # Delete all projects from the server
     $ ipctl clear projects
 
-##############################################################################
-# Import/Export commands
-##############################################################################
-
 import:
   use: project <path>
   group: automation-studio
@@ -170,21 +157,3 @@ export:
 
   description: |
     Export a project
-
-
-##############################################################################
-# Gitter commands
-##############################################################################
-
-pull:
-  use: project <repo>
-  group: automation-studio
-  description: |
-    Pull a project from a repository
-
-push:
-  use: project <name> <repo>
-  group: automation-studio
-  description: |
-    Push a project to a repository
-

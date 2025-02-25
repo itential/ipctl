@@ -5,15 +5,18 @@
 package runners
 
 import (
+	"fmt"
+	"os/user"
 	"time"
 
 	"github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/plumbing/object"
 	"github.com/itential/ipctl/internal/utils"
-	"github.com/itential/ipctl/pkg/config"
 	"github.com/itential/ipctl/pkg/logger"
 	"github.com/itential/ipctl/pkg/repositories"
 )
+
+type RepositoryOption func(r *Repository)
 
 type Repository struct {
 	Url            string
@@ -23,38 +26,72 @@ type Repository struct {
 	Email          string
 }
 
-func GetRepository(name string, config *config.Config) (*Repository, error) {
-	repo, err := config.GetRepository(name)
-	if err != nil {
-		return nil, err
-	}
-
-	return &Repository{
-		Url:            repo.Url,
-		PrivateKeyFile: repo.PrivateKeyFile,
-		Reference:      repo.Reference,
-		Name:           repo.Name,
-		Email:          repo.Email,
-	}, nil
-}
-
-func CloneRepository(in *Repository) (string, error) {
+func NewRepository(url string, opts ...RepositoryOption) *Repository {
 	logger.Trace()
 
-	r := repositories.Repository{
-		Url: in.Url,
+	currentUser, err := user.Current()
+	if err != nil {
+		logger.Fatal(err, "failed get current user")
 	}
-	if in.PrivateKeyFile != "" {
-		pk, err := utils.ReadStringFromFile(in.PrivateKeyFile)
+
+	r := &Repository{
+		Url:   url,
+		Name:  currentUser.Username,
+		Email: fmt.Sprintf("%s@users.ipctl", currentUser.Username),
+	}
+
+	for _, opt := range opts {
+		opt(r)
+	}
+
+	return r
+}
+
+func WithReference(v string) RepositoryOption {
+	return func(r *Repository) {
+		r.Reference = v
+	}
+}
+
+func WithPrivateKeyFile(v string) RepositoryOption {
+	return func(r *Repository) {
+		r.PrivateKeyFile = v
+	}
+}
+
+func WithName(v string) RepositoryOption {
+	return func(r *Repository) {
+		if v != "" {
+			r.Name = v
+		}
+	}
+}
+
+func WithEmail(v string) RepositoryOption {
+	return func(r *Repository) {
+		if v != "" {
+			r.Name = v
+		}
+	}
+}
+
+func (r Repository) Clone() (string, error) {
+	logger.Trace()
+
+	repo := repositories.Repository{
+		Url: r.Url,
+	}
+	if r.PrivateKeyFile != "" {
+		pk, err := utils.ReadStringFromFile(r.PrivateKeyFile)
 		if err != nil {
 			return "", err
 		}
-		r.PrivateKey = pk
+		repo.PrivateKey = pk
 	}
-	if in.Reference != "" {
-		r.Reference = in.Reference
+	if r.Reference != "" {
+		repo.Reference = r.Reference
 	}
-	p, err := r.Clone()
+	p, err := repo.Clone()
 	if err != nil {
 		return "", err
 	}
@@ -62,13 +99,15 @@ func CloneRepository(in *Repository) (string, error) {
 	return p, nil
 }
 
-func CommitAndPushRepo(in *Repository, path, msg string) error {
-	r, err := git.PlainOpen(path)
+func (r Repository) CommitAndPush(path, msg string) error {
+	logger.Trace()
+
+	repo, err := git.PlainOpen(path)
 	if err != nil {
 		return err
 	}
 
-	w, err := r.Worktree()
+	w, err := repo.Worktree()
 	if err != nil {
 		return err
 	}
@@ -85,8 +124,8 @@ func CommitAndPushRepo(in *Repository, path, msg string) error {
 	if !status.IsClean() {
 		commit, err := w.Commit(msg, &git.CommitOptions{
 			Author: &object.Signature{
-				Name:  in.Name,
-				Email: in.Email,
+				Name:  r.Name,
+				Email: r.Email,
 				When:  time.Now(),
 			},
 		})
@@ -96,11 +135,18 @@ func CommitAndPushRepo(in *Repository, path, msg string) error {
 
 		logger.Info("%v", commit)
 
-		err = r.Push(&git.PushOptions{})
-		if err != nil {
+		if err := repo.Push(&git.PushOptions{}); err != nil {
 			return err
 		}
 	}
 
 	return nil
+}
+
+func CloneRepository(in *Repository) (string, error) {
+	return in.Clone()
+}
+
+func CommitAndPushRepo(in *Repository, path, msg string) error {
+	return in.CommitAndPush(path, msg)
 }

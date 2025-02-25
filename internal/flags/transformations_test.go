@@ -7,7 +7,7 @@ package flags
 import "testing"
 
 func TestTransformationCreateOptions(t *testing.T) {
-	checkFlags(t, &TransformationCreateOptions{}, []string{"description", "replace"})
+	checkFlags(t, &TransformationCreateOptions{}, []string{"description"})
 }
 
 func TestTransformationGetOptions(t *testing.T) {

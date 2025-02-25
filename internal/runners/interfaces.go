@@ -51,8 +51,3 @@ type Shower interface {
 type Inspector interface {
 	Inspect(Request) (*Response, error)
 }
-
-type Gitter interface {
-	Pull(Request) (*Response, error)
-	Push(Request) (*Response, error)
-}

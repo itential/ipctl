@@ -10,12 +10,10 @@ import (
 
 type TransformationCreateOptions struct {
 	Description string
-	Replace     bool
 }
 
 func (o *TransformationCreateOptions) Flags(cmd *cobra.Command) {
 	cmd.Flags().StringVar(&o.Description, "description", o.Description, "Description of the transformation")
-	cmd.Flags().BoolVar(&o.Replace, "replace", o.Replace, "Replace the exist transformation if it exists")
 }
 
 type TransformationGetOptions struct {

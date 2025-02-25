@@ -2,6 +2,7 @@
 #############################################################################
 # Asset commands
 #############################################################################
+
 get:
   use: adapters
   group: admin-essentials
@@ -47,10 +48,6 @@ edit:
   description: |
     Edit an adapter configuration
 
-#############################################################################
-# Import/Export commands
-#############################################################################
-
 import:
   use: adapter <name>
   group: admin-essentials
@@ -64,7 +61,7 @@ export:
     Export an adapter configuration
 
 #############################################################################
-# Application commands
+# Platform commands
 #############################################################################
 
 start:
@@ -82,26 +79,7 @@ restart:
   description: |
     Restart an adapter
 
-#############################################################################
-# Inspect commands
-#############################################################################
 inspect:
   use: adapters
   description: |
     Show adapter status
-
-
-#############################################################################
-# Repository commands
-#############################################################################
-pull:
-  use: adapter <name>
-  group: admin-essentials
-  description: |
-    Pull an adapter configuration from a repository
-
-push:
-  use: adapter <name> <repository>
-  group: admin-essentials
-  description: |
-    Push an adapter configuration to a repository

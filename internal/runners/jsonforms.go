@@ -7,7 +7,6 @@ package runners
 import (
 	"errors"
 	"fmt"
-	"os"
 	"strings"
 
 	"github.com/itential/ipctl/internal/flags"
@@ -16,6 +15,10 @@ import (
 	"github.com/itential/ipctl/pkg/config"
 	"github.com/itential/ipctl/pkg/logger"
 	"github.com/itential/ipctl/pkg/services"
+)
+
+const (
+	jsonFormUrlTemplate = "/automation-studio/#/edit?tab=0&json-form=%s"
 )
 
 type JsonFormRunner struct {
@@ -67,16 +70,15 @@ func (r *JsonFormRunner) Get(in Request) (*Response, error) {
 func (r *JsonFormRunner) Describe(in Request) (*Response, error) {
 	logger.Trace()
 
-	name := in.Args[0]
-
-	json_form, err := r.service.Get(name)
+	res, err := r.service.Get(in.Args[0])
 	if err != nil {
 		return nil, err
 	}
 
 	return NewResponse(
-		fmt.Sprintf("Name: %s", json_form.Name),
-		WithJson(json_form),
+		fmt.Sprintf("Name: %s (%s)", res.Name, res.Id),
+		WithJson(res),
+		WithUrl(fmt.Sprintf(jsonFormUrlTemplate, res.Name)),
 	), nil
 }
 
@@ -90,8 +92,7 @@ func (r *JsonFormRunner) Create(in Request) (*Response, error) {
 
 	name := in.Args[0]
 
-	var options flags.JsonFormCreateOptions
-	utils.LoadObject(in.Options, &options)
+	options := in.Options.(*flags.JsonFormCreateOptions)
 
 	if options.Replace {
 		existing, err := r.service.GetByName(name)
@@ -113,8 +114,9 @@ func (r *JsonFormRunner) Create(in Request) (*Response, error) {
 	}
 
 	return NewResponse(
-		fmt.Sprintf("Successfully created jsonform `%s`", jf.Name),
+		fmt.Sprintf("Successfully created jsonform `%s` (%s)", jf.Name, jf.Id),
 		WithJson(jf),
+		WithUrl(fmt.Sprintf(jsonFormUrlTemplate, jf.Name)),
 	), nil
 }
 
@@ -229,9 +231,7 @@ func (r *JsonFormRunner) CopyTo(profile string, in any, replace bool) (any, erro
 		}
 	}
 
-	err = svc.Import(in.(services.JsonForm))
-
-	return nil, err
+	return svc.Import(in.(services.JsonForm))
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -242,28 +242,23 @@ func (r *JsonFormRunner) CopyTo(profile string, in any, replace bool) (any, erro
 func (r *JsonFormRunner) Import(in Request) (*Response, error) {
 	logger.Trace()
 
-	var common *flags.AssetImportCommon
-	utils.LoadObject(in.Common, &common)
+	common := in.Common.(*flags.AssetImportCommon)
 
-	path, err := NormalizePath(in)
-	if err != nil {
+	var res services.JsonForm
+
+	if err := importUnmarshalFromRequest(in, &res); err != nil {
 		return nil, err
 	}
 
-	data, err := os.ReadFile(path)
+	jf, err := r.importJsonForm(res, common.Replace)
 	if err != nil {
-		return nil, err
-	}
-
-	var jsonform services.JsonForm
-	utils.UnmarshalData(data, &jsonform)
-
-	if err := r.importJsonForm(jsonform, common.Replace); err != nil {
 		return nil, err
 	}
 
 	return NewResponse(
-		fmt.Sprintf("Successfully imported jsonform `%s`", jsonform.Name),
+		fmt.Sprintf("Successfully imported jsonform `%s` (%s)", jf.Name, jf.Id),
+		WithJson(jf),
+		WithUrl(fmt.Sprintf(jsonFormUrlTemplate, jf.Name)),
 	), nil
 }
 
@@ -297,89 +292,22 @@ func (r *JsonFormRunner) Export(in Request) (*Response, error) {
 }
 
 //////////////////////////////////////////////////////////////////////////////
-// Gitter Interface
-//
-
-// Pull implements the command `pull jsonform <repo>`
-func (r *JsonFormRunner) Pull(in Request) (*Response, error) {
-	logger.Trace()
-
-	var common flags.AssetPullCommon
-	utils.LoadObject(in.Common, &common)
-
-	pull := PullAction{
-		Name:     in.Args[1],
-		Filename: in.Args[0],
-		Config:   r.config,
-		Options:  common,
-	}
-
-	data, err := pull.Do()
-	if err != nil {
-		return nil, err
-	}
-
-	var jsonform services.JsonForm
-	utils.UnmarshalData(data, &jsonform)
-
-	if err := r.importJsonForm(jsonform, common.Replace); err != nil {
-		return nil, err
-	}
-
-	return NewResponse(
-		fmt.Sprintf("Successfully pulled jsonform `%s`", jsonform.Name),
-	), nil
-}
-
-// Push implements the command `push jsonform <repo>`
-func (r *JsonFormRunner) Push(in Request) (*Response, error) {
-	logger.Trace()
-
-	var common flags.AssetPushCommon
-	utils.LoadObject(in.Common, &common)
-
-	res, err := r.service.GetByName(in.Args[0])
-	if err != nil {
-		return nil, err
-	}
-
-	push := PushAction{
-		Name:     in.Args[1],
-		Filename: fmt.Sprintf("%s.jsonform.json", in.Args[0]),
-		Options:  common,
-		Config:   r.config,
-		Data:     res,
-	}
-
-	if err := push.Do(); err != nil {
-		return nil, err
-	}
-
-	return NewResponse(
-		fmt.Sprintf("Successfully pushed jsonform `%s` to `%s`", in.Args[0], in.Args[1]),
-	), nil
-}
-
-//////////////////////////////////////////////////////////////////////////////
 // Private functions
 //
 
-func (r JsonFormRunner) importJsonForm(in services.JsonForm, replace bool) error {
+func (r JsonFormRunner) importJsonForm(in services.JsonForm, replace bool) (*services.JsonForm, error) {
 	logger.Trace()
 
 	p, err := r.service.Get(in.Name)
 	if err == nil {
 		if replace {
-			r.service.Delete([]string{p.Id})
+			if err := r.service.Delete([]string{p.Id}); err != nil {
+				return nil, err
+			}
 		} else {
-			return errors.New(fmt.Sprintf("jsonform with name `%s` already exists", p.Name))
+			return nil, errors.New(fmt.Sprintf("jsonform with name `%s` already exists", p.Name))
 		}
 	}
 
-	err = r.service.Import(in)
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return r.service.Import(in)
 }

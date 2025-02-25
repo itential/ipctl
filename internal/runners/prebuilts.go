@@ -34,7 +34,11 @@ func NewPrebuiltRunner(client client.Client, cfg *config.Config) *PrebuiltRunner
 	}
 }
 
-// Get() implements the "get prebuilts" command
+//////////////////////////////////////////////////////////////////////////////
+// Reader Interface
+//
+
+// Get implements the "get prebuilts ..." command
 func (r *PrebuiltRunner) Get(in Request) (*Response, error) {
 	logger.Trace()
 
@@ -56,13 +60,13 @@ func (r *PrebuiltRunner) Get(in Request) (*Response, error) {
 
 }
 
-// Describe() implements the `describe prebuilt <name>` command
+// Describe implements the `describe prebuilt ...` command
 func (r *PrebuiltRunner) Describe(in Request) (*Response, error) {
 	logger.Trace()
 
 	name := in.Args[0]
 
-	prebuilt, err := r.GetByName(name)
+	prebuilt, err := r.service.GetByName(name)
 	if err != nil {
 		return nil, err
 	}
@@ -73,22 +77,25 @@ func (r *PrebuiltRunner) Describe(in Request) (*Response, error) {
 	), nil
 }
 
-// Create is the implementation of the command `ccreate prebuilt <name>`
+//////////////////////////////////////////////////////////////////////////////
+// Writer Interface
+//
+
+// Create implements the `create prebuilt ...` command
 func (r *PrebuiltRunner) Create(in Request) (*Response, error) {
 	logger.Trace()
 	return NotImplemented(in)
 }
 
-// Delete is the implementation of the command `delete prebuilt <name>`
+// Delete implementes the `delete prebuilt ...` command
 func (r *PrebuiltRunner) Delete(in Request) (*Response, error) {
 	logger.Trace()
 
 	name := in.Args[0]
 
-	var options *flags.PrebuiltDeleteOptions
-	utils.LoadObject(in.Options, &options)
+	options := in.Options.(*flags.PrebuiltDeleteOptions)
 
-	prebuilt, err := r.GetByName(name)
+	prebuilt, err := r.service.GetByName(name)
 	if err != nil {
 		return nil, err
 	}
@@ -98,10 +105,12 @@ func (r *PrebuiltRunner) Delete(in Request) (*Response, error) {
 			switch ele.Type {
 			case "workflow":
 				logger.Info("Checking for workflow: %s\n", ele.Name)
+
 				svc := services.NewWorkflowService(r.client)
 				exists, err := svc.Get(ele.Name)
+
 				if err != nil {
-					if !strings.HasPrefix(err.Error(), "could not find workflow") {
+					if !strings.HasPrefix(err.Error(), "workflow not found") {
 						return nil, err
 					}
 					logger.Info("Workflow %s not found, skipping", ele.Name)
@@ -198,14 +207,16 @@ func (r *PrebuiltRunner) Delete(in Request) (*Response, error) {
 		}
 	}
 
-	r.service.Delete(prebuilt.Id)
+	if err := r.service.Delete(prebuilt.Id); err != nil {
+		return nil, err
+	}
 
-	return &Response{
-		Text: fmt.Sprintf("Successfully deleted prebuilt `%s`", name),
-	}, nil
+	return NewResponse(
+		fmt.Sprintf("Successfully deleted prebuilt `%s` (%s)", name, prebuilt.Id),
+	), nil
 }
 
-// Clear is the implementation of the command `clear prebuilts`
+// Clear implements the `clear prebuilts ...` command
 func (r *PrebuiltRunner) Clear(in Request) (*Response, error) {
 	logger.Trace()
 
@@ -224,157 +235,136 @@ func (r *PrebuiltRunner) Clear(in Request) (*Response, error) {
 	return NewResponse(fmt.Sprintf("Deleted %v prebuilt(s)", cnt)), nil
 }
 
-// Copy implements the `copy prebuilt <name> <dst>` command
-func (r *PrebuiltRunner) Copy(in Request) (*Response, error) {
-	logger.Trace()
-	return NotImplemented(in)
-}
+//////////////////////////////////////////////////////////////////////////////
+// Importer Interface
+//
 
-// Import implements the command `import prebuilt <path>`
+// Import implements the `import prebuilt ...` command
 func (r *PrebuiltRunner) Import(in Request) (*Response, error) {
 	logger.Trace()
 
-	var common flags.AssetImportCommon
-	utils.LoadObject(in.Common, &common)
+	common := in.Common.(*flags.AssetImportCommon)
 
-	path, err := NormalizePath(in)
+	path, err := importGetPathFromRequest(in)
 	if err != nil {
 		return nil, err
 	}
 
-	data, err := utils.ReadFromFile(path)
+	wd := filepath.Dir(path)
+
+	if common.Repository != "" {
+		defer os.RemoveAll(wd)
+	}
+
+	var mPkg map[string]interface{}
+
+	if err := importLoadFromDisk(path, &mPkg); err != nil {
+		return nil, err
+	}
+
+	var bundles []map[string]interface{}
+
+	for _, ele := range mPkg["bundles"].([]interface{}) {
+		item := ele.(map[string]interface{})
+
+		if _, exists := item["filename"]; exists {
+			fp := filepath.Join(wd, item["filename"].(string))
+
+			var b map[string]interface{}
+
+			if err := importLoadFromDisk(fp, &b); err != nil {
+				return nil, err
+			}
+
+			item = map[string]interface{}{
+				"type": item["type"].(string),
+				"data": b,
+			}
+		}
+
+		bundles = append(bundles, item)
+	}
+
+	mPkg["bundles"] = bundles
+
+	b, err := json.Marshal(mPkg)
 	if err != nil {
 		return nil, err
 	}
 
 	var pkg services.PrebuiltPackage
-	utils.UnmarshalData(data, &pkg)
-
-	if !common.Replace {
-		if err := r.validatePackage(pkg); err != nil {
-			return nil, err
-		}
+	if err := json.Unmarshal(b, &pkg); err != nil {
+		return nil, err
 	}
 
-	var prebuilt map[string]interface{}
-	utils.UnmarshalData(data, &prebuilt)
-
-	imported, err := r.service.ImportRaw(prebuilt, common.Replace)
+	pb, err := r.service.Import(pkg, false)
 	if err != nil {
 		return nil, err
 	}
 
 	return NewResponse(
-		fmt.Sprintf("Successfully imported prebuilt `%s`", imported.Name),
+		fmt.Sprintf("Successfully imported prebuilt `%s` (%s)", pb.Name, pb.Id),
 	), nil
 
 }
 
-// Export is the implementation of the command `export prebuilt <name>`
+//////////////////////////////////////////////////////////////////////////////
+// Exporter Interface
+//
+
+// Export implements the `export prebuilt ...` command
 func (r *PrebuiltRunner) Export(in Request) (*Response, error) {
 	logger.Trace()
 
 	name := in.Args[0]
 
-	var common flags.AssetExportCommon
-	utils.LoadObject(in.Common, &common)
+	common := in.Common.(*flags.AssetExportCommon)
+	options := in.Options.(*flags.PrebuiltExportOptions)
 
-	var options flags.PrebuiltExportOptions
-	utils.LoadObject(in.Options, &options)
-
-	pb, err := r.GetByName(name)
+	pb, err := r.service.GetByName(name)
 	if err != nil {
 		return nil, err
 	}
 
-	path, err := os.Getwd()
+	pkg, err := r.service.Export(pb.Id)
 	if err != nil {
 		return nil, err
-	}
-
-	if common.Path != "" {
-		path = common.Path
 	}
 
 	if options.Expand {
-		for _, ele := range pb.Components {
-			outputPath := filepath.Join(path, fmt.Sprintf("bundles/%ss", ele.Type))
+		path := common.Path
 
-			if err := utils.EnsurePathExists(outputPath); err != nil {
-				return nil, err
+		var repo *Repository
+		var repoPath string
+
+		if common.Repository != "" {
+			repo = exportNewRepositoryFromRequest(in)
+
+			var e error
+
+			repoPath, e = repo.Clone()
+			if e != nil {
+				return nil, e
 			}
+			defer os.RemoveAll(repoPath)
 
-			var res any
-			var err error
-			var fn string
-
-			switch ele.Type {
-			case "template":
-				res, err = services.NewTemplateService(r.client).Get(ele.Id)
-				if res != nil {
-					fn = res.(*services.Template).Name
-				}
-			case "mop-template":
-				res, err = services.NewCommandTemplateService(r.client).Get(ele.Id)
-				if err != nil {
-					return nil, err
-				}
-				if res != nil {
-					fn = res.(*services.CommandTemplate).Name
-				}
-			case "workflow":
-				res, err = services.NewWorkflowService(r.client).Get(ele.Name)
-				if res != nil {
-					fn = res.(*services.Workflow).Name
-				}
-			case "json-forms":
-				res, err = services.NewJsonFormService(r.client).Get(ele.Id)
-				if res != nil {
-					fn = res.(*services.JsonForm).Name
-				}
-			case "transformation":
-				res, err = services.NewTransformationService(r.client).Get(ele.Id)
-				if res != nil {
-					fn = res.(*services.Transformation).Name
-				}
-			case "automation":
-				res, err = services.NewAutomationService(r.client).Get(ele.Id)
-				if res != nil {
-					fn = res.(*services.Automation).Name
-				}
-			default:
-				return nil, errors.New(fmt.Sprintf("unknown prebuilt component: %s", ele.Type))
-			}
-
-			if res == nil {
-				return nil, errors.New(fmt.Sprintf(
-					"unable to find prebuit component %s, type %s", ele.Name, ele.Type,
-				))
-			}
-
-			if err != nil {
-				return nil, err
-			}
-
-			if err := utils.WriteJsonToDisk(res, fn, outputPath); err != nil {
-				return nil, err
-			}
+			path = filepath.Join(repoPath, common.Path)
 		}
 
-		fn := fmt.Sprintf("%s.prebuilt.json", pb.Name)
-		if err := utils.WriteJsonToDisk(pb, fn, path); err != nil {
+		if err := r.expandPrebuilt(pkg, path); err != nil {
 			return nil, err
+		}
+
+		if common.Repository != "" {
+			if err := repo.CommitAndPush(repoPath, common.Message); err != nil {
+				return nil, err
+			}
 		}
 
 	} else {
-		res, err := r.service.Export(pb.Id)
-		if err != nil {
-			return nil, err
-		}
+		fn := fmt.Sprintf("%s.prebuilt.json", strings.Replace(pkg.Metadata.Name, "/", "_", 1))
 
-		fn := fmt.Sprintf("%s.prebuilt.json", strings.Replace(res.Metadata.Name, "/", "_", 1))
-
-		if err := utils.WriteJsonToDisk(res, fn, common.Path); err != nil {
+		if exportAssetFromRequest(in, pkg, fn); err != nil {
 			return nil, err
 		}
 	}
@@ -383,6 +373,10 @@ func (r *PrebuiltRunner) Export(in Request) (*Response, error) {
 		fmt.Sprintf("Successfully exported prebuilt `%s`", name),
 	), nil
 }
+
+//////////////////////////////////////////////////////////////////////////////
+// Private functions
+//
 
 func (r *PrebuiltRunner) validatePackage(in services.PrebuiltPackage) error {
 	logger.Trace()
@@ -494,29 +488,43 @@ func (r *PrebuiltRunner) GetAutomationIdFromName(name string) (string, error) {
 	return automationId, nil
 }
 
-func (r *PrebuiltRunner) GetByName(name string) (*services.Prebuilt, error) {
+func (r *PrebuiltRunner) expandPrebuilt(pkg *services.PrebuiltPackage, path string) error {
 	logger.Trace()
 
-	prebuilts, err := r.service.GetAll()
-	if err != nil {
-		return nil, err
-	}
+	var bundles []map[string]interface{}
 
-	var prebuiltId string
-	for _, ele := range prebuilts {
-		if ele.Name == name {
-			prebuiltId = ele.Id
+	for _, ele := range pkg.Bundles {
+		outputPath := filepath.Join(path, fmt.Sprintf("bundles/%ss", ele.Type))
+
+		if err := utils.EnsurePathExists(outputPath); err != nil {
+			return err
 		}
+
+		fn := fmt.Sprintf("%s.%s.json", ele.Data["name"], ele.Type)
+
+		if err := utils.WriteJsonToDisk(ele.Data, fn, outputPath); err != nil {
+			return err
+		}
+
+		bundles = append(bundles, map[string]interface{}{
+			"type":     ele.Type,
+			"filename": filepath.Join(fmt.Sprintf("bundles/%ss", ele.Type), fn),
+		})
 	}
 
-	if prebuiltId == "" {
-		return nil, errors.New(fmt.Sprintf("prebuilt `%s` does not exist", name))
-	}
-
-	prebuilt, err := r.service.Get(prebuiltId)
+	res, err := ToMap(pkg)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	return prebuilt, nil
+	res["bundles"] = bundles
+
+	fn := fmt.Sprintf("%s.prebuilt.json", pkg.Metadata.Name)
+
+	if err := utils.WriteJsonToDisk(res, fn, path); err != nil {
+		return err
+	}
+
+	return nil
+
 }
