@@ -27,6 +27,48 @@ func NewApplicationRunner(c client.Client, cfg *config.Config) *ApplicationRunne
 	}
 }
 
+func (r *ApplicationRunner) Start(in Request) (*Response, error) {
+	logger.Trace()
+
+	name := in.Args[0]
+
+	if err := r.service.Start(name); err != nil {
+		return nil, err
+	}
+
+	return NewResponse(
+		fmt.Sprintf("Successfully started application `%s`", name),
+	), nil
+}
+
+func (r *ApplicationRunner) Stop(in Request) (*Response, error) {
+	logger.Trace()
+
+	name := in.Args[0]
+
+	if err := r.service.Stop(name); err != nil {
+		return nil, err
+	}
+
+	return NewResponse(
+		fmt.Sprintf("Successfully stopped application `%s`", name),
+	), nil
+}
+
+func (r *ApplicationRunner) Restart(in Request) (*Response, error) {
+	logger.Trace()
+
+	name := in.Args[0]
+
+	if err := r.service.Restart(name); err != nil {
+		return nil, err
+	}
+
+	return NewResponse(
+		fmt.Sprintf("Successfully restarted application `%s`", name),
+	), nil
+}
+
 func (r *ApplicationRunner) Inspect(in Request) (*Response, error) {
 	logger.Trace()
 
