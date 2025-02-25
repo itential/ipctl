@@ -56,6 +56,7 @@ func NewHandler(iapClient client.Client, cfg *config.Config) Handler {
 		NewAdapterHandler(iapClient, cfg, descriptors),
 		NewAdapterModelHandler(iapClient, cfg, descriptors),
 		NewTagHandler(iapClient, cfg, descriptors),
+		NewApplicationHandler(iapClient, cfg, descriptors),
 
 		// Configuration Manager handlers
 		NewDeviceHandler(iapClient, cfg, descriptors),
