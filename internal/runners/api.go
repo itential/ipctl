@@ -53,10 +53,10 @@ func (r *ApiRunner) readData(in string) (map[string]interface{}, error) {
 	return data, nil
 
 }
-func (r *ApiRunner) jsonResponse(in string) (map[string]interface{}, error) {
+func (r *ApiRunner) jsonResponse(in string) (interface{}, error) {
 	logger.Trace()
 
-	var response map[string]interface{}
+	var response interface{}
 
 	if err := json.Unmarshal([]byte(in), &response); err != nil {
 		return nil, err
