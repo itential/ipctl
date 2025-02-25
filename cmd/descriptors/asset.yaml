@@ -38,3 +38,13 @@ clear:
     Delete all configured instances of a asset
   include_groups: true
   hidden: true
+
+import:
+  description: |
+    Import an asset
+  include_groups: true
+
+export:
+  description: |
+    Export an asset
+  include_groups: true

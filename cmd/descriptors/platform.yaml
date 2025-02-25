@@ -9,3 +9,19 @@ api:
 inspect:
   description: |
     Display status information
+
+start:
+  description:  |
+    Start a stopped application
+  include_groups: false
+
+stop:
+  description: |
+    Stop a running application
+  include_groups: false
+
+restart:
+  description: |
+    Restart a running application
+  include_groups: false
+

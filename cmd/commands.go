@@ -98,6 +98,9 @@ func assetCommands(h handlers.Handler, id string) []*cobra.Command {
 		GroupCommand{"clear", id, h.ClearCommands, "asset"},
 
 		GroupCommand{"edit", id, h.EditCommands, "asset"},
+
+		GroupCommand{"import", id, h.ImportCommands, "asset"},
+		GroupCommand{"export", id, h.ExportCommands, "asset"},
 	})
 }
 
@@ -105,21 +108,9 @@ func platformCommands(h handlers.Handler, id string) []*cobra.Command {
 	return makeGroupCommand([]GroupCommand{
 		GroupCommand{"api", id, h.ApiCommands, "platform"},
 		GroupCommand{"inspect", id, h.InspectCommands, "platform"},
-	})
-}
-
-func importExportCommands(h handlers.Handler, id string) []*cobra.Command {
-	return makeGroupCommand([]GroupCommand{
-		GroupCommand{"import", id, h.ImportCommands, "importexport"},
-		GroupCommand{"export", id, h.ExportCommands, "importexport"},
-	})
-}
-
-func applicationCommands(h handlers.Handler, id string) []*cobra.Command {
-	return makeGroupCommand([]GroupCommand{
-		GroupCommand{"start", id, h.StartCommands, "application"},
-		GroupCommand{"stop", id, h.StopCommands, "application"},
-		GroupCommand{"restart", id, h.RestartCommands, "application"},
+		GroupCommand{"start", id, h.StartCommands, "platform"},
+		GroupCommand{"stop", id, h.StopCommands, "platform"},
+		GroupCommand{"restart", id, h.RestartCommands, "platform"},
 	})
 }
 
