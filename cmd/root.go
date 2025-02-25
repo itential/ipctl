@@ -28,14 +28,10 @@ const description = `Manage Itential Platform
 
 func loadCommands(cmd *cobra.Command, h handlers.Handler, cfg *config.Config) {
 	addCommandGroup(cmd, h, "Asset Commands:", assetCommands)
-	addCommandGroup(cmd, h, "Application Commands:", applicationCommands)
-	addCommandGroup(cmd, h, "Import/Export Commands:", importExportCommands)
 	addCommandGroup(cmd, h, "Platform Commands:", platformCommands)
-
 	if cfg.HasRepositories() {
 		addCommandGroup(cmd, h, "Repository Commands:", repoCommands)
 	}
-
 	addCommandGroup(cmd, h, "Plugin Commands:", pluginCommands)
 }
 
