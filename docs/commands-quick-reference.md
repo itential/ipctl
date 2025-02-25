@@ -15,7 +15,7 @@ support for which assets.
 | integrations                       | *   | *        | *      | *      |      | *     |        |        |      |      |
 | methods                            | *   |          | -      |        |      | -     |        |        |      |      |
 | prebuilts                          | *   | *        | -      | *      |      | *     | *      | *      |      |      |
-| profiles                           | *   | *        | *      | *      |      |       | *      | *      | *    | *    |
+| profiles                           | *   | *        | *      | *      | *    | -     | *      | *      | *    | *    |
 | role-types                         | *   |          |        |        |      |       |        |        |      |      |
 | roles                              | *   | *        | *      | *      |      | *     | *      | *      |      |      |
 | tags                               | *   | *        | *      | *      | *    | *     |        |        |      |      |

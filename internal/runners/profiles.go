@@ -15,19 +15,26 @@ import (
 	"github.com/itential/ipctl/pkg/config"
 	"github.com/itential/ipctl/pkg/logger"
 	"github.com/itential/ipctl/pkg/services"
+	"github.com/itential/ipctl/pkg/validators"
 )
 
 type ProfileRunner struct {
 	config  *config.Config
 	service *services.ProfileService
+	client  client.Client
 }
 
 func NewProfileRunner(client client.Client, cfg *config.Config) *ProfileRunner {
 	return &ProfileRunner{
 		config:  cfg,
 		service: services.NewProfileService(client),
+		client:  client,
 	}
 }
+
+//////////////////////////////////////////////////////////////////////////////
+// Reader Interface
+//
 
 // Get implements the `get profiles` command
 func (r *ProfileRunner) Get(in Request) (*Response, error) {
@@ -67,6 +74,10 @@ func (r *ProfileRunner) Describe(in Request) (*Response, error) {
 		WithJson(profile),
 	), nil
 }
+
+//////////////////////////////////////////////////////////////////////////////
+// Writer Interface
+//
 
 // Create is the implementation of the command `ccreate profile <name>`
 func (r *ProfileRunner) Create(in Request) (*Response, error) {
@@ -123,11 +134,72 @@ func (r *ProfileRunner) Clear(in Request) (*Response, error) {
 	return NewResponse(fmt.Sprintf("Deleted %v profile(s)", cnt)), nil
 }
 
+//////////////////////////////////////////////////////////////////////////////
+// Copier Interface
+//
+
 // Copy implements the `copy profile <name> <dst>` command
 func (r *ProfileRunner) Copy(in Request) (*Response, error) {
 	logger.Trace()
-	return NotImplemented(in)
+
+	res, err := Copy(CopyRequest{Request: in, Type: "profile"}, r)
+	if err != nil {
+		return nil, err
+	}
+
+	return NewResponse(
+		fmt.Sprintf("Successfully copied profile `%s` from `%s` to `%s`", res.Name, res.From, res.To),
+	), nil
 }
+
+func (r *ProfileRunner) CopyFrom(profile, name string) (any, error) {
+	logger.Trace()
+
+	client, cancel, err := NewClient(profile, r.config)
+	if err != nil {
+		return nil, err
+	}
+	defer cancel()
+
+	res, err := services.NewProfileService(client).Export(name)
+	if err != nil {
+		return nil, err
+	}
+
+	return *res, err
+}
+
+func (r *ProfileRunner) CopyTo(profile string, in any, replace bool) (any, error) {
+	logger.Trace()
+
+	client, cancel, err := NewClient(profile, r.config)
+	if err != nil {
+		return nil, err
+	}
+	defer cancel()
+
+	svc := services.NewProfileService(client)
+
+	id := in.(services.Profile).Id
+
+	validator := validators.NewProfileValidator(r.client)
+
+	if err := validator.CanImport(in.(services.Profile)); err != nil {
+		if err.Code == validators.ValidatorAssetExists && replace {
+			if err := svc.Delete(id); err != nil {
+				return nil, err
+			}
+		} else {
+			return nil, err
+		}
+	}
+
+	return svc.Import(in.(services.Profile))
+}
+
+//////////////////////////////////////////////////////////////////////////////
+// Importer Interface
+//
 
 // Import implements the command `import profile <path>`
 func (r *ProfileRunner) Import(in Request) (*Response, error) {
@@ -160,6 +232,10 @@ func (r *ProfileRunner) Import(in Request) (*Response, error) {
 
 }
 
+//////////////////////////////////////////////////////////////////////////////
+// Exporter Interface
+//
+
 // Export is the implementation of the command `export profile <name>`
 func (r *ProfileRunner) Export(in Request) (*Response, error) {
 	logger.Trace()
@@ -185,6 +261,10 @@ func (r *ProfileRunner) Export(in Request) (*Response, error) {
 		fmt.Sprintf("Successfully exported profile `%s` to `%s`", name, fn),
 	), nil
 }
+
+//////////////////////////////////////////////////////////////////////////////
+// Gitter Interface
+//
 
 // Pull implements the command `pull profile <repo>`
 func (r *ProfileRunner) Pull(in Request) (*Response, error) {

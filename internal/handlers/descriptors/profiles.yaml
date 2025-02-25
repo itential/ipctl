@@ -1,4 +1,8 @@
 ---
+##############################################################################
+# Asset commands
+##############################################################################
+
 get:
   use: profiles
   group: admin-essentials
@@ -23,6 +27,38 @@ delete:
   description: |
     Delete an existing profile
 
+copy:
+  use: profile <name> --from <profile> --to <profile>
+  group: admin-essentials
+
+  description: |
+    Copy a profile from one server to another
+
+    The `copy profile` command can be used to directly copy a configured
+    profile from one server to another.   This command has three required
+    arguments.  The first argument is the name of the profile to copy and
+    it must exist on the source server.  The `--from` argument accepts the
+    name of a named profile from the configuration file and designates the
+    source server.  The `--to` argument accepts the anem of a named profile
+    from the configuration file and designates the destination server.
+
+    This command will first check if a profile by the same name exists on the
+    destination server.   If one does, an error is returned unless the
+    `--replace` option is used.  If `--replace` is specified, the profile
+    on the destination server is replace with the one from the source
+    server.
+
+  example: |
+    # Copy `profile1` from `dev` to `stage`
+    $ ipctl copy profile profile1 --from dev --to stage
+
+    # Copy and replace `profile1` from `stage` to `prod`
+    $ ipctl copy profile profile1 --from stage --to prod --replace
+
+##############################################################################
+# Import/Export commands
+##############################################################################
+
 import:
   use: profile <path>
   group: admin-essentials
@@ -35,6 +71,10 @@ export:
   description: |
     Export a profile
 
+##############################################################################
+# Repository commands
+##############################################################################
+
 push:
   use: profile <name> <repository>
   group: admin-essentials
@@ -46,4 +86,3 @@ pull:
   group: admin-essentials
   description: |
     Pull a profile from a repository
-
