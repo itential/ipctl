@@ -7,3 +7,20 @@ inspect:
   use: applications
   description: |
     Show application status
+
+start:
+  use: application <name>
+  description: |
+    Start a stopped application
+
+stop:
+  use: application <name>
+  description: |
+    Stop a running application
+
+restart:
+  use: application <name>
+  description: |
+    Restart an application
+
+
