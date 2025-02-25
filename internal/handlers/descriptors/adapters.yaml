@@ -1,6 +1,6 @@
 ---
 #############################################################################
-# Reader commands
+# Asset commands
 #############################################################################
 get:
   use: adapters
@@ -14,9 +14,6 @@ describe:
   description: |
     Display detailed information about an adapter
 
-#############################################################################
-# Writer commands
-#############################################################################
 create:
   use: adapter <name>
   group: admin-essentials
@@ -44,8 +41,14 @@ copy:
     The copy command will copy the specified adapter configuration from the
     source server to the destination server.
 
+edit:
+  use: adapter <name>
+  group: admin-essentials
+  description: |
+    Edit an adapter configuration
+
 #############################################################################
-# Promoter commands
+# Import/Export commands
 #############################################################################
 import:
   use: adapter <name>
@@ -60,7 +63,7 @@ export:
     Export an adapter configuration
 
 #############################################################################
-# Controller commands
+# Application commands
 #############################################################################
 
 start:
@@ -79,7 +82,7 @@ restart:
     Restart an adapter
 
 #############################################################################
-# Inspector commands
+# Inspect commands
 #############################################################################
 inspect:
   use: adapters
@@ -88,7 +91,7 @@ inspect:
 
 
 #############################################################################
-# Gitter commands
+# Repository commands
 #############################################################################
 pull:
   use: adapter <name>
