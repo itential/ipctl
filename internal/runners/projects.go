@@ -384,10 +384,9 @@ func (r *ProjectRunner) Pull(in Request) (*Response, error) {
 	common := in.Common.(*flags.AssetPullCommon)
 
 	pull := PullAction{
-		Name:     in.Args[1],
-		Filename: in.Args[0],
-		Config:   r.config,
-		Options:  *common,
+		Name:    in.Args[1],
+		Config:  r.config,
+		Options: *common,
 	}
 
 	path, err := pull.Clone()
@@ -398,15 +397,13 @@ func (r *ProjectRunner) Pull(in Request) (*Response, error) {
 
 	file := filepath.Join(path, common.Path, in.Args[0])
 
-	b, err := utils.ReadFromFile(file)
-	if err != nil {
+	var res services.Project
+
+	if err := importFromPath(file, &res); err != nil {
 		return nil, err
 	}
 
-	var res services.Project
-	utils.UnmarshalData(b, &res)
-
-	imported, err := r.importProject(res, filepath.Join(path, common.Path), common.Replace)
+	imported, err := r.importProject(res, file, common.Replace)
 	if err != nil {
 		return nil, err
 	}
@@ -499,8 +496,8 @@ type Member struct {
 func (r *ProjectRunner) importProject(project services.Project, path string, replace bool) (*services.Project, error) {
 	logger.Trace()
 
-	projectMap, err := toMap(project)
-	if err != nil {
+	var projectMap map[string]interface{}
+	if err := importFromPath(path, &projectMap); err != nil {
 		return nil, err
 	}
 

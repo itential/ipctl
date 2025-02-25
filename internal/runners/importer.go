@@ -5,6 +5,7 @@
 package runners
 
 import (
+	"errors"
 	"os"
 
 	"github.com/itential/ipctl/internal/utils"
@@ -19,6 +20,23 @@ func importFile(in Request, ptr any) error {
 	path, err := NormalizePath(in)
 	if err != nil {
 		return err
+	}
+
+	b, err := os.ReadFile(path)
+	if err != nil {
+		return err
+	}
+
+	utils.UnmarshalData(b, ptr)
+
+	return nil
+}
+
+func importFromPath(path string, ptr any) error {
+	logger.Trace()
+
+	if !utils.PathExists(path) {
+		return errors.New("path does not exist")
 	}
 
 	b, err := os.ReadFile(path)
