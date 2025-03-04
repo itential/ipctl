@@ -57,6 +57,7 @@ func (svc *ApplicationService) GetAll() ([]Application, error) {
 	}
 
 	var values []Application
+
 	for _, ele := range res.Results {
 		values = append(values, ele.Data)
 	}

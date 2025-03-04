@@ -5,6 +5,7 @@
 package runners
 
 import (
+	"encoding/json"
 	"fmt"
 
 	"github.com/itential/ipctl/pkg/client"
@@ -25,6 +26,53 @@ func NewApplicationRunner(c client.Client, cfg *config.Config) *ApplicationRunne
 		config:  cfg,
 		client:  c,
 	}
+}
+
+//////////////////////////////////////////////////////////////////////////////
+// Reader Interface
+//
+
+// Describe implements the `get applications` command
+func (r *ApplicationRunner) Get(in Request) (*Response, error) {
+	logger.Trace()
+
+	res, err := r.service.GetAll()
+	if err != nil {
+		return nil, err
+	}
+
+	var display = []string{"NAME\tMODEL"}
+
+	for _, ele := range res {
+		display = append(display, fmt.Sprintf("%s\t%s", ele.Name, ele.Model))
+	}
+
+	return NewResponse(
+		"",
+		WithTable(display),
+		WithJson(res),
+	), nil
+
+}
+
+// Describe implements the `describe applications ...` command
+func (r *ApplicationRunner) Describe(in Request) (*Response, error) {
+	logger.Trace()
+
+	res, err := r.service.Get(in.Args[0])
+	if err != nil {
+		return nil, err
+	}
+
+	b, err := json.MarshalIndent(res, "", "    ")
+	if err != nil {
+		logger.Fatal(err, "failed to marshal data")
+	}
+
+	return NewResponse(
+		string(b),
+		WithJson(res),
+	), nil
 }
 
 func (r *ApplicationRunner) Start(in Request) (*Response, error) {
