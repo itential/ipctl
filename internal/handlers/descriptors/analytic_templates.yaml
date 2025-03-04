@@ -1,7 +1,4 @@
 ---
-##############################################################################
-# Reader Commands
-##############################################################################
 get:
   use: analytic-templates
   group: automation-studio
@@ -13,10 +10,6 @@ describe:
   group: automation-studio
   description: |
     Display details about a analytic-template
-
-##############################################################################
-# Writer Commands
-##############################################################################
 
 create:
   use: analytic-template <name>
@@ -42,10 +35,6 @@ clear:
   description: |
     Delete all configured analytic templates
 
-
-##############################################################################
-# Promoter Commands
-##############################################################################
 import:
   use: analytic-template <path>
   group: automation-studio
@@ -57,18 +46,3 @@ export:
   group: automation-studio
   description: |
     Export an analytic template
-
-##############################################################################
-# Gitter Commands
-##############################################################################
-push:
-  use: analytic-template <name> <repository>
-  group: automation-studio
-  description: |
-    Push a command template to a repository
-
-pull:
-  use: analytic-template <filename> <repository>
-  group: automation-studio
-  description: |
-    Pull a command template from a repository

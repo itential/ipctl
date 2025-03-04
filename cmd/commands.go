@@ -114,13 +114,6 @@ func platformCommands(h handlers.Handler, id string) []*cobra.Command {
 	})
 }
 
-func repoCommands(h handlers.Handler, id string) []*cobra.Command {
-	return makeGroupCommand([]GroupCommand{
-		GroupCommand{"push", id, h.PushCommands, "repo"},
-		GroupCommand{"pull", id, h.PullCommands, "repo"},
-	})
-}
-
 func pluginCommands(h handlers.Handler, id string) []*cobra.Command {
 	return makeGroupCommand([]GroupCommand{
 		GroupCommand{"local-aaa", id, h.LocalAAACommands, "localaaa"},

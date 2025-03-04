@@ -34,21 +34,3 @@ type ProjectCopyOptions struct {
 func (o *ProjectCopyOptions) Flags(cmd *cobra.Command) {
 	cmd.Flags().StringArrayVar(&o.Members, "member", o.Members, "Configure one or more project members")
 }
-
-// Command line options for `push project ...`
-type ProjectPushOptions struct {
-	Expand bool
-}
-
-func (o *ProjectPushOptions) Flags(cmd *cobra.Command) {
-	cmd.Flags().BoolVar(&o.Expand, "expand", o.Expand, "Expand the project assets")
-}
-
-// Command line options for `pull project ...`
-type ProjectPullOptions struct {
-	Members []string
-}
-
-func (o *ProjectPullOptions) Flags(cmd *cobra.Command) {
-	cmd.Flags().StringArrayVar(&o.Members, "member", o.Members, "Configure one or more project members")
-}

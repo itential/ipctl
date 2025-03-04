@@ -1,8 +1,4 @@
 ---
-##############################################################################
-# Reader Commands
-##############################################################################
-
 get:
   use: command-templates
   group: automation-studio
@@ -33,11 +29,6 @@ describe:
   example: |
     # Describe a command template called `cli test`
     $ ipctl describe command-template "cli test"
-
-
-##############################################################################
-# Writer Commands
-##############################################################################
 
 create:
   use: command-template <name>
@@ -90,9 +81,6 @@ clear:
     # Delete all configured command templates
     $ ipctl clear command-templates
 
-##############################################################################
-# Promoter Commands
-##############################################################################
 import:
   use: command-template <path>
   group: automation-studio
@@ -104,18 +92,3 @@ export:
   group: automation-studio
   description: |
     Export a command template
-
-##############################################################################
-# Gitter Commands
-##############################################################################
-push:
-  use: command-template <name> <repository>
-  group: automation-studio
-  description: |
-    Push a command template to a repository
-
-pull:
-  use: command-template <filename> <repository>
-  group: automation-studio
-  description: |
-    Pull a command template from a repository

@@ -5,43 +5,70 @@
 package runners
 
 import (
+	"os"
+	"path/filepath"
+
 	"github.com/itential/ipctl/internal/flags"
 	"github.com/itential/ipctl/internal/utils"
 	"github.com/itential/ipctl/pkg/logger"
 )
 
-const (
-	exportSuccessMessage = "Successfully exported %s `%s` to `%s`"
-)
-
-type ExportAction struct {
-	Filename string
-	Data     any
-	Common   *flags.AssetExportCommon
+// exportNewRepository will create a new Repository object from an export
+// request.
+func exportNewRepositoryFromRequest(in Request) *Repository {
+	common := in.Common.(*flags.AssetExportCommon)
+	return NewRepository(
+		common.Repository,
+		WithReference(common.Reference),
+		WithPrivateKeyFile(common.PrivateKeyFile),
+		WithName(in.Config.GitName),
+		WithEmail(in.Config.GitEmail),
+	)
 }
 
-type ExportActionResponse struct {
-	Filename string
-	Message  string
-}
-
-func NewExportAction(data any, fn string, common *flags.AssetExportCommon) ExportAction {
+// exportAssetFromRequest will take a request object and instance of an asset
+// and write it to disk.  If the Git command line options where invoked, it
+// will write the asset to the repository and commit it.  If not, this function
+// will simply write the asset to the local disk.
+func exportAssetFromRequest(in Request, o any, fn string) error {
 	logger.Trace()
-	return ExportAction{
-		Data:     data,
-		Filename: fn,
-		Common:   common,
+
+	common := in.Common.(*flags.AssetExportCommon)
+
+	path := common.Path
+
+	var repo *Repository
+	var repoPath string
+
+	if common.Repository != "" {
+		repo = NewRepository(
+			common.Repository,
+			WithReference(common.Reference),
+			WithPrivateKeyFile(common.PrivateKeyFile),
+			WithName(in.Config.GitName),
+			WithEmail(in.Config.GitEmail),
+		)
+
+		var e error
+
+		repoPath, e = repo.Clone()
+		if e != nil {
+			return e
+		}
+		defer os.RemoveAll(repoPath)
+
+		path = filepath.Join(repoPath, common.Path)
 	}
-}
 
-func (a ExportAction) Do() error {
-	logger.Trace()
-
-	var common flags.AssetExportCommon
-	utils.LoadObject(a.Common, &common)
-
-	if err := utils.WriteJsonToDisk(a.Data, a.Filename, common.Path); err != nil {
+	if err := utils.WriteJsonToDisk(o, fn, path); err != nil {
 		return err
+	}
+
+	if common.Repository != "" {
+		msg := common.Message
+		if err := repo.CommitAndPush(repoPath, msg); err != nil {
+			return err
+		}
 	}
 
 	return nil

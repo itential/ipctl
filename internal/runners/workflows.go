@@ -30,6 +30,10 @@ func NewWorkflowRunner(c client.Client, cfg *config.Config) *WorkflowRunner {
 	}
 }
 
+//////////////////////////////////////////////////////////////////////////////
+// Reader Interface
+//
+
 // Get implements the `get workflows` command
 func (r *WorkflowRunner) Get(in Request) (*Response, error) {
 	logger.Trace()
@@ -59,7 +63,7 @@ func (r *WorkflowRunner) Get(in Request) (*Response, error) {
 
 }
 
-// Describe implements the `describe workflow <name>` command
+// Describe implements the `describe workflow ...` command
 func (r *WorkflowRunner) Describe(in Request) (*Response, error) {
 	logger.Trace()
 
@@ -70,32 +74,114 @@ func (r *WorkflowRunner) Describe(in Request) (*Response, error) {
 		return nil, err
 	}
 
+	human := strings.Join([]string{
+		"Name: %s (ID: %s)",
+		"Url: %s",
+		"Description:\n%s",
+	}, "\n")
+
 	return NewResponse(
-		fmt.Sprintf("Name: %s", workflow.Name),
+		fmt.Sprintf(human, workflow.Name, workflow.Id, r.makeUrl(name), workflow.Description),
 		WithJson(workflow),
 	), nil
 }
 
-func (r *WorkflowRunner) importWorkflow(in any, replace bool) error {
+//////////////////////////////////////////////////////////////////////////////
+// Writer interface
+//
+
+// Create is the implementation of the `create workflow ...` command
+func (r *WorkflowRunner) Create(in Request) (*Response, error) {
 	logger.Trace()
 
-	name := in.(services.Workflow).Name
+	name := in.Args[0]
 
-	p, err := r.service.Get(name)
-	if err == nil {
-		if replace {
-			r.service.Delete(p.Name)
-		} else {
-			return errors.New(fmt.Sprintf("workflow with name `%s` already exists", p.Name))
-		}
-	}
-
-	_, err = r.service.Import(in.(services.Workflow))
+	wf, err := r.service.Create(services.NewWorkflow(name))
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	return nil
+	return NewResponse(
+		fmt.Sprintf("Successfully created workflow `%s` (%s)", name, r.makeUrl(name)),
+		WithJson(wf),
+	), nil
+}
+
+// Delete is the implementation of the `delete workflow ...` command
+func (r *WorkflowRunner) Delete(in Request) (*Response, error) {
+	logger.Trace()
+
+	if err := r.service.Delete(in.Args[0]); err != nil {
+		return nil, err
+	}
+
+	return NewResponse(
+		fmt.Sprintf("Successfully deleted workflow `%s`", in.Args[0]),
+	), nil
+}
+
+// Clear is the implementation of the `clear workflows` command
+func (r *WorkflowRunner) Clear(in Request) (*Response, error) {
+	logger.Trace()
+
+	cnt := 0
+
+	workflows, err := r.service.GetAll()
+	if err != nil {
+		return nil, err
+	}
+
+	for _, ele := range workflows {
+		r.service.Delete(ele.Id)
+		cnt++
+	}
+
+	return NewResponse(
+		fmt.Sprintf("Deleted %v workflow(s)", cnt),
+	), nil
+}
+
+func (r *WorkflowRunner) Edit(in Request) (*Response, error) {
+	logger.Trace()
+
+	name := in.Args[0]
+
+	current, err := r.service.Get(name)
+	if err != nil {
+		return nil, err
+	}
+
+	var updated services.Workflow
+
+	if err := editor.Run(current, &updated); err != nil {
+		return nil, err
+	}
+
+	if _, err := r.service.Update(updated); err != nil {
+		return nil, err
+	}
+
+	return NewResponse(
+		fmt.Sprintf("Successfully updated workflow `%s`", name),
+	), nil
+}
+
+//////////////////////////////////////////////////////////////////////////////
+// Copier interface
+//
+
+// Copy implements the `copy workflow ...` command
+func (r *WorkflowRunner) Copy(in Request) (*Response, error) {
+	logger.Trace()
+
+	res, err := Copy(CopyRequest{Request: in, Type: "workflow"}, r)
+	if err != nil {
+		return nil, err
+	}
+
+	return NewResponse(
+		fmt.Sprintf("Successfully copied workflow `%s` from `%s` to `%s`", res.Name, res.From, res.To),
+	), nil
 }
 
 func (r *WorkflowRunner) CopyFrom(profile, name string) (any, error) {
@@ -147,138 +233,19 @@ func (r *WorkflowRunner) CopyTo(profile string, in any, replace bool) (any, erro
 	return res, nil
 }
 
-func (r *WorkflowRunner) Copy(in Request) (*Response, error) {
-	logger.Trace()
-
-	res, err := Copy(CopyRequest{Request: in, Type: "workflow"}, r)
-	if err != nil {
-		return nil, err
-	}
-
-	return NewResponse(
-		fmt.Sprintf("Successfully copied workflow `%s` from `%s` to `%s`", res.Name, res.From, res.To),
-	), nil
-}
-
-func (r *WorkflowRunner) Edit(in Request) (*Response, error) {
-	logger.Trace()
-
-	name := in.Args[0]
-
-	current, err := r.service.Get(name)
-	if err != nil {
-		return nil, err
-	}
-
-	var updated services.Workflow
-
-	if err := editor.Run(current, &updated); err != nil {
-		return nil, err
-	}
-
-	if _, err := r.service.Update(updated); err != nil {
-		return nil, err
-	}
-
-	return NewResponse(
-		fmt.Sprintf("Successfully updated workflow `%s`", name),
-	), nil
-}
-
-// Export is the implementation of the command `export workflow <name>`
-func (r *WorkflowRunner) Export(in Request) (*Response, error) {
-	logger.Trace()
-
-	var options *flags.AssetExportCommon
-	utils.LoadObject(in.Common, &options)
-
-	name := in.Args[0]
-
-	workflow, err := r.service.Export(name)
-	if err != nil {
-		return nil, err
-	}
-
-	fn := fmt.Sprintf("%s.workflow.json", name)
-
-	if err := utils.WriteJsonToDisk(workflow, fn, options.Path); err != nil {
-		return nil, err
-	}
-
-	return NewResponse(
-		fmt.Sprintf("Successfully exported workflow `%s`", workflow.Name),
-	), nil
-}
-
-// Pull implements the command `pull workflow <repo>`
-func (r *WorkflowRunner) Pull(in Request) (*Response, error) {
-	logger.Trace()
-
-	var common flags.AssetPullCommon
-	utils.LoadObject(in.Common, &common)
-
-	pull := PullAction{
-		Name:     in.Args[1],
-		Filename: in.Args[0],
-		Config:   r.config,
-		Options:  common,
-	}
-
-	data, err := pull.Do()
-	if err != nil {
-		return nil, err
-	}
-
-	var workflow services.Workflow
-	utils.UnmarshalData(data, &workflow)
-
-	if err := r.importWorkflow(workflow, common.Replace); err != nil {
-		return nil, err
-	}
-
-	return NewResponse(
-		fmt.Sprintf("Successfully pulled workflow `%s`", workflow.Name),
-	), nil
-}
-
-// Push implements the command `push workflow <repo>`
-func (r *WorkflowRunner) Push(in Request) (*Response, error) {
-	logger.Trace()
-
-	var common flags.AssetPushCommon
-	utils.LoadObject(in.Common, &common)
-
-	res, err := r.service.Export(in.Args[0])
-	if err != nil {
-		return nil, err
-	}
-
-	push := PushAction{
-		Name:     in.Args[1],
-		Filename: fmt.Sprintf("%s.workflow.json", in.Args[0]),
-		Options:  common,
-		Config:   r.config,
-		Data:     res,
-	}
-
-	if err := push.Do(); err != nil {
-		return nil, err
-	}
-
-	return NewResponse(
-		fmt.Sprintf("Successfully pushed workflow `%s` to `%s`", in.Args[0], in.Args[1]),
-	), nil
-}
+//////////////////////////////////////////////////////////////////////////////
+// Importer Interface
+//
 
 // Import implements the command `import workflow <path>`
 func (r *WorkflowRunner) Import(in Request) (*Response, error) {
 	logger.Trace()
 
-	var common flags.AssetImportCommon
-	utils.LoadObject(in.Common, &common)
+	common := in.Common.(*flags.AssetImportCommon)
 
 	var workflow services.Workflow
-	if err := importFile(in, &workflow); err != nil {
+
+	if err := importUnmarshalFromRequest(in, &workflow); err != nil {
 		return nil, err
 	}
 
@@ -291,53 +258,63 @@ func (r *WorkflowRunner) Import(in Request) (*Response, error) {
 	), nil
 }
 
-// Create is the implementation of the command `ccreate workflow <name>`
-func (r *WorkflowRunner) Create(in Request) (*Response, error) {
+//////////////////////////////////////////////////////////////////////////////
+// Exporter Interface
+//
+
+// Export is the implementation of the `export workflow ...` command
+func (r *WorkflowRunner) Export(in Request) (*Response, error) {
 	logger.Trace()
 
 	name := in.Args[0]
 
-	wf, err := r.service.Create(services.NewWorkflow(name))
+	workflow, err := r.service.Export(name)
 	if err != nil {
 		return nil, err
 	}
 
-	return NewResponse(
-		fmt.Sprintf("Successfully created workflow `%s`", name),
-		WithJson(wf),
-	), nil
-}
+	fn := fmt.Sprintf("%s.workflow.json", name)
 
-// Delete is the implementation of the command `delete workflow <name>`
-func (r *WorkflowRunner) Delete(in Request) (*Response, error) {
-	logger.Trace()
-
-	if err := r.service.Delete(in.Args[0]); err != nil {
+	if err := exportAssetFromRequest(in, workflow, fn); err != nil {
 		return nil, err
 	}
 
 	return NewResponse(
-		fmt.Sprintf("Successfully deleted workflow `%s`", in.Args[0]),
+		fmt.Sprintf("Successfully exported workflow `%s` (%s)", workflow.Name, workflow.Id),
 	), nil
 }
 
-// Clear is the implementation of the command `clear workflows`
-func (r *WorkflowRunner) Clear(in Request) (*Response, error) {
+//////////////////////////////////////////////////////////////////////////////
+// Private functions
+//
+
+func (r *WorkflowRunner) importWorkflow(in services.Workflow, replace bool) error {
 	logger.Trace()
 
-	cnt := 0
-
-	workflows, err := r.service.GetAll()
-	if err != nil {
-		return nil, err
-	}
-
-	for _, ele := range workflows {
-		if err := r.service.Delete(ele.Name); err != nil {
-			return nil, err
+	res, err := r.service.Get(in.Name)
+	if err == nil {
+		if res != nil {
+			if replace {
+				if err := r.service.Delete(res.Name); err != nil {
+					return err
+				}
+			} else {
+				return errors.New(fmt.Sprintf("workflow with name `%s` already exists, use `--replace` to overwrite", res.Name))
+			}
+		} else {
+			return err
 		}
-		cnt++
 	}
 
-	return NewResponse(fmt.Sprintf("Deleted %v workflow(s)", cnt)), nil
+	_, err = r.service.Import(in)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (r *WorkflowRunner) makeUrl(name string) string {
+	logger.Trace()
+	return makeUrl(r.config, "/automation-studio/#/edit?tab=0&workflow=%s", name)
 }

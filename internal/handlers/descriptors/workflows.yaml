@@ -73,8 +73,9 @@ clear:
     Delete all configured workflows
 
 ##############################################################################
-# Promoter Commands
+# Import/Export Commands
 ##############################################################################
+
 import:
   use: workflow <path>
   group: automation-studio
@@ -86,13 +87,21 @@ import:
     specified path.  The required path argument should point to the JSON file
     containing the worklow
 
-    The `--force` option will import the workflow even if it exists on the
-    desitnation server.  If the workflow exists and `--force` is used, the
-    workflow will be deleted and then imported.
+    The workflow can be directly imported from a Git repository.  To import the
+    workflow from a Git repository, use the `--repository` command line option.
+    When importing from a repository, the path argument should provide the full
+    path to the workflow document relative to the root of the repository.
+
+    If a workflow of the same name already exists on the server, this command
+    will return an error.  To replace the workflow on the server use the
+    `--replace` command line option.
 
   example: |
     # Import a workflow
     $ ipctl import workflow path/to/test.workflow.json
+
+    # Import a workflow from a repository
+    $ ipctl import workflow test.workflow.json --repository git@github.com:itential/worfklows.git
 
 export:
   use: workflow <name>

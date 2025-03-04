@@ -4,9 +4,12 @@
 
 package runners
 
+import "github.com/itential/ipctl/pkg/config"
+
 type Request struct {
 	Args    []string
 	Common  any
 	Options any
 	Runner  Runner
+	Config  *config.Config
 }
