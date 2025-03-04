@@ -7,7 +7,10 @@ package runners
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
+	"strings"
 
+	"github.com/itential/ipctl/pkg/config"
 	"github.com/itential/ipctl/pkg/logger"
 )
 
@@ -59,4 +62,32 @@ func WithJson(o any) ResponseOption {
 
 func NotImplemented(in Request) (*Response, error) {
 	return nil, errors.New("command not implemented!!")
+}
+
+func makeUrl(cfg *config.Config, path string, args ...any) string {
+	profile, _ := cfg.ActiveProfile()
+
+	var u string
+
+	if profile.UseTLS {
+		u = "https://"
+	} else {
+		u = "http://"
+	}
+
+	u += profile.Host
+
+	if profile.Port != 0 {
+		u += fmt.Sprintf(":%v", profile.Port)
+	}
+
+	path = fmt.Sprintf(path, args...)
+
+	if strings.HasPrefix(path, "/") {
+		u += path
+	} else {
+		u += fmt.Sprintf("/%s", path)
+	}
+
+	return u
 }

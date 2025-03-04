@@ -44,8 +44,3 @@ type Controller interface {
 type Inspector interface {
 	Inspect(*Runtime) *cobra.Command
 }
-
-type Gitter interface {
-	Push(*Runtime) *cobra.Command
-	Pull(*Runtime) *cobra.Command
-}

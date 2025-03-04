@@ -5,6 +5,12 @@ get:
   description: |
     Dispaly one or more groups
 
+describe:
+  use: group <name>
+  group: admin-essentials
+  description: |
+    Display details about a group
+
 create:
   use: group <name>
   group: admin-essentials
@@ -27,16 +33,9 @@ delete:
     # Delete a group call admins
     $ ipctl delete group admin
 
-describe:
-  use: group <name>
-  group: admin-essentials
-  description: |
-    Display details about a group
-
 copy:
   use: group <name> --from <profile> --to <profile>
   group: admin-essentials
-
   description: |
     Copy a group from one server to another server
 
@@ -57,16 +56,3 @@ import:
   group: admin-essentials
   description: |
     Import a group
-
-push:
-  use: group <name> <repository>
-  group: admin-essentials
-  description: |
-    Push a group to a repository
-
-pull:
-  use: group <filename> <repository>
-  group: admin-essentials
-  description: |
-    Pull a group from a repository
-

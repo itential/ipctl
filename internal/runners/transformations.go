@@ -7,11 +7,9 @@ package runners
 import (
 	"errors"
 	"fmt"
-	"path/filepath"
 	"strings"
 
 	"github.com/itential/ipctl/internal/flags"
-	"github.com/itential/ipctl/internal/utils"
 	"github.com/itential/ipctl/pkg/client"
 	"github.com/itential/ipctl/pkg/config"
 	"github.com/itential/ipctl/pkg/logger"
@@ -38,8 +36,7 @@ func NewTransformationRunner(c client.Client, cfg *config.Config) *Transformatio
 func (r *TransformationRunner) Get(in Request) (*Response, error) {
 	logger.Trace()
 
-	var options flags.WorkflowGetOptions
-	utils.LoadObject(in.Options, &options)
+	options := in.Options.(*flags.TransformationGetOptions)
 
 	transformations, err := r.service.GetAll()
 	if err != nil {
@@ -63,20 +60,27 @@ func (r *TransformationRunner) Get(in Request) (*Response, error) {
 
 }
 
-// Describe implements the `describe transformation <name>` command
+// Describe implements the `describe transformation ...` command
 func (r *TransformationRunner) Describe(in Request) (*Response, error) {
 	logger.Trace()
 
 	name := in.Args[0]
 
-	transformation, err := r.service.GetByName(name)
+	res, err := r.service.GetByName(name)
 	if err != nil {
 		return nil, err
 	}
 
+	output := []string{
+		fmt.Sprintf("Name: %s (%s)", res.Name, res.Id),
+		fmt.Sprintf("Description: %s", res.Description),
+		fmt.Sprintf("Created: %s", res.Created),
+		fmt.Sprintf("Updated: %s", res.LastUpdated),
+	}
+
 	return NewResponse(
-		fmt.Sprintf("Name: %s", transformation.Name),
-		WithJson(transformation),
+		strings.Join(output, "\n"),
+		WithJson(res),
 	), nil
 }
 
@@ -88,32 +92,19 @@ func (r *TransformationRunner) Describe(in Request) (*Response, error) {
 func (r *TransformationRunner) Create(in Request) (*Response, error) {
 	logger.Trace()
 
+	options := in.Options.(*flags.TransformationCreateOptions)
+
 	name := in.Args[0]
 
-	var options flags.TransformationCreateOptions
-	utils.LoadObject(in.Options, &options)
-
-	if options.Replace {
-		existing, err := r.service.GetByName(name)
-
-		if existing != nil {
-			if err := r.service.Delete(existing.Id); err != nil {
-				return nil, err
-			}
-		} else if err != nil {
-			if err.Error() != "transformation not found" {
-				return nil, err
-			}
-		}
-	}
-
-	res, err := r.service.Create(services.NewTransformation(name, options.Description))
+	res, err := r.service.Create(
+		services.NewTransformation(name, options.Description),
+	)
 	if err != nil {
 		return nil, err
 	}
 
 	return NewResponse(
-		fmt.Sprintf("Successfully created transformation `%s`", res.Name),
+		fmt.Sprintf("Successfully created transformation `%s` (%s)", res.Name, res.Id),
 		WithJson(res),
 	), nil
 }
@@ -129,16 +120,12 @@ func (r *TransformationRunner) Delete(in Request) (*Response, error) {
 		return nil, err
 	}
 
-	if res == nil {
-		return nil, errors.New(fmt.Sprintf("transformation not found"))
-	}
-
 	if err := r.service.Delete(res.Id); err != nil {
 		return nil, err
 	}
 
 	return NewResponse(
-		fmt.Sprintf("Successfully deleted transformation `%s`", name),
+		fmt.Sprintf("Successfully deleted transformation `%s` (%s)", res.Name, res.Id),
 	), nil
 }
 
@@ -153,6 +140,7 @@ func (r *TransformationRunner) Clear(in Request) (*Response, error) {
 
 	for _, ele := range transformations {
 		if err := r.service.Delete(ele.Id); err != nil {
+			logger.Debug("failed to delete transformation `%s` (%s)", ele.Name, ele.Id)
 			return nil, err
 		}
 	}
@@ -236,11 +224,11 @@ func (r *TransformationRunner) CopyTo(profile string, in any, replace bool) (any
 func (r *TransformationRunner) Import(in Request) (*Response, error) {
 	logger.Trace()
 
-	var common *flags.AssetImportCommon
-	utils.LoadObject(in.Common, &common)
+	common := in.Common.(*flags.AssetImportCommon)
 
 	var res services.Transformation
-	if err := importFile(in, &res); err != nil {
+
+	if err := importUnmarshalFromRequest(in, &res); err != nil {
 		return nil, err
 	}
 
@@ -249,7 +237,7 @@ func (r *TransformationRunner) Import(in Request) (*Response, error) {
 	}
 
 	return NewResponse(
-		fmt.Sprintf("Successfully imported transformation `%s`", res.Name),
+		fmt.Sprintf("Successfully imported transformation `%s` (%s)", res.Name, res.Id),
 	), nil
 }
 
@@ -261,7 +249,6 @@ func (r *TransformationRunner) Export(in Request) (*Response, error) {
 	logger.Trace()
 
 	name := in.Args[0]
-	common := in.Common.(*flags.AssetExportCommon)
 
 	res, err := r.service.GetByName(name)
 	if err != nil {
@@ -270,79 +257,12 @@ func (r *TransformationRunner) Export(in Request) (*Response, error) {
 
 	fn := fmt.Sprintf("%s.transformation.json", name)
 
-	if err := NewExportAction(res, fn, common).Do(); err != nil {
-		return nil, err
-	}
-
-	fp := filepath.Join(common.Path, fn)
-
-	return NewResponse(
-		fmt.Sprintf(exportSuccessMessage, "transformation", res.Name, fp),
-	), nil
-
-}
-
-//////////////////////////////////////////////////////////////////////////////
-// Gitter interface
-//
-
-// Pull implements the command `pull transformation <repo>`
-func (r *TransformationRunner) Pull(in Request) (*Response, error) {
-	logger.Trace()
-
-	var common flags.AssetPullCommon
-	utils.LoadObject(in.Common, &common)
-
-	pull := PullAction{
-		Name:     in.Args[1],
-		Filename: in.Args[0],
-		Config:   r.config,
-		Options:  common,
-	}
-
-	data, err := pull.Do()
-	if err != nil {
-		return nil, err
-	}
-
-	var res services.Transformation
-	utils.UnmarshalData(data, &res)
-
-	if err := r.importTransformation(res, common.Replace); err != nil {
+	if err := exportAssetFromRequest(in, res, fn); err != nil {
 		return nil, err
 	}
 
 	return NewResponse(
-		fmt.Sprintf("Successfully pulled transformation `%s`", res.Name),
-	), nil
-}
-
-// Push implements the command `push transformation <repo>`
-func (r *TransformationRunner) Push(in Request) (*Response, error) {
-	logger.Trace()
-
-	var common flags.AssetPushCommon
-	utils.LoadObject(in.Common, &common)
-
-	res, err := r.service.GetByName(in.Args[0])
-	if err != nil {
-		return nil, err
-	}
-
-	push := PushAction{
-		Name:     in.Args[1],
-		Filename: fmt.Sprintf("%s.transformation.json", in.Args[0]),
-		Options:  common,
-		Config:   r.config,
-		Data:     res,
-	}
-
-	if err := push.Do(); err != nil {
-		return nil, err
-	}
-
-	return NewResponse(
-		fmt.Sprintf("Successfully pushed transformation `%s` to `%s`", in.Args[0], in.Args[1]),
+		fmt.Sprintf("Successfully exported transformation `%s` (%s)", res.Name, res.Id),
 	), nil
 }
 

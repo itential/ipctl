@@ -205,31 +205,21 @@ func (r *ProfileRunner) CopyTo(profile string, in any, replace bool) (any, error
 func (r *ProfileRunner) Import(in Request) (*Response, error) {
 	logger.Trace()
 
-	var common flags.AssetImportCommon
-	utils.LoadObject(in.Common, &common)
-
-	path, err := NormalizePath(in)
-	if err != nil {
-		return nil, err
-	}
-
-	data, err := utils.ReadFromFile(path)
-	if err != nil {
-		return nil, err
-	}
+	common := in.Common.(*flags.AssetImportCommon)
 
 	var profile services.Profile
-	utils.UnmarshalData(data, &profile)
 
-	imported, err := r.service.Import(profile)
-	if err != nil {
+	if err := importUnmarshalFromRequest(in, &profile); err != nil {
+		return nil, err
+	}
+
+	if err := r.importProfile(profile, common.Replace); err != nil {
 		return nil, err
 	}
 
 	return NewResponse(
-		fmt.Sprintf("Successfully imported profile `%s`", imported.Id),
+		fmt.Sprintf("Successfully imported profile `%s`", profile.Id),
 	), nil
-
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -242,90 +232,25 @@ func (r *ProfileRunner) Export(in Request) (*Response, error) {
 
 	name := in.Args[0]
 
-	var options flags.AssetExportCommon
-	utils.LoadObject(in.Common, &options)
-
-	//profile, err := r.service.Export(name)
-	profile, err := r.service.Get(name)
+	profile, err := r.service.Export(name)
 	if err != nil {
 		return nil, err
 	}
 
-	fn := fmt.Sprintf("%s.profile.json", strings.Replace(profile.Id, "/", "_", 1))
+	fn := fmt.Sprintf("%s.profile.json", name)
 
-	if err := utils.WriteJsonToDisk(profile, fn, options.Path); err != nil {
+	if err := exportAssetFromRequest(in, profile, fn); err != nil {
 		return nil, err
 	}
 
 	return NewResponse(
-		fmt.Sprintf("Successfully exported profile `%s` to `%s`", name, fn),
+		fmt.Sprintf("Successfully exported profile `%s`", profile.Id),
 	), nil
 }
 
 //////////////////////////////////////////////////////////////////////////////
-// Gitter Interface
+// Private functions
 //
-
-// Pull implements the command `pull profile <repo>`
-func (r *ProfileRunner) Pull(in Request) (*Response, error) {
-	logger.Trace()
-
-	var common flags.AssetPullCommon
-	utils.LoadObject(in.Common, &common)
-
-	pull := PullAction{
-		Name:     in.Args[1],
-		Filename: in.Args[0],
-		Config:   r.config,
-		Options:  common,
-	}
-
-	data, err := pull.Do()
-	if err != nil {
-		return nil, err
-	}
-
-	var profile services.Profile
-	utils.UnmarshalData(data, &profile)
-
-	if err := r.importProfile(profile, common.Replace); err != nil {
-		return nil, err
-	}
-
-	return NewResponse(
-		fmt.Sprintf("Successfully pulled profile `%s`", profile.Id),
-	), nil
-}
-
-// Push implements the command `push profile <repo>`
-func (r *ProfileRunner) Push(in Request) (*Response, error) {
-	logger.Trace()
-
-	var common flags.AssetPushCommon
-	utils.LoadObject(in.Common, &common)
-
-	//res, err := r.service.Export(in.Args[0])
-	res, err := r.service.Get(in.Args[0])
-	if err != nil {
-		return nil, err
-	}
-
-	push := PushAction{
-		Name:     in.Args[1],
-		Filename: fmt.Sprintf("%s.profile.json", in.Args[0]),
-		Options:  common,
-		Config:   r.config,
-		Data:     res,
-	}
-
-	if err := push.Do(); err != nil {
-		return nil, err
-	}
-
-	return NewResponse(
-		fmt.Sprintf("Successfully pushed profile `%s` to `%s`", in.Args[0], in.Args[1]),
-	), nil
-}
 
 func (r *ProfileRunner) importProfile(in services.Profile, replace bool) error {
 	logger.Trace()

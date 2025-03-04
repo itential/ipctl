@@ -31,9 +31,6 @@ type AssetHandlerFlags struct {
 	Restart flags.Flagger
 
 	Inspect flags.Flagger
-
-	Pull flags.Flagger
-	Push flags.Flagger
 }
 
 type AssetHandler struct {
@@ -46,7 +43,6 @@ type AssetHandler struct {
 	isExporter   bool
 	isController bool
 	isInspector  bool
-	isGitter     bool
 	Descriptor   DescriptorMap
 	Flags        *AssetHandlerFlags
 }
@@ -70,7 +66,6 @@ func NewAssetHandler(r runners.Runner, dm DescriptorMap, flags *AssetHandlerFlag
 	assetHandler.isExporter = implements(r, (*runners.Exporter)(nil))
 	assetHandler.isController = implements(r, (*runners.Controller)(nil))
 	assetHandler.isInspector = implements(r, (*runners.Inspector)(nil))
-	assetHandler.isGitter = implements(r, (*runners.Gitter)(nil))
 
 	return assetHandler
 }
@@ -272,38 +267,6 @@ func (h AssetHandler) Edit(runtime *Runtime) *cobra.Command {
 			cmd.Args = cobra.ExactArgs(1)
 			if h.Flags.Edit != nil {
 				h.Flags.Edit.Flags(cmd)
-			}
-		}
-	}
-	return cmd
-}
-
-func (h AssetHandler) Push(runtime *Runtime) *cobra.Command {
-	var cmd *cobra.Command
-	if h.isGitter {
-		common := &flags.AssetPushCommon{}
-		cmd = h.newCommand("push", runtime, h.Runner.(runners.Gitter).Push, common)
-		if cmd != nil {
-			cmd.Args = cobra.ExactArgs(2)
-			common.Flags(cmd)
-			if h.Flags.Push != nil {
-				h.Flags.Push.Flags(cmd)
-			}
-		}
-	}
-	return cmd
-}
-
-func (h AssetHandler) Pull(runtime *Runtime) *cobra.Command {
-	var cmd *cobra.Command
-	if h.isGitter {
-		common := &flags.AssetPullCommon{}
-		cmd = h.newCommand("pull", runtime, h.Runner.(runners.Gitter).Pull, common)
-		if cmd != nil {
-			cmd.Args = cobra.ExactArgs(2)
-			common.Flags(cmd)
-			if h.Flags.Pull != nil {
-				h.Flags.Pull.Flags(cmd)
 			}
 		}
 	}

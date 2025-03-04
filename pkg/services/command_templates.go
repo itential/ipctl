@@ -169,10 +169,6 @@ func (svc *CommandTemplateService) Delete(name string) error {
 		return err
 	}
 
-	if res.DeletedCount == 0 {
-		return errors.New("command template not found")
-	}
-
 	return nil
 }
 

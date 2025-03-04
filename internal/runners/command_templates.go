@@ -29,6 +29,10 @@ func NewCommandTemplateRunner(c client.Client, cfg *config.Config) *CommandTempl
 	}
 }
 
+//////////////////////////////////////////////////////////////////////////////
+// Reader Interface
+//
+
 // Get implements the `get command-templates` command
 func (r *CommandTemplateRunner) Get(in Request) (*Response, error) {
 	logger.Trace()
@@ -69,33 +73,24 @@ func (r *CommandTemplateRunner) Describe(in Request) (*Response, error) {
 		return nil, err
 	}
 
+	output := []string{
+		fmt.Sprintf("Name: %s (%s)", res.Name, res.Id),
+	}
+
 	return NewResponse(
-		fmt.Sprintf("Name: %s", res.Name),
+		strings.Join(output, "\n"),
 		WithJson(res),
 	), nil
 }
+
+//////////////////////////////////////////////////////////////////////////////
+// Writer Interface
+//
 
 func (r *CommandTemplateRunner) Create(in Request) (*Response, error) {
 	logger.Trace()
 
 	name := in.Args[0]
-
-	var options flags.CommandTemplateCreateOptions
-	utils.LoadObject(in.Options, &options)
-
-	if options.Replace {
-		existing, err := r.service.Get(name)
-
-		if existing != nil {
-			if err := r.service.Delete(existing.Id); err != nil {
-				return nil, err
-			}
-		} else if err != nil {
-			if err.Error() != "command template not found" {
-				return nil, err
-			}
-		}
-	}
 
 	res, err := r.service.Create(services.NewCommandTemplate(name))
 	if err != nil {
@@ -103,7 +98,7 @@ func (r *CommandTemplateRunner) Create(in Request) (*Response, error) {
 	}
 
 	return NewResponse(
-		fmt.Sprintf("Successfully created command template `%s`", name),
+		fmt.Sprintf("Successfully created command template `%s` (%s)", res.Name, res.Id),
 		WithJson(res),
 	), nil
 }
@@ -136,8 +131,61 @@ func (r *CommandTemplateRunner) Clear(in Request) (*Response, error) {
 		}
 	}
 
-	return NewResponse(fmt.Sprintf("Deleted %v command-template(s)", len(elements))), nil
+	return NewResponse(fmt.Sprintf("Deleted %v command template(s)", len(elements))), nil
 }
+
+//////////////////////////////////////////////////////////////////////////////
+// Importer Interface
+//
+
+func (r *CommandTemplateRunner) Import(in Request) (*Response, error) {
+	logger.Trace()
+
+	common := in.Common.(*flags.AssetImportCommon)
+
+	var ct services.CommandTemplate
+
+	if err := importUnmarshalFromRequest(in, &ct); err != nil {
+		return nil, err
+	}
+
+	if err := r.importCommandTemplate(ct, common.Replace); err != nil {
+		return nil, err
+	}
+
+	return NewResponse(
+		fmt.Sprintf("Successfully imported command template `%s`", ct.Name),
+	), nil
+}
+
+//////////////////////////////////////////////////////////////////////////////
+// Exporter Interface
+//
+
+func (r *CommandTemplateRunner) Export(in Request) (*Response, error) {
+	logger.Trace()
+
+	name := in.Args[0]
+
+	ct, err := r.service.Export(name)
+	if err != nil {
+		return nil, err
+	}
+
+	fn := fmt.Sprintf("%s.command_template.json", name)
+
+	if err := exportAssetFromRequest(in, ct, fn); err != nil {
+		return nil, err
+	}
+
+	return NewResponse(
+		fmt.Sprintf("Successfully exported command template `%s`", ct.Name),
+	), nil
+}
+
+//////////////////////////////////////////////////////////////////////////////
+// Copier Interface
+//
 
 func (r *CommandTemplateRunner) Copy(in Request) (*Response, error) {
 	logger.Trace()
@@ -149,113 +197,6 @@ func (r *CommandTemplateRunner) Copy(in Request) (*Response, error) {
 
 	return NewResponse(
 		fmt.Sprintf("Successfully copied command template `%s` from `%s` to `%s`", res.Name, res.From, res.To),
-	), nil
-}
-
-func (r *CommandTemplateRunner) Import(in Request) (*Response, error) {
-	logger.Trace()
-
-	path, err := NormalizePath(in)
-	if err != nil {
-		return nil, err
-	}
-
-	var template services.CommandTemplate
-	if err := utils.ReadObjectFromDisk(path, &template); err != nil {
-		return nil, err
-	}
-
-	if err := r.importCommandTemplate(template, false); err != nil {
-		return nil, err
-	}
-
-	return NewResponse(
-		fmt.Sprintf("Successfully imported command template `%s`", path),
-	), nil
-}
-
-func (r *CommandTemplateRunner) Export(in Request) (*Response, error) {
-	logger.Trace()
-
-	name := in.Args[0]
-
-	var common flags.AssetExportCommon
-	utils.LoadObject(in.Common, &common)
-
-	mop, err := r.service.Export(name)
-	if err != nil {
-		return nil, err
-	}
-
-	fn := fmt.Sprintf("%s.command_template.json", name)
-
-	if err := utils.WriteJsonToDisk(mop, fn, common.Path); err != nil {
-		return nil, err
-	}
-
-	return NewResponse(
-		fmt.Sprintf("Successfully exported command-template `%s`", mop.Name),
-	), nil
-
-}
-
-// Pull implements the command `pull command-template <repo>`
-func (r *CommandTemplateRunner) Pull(in Request) (*Response, error) {
-	logger.Trace()
-
-	var common flags.AssetPullCommon
-	utils.LoadObject(in.Common, &common)
-
-	pull := PullAction{
-		Name:     in.Args[1],
-		Filename: in.Args[0],
-		Config:   r.config,
-		Options:  common,
-	}
-
-	data, err := pull.Do()
-	if err != nil {
-		return nil, err
-	}
-
-	var doc services.CommandTemplate
-	utils.UnmarshalData(data, &doc)
-
-	if err := r.importCommandTemplate(doc, common.Replace); err != nil {
-		return nil, err
-	}
-
-	return NewResponse(
-		fmt.Sprintf("Successfully pulled command template `%s`", doc.Name),
-	), nil
-}
-
-// Push implements the command `push command-template <repo>`
-func (r *CommandTemplateRunner) Push(in Request) (*Response, error) {
-	logger.Trace()
-
-	var common flags.AssetPushCommon
-	utils.LoadObject(in.Common, &common)
-
-	res, err := r.service.Export(in.Args[0])
-	if err != nil {
-		return nil, err
-	}
-
-	push := PushAction{
-		Name:     in.Args[1],
-		Filename: fmt.Sprintf("%s.command_template.json", in.Args[0]),
-		Options:  common,
-		Config:   r.config,
-		Data:     res,
-	}
-
-	if err := push.Do(); err != nil {
-		return nil, err
-	}
-
-	return NewResponse(
-		fmt.Sprintf("Successfully pushed command template `%s` to `%s`", in.Args[0], in.Args[1]),
 	), nil
 }
 
@@ -307,6 +248,10 @@ func (r *CommandTemplateRunner) CopyTo(profile string, in any, replace bool) (an
 	return nil, nil
 }
 
+//////////////////////////////////////////////////////////////////////////////
+// Private functions
+//
+
 func (r *CommandTemplateRunner) importCommandTemplate(in services.CommandTemplate, replace bool) error {
 	logger.Trace()
 
@@ -322,7 +267,7 @@ func (r *CommandTemplateRunner) importCommandTemplate(in services.CommandTemplat
 					return err
 				}
 			} else {
-				return errors.New(fmt.Sprintf("command-template `%s` already exists", ele.Name))
+				return errors.New(fmt.Sprintf("command template `%s` already exists", ele.Name))
 			}
 		}
 	}

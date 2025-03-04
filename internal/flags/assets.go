@@ -9,19 +9,33 @@ import (
 )
 
 type AssetImportCommon struct {
-	Replace bool
+	Replace        bool
+	Repository     string
+	Reference      string
+	PrivateKeyFile string
 }
 
 func (o *AssetImportCommon) Flags(cmd *cobra.Command) {
 	cmd.Flags().BoolVar(&o.Replace, "replace", o.Replace, "Replace an existing asset (if it exists)")
+	cmd.Flags().StringVar(&o.Repository, "repository", o.Repository, "Git repository URL")
+	cmd.Flags().StringVar(&o.Reference, "reference", o.Reference, "Git reference")
+	cmd.Flags().StringVar(&o.PrivateKeyFile, "private-key-file", o.PrivateKeyFile, "Path to Git private key")
 }
 
 type AssetExportCommon struct {
-	Path string
+	Path           string
+	Repository     string
+	Reference      string
+	PrivateKeyFile string
+	Message        string
 }
 
 func (o *AssetExportCommon) Flags(cmd *cobra.Command) {
 	cmd.Flags().StringVar(&o.Path, "path", o.Path, "Path where asset should be exported to")
+	cmd.Flags().StringVar(&o.Repository, "repository", o.Repository, "Git repository URL")
+	cmd.Flags().StringVar(&o.Reference, "reference", o.Reference, "Git reference")
+	cmd.Flags().StringVar(&o.PrivateKeyFile, "private-key-file", o.PrivateKeyFile, "Path to Git private key")
+	cmd.Flags().StringVar(&o.Message, "message", o.Message, "Git commit message")
 }
 
 type AssetCopyCommon struct {
@@ -38,28 +52,4 @@ func (o *AssetCopyCommon) Flags(cmd *cobra.Command) {
 	cmd.MarkFlagRequired("from")
 
 	cmd.Flags().BoolVar(&o.Replace, "replace", o.Replace, "Replace asset on destination server if it exists")
-}
-
-type AssetPullCommon struct {
-	Path      string
-	Replace   bool
-	Reference string
-}
-
-func (o *AssetPullCommon) Flags(cmd *cobra.Command) {
-	cmd.Flags().StringVar(&o.Path, "path", o.Path, "Path to the file in the repository")
-	cmd.Flags().BoolVar(&o.Replace, "replace", o.Replace, "Replace an existing asset (if it exists)")
-	cmd.Flags().StringVar(&o.Reference, "reference", o.Reference, "Git reference")
-}
-
-type AssetPushCommon struct {
-	Path      string
-	Message   string
-	Reference string
-}
-
-func (o *AssetPushCommon) Flags(cmd *cobra.Command) {
-	cmd.Flags().StringVar(&o.Path, "path", o.Path, "Path to the file in the repository")
-	cmd.Flags().StringVar(&o.Message, "message", o.Message, "Commit message")
-	cmd.Flags().StringVar(&o.Reference, "reference", o.Reference, "Git reference")
 }

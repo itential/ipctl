@@ -1,8 +1,4 @@
 ---
-##############################################################################
-# Asset commands
-##############################################################################
-
 get:
   use: profiles
   group: admin-essentials
@@ -55,10 +51,6 @@ copy:
     # Copy and replace `profile1` from `stage` to `prod`
     $ ipctl copy profile profile1 --from stage --to prod --replace
 
-##############################################################################
-# Import/Export commands
-##############################################################################
-
 import:
   use: profile <path>
   group: admin-essentials
@@ -70,19 +62,3 @@ export:
   group: admin-essentials
   description: |
     Export a profile
-
-##############################################################################
-# Repository commands
-##############################################################################
-
-push:
-  use: profile <name> <repository>
-  group: admin-essentials
-  description: |
-    Push a profile to a repository
-
-pull:
-  use: profile <filename> <repository>
-  group: admin-essentials
-  description: |
-    Pull a profile from a repository

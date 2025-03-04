@@ -6,6 +6,7 @@ package services
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 
@@ -126,6 +127,33 @@ func (svc *PrebuiltService) Get(id string) (*Prebuilt, error) {
 	var prebuilt *Prebuilt
 
 	if err := json.Unmarshal(res.Body, &prebuilt); err != nil {
+		return nil, err
+	}
+
+	return prebuilt, nil
+}
+
+func (p *PrebuiltService) GetByName(name string) (*Prebuilt, error) {
+	logger.Trace()
+
+	prebuilts, err := p.GetAll()
+	if err != nil {
+		return nil, err
+	}
+
+	var prebuiltId string
+	for _, ele := range prebuilts {
+		if ele.Name == name {
+			prebuiltId = ele.Id
+		}
+	}
+
+	if prebuiltId == "" {
+		return nil, errors.New(fmt.Sprintf("prebuilt `%s` does not exist", name))
+	}
+
+	prebuilt, err := p.Get(prebuiltId)
+	if err != nil {
 		return nil, err
 	}
 

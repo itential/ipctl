@@ -103,14 +103,3 @@ func Inspectors() []Inspector {
 	}
 	return resources
 }
-
-func Gitters() []Gitter {
-	res := reflect.TypeOf((*Gitter)(nil)).Elem()
-	var resources []Gitter
-	for _, ele := range registry {
-		if reflect.TypeOf(ele).Implements(res) {
-			resources = append(resources, ele.(Gitter))
-		}
-	}
-	return resources
-}

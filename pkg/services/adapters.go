@@ -17,25 +17,22 @@ type AdapterOperationResponse struct {
 	Message string `json:"message"`
 }
 
-type UpdateAdapterResponse struct {
-	Status  string  `json:"status"`
-	Message string  `json:"message"`
-	Data    Adapter `json:"data"`
-}
-
-type CreateAdapterResponse struct {
-	Status  string  `json:"status"`
-	Message string  `json:"message"`
-	Data    Adapter `json:"data"`
+type AdapterProperties struct {
+	Id         string                 `json:"id"`
+	Type       string                 `json:"type"`
+	Brokers    []string               `json:"brokers"`
+	Groups     []any                  `json:"groups"`
+	Properties map[string]interface{} `json:"properties"`
 }
 
 type Adapter struct {
 	Name             string                 `json:"name"`
 	Type             string                 `json:"type"`
 	Model            string                 `json:"model"`
-	Properties       map[string]interface{} `json:"properties"`
+	Properties       AdapterProperties      `json:"properties"`
 	IsEncrypted      bool                   `json:"isEncrypted"`
 	LoggerProperties map[string]interface{} `json:"loggerProps"`
+	Virtual          bool                   `json:"virtual"`
 }
 
 type AdapterService struct {
@@ -112,18 +109,30 @@ func (svc *AdapterService) Get(name string) (*Adapter, error) {
 	return &res.Data, nil
 }
 
-func (svc *AdapterService) Create(in Adapter) (*CreateAdapterResponse, error) {
+func (svc *AdapterService) Create(in Adapter) (*Adapter, error) {
 	logger.Trace()
 
 	body := map[string]interface{}{"properties": in}
 
-	var res CreateAdapterResponse
+	type Response struct {
+		Status  string   `json:"status"`
+		Message string   `json:"message"`
+		Data    *Adapter `json:"data"`
+	}
 
-	if err := svc.client.Post("/adapters", &body, &res); err != nil {
+	var res Response
+
+	if err := svc.client.PostRequest(&Request{
+		uri:                "/adapters",
+		body:               &body,
+		expectedStatusCode: 200,
+	}, &res); err != nil {
 		return nil, err
 	}
 
-	return &res, nil
+	logger.Info(res.Message)
+
+	return res.Data, nil
 }
 
 func (svc *AdapterService) Delete(name string) error {

@@ -249,32 +249,6 @@ func (h Handler) ApiCommands() []*cobra.Command {
 	return commands
 }
 
-//////////////////////////////////////////////////////////////////
-
-func (h Handler) PushCommands() []*cobra.Command {
-	var commands []*cobra.Command
-	for _, ele := range Gitters() {
-		cmd := ele.Push(h.Runtime)
-		if cmd != nil {
-			commands = append(commands, cmd)
-		}
-	}
-	return commands
-}
-
-func (h Handler) PullCommands() []*cobra.Command {
-	var commands []*cobra.Command
-	for _, ele := range Gitters() {
-		cmd := ele.Pull(h.Runtime)
-		if cmd != nil {
-			commands = append(commands, cmd)
-		}
-	}
-	return commands
-}
-
-//////////////////////////////////////////////////////////////////
-
 func (h Handler) LocalAAACommands() []*cobra.Command {
 	if h.Config.MongoUri != "" {
 		handler := NewLocalAAAHandler(h.Client, h.Config, h.Descriptors)

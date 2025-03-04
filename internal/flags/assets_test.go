@@ -7,7 +7,7 @@ package flags
 import "testing"
 
 func TestAssetImportCommon(t *testing.T) {
-	checkFlags(t, &AssetImportCommon{}, []string{"replace"})
+	checkFlags(t, &AssetImportCommon{}, []string{"replace", "repository", "reference", "private-key-file"})
 }
 
 func TestAssetExportCommon(t *testing.T) {
@@ -16,12 +16,4 @@ func TestAssetExportCommon(t *testing.T) {
 
 func TestAssetCopyCommon(t *testing.T) {
 	checkFlags(t, &AssetCopyCommon{}, []string{"to", "from", "replace"})
-}
-
-func TestAssetPullCommon(t *testing.T) {
-	checkFlags(t, &AssetPullCommon{}, []string{"path", "replace", "reference"})
-}
-
-func TestAssetPushCommon(t *testing.T) {
-	checkFlags(t, &AssetPushCommon{}, []string{"path", "message", "reference"})
 }

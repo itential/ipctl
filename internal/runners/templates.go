@@ -10,7 +10,6 @@ import (
 	"strings"
 
 	"github.com/itential/ipctl/internal/flags"
-	"github.com/itential/ipctl/internal/utils"
 	"github.com/itential/ipctl/pkg/client"
 	"github.com/itential/ipctl/pkg/config"
 	"github.com/itential/ipctl/pkg/logger"
@@ -37,8 +36,7 @@ func NewTemplateRunner(c client.Client, cfg *config.Config) *TemplateRunner {
 func (r *TemplateRunner) Get(in Request) (*Response, error) {
 	logger.Trace()
 
-	var options flags.TemplateGetOptions
-	utils.LoadObject(in.Options, &options)
+	options := in.Options.(*flags.TemplateGetOptions)
 
 	templates, err := r.service.GetAll()
 	if err != nil {
@@ -68,14 +66,23 @@ func (r *TemplateRunner) Describe(in Request) (*Response, error) {
 
 	name := in.Args[0]
 
-	template, err := r.service.GetByName(name)
+	res, err := r.service.GetByName(name)
 	if err != nil {
 		return nil, err
 	}
 
+	output := []string{
+		fmt.Sprintf("Name: %s (%s)", res.Name, res.Id),
+		fmt.Sprintf("Description: %s", res.Description),
+		fmt.Sprintf("Type: %s", res.Type),
+		fmt.Sprintf("Group: %s, Command: %s", res.Group, res.Command),
+		fmt.Sprintf("Created: %s", res.Created),
+		fmt.Sprintf("Updated: %s", res.LastUpdated),
+	}
+
 	return NewResponse(
-		fmt.Sprintf("Name: %s", template.Name),
-		WithJson(template),
+		strings.Join(output, "\n"),
+		WithJson(res),
 	), nil
 }
 
@@ -87,10 +94,9 @@ func (r *TemplateRunner) Describe(in Request) (*Response, error) {
 func (r *TemplateRunner) Create(in Request) (*Response, error) {
 	logger.Trace()
 
-	name := in.Args[0]
+	options := in.Options.(*flags.TemplateCreateOptions)
 
-	var options flags.TemplateCreateOptions
-	utils.LoadObject(in.Options, &options)
+	name := in.Args[0]
 
 	if options.Replace {
 		existing, err := r.service.GetByName(name)
@@ -117,7 +123,7 @@ func (r *TemplateRunner) Create(in Request) (*Response, error) {
 	}
 
 	return NewResponse(
-		fmt.Sprintf("Successfully created template `%s`", res.Name),
+		fmt.Sprintf("Successfully created template `%s` (%s)", res.Name, res.Id),
 		WithJson(res),
 	), nil
 }
@@ -135,7 +141,7 @@ func (r *TemplateRunner) Delete(in Request) (*Response, error) {
 	}
 
 	return NewResponse(
-		fmt.Sprintf("Successfully deleted template `%s`", t.Name),
+		fmt.Sprintf("Successfully deleted template `%s` (%s)", t.Name, t.Id),
 	), nil
 }
 
@@ -149,11 +155,14 @@ func (r *TemplateRunner) Clear(in Request) (*Response, error) {
 
 	for _, ele := range elements {
 		if err := r.service.Delete(ele.Id); err != nil {
+			logger.Debug("failed to delete template `%s` (%s)", ele.Name, ele.Id)
 			return nil, err
 		}
 	}
 
-	return NewResponse(fmt.Sprintf("Deleted %v template(s)", len(elements))), nil
+	return NewResponse(
+		fmt.Sprintf("Deleted %v template(s)", len(elements)),
+	), nil
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -231,10 +240,11 @@ func (r *TemplateRunner) CopyTo(profile string, in any, replace bool) (any, erro
 func (r *TemplateRunner) Import(in Request) (*Response, error) {
 	logger.Trace()
 
-	common := in.Common.(flags.AssetImportCommon)
+	common := in.Common.(*flags.AssetImportCommon)
 
 	var res services.Template
-	if err := ReadImportFromFile(in, &res); err != nil {
+
+	if err := importUnmarshalFromRequest(in, &res); err != nil {
 		return nil, err
 	}
 
@@ -256,9 +266,6 @@ func (r *TemplateRunner) Export(in Request) (*Response, error) {
 
 	name := in.Args[0]
 
-	var common flags.AssetExportCommon
-	utils.LoadObject(in.Common, &common)
-
 	res, err := r.service.GetByName(name)
 	if err != nil {
 		return nil, err
@@ -271,74 +278,12 @@ func (r *TemplateRunner) Export(in Request) (*Response, error) {
 
 	fn := fmt.Sprintf("%s.template.json", exported.Name)
 
-	if err := utils.WriteJsonToDisk(exported, fn, common.Path); err != nil {
+	if err := exportAssetFromRequest(in, exported, fn); err != nil {
 		return nil, err
 	}
 
 	return NewResponse(
-		fmt.Sprintf("Successfully exported template `%s`", exported.Name),
-	), nil
-}
-
-//////////////////////////////////////////////////////////////////////////////
-// Gitter Interface
-//
-
-// Pull implements the command `pull template <repo>`
-func (r *TemplateRunner) Pull(in Request) (*Response, error) {
-	logger.Trace()
-
-	common := in.Common.(*flags.AssetPullCommon)
-
-	pull := PullAction{
-		Name:     in.Args[1],
-		Filename: in.Args[0],
-		Config:   r.config,
-		Options:  *common,
-	}
-
-	data, err := pull.Do()
-	if err != nil {
-		return nil, err
-	}
-
-	var res services.Template
-	utils.UnmarshalData(data, &res)
-
-	if err := r.importTemplate(res, common.Replace); err != nil {
-		return nil, err
-	}
-
-	return NewResponse(
-		fmt.Sprintf("Successfully pulled template `%s`", res.Name),
-	), nil
-}
-
-// Push implements the command `push template <repo>`
-func (r *TemplateRunner) Push(in Request) (*Response, error) {
-	logger.Trace()
-
-	common := in.Common.(*flags.AssetPushCommon)
-
-	res, err := r.service.GetByName(in.Args[0])
-	if err != nil {
-		return nil, err
-	}
-
-	push := PushAction{
-		Name:     in.Args[1],
-		Filename: fmt.Sprintf("%s.template.json", in.Args[0]),
-		Options:  *common,
-		Config:   r.config,
-		Data:     res,
-	}
-
-	if err := push.Do(); err != nil {
-		return nil, err
-	}
-
-	return NewResponse(
-		fmt.Sprintf("Successfully pushed template `%s` to `%s`", in.Args[0], in.Args[1]),
+		fmt.Sprintf("Successfully exported template `%s` (%s)", exported.Name, exported.Id),
 	), nil
 }
 
@@ -354,7 +299,7 @@ func (r TemplateRunner) importTemplate(in services.Template, replace bool) error
 		if replace {
 			r.service.Delete(p.Id)
 		} else {
-			return errors.New(fmt.Sprintf("template with name `%s` already exists", p.Name))
+			return errors.New(fmt.Sprintf("template with name `%s` already exists, use `--replace` to overwrite", p.Name))
 		}
 	}
 

@@ -35,6 +35,10 @@ func NewAdapterRunner(c client.Client, cfg *config.Config) *AdapterRunner {
 	}
 }
 
+//////////////////////////////////////////////////////////////////////////////
+// Reader Interface
+//
+
 // Get is the implementation of the command `get adapters`
 func (r *AdapterRunner) Get(in Request) (*Response, error) {
 	logger.Trace()
@@ -77,6 +81,78 @@ func (r *AdapterRunner) Describe(in Request) (*Response, error) {
 	), nil
 }
 
+//////////////////////////////////////////////////////////////////////////////
+// Writer Interface
+//
+
+func (r *AdapterRunner) Create(in Request) (*Response, error) {
+	logger.Trace()
+
+	name := in.Args[0]
+
+	options := in.Options.(*flags.AdapterCreateOptions)
+
+	adapter := services.Adapter{
+		Name: name,
+		Type: "Adapter",
+		Properties: services.AdapterProperties{
+			Id: name,
+			//Type: options.Type,
+		},
+	}
+
+	if options.Model != "" {
+		adapter.Model = options.Model
+	}
+
+	if options.Template != "" {
+		content, err := utils.ReadFromFile(options.Template)
+		if err != nil {
+			return nil, err
+		}
+
+		tmpl := template.Must(
+			template.New("adapter").
+				Option("missingkey=error").
+				Parse(string(content)))
+
+		var variables = map[string]interface{}{
+			"name": name,
+		}
+
+		for _, ele := range options.Variables {
+			parts := strings.Split(ele, "=")
+			if len(parts) != 2 {
+				return nil, errors.New("invalid variable")
+			}
+			variables[parts[0]] = parts[1]
+		}
+
+		buf := &bytes.Buffer{}
+
+		if err := tmpl.Execute(buf, variables); err != nil {
+			return nil, err
+		}
+
+		var props map[string]interface{}
+
+		if err := json.Unmarshal([]byte(buf.String()), &props); err != nil {
+			return nil, err
+		}
+
+		adapter.Properties.Properties = props
+	}
+
+	res, err := r.service.Create(adapter)
+	if err != nil {
+		return nil, err
+	}
+
+	return NewResponse(
+		fmt.Sprintf("Successfully created adapter `%s`", res.Name),
+	), nil
+}
+
 // Delete is the implementation of `delete adatper <name>`
 func (r *AdapterRunner) Delete(in Request) (*Response, error) {
 	logger.Trace()
@@ -93,6 +169,10 @@ func (r *AdapterRunner) Delete(in Request) (*Response, error) {
 func (r *AdapterRunner) Clear(in Request) (*Response, error) {
 	return NotImplemented(in)
 }
+
+//////////////////////////////////////////////////////////////////////////////
+// Editor Interface
+//
 
 // Edit implements the `edti adapter ...` command
 func (r *AdapterRunner) Edit(in Request) (*Response, error) {
@@ -119,6 +199,10 @@ func (r *AdapterRunner) Edit(in Request) (*Response, error) {
 		fmt.Sprintf("Successfully updated adapter `%s`", name),
 	), nil
 }
+
+//////////////////////////////////////////////////////////////////////////////
+// Copier Interface
+//
 
 func (r *AdapterRunner) Copy(in Request) (*Response, error) {
 	logger.Trace()
@@ -202,70 +286,35 @@ func (r *AdapterRunner) CopyTo(profile string, in any, replace bool) (any, error
 	return res, nil
 
 }
-func (r *AdapterRunner) Create(in Request) (*Response, error) {
-	logger.Trace()
 
-	name := in.Args[0]
-
-	var options *flags.AdapterCreateOptions
-	utils.LoadObject(in.Options, &options)
-
-	if options.Template != "" {
-		content, err := utils.ReadFromFile(options.Template)
-		if err != nil {
-			return nil, err
-		}
-
-		tmpl := template.Must(template.New("adapter").Parse(string(content)))
-
-		var variables = map[string]interface{}{
-			"name": name,
-		}
-
-		for _, ele := range options.Variables {
-			parts := strings.Split(ele, "=")
-			if len(parts) != 2 {
-				return nil, errors.New("invalid variable")
-			}
-			variables[parts[0]] = parts[1]
-		}
-
-		buf := &bytes.Buffer{}
-
-		if err := tmpl.Execute(buf, variables); err != nil {
-			return nil, err
-		}
-	}
-
-	fmt.Println(name)
-	fmt.Println(options)
-
-	return NotImplemented(in)
-}
+//////////////////////////////////////////////////////////////////////////////
+// Importer Interface
+//
 
 // Import provides the implementation for `import adapter <filepath>`
 func (r *AdapterRunner) Import(in Request) (*Response, error) {
 	logger.Trace()
 
-	path, err := NormalizePath(in)
-	if err != nil {
-		return nil, err
-	}
+	common := in.Common.(*flags.AssetImportCommon)
 
 	var adapter services.Adapter
-	if err := utils.ReadObjectFromDisk(path, &adapter); err != nil {
+
+	if err := importUnmarshalFromRequest(in, &adapter); err != nil {
 		return nil, err
 	}
 
-	if err := r.importAdapter(adapter, false); err != nil {
+	if err := r.importAdapter(adapter, common.Replace); err != nil {
 		return nil, err
 	}
 
 	return NewResponse(
-		fmt.Sprintf("Successfully imported adapter `%s`", in.Args[0]),
+		fmt.Sprintf("Successfully imported adapter `%s`", adapter.Name),
 	), nil
-
 }
+
+//////////////////////////////////////////////////////////////////////////////
+// Exporter Interface
+//
 
 // Export) provides the implementation for `export adapter <name>`
 func (r *AdapterRunner) Export(in Request) (*Response, error) {
@@ -273,24 +322,25 @@ func (r *AdapterRunner) Export(in Request) (*Response, error) {
 
 	name := in.Args[0]
 
-	var options flags.AssetExportCommon
-	utils.LoadObject(in.Common, &options)
-
-	adapter, err := r.service.Get(name)
+	adapter, err := r.service.Export(name)
 	if err != nil {
 		return nil, err
 	}
 
 	fn := fmt.Sprintf("%s.adapter.json", name)
 
-	if err := utils.WriteJsonToDisk(adapter, fn, options.Path); err != nil {
+	if err := exportAssetFromRequest(in, adapter, fn); err != nil {
 		return nil, err
 	}
 
 	return NewResponse(
-		fmt.Sprintf("Successfully exported adapter `%s` to `%s`", adapter.Name, fn),
+		fmt.Sprintf("Successfully exported adapter `%s`", adapter.Name),
 	), nil
 }
+
+//////////////////////////////////////////////////////////////////////////////
+// Inspector interface
+//
 
 func (r *AdapterRunner) Inspect(in Request) (*Response, error) {
 	logger.Trace()
@@ -316,65 +366,9 @@ func (r *AdapterRunner) Inspect(in Request) (*Response, error) {
 	), nil
 }
 
-// Pull implements the command `pull adapter <repo>`
-func (r *AdapterRunner) Pull(in Request) (*Response, error) {
-	logger.Trace()
-
-	var common flags.AssetPullCommon
-	utils.LoadObject(in.Common, &common)
-
-	pull := PullAction{
-		Name:     in.Args[1],
-		Filename: in.Args[0],
-		Config:   r.config,
-		Options:  common,
-	}
-
-	data, err := pull.Do()
-	if err != nil {
-		return nil, err
-	}
-
-	var adapter services.Adapter
-	utils.UnmarshalData(data, &adapter)
-
-	if err := r.importAdapter(adapter, common.Replace); err != nil {
-		return nil, err
-	}
-
-	return NewResponse(
-		fmt.Sprintf("Successfully pulled adapter `%s`", adapter.Name),
-	), nil
-}
-
-// Push implements the command `push adapter <repo>`
-func (r *AdapterRunner) Push(in Request) (*Response, error) {
-	logger.Trace()
-
-	var common flags.AssetPushCommon
-	utils.LoadObject(in.Common, &common)
-
-	res, err := r.service.Export(in.Args[0])
-	if err != nil {
-		return nil, err
-	}
-
-	push := PushAction{
-		Name:     in.Args[1],
-		Filename: fmt.Sprintf("%s.adapter.json", in.Args[0]),
-		Options:  common,
-		Config:   r.config,
-		Data:     res,
-	}
-
-	if err := push.Do(); err != nil {
-		return nil, err
-	}
-
-	return NewResponse(
-		fmt.Sprintf("Successfully pushed adapter `%s` to `%s`", in.Args[0], in.Args[1]),
-	), nil
-}
+//////////////////////////////////////////////////////////////////////////////
+// Controller interface
+//
 
 func (r *AdapterRunner) Start(in Request) (*Response, error) {
 	logger.Trace()
@@ -417,6 +411,10 @@ func (r *AdapterRunner) Restart(in Request) (*Response, error) {
 		fmt.Sprintf("Successfully restarted adapter `%s`", name),
 	), nil
 }
+
+//////////////////////////////////////////////////////////////////////////////
+// Private functions
+//
 
 func (r *AdapterRunner) importAdapter(in services.Adapter, replace bool) error {
 	logger.Trace()

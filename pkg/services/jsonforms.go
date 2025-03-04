@@ -189,24 +189,42 @@ func (svc *JsonFormService) Clear() error {
 
 // Import will call the Itential Platform import API and import the specified
 // JSON Form to the server.
-func (svc *JsonFormService) Import(in JsonForm) error {
+func (svc *JsonFormService) Import(in JsonForm) (*JsonForm, error) {
 	logger.Trace()
 
 	body := map[string]interface{}{
 		"forms": []JsonForm{in},
 	}
 
+	type ImportedResponse struct {
+		Success  bool                   `json:"success"`
+		Message  string                 `json:"message"`
+		Original map[string]interface{} `json:"original"`
+		Created  map[string]interface{} `json:"created"`
+	}
+
 	type Response struct {
-		Message string `json:"message"`
-		Status  string `json:"status"`
+		Message  string           `json:"message"`
+		Status   string           `json:"status"`
+		Imported ImportedResponse `json:"imported"`
 	}
 
 	var res Response
 
-	return svc.client.PostRequest(&Request{
+	if err := svc.client.PostRequest(&Request{
 		uri:                "/json-forms/import/forms",
 		body:               &body,
 		expectedStatusCode: http.StatusOK,
-	}, &res)
+	}, &res); err != nil {
+		return nil, err
+	}
 
+	logger.Info(res.Imported.Message)
+
+	jf, err := svc.Get(res.Imported.Created["_id"].(string))
+	if err != nil {
+		return nil, err
+	}
+
+	return jf, nil
 }

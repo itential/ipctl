@@ -31,6 +31,9 @@ const (
 	defaultTerminalNoColor       = false
 	defaultTerminalDefaultOutput = "human"
 	defaultTerminalPager         = true
+
+	defaultGitName  = ""
+	defaultGitEmail = ""
 )
 
 type Config struct {
@@ -41,9 +44,6 @@ type Config struct {
 	// Profiles
 	profileName string
 	profiles    map[string]*Profile
-
-	// Repositories
-	repositories map[string]*Repository
 
 	// Log settings
 	LogLevel             string         `json:"log_level"`
@@ -56,6 +56,10 @@ type Config struct {
 	TerminalNoColor       bool   `json:"terminal_no_color"`
 	TerminalDefaultOutput string `json:"terminal_default_output"`
 	TerminalPager         bool   `json:"terminal_pager"`
+
+	// Git settings
+	GitName  string `json:"git_name"`
+	GitEmail string `json:"git_email"`
 
 	// Mongo settings
 	MongoUri string `json:"mongo_uri"`
@@ -90,12 +94,6 @@ func (ac *Config) DumpConfig() string {
 	return string(bs)
 }
 
-// HasRepositories will return true if there are any configured repositories in
-// the configuration file and false if there are no configured repositories.
-func (ac *Config) HasRepositories() bool {
-	return len(ac.repositories) > 0
-}
-
 func (ac *Config) initConfig(defaultsVariables map[string]interface{}, environmentBindings map[string]string, appWorkingDir, sysConfigPath, fileName string) {
 	// Set the default values within the application.
 	for k, v := range defaultsVariables {
@@ -122,7 +120,6 @@ func (ac *Config) initConfig(defaultsVariables map[string]interface{}, environme
 	}
 
 	ac.profiles = map[string]*Profile{}
-	ac.repositories = map[string]*Repository{}
 
 	var defaults map[string]interface{}
 
@@ -133,24 +130,7 @@ func (ac *Config) initConfig(defaultsVariables map[string]interface{}, environme
 	ac.profiles["default"] = loadProfile(defaults, defaults, map[string]interface{}{})
 
 	for key, value := range viper.AllSettings() {
-		if strings.HasPrefix(key, "repository ") {
-			parts := strings.Split(key, " ")
-
-			if len(parts) > 2 {
-				handleError("repository names cannot contain spaces", nil)
-			}
-
-			var overrides = map[string]interface{}{}
-
-			for _, ele := range getRepositoryFields() {
-				if val, exists := os.LookupEnv(fmt.Sprintf("IPCTL_REPOSITORY_%s_%s", strings.ToUpper(parts[1]), strings.ToUpper(ele))); exists {
-					overrides[ele] = val
-				}
-			}
-
-			ac.repositories[parts[1]] = loadRepository(value.(map[string]any), overrides)
-
-		} else if strings.HasPrefix(key, "profile ") {
+		if strings.HasPrefix(key, "profile ") {
 			parts := strings.Split(key, " ")
 
 			if len(parts) > 2 {
@@ -191,6 +171,9 @@ func (ac *Config) populateFields() {
 	ac.TerminalPager = viper.GetBool("termminal.pager")
 	ac.TerminalDefaultOutput = viper.GetString("terminal.default_output")
 
+	ac.GitName = viper.GetString("git.name")
+	ac.GitEmail = viper.GetString("git.email")
+
 	ac.MongoUri = viper.GetString("mongo.uri")
 }
 
@@ -207,6 +190,9 @@ var defaultValues = map[string]interface{}{
 	"terminal.no_color":       defaultTerminalNoColor,
 	"terminal.default_output": defaultTerminalDefaultOutput,
 	"terminal.pager":          defaultTerminalPager,
+
+	"git.name":  defaultGitName,
+	"git.email": defaultGitEmail,
 }
 
 var defaultEnvVarBindings = map[string]string{
@@ -222,6 +208,9 @@ var defaultEnvVarBindings = map[string]string{
 	"terminal.no_color":       "IPCTL_TERMINAL_NO_COLOR",
 	"terminal.default_output": "IPCTL_TERMINAL_DEFAULT_OUTPUT",
 	"termial.pager":           "IPCTL_TERMINAL_PAGER",
+
+	"git.name":  "IPCTL_GIT_NAME",
+	"git.email": "IPCTL_GIT_EMAIL",
 
 	"mongo.uri": "IPCTL_MONGO_URI",
 }

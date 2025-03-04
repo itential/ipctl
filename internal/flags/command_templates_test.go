@@ -6,10 +6,6 @@ package flags
 
 import "testing"
 
-func TestCommandTemplateCreateOptions(t *testing.T) {
-	checkFlags(t, &CommandTemplateCreateOptions{}, []string{"replace"})
-}
-
 func TestCommandTemplateGetOptions(t *testing.T) {
 	checkFlags(t, &CommandTemplateGetOptions{}, []string{"all"})
 }
