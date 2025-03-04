@@ -9,6 +9,7 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"path/filepath"
 
 	"github.com/itential/ipctl/internal/flags"
 	"github.com/itential/ipctl/internal/utils"
@@ -21,14 +22,20 @@ import (
 type ModelRunner struct {
 	config  *config.Config
 	service *services.ModelService
+	client  client.Client
 }
 
 func NewModelRunner(client client.Client, cfg *config.Config) *ModelRunner {
 	return &ModelRunner{
 		config:  cfg,
 		service: services.NewModelService(client),
+		client:  client,
 	}
 }
+
+//////////////////////////////////////////////////////////////////////////////
+// Reader Interface
+//
 
 // GetModels() is the implementation of the command `get models`
 func (r *ModelRunner) Get(in Request) (*Response, error) {
@@ -67,6 +74,10 @@ func (r *ModelRunner) Describe(in Request) (*Response, error) {
 		WithJson(model),
 	), nil
 }
+
+//////////////////////////////////////////////////////////////////////////////
+// Writer Interface
+//
 
 // Create implements the `create model <name>` command
 func (r *ModelRunner) Create(in Request) (*Response, error) {
@@ -123,6 +134,8 @@ func (r *ModelRunner) Create(in Request) (*Response, error) {
 func (r *ModelRunner) Delete(in Request) (*Response, error) {
 	logger.Trace()
 
+	options := in.Options.(*flags.ModelDeleteOptions)
+
 	name := in.Args[0]
 
 	elements, err := r.service.GetAll()
@@ -141,6 +154,59 @@ func (r *ModelRunner) Delete(in Request) (*Response, error) {
 
 	if model == nil {
 		return nil, errors.New(fmt.Sprintf("model `%s` not found", name))
+	}
+
+	if options.All {
+		for _, ele := range model.Actions {
+			if ele.Workflow != "" {
+				wfSvc := services.NewWorkflowService(r.client)
+
+				wf, err := wfSvc.GetById(ele.Workflow)
+				if err != nil {
+					if err.Error() != "workflow not found" {
+						return nil, err
+					}
+				}
+
+				if wf != nil {
+					if err := wfSvc.Delete(wf.Name); err != nil {
+						return nil, err
+					}
+				}
+			}
+
+			jstSvc := services.NewTransformationService(r.client)
+
+			if ele.PreWorkflowJst != "" {
+				jst, err := jstSvc.Get(ele.PreWorkflowJst)
+				if err != nil {
+					if err.Error() != "transformation not found" {
+						logger.Warn(err.Error())
+						//return nil, err
+					}
+				}
+				if jst != nil {
+					if err := jstSvc.Delete(jst.Id); err != nil {
+						return nil, err
+					}
+				}
+			}
+
+			if ele.PostWorkflowJst != "" {
+				jst, err := jstSvc.Get(ele.PostWorkflowJst)
+				if err != nil {
+					if err.Error() != "transformation not found" {
+						logger.Warn(err.Error())
+						//return nil, err
+					}
+				}
+				if jst != nil {
+					if err := jstSvc.Delete(jst.Id); err != nil {
+						return nil, err
+					}
+				}
+			}
+		}
 	}
 
 	if err := r.service.Delete(model.Id); err != nil {
@@ -186,42 +252,74 @@ func (r *ModelRunner) Copy(in Request) (*Response, error) {
 	), nil
 }
 
+//////////////////////////////////////////////////////////////////////////////
+// Importer Interface
+//
+
 // Import implements the command `import model <path>`
 func (r *ModelRunner) Import(in Request) (*Response, error) {
 	logger.Trace()
 
-	var common *flags.AssetImportCommon
-	utils.LoadObject(in.Common, &common)
+	common := in.Common.(*flags.AssetImportCommon)
+	options := in.Options.(*flags.ModelImportOptions)
 
-	path, err := NormalizePath(in)
+	path, err := importGetPathFromRequest(in)
 	if err != nil {
 		return nil, err
 	}
 
-	data, err := os.ReadFile(path)
+	wd := filepath.Dir(path)
+
+	if common.Repository != "" {
+		defer os.RemoveAll(wd)
+	}
+
+	var mModel map[string]interface{}
+
+	if err := importLoadFromDisk(path, &mModel); err != nil {
+		return nil, err
+	}
+
+	// Check the actions defined in the model to validate the model can be
+	// imported.  This will also handle reconstructing the model defintion if
+	// it was exported using `--expand`
+	for _, ele := range mModel["actions"].([]interface{}) {
+		if err := r.importActionMap(ele.(map[string]interface{}), wd, options.SkipChecks); err != nil {
+			return nil, err
+		}
+	}
+
+	b, err := json.Marshal(mModel)
 	if err != nil {
 		return nil, err
 	}
 
 	var model services.Model
-	utils.UnmarshalData(data, &model)
+	if err := json.Unmarshal(b, &model); err != nil {
+		return nil, err
+	}
 
-	if err := r.importModel(model, common.Replace); err != nil {
+	res, err := r.service.Import(model)
+	if err != nil {
 		return nil, err
 	}
 
 	return NewResponse(
-		fmt.Sprintf("Successfully imported model `%s`", model.Name),
+		fmt.Sprintf("Successfully imported model `%s` (%s)", res.Name, res.Id),
 		WithJson(model),
 	), nil
 }
+
+//////////////////////////////////////////////////////////////////////////////
+// Exporter Interface
+//
 
 // Export implements the `export model ...` command
 func (r *ModelRunner) Export(in Request) (*Response, error) {
 	logger.Trace()
 
-	var options *flags.AssetExportCommon
-	utils.LoadObject(in.Common, &options)
+	common := in.Common.(*flags.AssetExportCommon)
+	options := in.Options.(*flags.ModelExportOptions)
 
 	name := in.Args[0]
 
@@ -235,36 +333,122 @@ func (r *ModelRunner) Export(in Request) (*Response, error) {
 		return nil, err
 	}
 
-	out, err := Export(
-		model,
-		WithExportName(name),
-		WithExportType("model"),
-		WithExportEncoding("json"),
-		WithExportPath(options.Path),
-	)
+	if options.Expand {
+		path := common.Path
 
-	return NewResponse(
-		fmt.Sprintf("Successfully exported model `%s` to `%s`", model.Name, out.AbsPath),
-		WithJson(out),
-	), nil
-}
+		var repo *Repository
+		var repoPath string
 
-func (r *ModelRunner) importModel(in services.Model, replace bool) error {
-	logger.Trace()
+		if common.Repository != "" {
+			repo = exportNewRepositoryFromRequest(in)
 
-	res, err := r.service.Get(in.Name)
-	if err == nil {
-		if replace {
-			if err := r.service.Delete(res.Id); err != nil {
-				return err
+			var e error
+
+			repoPath, e = repo.Clone()
+			if e != nil {
+				return nil, e
 			}
-		} else {
-			return errors.New(fmt.Sprintf("model with name `%s` already exists", res.Name))
+			defer os.RemoveAll(repoPath)
+
+			path = filepath.Join(repoPath, common.Path)
+		}
+
+		if err := r.expandModel(in, model, path); err != nil {
+			return nil, err
+		}
+
+		if common.Repository != "" {
+			logger.Info("commiting %s to %s", repoPath, common.Repository)
+			if err := repo.CommitAndPush(repoPath, common.Message); err != nil {
+				return nil, err
+			}
+		}
+
+	} else {
+		fn := fmt.Sprintf("%s.model.json", normalizeFilename(model.Name))
+
+		if err := exportAssetFromRequest(in, model, fn); err != nil {
+			return nil, err
 		}
 	}
 
-	_, err = r.service.Import(in)
+	return NewResponse(
+		fmt.Sprintf("Successfull exported model `%s`", model.Name),
+	), nil
+}
+
+func (r *ModelRunner) expandModel(in Request, model *services.Model, path string) error {
+	logger.Trace()
+
+	mModel, err := ToMap(model)
 	if err != nil {
+		return err
+	}
+
+	for idx, ele := range model.Actions {
+
+		var res any
+		var e error
+		var fn string
+
+		mAction := mModel["actions"].([]interface{})[idx].(map[string]interface{})
+
+		// export the action workflow
+		if ele.Workflow != "" {
+			res, e = services.NewWorkflowService(r.client).Export(ele.Workflow)
+			if e != nil {
+				return e
+			}
+
+			name := normalizeFilename(res.(*services.Workflow).Name)
+			fn = fmt.Sprintf("%s.workflow.json", name)
+
+			delete(mAction, "workflow")
+			mAction["workflowFilename"] = fn
+
+			if err := utils.WriteJsonToDisk(res, fn, path); err != nil {
+				return err
+			}
+		}
+
+		// export the preworkflow jst
+		if ele.PreWorkflowJst != "" {
+			res, e = services.NewTransformationService(r.client).Get(ele.PreWorkflowJst)
+			if e != nil {
+				return e
+			}
+			name := normalizeFilename(res.(*services.Transformation).Name)
+			fn = fmt.Sprintf("%s.transformation.json", name)
+
+			delete(mAction, "preWorkflowJst")
+			mAction["preWorkflowJstFilename"] = fn
+
+			if err := utils.WriteJsonToDisk(res, fn, path); err != nil {
+				return err
+			}
+		}
+
+		// export the postworkflow jst
+		if ele.PostWorkflowJst != "" {
+			res, e = services.NewTransformationService(r.client).Get(ele.PostWorkflowJst)
+			if e != nil {
+				return e
+			}
+			name := normalizeFilename(res.(*services.Transformation).Name)
+			fn = fmt.Sprintf("%s.transformation.json", name)
+
+			delete(mAction, "postWorkflowJst")
+			mAction["postWorkflowJstFilename"] = fn
+
+			if err := utils.WriteJsonToDisk(res, fn, path); err != nil {
+				return err
+			}
+		}
+	}
+
+	fn := fmt.Sprintf("%s.model.json", model.Name)
+
+	if err := utils.WriteJsonToDisk(mModel, fn, path); err != nil {
 		return err
 	}
 
@@ -325,4 +509,93 @@ func (r *ModelRunner) CopyTo(profile string, in any, replace bool) (any, error) 
 	}
 
 	return res, nil
+}
+
+//////////////////////////////////////////////////////////////////////////////
+// Private functions
+//
+
+func (r *ModelRunner) importActionMap(action map[string]interface{}, path string, skipChecks bool) error {
+	logger.Trace()
+
+	if value, exists := action["workflow"]; exists {
+		if !skipChecks {
+			wf, err := services.NewWorkflowService(r.client).Get(value.(string))
+			if err != nil {
+				return err
+			}
+			if wf != nil {
+				return errors.New(
+					fmt.Sprintf("workflow for action `%s` does not exist", action["name"]),
+				)
+			}
+		}
+
+	} else if value, exists := action["workflowFilename"]; exists {
+		var wf services.Workflow
+		if err := importLoadFromDisk(filepath.Join(path, value.(string)), &wf); err != nil {
+			return err
+		}
+		res, err := services.NewWorkflowService(r.client).Import(wf)
+		if err != nil {
+			return err
+		}
+		delete(action, "workflowFilename")
+		action["workflow"] = res.Id
+
+	} else if value, exists := action["preWorkflowJst"]; exists {
+		if !skipChecks {
+			var res *services.Transformation
+			res, err := services.NewTransformationService(r.client).Get(value.(string))
+			if err != nil {
+				return err
+			}
+			if res != nil {
+				return errors.New(
+					fmt.Sprintf("pre transformation for action `%s` does not exist", action["name"]),
+				)
+			}
+		}
+
+	} else if value, exists := action["preWorkflowJstFilename"]; exists {
+		var jst services.Transformation
+		if err := importLoadFromDisk(filepath.Join(path, value.(string)), &jst); err != nil {
+			return err
+		}
+		res, err := services.NewTransformationService(r.client).Import(jst)
+		if err != nil {
+			return err
+		}
+		delete(action, "preWorkflowjstFilename")
+		action["preWorkflowJst"] = res.Id
+
+	} else if value, exists := action["postWorkflowJst"]; exists {
+		if !skipChecks {
+			var res *services.Transformation
+			res, err := services.NewTransformationService(r.client).Get(value.(string))
+			if err != nil {
+				return err
+			}
+			if res != nil {
+				return errors.New(
+					fmt.Sprintf("pre transformation for action `%s` does not exist", action["name"]),
+				)
+			}
+		}
+
+	} else if value, exists := action["postWorkflowJstFilename"]; exists {
+		var jst services.Transformation
+		if err := importLoadFromDisk(filepath.Join(path, value.(string)), &jst); err != nil {
+			return err
+		}
+		res, err := services.NewTransformationService(r.client).Import(jst)
+		if err != nil {
+			return err
+		}
+		delete(action, "postWorkflowjstFilename")
+		action["postWorkflowJst"] = res.Id
+
+	}
+
+	return nil
 }

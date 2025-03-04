@@ -187,6 +187,29 @@ func (svc *WorkflowService) Get(name string) (*Workflow, error) {
 	return &res.Items[0], nil
 }
 
+func (svc *WorkflowService) GetById(id string) (*Workflow, error) {
+	logger.Trace()
+
+	res, err := svc.GetAll()
+	if err != nil {
+		return nil, err
+	}
+
+	var workflow *Workflow
+	for _, ele := range res {
+		if ele.Id == id {
+			workflow = &ele
+			break
+		}
+	}
+
+	if workflow == nil {
+		return nil, errors.New("workflow not found")
+	}
+
+	return workflow, nil
+}
+
 // Create will add a new workflow asset to the Itential Platform server.  The
 // workflow will always be created even if another workflow by the same name
 // already exists.
@@ -253,6 +276,28 @@ func (svc *WorkflowService) Export(name string) (*Workflow, error) {
 	body := map[string]interface{}{
 		"options": map[string]interface{}{
 			"name": name,
+		},
+	}
+
+	var res Workflow
+
+	if err := svc.client.PostRequest(&Request{
+		uri:                "/workflow_builder/export",
+		body:               &body,
+		expectedStatusCode: http.StatusOK,
+	}, &res); err != nil {
+		return nil, err
+	}
+
+	return &res, nil
+}
+
+func (svc *WorkflowService) ExportById(id string) (*Workflow, error) {
+	logger.Trace()
+
+	body := map[string]interface{}{
+		"options": map[string]interface{}{
+			"_id": id,
 		},
 	}
 
