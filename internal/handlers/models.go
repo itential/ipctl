@@ -17,6 +17,9 @@ func NewModelHandler(c client.Client, cfg *config.Config, desc Descriptors) Asse
 		desc[modelsDescriptor],
 		&AssetHandlerFlags{
 			Create: &flags.ModelCreateOptions{},
+			Delete: &flags.ModelDeleteOptions{},
+			Import: &flags.ModelImportOptions{},
+			Export: &flags.ModelExportOptions{},
 		},
 	)
 }

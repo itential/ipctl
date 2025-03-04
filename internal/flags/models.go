@@ -19,3 +19,29 @@ func (o *ModelCreateOptions) Flags(cmd *cobra.Command) {
 	cmd.Flags().StringVar(&o.Schema, "schema", o.Schema, "JSON Schema of the resource model")
 	cmd.Flags().BoolVar(&o.Replace, "replace", o.Replace, "Overwrite existing model if it exists")
 }
+
+type ModelDeleteOptions struct {
+	All bool
+}
+
+func (o *ModelDeleteOptions) Flags(cmd *cobra.Command) {
+	cmd.Flags().BoolVar(&o.All, "all", o.All, "Include all action assets")
+}
+
+type ModelExportOptions struct {
+	Expand bool
+}
+
+func (o *ModelExportOptions) Flags(cmd *cobra.Command) {
+	cmd.Flags().BoolVar(&o.Expand, "expand", o.Expand, "Expand export to include all assets")
+}
+
+type ModelImportOptions struct {
+	All        bool
+	SkipChecks bool
+}
+
+func (o *ModelImportOptions) Flags(cmd *cobra.Command) {
+	cmd.Flags().BoolVar(&o.All, "all", o.All, "Include all action assets")
+	cmd.Flags().BoolVar(&o.SkipChecks, "skip-checks", o.SkipChecks, "Skip checking for other assets")
+}
