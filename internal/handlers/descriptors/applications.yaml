@@ -1,5 +1,21 @@
 ---
 #############################################################################
+# Asset commands
+#############################################################################
+get:
+  use: applications
+  group: admin-essentials
+  description: |
+    Display one or more applications
+
+describe:
+  use: application <name>
+  group: admin-essentials
+  description: |
+    Display detailed information about an application
+
+
+#############################################################################
 # Inspector commands
 #############################################################################
 
