@@ -147,7 +147,7 @@ import:
 
   example: |
     # Import a project and add members
-    $ ipctl import project path/to/proj.project.json --member type=account,name=bob,type=owner
+    $ ipctl import project path/to/proj.project.json --member type=account,name=bob,access=owner
 
 export:
   use: project <name>
