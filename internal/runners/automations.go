@@ -243,7 +243,7 @@ func (r *AutomationRunner) CopyTo(profile string, in any, replace bool) (any, er
 func (r *AutomationRunner) Import(in Request) (*Response, error) {
 	logger.Trace()
 
-	common := in.Common.(flags.AssetImportCommon)
+	common := in.Common.(*flags.AssetImportCommon)
 
 	var automation services.Automation
 
