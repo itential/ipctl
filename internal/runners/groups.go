@@ -49,7 +49,7 @@ func (r *GroupRunner) Get(in Request) (*Response, error) {
 	return NewResponse(
 		"",
 		WithTable(display),
-		WithJson(groups),
+		WithObject(groups),
 	), nil
 
 }
@@ -81,7 +81,7 @@ func (r *GroupRunner) Describe(in Request) (*Response, error) {
 
 	return NewResponse(
 		"",
-		WithJson(grp),
+		WithObject(grp),
 	), nil
 }
 
@@ -104,7 +104,7 @@ func (r *GroupRunner) Create(in Request) (*Response, error) {
 
 	return NewResponse(
 		fmt.Sprintf("Successfully created group `%s`", in.Args[0]),
-		WithJson(res),
+		WithObject(res),
 	), nil
 }
 

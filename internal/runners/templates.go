@@ -55,7 +55,7 @@ func (r *TemplateRunner) Get(in Request) (*Response, error) {
 	return NewResponse(
 		"",
 		WithTable(display),
-		WithJson(templates),
+		WithObject(templates),
 	), nil
 
 }
@@ -82,7 +82,7 @@ func (r *TemplateRunner) Describe(in Request) (*Response, error) {
 
 	return NewResponse(
 		strings.Join(output, "\n"),
-		WithJson(res),
+		WithObject(res),
 	), nil
 }
 
@@ -124,7 +124,7 @@ func (r *TemplateRunner) Create(in Request) (*Response, error) {
 
 	return NewResponse(
 		fmt.Sprintf("Successfully created template `%s` (%s)", res.Name, res.Id),
-		WithJson(res),
+		WithObject(res),
 	), nil
 }
 

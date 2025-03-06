@@ -42,7 +42,7 @@ func (r *ViewRunner) Get(in Request) (*Response, error) {
 	return NewResponse(
 		"",
 		WithTable(display),
-		WithJson(views),
+		WithObject(views),
 	), nil
 }
 

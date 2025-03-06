@@ -57,7 +57,7 @@ func (r *AnalyticTemplateRunner) Get(in Request) (*Response, error) {
 	return NewResponse(
 		"",
 		WithTable(display),
-		WithJson(templates),
+		WithObject(templates),
 	), nil
 
 }
@@ -75,7 +75,7 @@ func (r *AnalyticTemplateRunner) Describe(in Request) (*Response, error) {
 
 	return NewResponse(
 		fmt.Sprintf("Name: %s", template.Name),
-		WithJson(template),
+		WithObject(template),
 	), nil
 }
 
@@ -112,7 +112,7 @@ func (r *AnalyticTemplateRunner) Create(in Request) (*Response, error) {
 
 	return NewResponse(
 		fmt.Sprintf("Successfully created analytic template `%s`", name),
-		WithJson(res),
+		WithObject(res),
 	), nil
 }
 

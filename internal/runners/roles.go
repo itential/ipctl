@@ -63,7 +63,7 @@ func (r *RoleRunner) Get(in Request) (*Response, error) {
 	return NewResponse(
 		"",
 		WithTable(display),
-		WithJson(filtered),
+		WithObject(filtered),
 	), nil
 
 }
@@ -101,7 +101,7 @@ func (r *RoleRunner) Describe(in Request) (*Response, error) {
 
 	return NewResponse(
 		"",
-		WithJson(role),
+		WithObject(role),
 	), nil
 }
 

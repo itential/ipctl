@@ -128,37 +128,10 @@ func NewCommand(c *CommandRunner) *cobra.Command {
 			checkError(err, c.Runtime)
 
 			if c.Runtime.Config.TerminalDefaultOutput == "json" {
-				if resp.Json != nil {
-					terminal.Display(string(resp.Json))
-				} else {
-					terminal.Display(resp.String())
-				}
-				terminal.Display("")
+				checkError(terminal.DisplayJson(resp.Object), c.Runtime)
 
-			} else if c.Runtime.Config.TerminalDefaultOutput == "url" && resp.Url != "" {
-				profile, _ := c.Runtime.Config.ActiveProfile()
-
-				var u string
-
-				if profile.UseTLS {
-					u = "https://"
-				} else {
-					u = "http://"
-				}
-
-				u += profile.Host
-
-				if profile.Port != 0 {
-					u += fmt.Sprintf(":%v", profile.Port)
-				}
-
-				if strings.HasPrefix(resp.Url, "/") {
-					u += resp.Url
-				} else {
-					u += fmt.Sprintf("/%s", resp.Url)
-				}
-
-				terminal.Display(u)
+			} else if c.Runtime.Config.TerminalDefaultOutput == "yaml" {
+				checkError(terminal.DisplayYaml(resp.Object), c.Runtime)
 
 			} else if len(resp.Lines) > 0 {
 				if c.Runtime.Config.TerminalPager {
@@ -170,8 +143,6 @@ func NewCommand(c *CommandRunner) *cobra.Command {
 			} else {
 				if resp.Text != "" {
 					terminal.Display(resp.String())
-				} else if resp.Json != nil {
-					terminal.Display(string(resp.Json))
 				} else {
 					terminal.Display("unable to display response")
 				}

@@ -45,7 +45,7 @@ func (r *AccountRunner) Get(in Request) (*Response, error) {
 	return NewResponse(
 		"",
 		WithTable(display),
-		WithJson(accounts),
+		WithObject(accounts),
 	), nil
 }
 
@@ -75,6 +75,6 @@ func (r *AccountRunner) Describe(in Request) (*Response, error) {
 
 	return NewResponse(
 		"",
-		WithJson(account),
+		WithObject(account),
 	), nil
 }

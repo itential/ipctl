@@ -44,7 +44,7 @@ func (r *IntegrationModelRunner) Get(in Request) (*Response, error) {
 	return NewResponse(
 		"",
 		WithTable(display),
-		WithJson(res),
+		WithObject(res),
 	), nil
 
 }
@@ -62,7 +62,7 @@ func (r *IntegrationModelRunner) Describe(in Request) (*Response, error) {
 
 	return NewResponse(
 		fmt.Sprintf("Name: %s", res.Model),
-		WithJson(res),
+		WithObject(res),
 	), nil
 }
 

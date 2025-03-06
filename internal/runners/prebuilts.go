@@ -55,7 +55,7 @@ func (r *PrebuiltRunner) Get(in Request) (*Response, error) {
 	return NewResponse(
 		"",
 		WithTable(display),
-		WithJson(prebuilts),
+		WithObject(prebuilts),
 	), nil
 
 }
@@ -73,7 +73,7 @@ func (r *PrebuiltRunner) Describe(in Request) (*Response, error) {
 
 	return NewResponse(
 		fmt.Sprintf("Name: %s", prebuilt.Name),
-		WithJson(prebuilt),
+		WithObject(prebuilt),
 	), nil
 }
 

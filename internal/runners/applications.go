@@ -50,7 +50,7 @@ func (r *ApplicationRunner) Get(in Request) (*Response, error) {
 	return NewResponse(
 		"",
 		WithTable(display),
-		WithJson(res),
+		WithObject(res),
 	), nil
 
 }
@@ -71,7 +71,7 @@ func (r *ApplicationRunner) Describe(in Request) (*Response, error) {
 
 	return NewResponse(
 		string(b),
-		WithJson(res),
+		WithObject(res),
 	), nil
 }
 
@@ -137,6 +137,6 @@ func (r *ApplicationRunner) Inspect(in Request) (*Response, error) {
 	return NewResponse(
 		"",
 		WithTable(display),
-		WithJson(res),
+		WithObject(res),
 	), nil
 }

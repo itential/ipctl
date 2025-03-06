@@ -45,7 +45,7 @@ func (r *GoldenConfigRunner) Get(in Request) (*Response, error) {
 
 	return NewResponse(
 		strings.Join(display, "\n"),
-		WithJson(trees),
+		WithObject(trees),
 	), nil
 }
 
@@ -70,7 +70,7 @@ func (r *GoldenConfigRunner) Create(in Request) (*Response, error) {
 
 	return NewResponse(
 		"Successfully create new golden configuration",
-		WithJson(gc),
+		WithObject(gc),
 	), nil
 }
 

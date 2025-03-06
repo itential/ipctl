@@ -47,7 +47,7 @@ func (r *IntegrationRunner) Get(in Request) (*Response, error) {
 	return NewResponse(
 		"",
 		WithTable(display),
-		WithJson(res),
+		WithObject(res),
 	), nil
 
 }
@@ -65,7 +65,7 @@ func (r *IntegrationRunner) Describe(in Request) (*Response, error) {
 
 	return NewResponse(
 		fmt.Sprintf("Name: %s", res.Name),
-		WithJson(res),
+		WithObject(res),
 	), nil
 }
 
@@ -99,7 +99,7 @@ func (r *IntegrationRunner) Create(in Request) (*Response, error) {
 
 	return NewResponse(
 		fmt.Sprintf("Successfully created integration `%s`", name),
-		WithJson(res),
+		WithObject(res),
 	), nil
 }
 
