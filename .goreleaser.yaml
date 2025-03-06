@@ -1,8 +1,17 @@
 ---
+version: 2
+
 before:
   hooks:
     - make clean
     - go mod tidy
 
 snapshot:
-  version_template: "{{ .Env.BUILD }}"
+  version_template: "{{ .Version }}"
+
+builds:
+  - id: default
+    ldflags:
+      - -s -w
+      - -X github.com/itential/ipctl/internal/metadata.Build={{ .Env.BUILD }}
+      - -X github.com/itential/ipctl/internal/metadata.Version={{ .Tag }}

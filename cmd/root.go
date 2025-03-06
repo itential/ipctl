@@ -38,7 +38,7 @@ func versionCommand() *cobra.Command {
 		Short: "Print the version information",
 		Run: func(cmd *cobra.Command, args []string) {
 			terminal.Display("version: %s", metadata.Version)
-			terminal.Display("commit: %s", metadata.Sha)
+			terminal.Display("commit: %s", metadata.Build)
 			e, _ := os.Executable()
 			terminal.Display("executable: %s", path.Dir(e))
 			terminal.Display("")

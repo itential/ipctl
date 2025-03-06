@@ -74,7 +74,7 @@ snapshot:
 # and add and remove any missing or unused modules.
 install:
 	go mod download
-	@go mod tidy
+	go mod tidy
 
 # The build target will build the application binary and place it into the bin/
 # folder.  If the folder does not exist, it will be created.
@@ -82,7 +82,7 @@ build: install
 	go build \
 		-v \
 		-o bin/ipctl \
-		-ldflags="-X 'github.com/itential/ipctl/internal/metadata.Sha=$$(git rev-parse --short HEAD)' -X 'github.com/itential/ipctl/nternal/metadata.User=$$(id -u -n)' -X 'github.com/itential/ipctl/internal/metadata.Time=$$(date)' -X 'github.com/itential/ipctl/internal/metadata.Version=$$(git tag | sort -V | tail -1)'"
+		-ldflags="-X 'github.com/itential/ipctl/internal/metadata.Build=$$(git rev-parse --short HEAD)' -X 'github.com/itential/ipctl/internal/metadata.Version=$$(git tag | sort -V | tail -1)'"
 
 # The test target runs the unit tests for this project.   All unit tests are
 # based on mock data for the various services it connects to.  The target
