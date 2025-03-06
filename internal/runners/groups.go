@@ -253,7 +253,7 @@ func (r *GroupRunner) Export(in Request) (*Response, error) {
 
 	name := in.Args[0]
 
-	grp, err := r.service.Get(name)
+	grp, err := r.service.GetByName(name)
 	if err != nil {
 		return nil, err
 	}
