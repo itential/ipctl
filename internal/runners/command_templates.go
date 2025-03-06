@@ -57,7 +57,7 @@ func (r *CommandTemplateRunner) Get(in Request) (*Response, error) {
 	return NewResponse(
 		"",
 		WithTable(display),
-		WithJson(templates),
+		WithObject(templates),
 	), nil
 
 }
@@ -79,7 +79,7 @@ func (r *CommandTemplateRunner) Describe(in Request) (*Response, error) {
 
 	return NewResponse(
 		strings.Join(output, "\n"),
-		WithJson(res),
+		WithObject(res),
 	), nil
 }
 
@@ -99,7 +99,7 @@ func (r *CommandTemplateRunner) Create(in Request) (*Response, error) {
 
 	return NewResponse(
 		fmt.Sprintf("Successfully created command template `%s` (%s)", res.Name, res.Id),
-		WithJson(res),
+		WithObject(res),
 	), nil
 }
 

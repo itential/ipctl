@@ -47,7 +47,7 @@ func (r *TagRunner) Get(in Request) (*Response, error) {
 	return NewResponse(
 		"",
 		WithTable(display),
-		WithJson(tags),
+		WithObject(tags),
 	), nil
 }
 
@@ -64,7 +64,7 @@ func (r *TagRunner) Describe(in Request) (*Response, error) {
 
 	return NewResponse(
 		"",
-		WithJson(tag),
+		WithObject(tag),
 	), nil
 }
 

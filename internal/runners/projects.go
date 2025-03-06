@@ -59,7 +59,7 @@ func (r *ProjectRunner) Get(in Request) (*Response, error) {
 	return NewResponse(
 		"",
 		WithTable(display),
-		WithJson(projects),
+		WithObject(projects),
 	), nil
 
 }
@@ -87,7 +87,7 @@ func (r *ProjectRunner) Describe(in Request) (*Response, error) {
 
 	return NewResponse(
 		strings.Join(output, "\n"),
-		WithJson(res),
+		WithObject(res),
 	), nil
 }
 
@@ -113,7 +113,7 @@ func (r *ProjectRunner) Create(in Request) (*Response, error) {
 
 	return NewResponse(
 		fmt.Sprintf("Successfully created project `%s` (%s)", project.Name, project.Id),
-		WithJson(project),
+		WithObject(project),
 	), nil
 }
 

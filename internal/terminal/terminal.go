@@ -5,6 +5,8 @@
 package terminal
 
 import (
+	"bytes"
+	"encoding/json"
 	"fmt"
 	"os"
 	"strings"
@@ -13,16 +15,21 @@ import (
 
 	"github.com/itential/ipctl/pkg/logger"
 	"github.com/manifoldco/promptui"
+	"gopkg.in/yaml.v2"
+)
+
+var (
+	displayBuffer   bytes.Buffer
+	displayToStdout bool = true
 )
 
 // Display Write a message to stdout.
 func Display(format string, args ...interface{}) {
-	fmt.Printf("%s\n", fmt.Sprintf(format, args...))
-}
-
-// Display Write a message to stdout.
-func Displayf(format string, args ...interface{}) {
-	fmt.Printf("%s", fmt.Sprintf(format, args...))
+	displayBuffer.Reset()
+	displayBuffer.WriteString(fmt.Sprintf(format, args...))
+	if displayToStdout {
+		fmt.Printf("%s\n", displayBuffer.String())
+	}
 }
 
 // DisplayError prints a formatted error message to the terminal and prints the same message to the logger
@@ -103,4 +110,36 @@ func Password() string {
 	}
 
 	return value
+}
+
+// DisplayJson accepts any interface object and will marshal the object to JSON
+// format and display it to stdout.   This function will return an error if it
+// cannot marhsal the object.
+func DisplayJson(o any) error {
+	logger.Trace()
+
+	b, err := json.MarshalIndent(o, "", "    ")
+	if err != nil {
+		return err
+	}
+
+	Display("%s\n", b)
+
+	return nil
+}
+
+// DisplayYaml accepts any interface object and will marshal the object to YAML
+// format and display it to stdout.   This function will return an error if it
+// cannot marhsal the object.
+func DisplayYaml(o any) error {
+	logger.Trace()
+
+	b, err := yaml.Marshal(o)
+	if err != nil {
+		return err
+	}
+
+	Display("%s\n", b)
+
+	return nil
 }

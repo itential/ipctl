@@ -40,7 +40,7 @@ func (r *AdapterModelRunner) Get(in Request) (*Response, error) {
 	return NewResponse(
 		"",
 		WithTable(display),
-		WithJson(res),
+		WithObject(res),
 	), nil
 
 }

@@ -30,7 +30,6 @@ func TestGet(t *testing.T) {
 	assert.NotNil(t, res)
 	assert.Empty(t, res.Text)
 	assert.NotEmpty(t, res.Lines)
-	assert.NotEmpty(t, res.Json)
 }
 
 func TestDescribe(t *testing.T) {
@@ -47,5 +46,4 @@ func TestDescribe(t *testing.T) {
 	assert.NotNil(t, res)
 	assert.Empty(t, res.Text)
 	assert.NotEmpty(t, res.Lines)
-	assert.NotEmpty(t, res.Json)
 }

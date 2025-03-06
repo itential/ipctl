@@ -42,7 +42,7 @@ func (r *MethodRunner) Get(in Request) (*Response, error) {
 	return NewResponse(
 		"",
 		WithTable(display),
-		WithJson(methods),
+		WithObject(methods),
 	), nil
 }
 

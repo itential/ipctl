@@ -54,7 +54,7 @@ func (r *ModelRunner) Get(in Request) (*Response, error) {
 	return NewResponse(
 		"",
 		WithTable(display),
-		WithJson(models),
+		WithObject(models),
 	), nil
 
 }
@@ -71,7 +71,7 @@ func (r *ModelRunner) Describe(in Request) (*Response, error) {
 
 	return NewResponse(
 		fmt.Sprintf("Name: %s", model.Name),
-		WithJson(model),
+		WithObject(model),
 	), nil
 }
 
@@ -126,7 +126,7 @@ func (r *ModelRunner) Create(in Request) (*Response, error) {
 
 	return NewResponse(
 		fmt.Sprintf("Successfully created model `%s`", jf.Name),
-		WithJson(jf),
+		WithObject(jf),
 	), nil
 }
 
@@ -306,7 +306,7 @@ func (r *ModelRunner) Import(in Request) (*Response, error) {
 
 	return NewResponse(
 		fmt.Sprintf("Successfully imported model `%s` (%s)", res.Name, res.Id),
-		WithJson(model),
+		WithObject(model),
 	), nil
 }
 

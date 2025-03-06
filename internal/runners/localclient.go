@@ -34,6 +34,6 @@ func (r *LocalClientRunner) ShowConfig(in Request) (*Response, error) {
 
 	return NewResponse(
 		string(b),
-		WithJson(r.client),
+		WithObject(r.client),
 	), nil
 }

@@ -5,24 +5,21 @@
 package runners
 
 import (
-	"encoding/json"
 	"errors"
 	"fmt"
 	"strings"
 
 	"github.com/itential/ipctl/pkg/config"
-	"github.com/itential/ipctl/pkg/logger"
 )
 
 type ResponseOption func(r *Response)
 
 type Response struct {
-	reference any
+	// Object is a generate interface field that holds the response object.
+	Object any
 
 	Text  string
 	Lines []string
-	Json  []byte
-	Url   string
 }
 
 func (r *Response) String() string {
@@ -43,20 +40,9 @@ func WithTable(lines []string) ResponseOption {
 	}
 }
 
-func WithUrl(s string) ResponseOption {
+func WithObject(o any) ResponseOption {
 	return func(r *Response) {
-		r.Url = s
-	}
-}
-
-func WithJson(o any) ResponseOption {
-	return func(r *Response) {
-		b, err := json.MarshalIndent(o, "", "    ")
-		if err != nil {
-			logger.Fatal(err, "failed to marshal json")
-		}
-		r.Json = b
-		r.reference = o
+		r.Object = o
 	}
 }
 

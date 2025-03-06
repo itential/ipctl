@@ -35,5 +35,4 @@ func TestWorkflowDelete(t *testing.T) {
 	assert.Nil(t, err)
 	assert.NotNil(t, res)
 	assert.NotEmpty(t, res.Text)
-	assert.Empty(t, res.Json)
 }

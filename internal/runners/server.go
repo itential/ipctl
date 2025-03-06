@@ -61,6 +61,6 @@ func (r *ServerRunner) Inspect(in Request) (*Response, error) {
 
 	return NewResponse(
 		"",
-		WithJson(res),
+		WithObject(res),
 	), nil
 }

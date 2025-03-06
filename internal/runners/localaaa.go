@@ -46,7 +46,7 @@ func (r *LocalAAARunner) GetGroups(in Request) (*Response, error) {
 	return NewResponse(
 		"",
 		WithTable(display),
-		WithJson(res),
+		WithObject(res),
 	), nil
 }
 
@@ -95,7 +95,7 @@ func (r *LocalAAARunner) GetAccounts(in Request) (*Response, error) {
 	return NewResponse(
 		"",
 		WithTable(display),
-		WithJson(res),
+		WithObject(res),
 	), nil
 }
 

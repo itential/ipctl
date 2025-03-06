@@ -57,7 +57,7 @@ func (r *AdapterRunner) Get(in Request) (*Response, error) {
 	return NewResponse(
 		"",
 		WithTable(display),
-		WithJson(adapters),
+		WithObject(adapters),
 	), nil
 }
 
@@ -77,7 +77,7 @@ func (r *AdapterRunner) Describe(in Request) (*Response, error) {
 
 	return NewResponse(
 		string(b),
-		WithJson(res),
+		WithObject(res),
 	), nil
 }
 
@@ -362,7 +362,7 @@ func (r *AdapterRunner) Inspect(in Request) (*Response, error) {
 	return NewResponse(
 		"",
 		WithTable(display),
-		WithJson(adapters),
+		WithObject(adapters),
 	), nil
 }
 
