@@ -23,6 +23,7 @@ const (
 	defaultPassword     = "admin"
 	defaultClientID     = ""
 	defaultClientSecret = ""
+	defaultMongoUrl     = ""
 	defaultTimeout      = 5
 )
 
@@ -38,6 +39,8 @@ type Profile struct {
 
 	ClientID     string `json:"client_id"`
 	ClientSecret string `json:"client_secret"`
+
+	MongoUrl string `json:"mongo_url"`
 
 	Timeout int `json:"timeout"`
 }
@@ -139,6 +142,11 @@ func loadProfile(values, defaults, overrides map[string]interface{}) *Profile {
 				v = defaultClientSecret
 			}
 			p.ClientSecret = v
+		case "mongo_url":
+			if v == "" {
+				v = defaultMongoUrl
+			}
+			p.MongoUrl = v
 		case "timeout":
 			if v != "" {
 				timeout, err := strconv.Atoi(v)

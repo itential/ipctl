@@ -240,6 +240,13 @@ server.
 
 The default value for `timeout` is `5`
 
+#### mongo_url
+
+Configures the URL to use to make calls directly to the Mongo database.  This
+is primarily used by plugins.
+
+The default value for `mongo_url` is `null`
+
 
 ### Repository settings
 
