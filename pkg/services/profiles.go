@@ -5,6 +5,7 @@
 package services
 
 import (
+	"errors"
 	"fmt"
 	"net/http"
 
@@ -123,6 +124,41 @@ func (svc *ProfileService) Get(id string) (*Profile, error) {
 	}
 
 	return &res.Profile, nil
+}
+
+func (svc *ProfileService) GetActiveProfile() (*Profile, error) {
+	logger.Trace()
+
+	type Results struct {
+		Metadata ProfileMetadata `json:"metadata"`
+		Profile  Profile         `json:"profile"`
+	}
+
+	type Response struct {
+		Results []Results `json:"results"`
+		Total   int       `json:"total"`
+	}
+
+	var res Response
+
+	if err := svc.client.Get("/profiles", &res); err != nil {
+		return nil, err
+	}
+
+	var active *Profile
+
+	for _, ele := range res.Results {
+		if ele.Metadata.IsActive {
+			active = &ele.Profile
+			break
+		}
+	}
+
+	if active == nil {
+		return nil, errors.New("failed to find the active profile")
+	}
+
+	return active, nil
 }
 
 func (svc *ProfileService) Create(in Profile) (*Profile, error) {

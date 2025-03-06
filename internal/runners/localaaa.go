@@ -22,9 +22,40 @@ type LocalAAARunner struct {
 }
 
 func NewLocalAAARunner(client client.Client, cfg *config.Config) LocalAAARunner {
+	activeProfile, err := cfg.ActiveProfile()
+	if err != nil {
+		logger.Fatal(err, "")
+	}
+
+	mongoUrl := activeProfile.MongoUrl
+
+	// NOTE (privateip) Disabling this block for the moment as it causes a
+	// severe slow down running the app.  Need to re-think this
+	/*
+		if mongoUrl == "" {
+			p, err := services.NewProfileService(client).GetActiveProfile()
+			if err != nil {
+				logger.Fatal(err, "failed to find the active profile")
+			}
+
+			adapters := p.Adapter["adapters"].([]interface{})
+
+			for _, ele := range adapters {
+				item := ele.(map[string]interface{})
+				if item["type"].(string) == "local_aaa" {
+					props := item["properties"].(map[string]interface{})
+					db := props["database"].(map[string]interface{})
+					mongoUrl = db["url"].(string)
+				}
+			}
+		}
+	*/
+
+	logger.Info("mongo url is %s", mongoUrl)
+
 	return LocalAAARunner{
 		config:  cfg,
-		service: localaaa.NewLocalAAAService(cfg.MongoUri),
+		service: localaaa.NewLocalAAAService(mongoUrl),
 	}
 }
 

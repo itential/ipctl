@@ -250,7 +250,12 @@ func (h Handler) ApiCommands() []*cobra.Command {
 }
 
 func (h Handler) LocalAAACommands() []*cobra.Command {
-	if h.Config.MongoUri != "" {
+	p, err := h.Config.ActiveProfile()
+	if err != nil {
+		logger.Fatal(err, "")
+	}
+
+	if p.MongoUrl != "" {
 		handler := NewLocalAAAHandler(h.Client, h.Config, h.Descriptors)
 		logger.Info("adding LocalAAA commands")
 		return []*cobra.Command{
@@ -259,6 +264,7 @@ func (h Handler) LocalAAACommands() []*cobra.Command {
 			handler.Delete(h.Runtime),
 		}
 	}
+
 	return nil
 }
 
