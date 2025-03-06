@@ -20,9 +20,7 @@ var profileFields = []string{
 	"client_id",
 	"client_secret",
 	"timeout",
-	"output",
-	"verbose",
-	"pager",
+	"mongo_url",
 }
 
 func TestGetProfileFields(t *testing.T) {
@@ -43,6 +41,7 @@ func TestLoadProfileWithValues(t *testing.T) {
 		"client_id":     "test",
 		"client_secret": "test",
 		"timeout":       1000,
+		"mongo_url":     "test",
 	}
 
 	p := loadProfile(values, map[string]interface{}{}, map[string]interface{}{})
@@ -67,6 +66,8 @@ func TestLoadProfileWithValues(t *testing.T) {
 			assert.Equal(t, p.ClientSecret, value)
 		case "timeout":
 			assert.Equal(t, p.Timeout, value)
+		case "mongo_url":
+			assert.Equal(t, p.MongoUrl, value)
 		}
 	}
 }
