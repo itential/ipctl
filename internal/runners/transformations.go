@@ -55,7 +55,7 @@ func (r *TransformationRunner) Get(in Request) (*Response, error) {
 	return NewResponse(
 		"",
 		WithTable(display),
-		WithJson(transformations),
+		WithObject(transformations),
 	), nil
 
 }
@@ -80,7 +80,7 @@ func (r *TransformationRunner) Describe(in Request) (*Response, error) {
 
 	return NewResponse(
 		strings.Join(output, "\n"),
-		WithJson(res),
+		WithObject(res),
 	), nil
 }
 
@@ -105,7 +105,7 @@ func (r *TransformationRunner) Create(in Request) (*Response, error) {
 
 	return NewResponse(
 		fmt.Sprintf("Successfully created transformation `%s` (%s)", res.Name, res.Id),
-		WithJson(res),
+		WithObject(res),
 	), nil
 }
 

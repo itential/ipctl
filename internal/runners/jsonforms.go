@@ -61,7 +61,7 @@ func (r *JsonFormRunner) Get(in Request) (*Response, error) {
 	return NewResponse(
 		"",
 		WithTable(display),
-		WithJson(json_forms),
+		WithObject(json_forms),
 	), nil
 
 }
@@ -77,8 +77,7 @@ func (r *JsonFormRunner) Describe(in Request) (*Response, error) {
 
 	return NewResponse(
 		fmt.Sprintf("Name: %s (%s)", res.Name, res.Id),
-		WithJson(res),
-		WithUrl(fmt.Sprintf(jsonFormUrlTemplate, res.Name)),
+		WithObject(res),
 	), nil
 }
 
@@ -115,8 +114,7 @@ func (r *JsonFormRunner) Create(in Request) (*Response, error) {
 
 	return NewResponse(
 		fmt.Sprintf("Successfully created jsonform `%s` (%s)", jf.Name, jf.Id),
-		WithJson(jf),
-		WithUrl(fmt.Sprintf(jsonFormUrlTemplate, jf.Name)),
+		WithObject(jf),
 	), nil
 }
 
@@ -257,8 +255,7 @@ func (r *JsonFormRunner) Import(in Request) (*Response, error) {
 
 	return NewResponse(
 		fmt.Sprintf("Successfully imported jsonform `%s` (%s)", jf.Name, jf.Id),
-		WithJson(jf),
-		WithUrl(fmt.Sprintf(jsonFormUrlTemplate, jf.Name)),
+		WithObject(jf),
 	), nil
 }
 

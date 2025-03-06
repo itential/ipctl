@@ -54,7 +54,8 @@ func (r *ProfileRunner) Get(in Request) (*Response, error) {
 	return NewResponse(
 		"",
 		WithTable(display),
-		WithJson(profiles),
+		WithObject(profiles),
+		WithObject(profiles),
 	), nil
 }
 
@@ -71,7 +72,7 @@ func (r *ProfileRunner) Describe(in Request) (*Response, error) {
 
 	return NewResponse(
 		"",
-		WithJson(profile),
+		WithObject(profile),
 	), nil
 }
 

@@ -58,7 +58,7 @@ func (r *WorkflowRunner) Get(in Request) (*Response, error) {
 	return NewResponse(
 		"",
 		WithTable(display),
-		WithJson(workflows),
+		WithObject(workflows),
 	), nil
 
 }
@@ -82,7 +82,7 @@ func (r *WorkflowRunner) Describe(in Request) (*Response, error) {
 
 	return NewResponse(
 		fmt.Sprintf(human, workflow.Name, workflow.Id, r.makeUrl(name), workflow.Description),
-		WithJson(workflow),
+		WithObject(workflow),
 	), nil
 }
 
@@ -103,7 +103,7 @@ func (r *WorkflowRunner) Create(in Request) (*Response, error) {
 
 	return NewResponse(
 		fmt.Sprintf("Successfully created workflow `%s` (%s)", name, r.makeUrl(name)),
-		WithJson(wf),
+		WithObject(wf),
 	), nil
 }
 

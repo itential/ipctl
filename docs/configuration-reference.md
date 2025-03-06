@@ -119,8 +119,8 @@ The default value for `no_color` is `false`
 #### default_output
 
 Sets the default output format for commands.  Currently, the application
-supports two output formats `human` and `json`.   Use this configuration to
-define the default output format for all commands.
+supports three output formats `human`,`json` and `yaml`.   Use this
+configuration to define the default output format for all commands.
 
 This setting can be override for any command using `--output <format>`
 

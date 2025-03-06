@@ -59,7 +59,7 @@ func (r *AutomationRunner) Get(in Request) (*Response, error) {
 	return NewResponse(
 		"",
 		WithTable(display),
-		WithJson(automations),
+		WithObject(automations),
 	), nil
 }
 
@@ -75,7 +75,7 @@ func (r *AutomationRunner) Describe(in Request) (*Response, error) {
 
 	return NewResponse(
 		"",
-		WithJson(res),
+		WithObject(res),
 	), nil
 }
 
@@ -112,7 +112,7 @@ func (r *AutomationRunner) Create(in Request) (*Response, error) {
 
 	return NewResponse(
 		fmt.Sprintf("Successfully created automation `%s`", res.Name),
-		WithJson(res),
+		WithObject(res),
 	), nil
 }
 

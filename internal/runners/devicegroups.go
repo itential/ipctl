@@ -44,7 +44,7 @@ func (r *DeviceGroupRunner) Get(in Request) (*Response, error) {
 	return NewResponse(
 		"",
 		WithTable(display),
-		WithJson(devices),
+		WithObject(devices),
 	), nil
 
 }
@@ -61,7 +61,6 @@ func (r *DeviceGroupRunner) Describe(in Request) (*Response, error) {
 
 	return NewResponse(
 		fmt.Sprintf("Name: %s", res.Name),
-		WithUrl(fmt.Sprintf("/configuration_manager/#/devices/%s", res.Name)),
-		WithJson(res),
+		WithObject(res),
 	), nil
 }
