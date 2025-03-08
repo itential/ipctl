@@ -7,8 +7,6 @@ package runners
 import (
 	"fmt"
 
-	"github.com/itential/ipctl/internal/flags"
-	"github.com/itential/ipctl/internal/utils"
 	"github.com/itential/ipctl/pkg/client"
 	"github.com/itential/ipctl/pkg/config"
 	"github.com/itential/ipctl/pkg/logger"
@@ -26,6 +24,10 @@ func NewIntegrationModelRunner(c client.Client, cfg *config.Config) *Integration
 		config:  cfg,
 	}
 }
+
+//////////////////////////////////////////////////////////////////////////////
+// Reader Interface
+//
 
 // Get implements the `get integration-models` command
 func (r *IntegrationModelRunner) Get(in Request) (*Response, error) {
@@ -66,53 +68,100 @@ func (r *IntegrationModelRunner) Describe(in Request) (*Response, error) {
 	), nil
 }
 
+//////////////////////////////////////////////////////////////////////////////
+// Writer Interface
+//
+
+func (r *IntegrationModelRunner) Create(in Request) (*Response, error) {
+	logger.Trace()
+
+	var schema map[string]interface{}
+
+	if err := importUnmarshalFromRequest(in, &schema); err != nil {
+		return nil, err
+	}
+
+	res, err := r.service.Create(schema)
+	if err != nil {
+		return nil, err
+	}
+
+	return NewResponse(
+		fmt.Sprintf("Successfully created integration model `%s`", res.Model),
+		WithObject(res),
+	), nil
+
+}
+
+func (r *IntegrationModelRunner) Delete(in Request) (*Response, error) {
+	logger.Trace()
+
+	name := in.Args[0]
+
+	if err := r.service.Delete(in.Args[0]); err != nil {
+		return nil, err
+	}
+
+	return NewResponse(
+		fmt.Sprintf("Successfully deleted integration model `%s`", name),
+	), nil
+}
+
+func (r *IntegrationModelRunner) Clear(in Request) (*Response, error) {
+	logger.Trace()
+
+	res, err := r.service.GetAll()
+	if err != nil {
+		return nil, err
+	}
+
+	for _, ele := range res {
+		if err := r.service.Delete(ele.Model); err != nil {
+			return nil, err
+		}
+	}
+
+	return NewResponse(
+		fmt.Sprintf("Suuccessfully deleted %v integration models", len(res)),
+	), nil
+}
+
+//////////////////////////////////////////////////////////////////////////////
+// Importer Interface
+//
+
 // Import implements the `import integration-model ...` command
 func (r *IntegrationModelRunner) Import(in Request) (*Response, error) {
 	logger.Trace()
-	return NotImplemented(in)
 
-	/*
-		path, err := NormalizePath(in)
-		if err != nil {
-			return nil, err
-		}
+	var schema map[string]interface{}
 
-		data, err := os.ReadFile(path)
-		if err != nil {
-			return nil, err
-		}
+	if err := importUnmarshalFromRequest(in, &schema); err != nil {
+		return nil, err
+	}
 
-		var integration_model services.IntegrationModel
-		utils.UnmarshalData(data, &integration_model)
+	res, err := r.service.Create(schema)
+	if err != nil {
+		return nil, err
+	}
 
-		p, err := r.service.Get(integration_model.Name)
-		if err == nil {
-			if common.Force {
-				r.service.Delete([]string{p.Id})
-			} else {
-				return nil, errors.New(fmt.Sprintf("integration_model with name `%s` already exists", p.Name))
-			}
-		}
-
-		err = r.service.Import(integration_model)
-		if err != nil {
-			return nil, err
-		}
-
-		return NewResponse(
-			fmt.Sprintf("Successfully imported integration_model `%s`", integration_model.Name),
-		), nil
-	*/
+	return NewResponse(
+		fmt.Sprintf("Successfully imported integration model `%s`", res.VersionId),
+		WithObject(res),
+	), nil
 }
+
+//////////////////////////////////////////////////////////////////////////////
+// Exporter Interface
+//
 
 // Export implements the  `export integration-model ...` command
 func (r *IntegrationModelRunner) Export(in Request) (*Response, error) {
 	logger.Trace()
 
-	name := in.Args[0]
+	//common := in.Common.(*flags.AssetExportCommon)
 
-	var options *flags.AssetExportCommon
-	utils.LoadObject(in.Common, &options)
+	name := in.Args[0]
 
 	res, err := r.service.Export(name)
 	if err != nil {
@@ -121,7 +170,7 @@ func (r *IntegrationModelRunner) Export(in Request) (*Response, error) {
 
 	fn := fmt.Sprintf("%s.integration_model.json", name)
 
-	if err := utils.WriteJsonToDisk(res, fn, options.Path); err != nil {
+	if err := exportAssetFromRequest(in, res, fn); err != nil {
 		return nil, err
 	}
 
