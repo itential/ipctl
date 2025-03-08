@@ -51,3 +51,11 @@ type Shower interface {
 type Inspector interface {
 	Inspect(Request) (*Response, error)
 }
+
+type Dumper interface {
+	Dump(Request) (*Response, error)
+}
+
+type Loader interface {
+	Load(Request) (*Response, error)
+}

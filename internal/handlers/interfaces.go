@@ -44,3 +44,11 @@ type Controller interface {
 type Inspector interface {
 	Inspect(*Runtime) *cobra.Command
 }
+
+type Dumper interface {
+	Dump(*Runtime) *cobra.Command
+}
+
+type Loader interface {
+	Load(*Runtime) *cobra.Command
+}
