@@ -31,6 +31,9 @@ type AssetHandlerFlags struct {
 	Restart flags.Flagger
 
 	Inspect flags.Flagger
+
+	Dump flags.Flagger
+	Load flags.Flagger
 }
 
 type AssetHandler struct {
@@ -43,6 +46,8 @@ type AssetHandler struct {
 	isExporter   bool
 	isController bool
 	isInspector  bool
+	isDumper     bool
+	isLoader     bool
 	Descriptor   DescriptorMap
 	Flags        *AssetHandlerFlags
 }
@@ -66,6 +71,8 @@ func NewAssetHandler(r runners.Runner, dm DescriptorMap, flags *AssetHandlerFlag
 	assetHandler.isExporter = implements(r, (*runners.Exporter)(nil))
 	assetHandler.isController = implements(r, (*runners.Controller)(nil))
 	assetHandler.isInspector = implements(r, (*runners.Inspector)(nil))
+	assetHandler.isDumper = implements(r, (*runners.Dumper)(nil))
+	assetHandler.isLoader = implements(r, (*runners.Loader)(nil))
 
 	return assetHandler
 }
@@ -267,6 +274,37 @@ func (h AssetHandler) Edit(runtime *Runtime) *cobra.Command {
 			cmd.Args = cobra.ExactArgs(1)
 			if h.Flags.Edit != nil {
 				h.Flags.Edit.Flags(cmd)
+			}
+		}
+	}
+	return cmd
+}
+
+func (h AssetHandler) Dump(runtime *Runtime) *cobra.Command {
+	var cmd *cobra.Command
+	if h.isDumper {
+		common := &flags.AssetDumpCommon{}
+		cmd = h.newCommand("dump", runtime, h.Runner.(runners.Dumper).Dump, common)
+		if cmd != nil {
+			common.Flags(cmd)
+			if h.Flags.Dump != nil {
+				h.Flags.Dump.Flags(cmd)
+			}
+		}
+	}
+	return cmd
+}
+
+func (h AssetHandler) Load(runtime *Runtime) *cobra.Command {
+	var cmd *cobra.Command
+	if h.isLoader {
+		common := &flags.AssetLoadCommon{}
+		cmd = h.newCommand("load", runtime, h.Runner.(runners.Loader).Load, common)
+		if cmd != nil {
+			common.Flags(cmd)
+			cmd.Args = cobra.ExactArgs(1)
+			if h.Flags.Load != nil {
+				h.Flags.Load.Flags(cmd)
 			}
 		}
 	}

@@ -33,18 +33,16 @@ func exportNewRepositoryFromRequest(in Request) *Repository {
 func exportAssetFromRequest(in Request, o any, fn string) error {
 	logger.Trace()
 
-	common := in.Common.(*flags.AssetExportCommon)
-
-	path := common.Path
+	path := in.Common.(flags.Committer).GetPath()
 
 	var repo *Repository
 	var repoPath string
 
-	if common.Repository != "" {
+	if in.Common.(flags.Gitter).GetRepository() != "" {
 		repo = NewRepository(
-			common.Repository,
-			WithReference(common.Reference),
-			WithPrivateKeyFile(common.PrivateKeyFile),
+			in.Common.(flags.Gitter).GetRepository(),
+			WithReference(in.Common.(flags.Gitter).GetReference()),
+			WithPrivateKeyFile(in.Common.(flags.Gitter).GetPrivateKeyFile()),
 			WithName(in.Config.GitName),
 			WithEmail(in.Config.GitEmail),
 		)
@@ -57,15 +55,15 @@ func exportAssetFromRequest(in Request, o any, fn string) error {
 		}
 		defer os.RemoveAll(repoPath)
 
-		path = filepath.Join(repoPath, common.Path)
+		path = filepath.Join(repoPath, in.Common.(flags.Committer).GetPath())
 	}
 
 	if err := utils.WriteJsonToDisk(o, fn, path); err != nil {
 		return err
 	}
 
-	if common.Repository != "" {
-		msg := common.Message
+	if in.Common.(flags.Gitter).GetRepository() != "" {
+		msg := in.Common.(flags.Committer).GetMessage()
 		if err := repo.CommitAndPush(repoPath, msg); err != nil {
 			return err
 		}

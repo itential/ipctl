@@ -103,3 +103,25 @@ func Inspectors() []Inspector {
 	}
 	return resources
 }
+
+func Dumpers() []Dumper {
+	res := reflect.TypeOf((*Dumper)(nil)).Elem()
+	var resources []Dumper
+	for _, ele := range registry {
+		if reflect.TypeOf(ele).Implements(res) {
+			resources = append(resources, ele.(Dumper))
+		}
+	}
+	return resources
+}
+
+func Loaders() []Loader {
+	res := reflect.TypeOf((*Loader)(nil)).Elem()
+	var resources []Loader
+	for _, ele := range registry {
+		if reflect.TypeOf(ele).Implements(res) {
+			resources = append(resources, ele.(Loader))
+		}
+	}
+	return resources
+}

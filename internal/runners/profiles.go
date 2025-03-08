@@ -250,6 +250,82 @@ func (r *ProfileRunner) Export(in Request) (*Response, error) {
 }
 
 //////////////////////////////////////////////////////////////////////////////
+// Dumper Interface
+//
+
+// Dump implements the `dump prorfiles` command
+func (r *ProfileRunner) Dump(in Request) (*Response, error) {
+	logger.Trace()
+
+	res, err := r.service.GetAll()
+	if err != nil {
+		return nil, err
+	}
+
+	var assets = map[string]interface{}{}
+	for _, ele := range res {
+		key := fmt.Sprintf("%s.profile.json", ele.Id)
+		assets[key] = ele
+	}
+
+	if err := dumpAssets(in, assets); err != nil {
+		return nil, err
+	}
+
+	return NewResponse(
+		fmt.Sprintf("Dumped %v profile(s)", len(assets)),
+	), nil
+}
+
+//////////////////////////////////////////////////////////////////////////////
+// Loader Interface
+//
+
+// Load implements the `load profiles ...` command
+func (r *ProfileRunner) Load(in Request) (*Response, error) {
+	logger.Trace()
+
+	elements, err := loadAssets(in)
+	if err != nil {
+		return nil, err
+	}
+
+	var loaded int
+	var skipped int
+
+	var output []string
+
+	for fn, ele := range elements {
+		var profile services.Profile
+
+		if err := loadUnmarshalAsset(ele, &profile); err != nil {
+			output = append(output, fmt.Sprintf("Failed to load profile from `%s`, skipping", fn))
+			skipped++
+			//return nil, err
+		} else {
+			if _, err := r.service.Import(profile); err != nil {
+				if !strings.HasSuffix(err.Error(), "already exists!\"") {
+					return nil, err
+				}
+				output = append(output, fmt.Sprintf("Skipping `%s`, profile `%s` already exists", fn, profile.Id))
+				skipped++
+			} else {
+				output = append(output, fmt.Sprintf("Loaded profile `%s` successfully from `%s`", profile.Id, fn))
+				loaded++
+			}
+		}
+	}
+
+	output = append(output, fmt.Sprintf(
+		"\nSuccessfully loaded %v and skipped %v files from `%s`", loaded, skipped, in.Args[0],
+	))
+
+	return NewResponse(
+		strings.Join(output, "\n"),
+	), nil
+}
+
+//////////////////////////////////////////////////////////////////////////////
 // Private functions
 //
 
@@ -266,6 +342,7 @@ func (r *ProfileRunner) importProfile(in services.Profile, replace bool) error {
 			return err
 		}
 	} else {
+		logger.Error(err, "")
 		return errors.New(fmt.Sprintf("profile `%s` already exists", profile.Id))
 	}
 

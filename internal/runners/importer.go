@@ -64,15 +64,13 @@ func importLoadFromDisk(path string, ptr any) error {
 func importGetPathFromRequest(in Request) (string, error) {
 	logger.Trace()
 
-	common := in.Common.(*flags.AssetImportCommon)
-
 	path := in.Args[0]
 
-	if common.Repository != "" {
+	if in.Common.(flags.Gitter).GetRepository() != "" {
 		r := &Repository{
-			Url:            common.Repository,
-			PrivateKeyFile: common.PrivateKeyFile,
-			Reference:      common.Reference,
+			Url:            in.Common.(flags.Gitter).GetRepository(),
+			PrivateKeyFile: in.Common.(flags.Gitter).GetPrivateKeyFile(),
+			Reference:      in.Common.(flags.Gitter).GetReference(),
 		}
 
 		p, err := CloneRepository(r)
