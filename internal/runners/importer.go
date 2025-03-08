@@ -22,11 +22,16 @@ import (
 func importUnmarshalFromRequest(in Request, ptr any) error {
 	logger.Trace()
 
+	common := in.Common.(*flags.AssetImportCommon)
+
 	path, err := importGetPathFromRequest(in)
 	if err != nil {
 		return err
 	}
-	defer os.RemoveAll(path)
+
+	if common.Repository != "" {
+		defer os.RemoveAll(path)
+	}
 
 	return importLoadFromDisk(path, ptr)
 }

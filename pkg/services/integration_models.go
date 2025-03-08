@@ -31,9 +31,10 @@ type IntegrationModelProperties struct {
 }
 
 type IntegrationModel struct {
-	Model      string                     `json:"model,omitempty"`
-	VersionId  string                     `json:"versionId"`
-	Properties IntegrationModelProperties `json:"properties"`
+	Model       string                     `json:"model,omitempty"`
+	VersionId   string                     `json:"versionId"`
+	Description string                     `json:"description"`
+	Properties  IntegrationModelProperties `json:"properties"`
 }
 
 type IntegrationModelService struct {
@@ -80,9 +81,9 @@ func (svc *IntegrationModelService) Create(in map[string]interface{}) (*Integrat
 	body := map[string]interface{}{"model": in}
 
 	type Response struct {
-		Message string            `json:"message"`
-		Status  string            `json:"status"`
-		Data    *IntegrationModel `json:"data"`
+		Message string                 `json:"message"`
+		Status  string                 `json:"status"`
+		Data    map[string]interface{} `json:"data"`
 	}
 
 	var res Response
@@ -97,7 +98,12 @@ func (svc *IntegrationModelService) Create(in map[string]interface{}) (*Integrat
 
 	logger.Info(res.Message)
 
-	return res.Data, nil
+	model, err := svc.Get(res.Data["versionId"].(string))
+	if err != nil {
+		return nil, err
+	}
+
+	return model, nil
 }
 
 func (svc *IntegrationModelService) Delete(name string) error {
