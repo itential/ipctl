@@ -15,12 +15,5 @@ import (
 // value must be the object instance.
 func dumpAssets(in Request, objects map[string]interface{}) error {
 	logger.Trace()
-
-	for key, value := range objects {
-		if err := exportAssetFromRequest(in, value, key); err != nil {
-			return err
-		}
-	}
-
-	return nil
+	return exportAssets(in, objects)
 }

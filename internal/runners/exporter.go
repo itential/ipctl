@@ -7,23 +7,54 @@ package runners
 import (
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/itential/ipctl/internal/flags"
 	"github.com/itential/ipctl/internal/utils"
 	"github.com/itential/ipctl/pkg/logger"
+	giturls "github.com/whilp/git-urls"
 )
 
-// exportNewRepository will create a new Repository object from an export
-// request.
-func exportNewRepositoryFromRequest(in Request) *Repository {
-	common := in.Common.(*flags.AssetExportCommon)
+// exportNewRepository will create a new Repository object from an the incoming
+// Request object.
+func exportNewRepositoryFromRequest(in Request) (*Repository, error) {
+	logger.Trace()
+
+	common := in.Common.(flags.Gitter)
+
+	url := common.GetRepository()
+	privateKeyFile := common.GetPrivateKeyFile()
+	reference := common.GetReference()
+
+	u, err := giturls.Parse(common.GetRepository())
+	if err != nil {
+		panic(err)
+	}
+
+	if u.Scheme == "file" && strings.HasPrefix(u.Path, "@") {
+		r, err := in.Config.GetRepository(u.Path[1:])
+		if err != nil {
+			return nil, err
+		}
+
+		url = r.Url
+
+		if privateKeyFile == "" {
+			privateKeyFile = r.PrivateKeyFile
+		}
+
+		if reference == "" {
+			reference = r.Reference
+		}
+	}
+
 	return NewRepository(
-		common.Repository,
-		WithReference(common.Reference),
-		WithPrivateKeyFile(common.PrivateKeyFile),
+		url,
+		WithReference(reference),
+		WithPrivateKeyFile(privateKeyFile),
 		WithName(in.Config.GitName),
 		WithEmail(in.Config.GitEmail),
-	)
+	), nil
 }
 
 // exportAssetFromRequest will take a request object and instance of an asset
@@ -31,6 +62,15 @@ func exportNewRepositoryFromRequest(in Request) *Repository {
 // will write the asset to the repository and commit it.  If not, this function
 // will simply write the asset to the local disk.
 func exportAssetFromRequest(in Request, o any, fn string) error {
+	return exportAssets(in, map[string]interface{}{fn: o})
+}
+
+// exportAssets accepts the Request object and a map of the assets and will
+// write them to disk.  If the request object includes repository settings,
+// this function will push the assets into the repository.  The assets argument
+// must be a map where the key is the filename and the value is the asset to
+// write to disk.
+func exportAssets(in Request, assets map[string]interface{}) error {
 	logger.Trace()
 
 	path := in.Common.(flags.Committer).GetPath()
@@ -39,15 +79,12 @@ func exportAssetFromRequest(in Request, o any, fn string) error {
 	var repoPath string
 
 	if in.Common.(flags.Gitter).GetRepository() != "" {
-		repo = NewRepository(
-			in.Common.(flags.Gitter).GetRepository(),
-			WithReference(in.Common.(flags.Gitter).GetReference()),
-			WithPrivateKeyFile(in.Common.(flags.Gitter).GetPrivateKeyFile()),
-			WithName(in.Config.GitName),
-			WithEmail(in.Config.GitEmail),
-		)
-
 		var e error
+
+		repo, e = exportNewRepositoryFromRequest(in)
+		if e != nil {
+			return e
+		}
 
 		repoPath, e = repo.Clone()
 		if e != nil {
@@ -58,11 +95,13 @@ func exportAssetFromRequest(in Request, o any, fn string) error {
 		path = filepath.Join(repoPath, in.Common.(flags.Committer).GetPath())
 	}
 
-	if err := utils.WriteJsonToDisk(o, fn, path); err != nil {
-		return err
+	for key, value := range assets {
+		if err := utils.WriteJsonToDisk(value, key, path); err != nil {
+			return err
+		}
 	}
 
-	if in.Common.(flags.Gitter).GetRepository() != "" {
+	if repo != nil {
 		msg := in.Common.(flags.Committer).GetMessage()
 		if err := repo.CommitAndPush(repoPath, msg); err != nil {
 			return err
