@@ -69,12 +69,9 @@ func NewHandler(iapClient client.Client, cfg *config.Config) Handler {
 
 		NewServerHandler(iapClient, cfg, descriptors),
 
+		NewLocalAAAHandler(iapClient, cfg, descriptors),
 		NewLocalClientHandler(iapClient, cfg, descriptors),
 	)
-
-	if cfg.MongoUri != "" {
-		NewLocalAAAHandler(iapClient, cfg, descriptors)
-	}
 
 	return Handler{
 		Runtime: &Runtime{

@@ -413,6 +413,81 @@ func (r *AdapterRunner) Restart(in Request) (*Response, error) {
 }
 
 //////////////////////////////////////////////////////////////////////////////
+// Dumper Interface
+//
+
+// Dump implements the `dump adapters...` command
+func (r *AdapterRunner) Dump(in Request) (*Response, error) {
+	logger.Trace()
+
+	res, err := r.service.GetAll()
+	if err != nil {
+		return nil, err
+	}
+
+	var assets = map[string]interface{}{}
+	for _, ele := range res {
+		key := fmt.Sprintf("%s.adapter.json", ele.Name)
+		assets[key] = ele
+	}
+
+	if err := dumpAssets(in, assets); err != nil {
+		return nil, err
+	}
+
+	return NewResponse(
+		fmt.Sprintf("Dumped %v adapter(s)", len(assets)),
+	), nil
+}
+
+//////////////////////////////////////////////////////////////////////////////
+// Loader Interface
+//
+
+// Load implements the `load adapters ...` command
+func (r *AdapterRunner) Load(in Request) (*Response, error) {
+	logger.Trace()
+
+	elements, err := loadAssets(in)
+	if err != nil {
+		return nil, err
+	}
+
+	var loaded int
+	var skipped int
+
+	var output []string
+
+	for fn, ele := range elements {
+		var adapter services.Adapter
+
+		if err := loadUnmarshalAsset(ele, &adapter); err != nil {
+			output = append(output, fmt.Sprintf("Failed to load adapter from `%s`, skipping", fn))
+			skipped++
+		} else {
+			if _, err := r.service.Import(adapter); err != nil {
+				if !strings.HasSuffix(err.Error(), "already exists!\"") {
+					return nil, err
+				}
+				output = append(output, fmt.Sprintf("Skipping `%s`, adapter `%s` already exists", fn, adapter.Name))
+				skipped++
+			} else {
+				output = append(output, fmt.Sprintf("Loaded adapter `%s` successfully from `%s`", adapter.Name, fn))
+				loaded++
+			}
+		}
+	}
+
+	output = append(output, fmt.Sprintf(
+		"\nSuccessfully loaded %v and skipped %v files from `%s`", loaded, skipped, in.Args[0],
+	))
+
+	return NewResponse(
+		strings.Join(output, "\n"),
+	), nil
+}
+
+//////////////////////////////////////////////////////////////////////////////
 // Private functions
 //
 
