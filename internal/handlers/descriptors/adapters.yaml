@@ -60,6 +60,18 @@ export:
   description: |
     Export an adapter configuration
 
+load:
+  use: adapters <path>
+  group: admin-essentials
+  description: |
+    Load all adapters
+
+dump:
+  use: adapters
+  group: admin-essentials
+  description: |
+    Dump all adapters
+
 #############################################################################
 # Platform commands
 #############################################################################

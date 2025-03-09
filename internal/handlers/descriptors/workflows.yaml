@@ -111,18 +111,17 @@ export:
 
 
 ##############################################################################
-# Gitter Commands
+# Dataset Commands
 ##############################################################################
-push:
-  use: workflow <name> <repository>
+
+load:
+  use: workflows <path>
   group: automation-studio
-
   description: |
-    Push a workflow directly to a repository
+    Load workflows
 
-pull:
-  use: workflow <filename> <repository>
+dump:
+  use: workflows
   group: automation-studio
-
   description: |
-    Pull a workflow directly from a repository
+    Dump all workflows

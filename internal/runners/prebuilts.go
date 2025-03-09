@@ -338,7 +338,10 @@ func (r *PrebuiltRunner) Export(in Request) (*Response, error) {
 		var repoPath string
 
 		if common.Repository != "" {
-			repo = exportNewRepositoryFromRequest(in)
+			repo, err = exportNewRepositoryFromRequest(in)
+			if err != nil {
+				return nil, err
+			}
 
 			var e error
 

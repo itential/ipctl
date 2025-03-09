@@ -19,8 +19,9 @@ import (
 const (
 	defaultFileName = "config"
 
-	defaultAppWorkingDir     = "~/.platform.d"
-	defaultAppDefaultProfile = ""
+	defaultAppWorkingDir        = "~/.platform.d"
+	defaultAppDefaultProfile    = ""
+	defaultAppDefaultRepository = ""
 
 	defaultLogLevel             = "INFO"
 	defaultLogFileJson          = false
@@ -38,12 +39,16 @@ const (
 
 type Config struct {
 	// Application settings
-	WorkingDir     string `json:"working_dir"`
-	DefaultProfile string `json:"default_profile"`
+	WorkingDir        string `json:"working_dir"`
+	DefaultProfile    string `json:"default_profile"`
+	DefaultRepository string `json:"default_repository"`
 
 	// Profiles
 	profileName string
 	profiles    map[string]*Profile
+
+	// Repositories
+	repositories map[string]*Repository
 
 	// Log settings
 	LogLevel             string         `json:"log_level"`
@@ -60,9 +65,6 @@ type Config struct {
 	// Git settings
 	GitName  string `json:"git_name"`
 	GitEmail string `json:"git_email"`
-
-	// Mongo settings
-	MongoUri string `json:"mongo_uri"`
 }
 
 func NewConfig(defaults map[string]interface{}, envBinding map[string]string, appWorkingDir, sysConfigPath, fileName string) *Config {
@@ -120,6 +122,7 @@ func (ac *Config) initConfig(defaultsVariables map[string]interface{}, environme
 	}
 
 	ac.profiles = map[string]*Profile{}
+	ac.repositories = map[string]*Repository{}
 
 	var defaults map[string]interface{}
 
@@ -130,7 +133,24 @@ func (ac *Config) initConfig(defaultsVariables map[string]interface{}, environme
 	ac.profiles["default"] = loadProfile(defaults, defaults, map[string]interface{}{})
 
 	for key, value := range viper.AllSettings() {
-		if strings.HasPrefix(key, "profile ") {
+		if strings.HasPrefix(key, "repository ") {
+			parts := strings.Split(key, " ")
+
+			if len(parts) > 2 {
+				handleError("repository names cannot contain spaces", nil)
+			}
+
+			var overrides = map[string]interface{}{}
+
+			for _, ele := range getRepositoryFields() {
+				if val, exists := os.LookupEnv(fmt.Sprintf("IPCTL_REPOSITORY_%s_%s", strings.ToUpper(parts[1]), strings.ToUpper(ele))); exists {
+					overrides[ele] = val
+				}
+			}
+
+			ac.repositories[parts[1]] = loadRepository(value.(map[string]any), overrides)
+
+		} else if strings.HasPrefix(key, "profile ") {
 			parts := strings.Split(key, " ")
 
 			if len(parts) > 2 {
@@ -160,6 +180,7 @@ func (ac *Config) initConfig(defaultsVariables map[string]interface{}, environme
 func (ac *Config) populateFields() {
 	ac.WorkingDir = GetAndExpandDirectory("application.working_dir")
 	ac.DefaultProfile = viper.GetString("application.default_profile")
+	ac.DefaultRepository = viper.GetString("application.default_repository")
 
 	ac.LogLevel = viper.GetString("log.level")
 	ac.LogFileJSON = viper.GetBool("log.file_json")
@@ -173,13 +194,12 @@ func (ac *Config) populateFields() {
 
 	ac.GitName = viper.GetString("git.name")
 	ac.GitEmail = viper.GetString("git.email")
-
-	ac.MongoUri = viper.GetString("mongo.uri")
 }
 
 var defaultValues = map[string]interface{}{
-	"application.working_dir":     defaultAppWorkingDir,
-	"application.default_profile": defaultAppDefaultProfile,
+	"application.working_dir":        defaultAppWorkingDir,
+	"application.default_profile":    defaultAppDefaultProfile,
+	"application.default_repository": defaultAppDefaultRepository,
 
 	"log.level":              defaultLogLevel,
 	"log.file_json":          defaultLogFileJson,
@@ -196,8 +216,9 @@ var defaultValues = map[string]interface{}{
 }
 
 var defaultEnvVarBindings = map[string]string{
-	"application.working_dir":     "IPCTL_APPLICATION_WORKING_DIR",
-	"application.default_profile": "IPCTL_APPLICATION_DEFAULT_PROFILE",
+	"application.working_dir":        "IPCTL_APPLICATION_WORKING_DIR",
+	"application.default_profile":    "IPCTL_APPLICATION_DEFAULT_PROFILE",
+	"application.default_repository": "IPCTL_APPLICATION_DEFAULT_REPOSITORY",
 
 	"log.level":              "IPCTL_LOG_LEVEL",
 	"log.file_json":          "IPCTL_LOG_FILE_JSON",
@@ -211,8 +232,6 @@ var defaultEnvVarBindings = map[string]string{
 
 	"git.name":  "IPCTL_GIT_NAME",
 	"git.email": "IPCTL_GIT_EMAIL",
-
-	"mongo.uri": "IPCTL_MONGO_URI",
 }
 
 // getConfigFileFromFlag reads in the file passed in using the --config flag on the cli

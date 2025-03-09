@@ -285,6 +285,84 @@ func (r *WorkflowRunner) Export(in Request) (*Response, error) {
 }
 
 //////////////////////////////////////////////////////////////////////////////
+// Dumper Interface
+//
+
+// Dump implements the `dump workflows...` command
+func (r *WorkflowRunner) Dump(in Request) (*Response, error) {
+	logger.Trace()
+
+	res, err := r.service.GetAll()
+	if err != nil {
+		return nil, err
+	}
+
+	var assets = map[string]interface{}{}
+
+	for _, ele := range res {
+		if !strings.HasPrefix(ele.Name, "@") {
+			key := fmt.Sprintf("%s.workflow.json", ele.Name)
+			assets[key] = ele
+		}
+	}
+
+	if err := dumpAssets(in, assets); err != nil {
+		return nil, err
+	}
+
+	return NewResponse(
+		fmt.Sprintf("Dumped %v workflow(s)", len(assets)),
+	), nil
+}
+
+//////////////////////////////////////////////////////////////////////////////
+// Loader Interface
+//
+
+// Load implements the `load workflows ...` command
+func (r *WorkflowRunner) Load(in Request) (*Response, error) {
+	logger.Trace()
+
+	elements, err := loadAssets(in)
+	if err != nil {
+		return nil, err
+	}
+
+	var loaded int
+	var skipped int
+
+	var output []string
+
+	for fn, ele := range elements {
+		var workflow services.Workflow
+
+		if err := loadUnmarshalAsset(ele, &workflow); err != nil {
+			output = append(output, fmt.Sprintf("Failed to load workflow from `%s`, skipping", fn))
+			skipped++
+		} else {
+			if err := r.importWorkflow(workflow, false); err != nil {
+				if !strings.HasPrefix(err.Error(), "worklow with name") {
+					return nil, err
+				}
+				output = append(output, fmt.Sprintf("Skipping `%s`, workflow `%s` already exists", fn, workflow.Name))
+				skipped++
+			} else {
+				output = append(output, fmt.Sprintf("Loaded workflow `%s` successfully from `%s`", workflow.Name, fn))
+				loaded++
+			}
+		}
+	}
+
+	output = append(output, fmt.Sprintf(
+		"\nSuccessfully loaded %v and skipped %v files from `%s`", loaded, skipped, in.Args[0],
+	))
+
+	return NewResponse(
+		strings.Join(output, "\n"),
+	), nil
+}
+
+//////////////////////////////////////////////////////////////////////////////
 // Private functions
 //
 

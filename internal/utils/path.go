@@ -93,12 +93,12 @@ func WriteBytesToDisk(b []byte, dst string, overwrite bool) error {
 // current working directory is used.
 func WriteJsonToDisk(o any, fn, fp string) error {
 	logger.Trace()
-	logger.Debug("Writing file `%s` to path `%s`", fn, fp)
 
 	dst, err := NormalizeFilename(fn, fp)
 	if err != nil {
 		return err
 	}
+	logger.Debug("Writing file `%s` to path `%s`", fn, fp)
 
 	b, err := json.MarshalIndent(o, "", "    ")
 	if err != nil {
