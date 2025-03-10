@@ -9,11 +9,13 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/itential/ipctl/internal/flags"
 	"github.com/itential/ipctl/internal/utils"
 	"github.com/itential/ipctl/pkg/logger"
 	"github.com/mitchellh/go-homedir"
+	giturls "github.com/whilp/git-urls"
 )
 
 // This function accepts the request object as the first argument and
@@ -67,10 +69,9 @@ func importGetPathFromRequest(in Request) (string, error) {
 	path := in.Args[0]
 
 	if in.Common.(flags.Gitter).GetRepository() != "" {
-		r := &Repository{
-			Url:            in.Common.(flags.Gitter).GetRepository(),
-			PrivateKeyFile: in.Common.(flags.Gitter).GetPrivateKeyFile(),
-			Reference:      in.Common.(flags.Gitter).GetReference(),
+		r, err := importNewRepositoryFromRequest(in)
+		if err != nil {
+			return "", err
 		}
 
 		p, err := CloneRepository(r)
@@ -82,4 +83,44 @@ func importGetPathFromRequest(in Request) (string, error) {
 	}
 
 	return homedir.Expand(path)
+}
+
+func importNewRepositoryFromRequest(in Request) (*Repository, error) {
+	logger.Trace()
+
+	common := in.Common.(flags.Gitter)
+
+	url := common.GetRepository()
+	privateKeyFile := common.GetPrivateKeyFile()
+	reference := common.GetReference()
+
+	u, err := giturls.Parse(common.GetRepository())
+	if err != nil {
+		panic(err)
+	}
+
+	if u.Scheme == "file" && strings.HasPrefix(u.Path, "@") {
+		r, err := in.Config.GetRepository(u.Path[1:])
+		if err != nil {
+			return nil, err
+		}
+
+		url = r.Url
+
+		if privateKeyFile == "" {
+			privateKeyFile = r.PrivateKeyFile
+		}
+
+		if reference == "" {
+			reference = r.Reference
+		}
+	}
+
+	return NewRepository(
+		url,
+		WithReference(reference),
+		WithPrivateKeyFile(privateKeyFile),
+		WithName(in.Config.GitName),
+		WithEmail(in.Config.GitEmail),
+	), nil
 }
