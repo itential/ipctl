@@ -1,6 +1,6 @@
 ---
 ##############################################################################
-# Reader commands
+# Asset commands
 ##############################################################################
 
 get:
@@ -14,10 +14,6 @@ describe:
   group: operations-manager
   description: |
     Display detailed details about an automation
-
-##############################################################################
-# Writer commands
-##############################################################################
 
 create:
   use: automation <name>
@@ -43,10 +39,6 @@ clear:
   description: |
     Delete all configured automations
 
-##############################################################################
-# Promotoer commands
-##############################################################################
-
 import:
   use: automation
   group: operations-manager
@@ -59,3 +51,18 @@ export:
   description: |
     Export an automation (including triggers)
 
+##############################################################################
+# Dataset commands
+##############################################################################
+
+dump:
+  use: automations
+  group: operations-manager
+  description: |
+    Dump all automations
+
+load:
+  use: automations <path>
+  group: operations-manager
+  description: |
+    Load all automations

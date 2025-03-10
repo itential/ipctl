@@ -32,17 +32,25 @@ type AutomationGbac struct {
 }
 
 type Automation struct {
-	Id            string         `json:"_id"`
-	Name          string         `json:"name"`
-	Description   string         `json:"description"`
-	ComponentName string         `json:"componentName"`
-	ComponentType string         `json:"componentType"`
+	Id            string `json:"_id"`
+	Name          string `json:"name"`
+	Description   string `json:"description"`
+	ComponentName string `json:"componentName"`
+	ComponentType string `json:"componentType"`
+
+	// ComponentId field does not exist when exporting the automation but it
+	// does exist when getting it
+	ComponentId string `json:"componentId,omitempty"`
+
 	Gbac          AutomationGbac `json:"gbac"`
 	Created       string         `json:"created"`
 	CreatedBy     string         `json:"createdBy"`
 	LastUpdated   string         `json:"lastUpdated"`
-	LastUpdatedby string         `json:"lastUpdatedBy"`
-	Triggers      []Trigger      `json:"triggers"`
+	LastUpdatedBy string         `json:"lastUpdatedBy"`
+
+	// Triggers does not exist when getting the autoatmion but it does exists
+	// when exporting it
+	Triggers []Trigger `json:"triggers,omitempty"`
 }
 
 type AutomationService struct {
