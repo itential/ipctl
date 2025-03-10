@@ -8,6 +8,7 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"strings"
 
 	"github.com/itential/ipctl/pkg/client"
 	"github.com/itential/ipctl/pkg/logger"
@@ -144,7 +145,20 @@ func (svc *TransformationService) GetByName(name string) (*Transformation, error
 		return nil, errors.New("transformation not found")
 	}
 
-	return &res.Results[0], nil
+	var selected *Transformation
+
+	for _, ele := range res.Results {
+		if !strings.HasPrefix(ele.Name, "@") {
+			selected = &ele
+			break
+		}
+	}
+
+	if selected == nil {
+		return nil, errors.New("transformation not found")
+	}
+
+	return selected, nil
 }
 
 // Create all attempt to create a new transformation on the server.  This
