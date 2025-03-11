@@ -69,20 +69,29 @@ func (r *WorkflowRunner) Describe(in Request) (*Response, error) {
 
 	name := in.Args[0]
 
-	workflow, err := r.service.Get(name)
+	wf, err := r.service.Get(name)
 	if err != nil {
 		return nil, err
 	}
 
-	human := strings.Join([]string{
-		"Name: %s (ID: %s)",
-		"Url: %s",
-		"Description:\n%s",
-	}, "\n")
+	res, err := r.service.Export(name)
+	if err != nil {
+		return nil, err
+	}
+
+	createdBy := res.CreatedBy.(map[string]interface{})["username"].(string)
+	updatedBy := res.LastUpdatedBy.(map[string]interface{})["username"].(string)
+
+	output := []string{
+		fmt.Sprintf("Name: %s (%s)", res.Name, wf.Id),
+		fmt.Sprintf("\nDescription: %s", res.Description),
+		fmt.Sprintf("\nCreated: %s, By: %s", res.Created, createdBy),
+		fmt.Sprintf("Updated: %s, By: %s", res.LastUpdated, updatedBy),
+	}
 
 	return NewResponse(
-		fmt.Sprintf(human, workflow.Name, workflow.Id, r.makeUrl(name), workflow.Description),
-		WithObject(workflow),
+		strings.Join(output, "\n"),
+		WithObject(res),
 	), nil
 }
 
@@ -102,7 +111,7 @@ func (r *WorkflowRunner) Create(in Request) (*Response, error) {
 	}
 
 	return NewResponse(
-		fmt.Sprintf("Successfully created workflow `%s` (%s)", name, r.makeUrl(name)),
+		fmt.Sprintf("Successfully created workflow `%s` (%s)", name, wf.Id),
 		WithObject(wf),
 	), nil
 }
@@ -280,7 +289,7 @@ func (r *WorkflowRunner) Export(in Request) (*Response, error) {
 	}
 
 	return NewResponse(
-		fmt.Sprintf("Successfully exported workflow `%s` (%s)", workflow.Name, workflow.Id),
+		fmt.Sprintf("Successfully exported workflow `%s`", workflow.Name),
 	), nil
 }
 
@@ -390,9 +399,4 @@ func (r *WorkflowRunner) importWorkflow(in services.Workflow, replace bool) erro
 	}
 
 	return nil
-}
-
-func (r *WorkflowRunner) makeUrl(name string) string {
-	logger.Trace()
-	return makeUrl(r.config, "/automation-studio/#/edit?tab=0&workflow=%s", name)
 }
