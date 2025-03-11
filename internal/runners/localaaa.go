@@ -51,12 +51,14 @@ func NewLocalAAARunner(client client.Client, cfg *config.Config) LocalAAARunner 
 		}
 	*/
 
-	logger.Info("mongo url is %s", mongoUrl)
+	runner := LocalAAARunner{config: cfg}
 
-	return LocalAAARunner{
-		config:  cfg,
-		service: localaaa.NewLocalAAAService(mongoUrl),
+	if mongoUrl != "" {
+		logger.Info("mongo url is %s", mongoUrl)
+		runner.service = localaaa.NewLocalAAAService(mongoUrl)
 	}
+
+	return runner
 }
 
 func (r *LocalAAARunner) GetGroups(in Request) (*Response, error) {
