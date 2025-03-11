@@ -24,6 +24,11 @@ jobs:
         with:
           go-version: stable
 
+      - name: Declare some variables
+        shell: bash
+        run: |
+          echo "GITHUB_SHA_SHORT=$(git rev-parse --short "$GITHUB_SHA")" >> "$GITHUB_ENV"
+
       - name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v6
         with:
@@ -33,4 +38,4 @@ jobs:
           args: release --clean
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          BUILD: $(git rev-parse --short "$GITHUB_SHA")
+          BUILD: ${{ env.GITHUB_SHA_SHORT }}
