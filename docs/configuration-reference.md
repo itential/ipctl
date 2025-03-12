@@ -262,7 +262,7 @@ name in various commands.
 
 Any configuration value included in the `repository` section can be overridden
 with environment variables prefixed with `IPCTL_REPOSITORY_<NAME>_<KEY>`.  For
-instace, to override the `reference` configuration value for the repository
+instance, to override the `reference` configuration value for the repository
 named `assets`, the environment variable would be
 `IPCTL_REPOSITORY_ASSETS_REFERENCE`.
 
