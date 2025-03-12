@@ -1,6 +1,6 @@
 # Configuration Reference.
 
-This document provides details about the availalbe configuration options
+This document provides details about the available configuration options
 available to configure `ipctl`.   All configuration options can be specified
 either in a configuration file and/or as environment variables.
 
@@ -262,7 +262,7 @@ name in various commands.
 
 Any configuration value included in the `repository` section can be overridden
 with environment variables prefixed with `IPCTL_REPOSITORY_<NAME>_<KEY>`.  For
-instace, to override the `reference` configuration value for the repository
+instance, to override the `reference` configuration value for the repository
 named `assets`, the environment variable would be
 `IPCTL_REPOSITORY_ASSETS_REFERENCE`.
 
