@@ -120,7 +120,7 @@ The `import` command can be used to pull an asset directly from a Git
 repository and import it into an Itential Platform server.   The `import`
 command accepts the following command line options for performing this task.
 
-- `--repostory`
+- `--repository`
 - `--reference`
 
 Using these command line options will instruct `ipctl` to pull the asset from
