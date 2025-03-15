@@ -286,7 +286,9 @@ func (r *AutomationRunner) Import(in Request) (*Response, error) {
 		return nil, err
 	}
 
-	res, err := r.importAutomation(automation)
+	common := in.Common.(*flags.AssetImportCommon)
+
+	res, err := r.importAutomation(automation, common.Replace)
 	if err != nil {
 		return nil, err
 	}
@@ -390,7 +392,7 @@ func (r *AutomationRunner) Load(in Request) (*Response, error) {
 			output = append(output, fmt.Sprintf("Failed to load automation from `%s`, skipping", fn))
 			skipped++
 		} else {
-			_, err := r.importAutomation(automation)
+			_, err := r.importAutomation(automation, false)
 			if err != nil {
 				if !strings.HasSuffix(err.Error(), "already exists on the server") {
 					return nil, err
@@ -417,11 +419,11 @@ func (r *AutomationRunner) Load(in Request) (*Response, error) {
 // Private functions
 //
 
-func (r *AutomationRunner) importAutomation(in services.Automation) (*services.Automation, error) {
+func (r *AutomationRunner) importAutomation(in services.Automation, replace bool) (*services.Automation, error) {
 	logger.Trace()
 
 	if err := validators.NewAutomationValidator(r.client).CanImport(in); err != nil {
-		if err := r.checkImportValidationError(err, in.Name, false); err != nil {
+		if err := r.checkImportValidationError(err, in.Name, replace); err != nil {
 			return nil, err
 		}
 	}
