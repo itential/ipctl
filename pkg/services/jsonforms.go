@@ -204,9 +204,9 @@ func (svc *JsonFormService) Import(in JsonForm) (*JsonForm, error) {
 	}
 
 	type Response struct {
-		Message  string           `json:"message"`
-		Status   string           `json:"status"`
-		Imported ImportedResponse `json:"imported"`
+		Message  string             `json:"message"`
+		Status   string             `json:"status"`
+		Imported []ImportedResponse `json:"imported"`
 	}
 
 	var res Response
@@ -219,9 +219,9 @@ func (svc *JsonFormService) Import(in JsonForm) (*JsonForm, error) {
 		return nil, err
 	}
 
-	logger.Info(res.Imported.Message)
+	logger.Info(res.Imported[0].Message)
 
-	jf, err := svc.Get(res.Imported.Created["_id"].(string))
+	jf, err := svc.Get(res.Imported[0].Created["_id"].(string))
 	if err != nil {
 		return nil, err
 	}
