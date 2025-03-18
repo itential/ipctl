@@ -307,8 +307,6 @@ func (r *AutomationRunner) Import(in Request) (*Response, error) {
 func (r *AutomationRunner) Export(in Request) (*Response, error) {
 	logger.Trace()
 
-	common := in.Common.(*flags.AssetExportCommon)
-
 	name := in.Args[0]
 
 	automation, err := r.service.GetByName(name)
@@ -323,7 +321,7 @@ func (r *AutomationRunner) Export(in Request) (*Response, error) {
 
 	fn := fmt.Sprintf("%s.automation.json", name)
 
-	if err := utils.WriteJsonToDisk(res, fn, common.Path); err != nil {
+	if err := exportAssetFromRequest(in, res, fn); err != nil {
 		return nil, err
 	}
 
