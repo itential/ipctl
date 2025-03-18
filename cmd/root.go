@@ -78,6 +78,17 @@ func Execute() int {
 	cfg := config.NewConfig(nil, nil, "", "", "")
 	logger.InitializeLogger(cfg)
 
+	if metadata.Version != "" && metadata.Build != "" {
+		logger.Info("ipctl %s (%s)", metadata.Version, metadata.Build)
+	} else {
+		sha, err := metadata.GetCurrentSha()
+		if err == nil {
+			logger.Info("ipctl running from commit %s", sha)
+		} else {
+			logger.Info("ipctl unable to determine source")
+		}
+	}
+
 	profile, err := cfg.ActiveProfile()
 	if err != nil {
 		cmdutils.CheckError(err, cfg.TerminalNoColor)
