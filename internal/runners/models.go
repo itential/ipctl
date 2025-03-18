@@ -525,7 +525,9 @@ func (r *ModelRunner) importActionMap(action map[string]interface{}, path string
 		if !skipChecks {
 			wf, err := services.NewWorkflowService(r.client).Get(value.(string))
 			if err != nil {
-				return err
+				return errors.New(
+					fmt.Sprintf("workflow for action `%s` encountered the following error: %s", action["name"], err.Error()),
+				)
 			}
 			if wf != nil {
 				return errors.New(
@@ -551,7 +553,9 @@ func (r *ModelRunner) importActionMap(action map[string]interface{}, path string
 			var res *services.Transformation
 			res, err := services.NewTransformationService(r.client).Get(value.(string))
 			if err != nil {
-				return err
+				return errors.New(
+					fmt.Sprintf("pre transformation for action `%s` encountered the following error: %s", action["name"], err.Error()),
+				)
 			}
 			if res != nil {
 				return errors.New(
@@ -577,7 +581,9 @@ func (r *ModelRunner) importActionMap(action map[string]interface{}, path string
 			var res *services.Transformation
 			res, err := services.NewTransformationService(r.client).Get(value.(string))
 			if err != nil {
-				return err
+				return errors.New(
+					fmt.Sprintf("post transformation for action `%s` encountered the following error: %s", action["name"], err.Error()),
+				)
 			}
 			if res != nil {
 				return errors.New(
@@ -597,7 +603,6 @@ func (r *ModelRunner) importActionMap(action map[string]interface{}, path string
 		}
 		delete(action, "postWorkflowjstFilename")
 		action["postWorkflowJst"] = res.Id
-
 	}
 
 	return nil
