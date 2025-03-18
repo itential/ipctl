@@ -23,6 +23,8 @@ const (
 	defaultAppDefaultProfile    = ""
 	defaultAppDefaultRepository = ""
 
+	defaultFeaturesDatasetsEnabled = false
+
 	defaultLogLevel             = "INFO"
 	defaultLogFileJson          = false
 	defaultLogConsoleJson       = false
@@ -42,6 +44,8 @@ type Config struct {
 	WorkingDir        string `json:"working_dir"`
 	DefaultProfile    string `json:"default_profile"`
 	DefaultRepository string `json:"default_repository"`
+
+	FeaturesDatasetsEnabled bool `json:"datasets_enabled"`
 
 	// Profiles
 	profileName string
@@ -182,6 +186,8 @@ func (ac *Config) populateFields() {
 	ac.DefaultProfile = viper.GetString("application.default_profile")
 	ac.DefaultRepository = viper.GetString("application.default_repository")
 
+	ac.FeaturesDatasetsEnabled = viper.GetBool("features.datasets_enabled")
+
 	ac.LogLevel = viper.GetString("log.level")
 	ac.LogFileJSON = viper.GetBool("log.file_json")
 	ac.LogConsoleJSON = viper.GetBool("log.console_json")
@@ -201,6 +207,8 @@ var defaultValues = map[string]interface{}{
 	"application.default_profile":    defaultAppDefaultProfile,
 	"application.default_repository": defaultAppDefaultRepository,
 
+	"features.datasets_enabled": defaultFeaturesDatasetsEnabled,
+
 	"log.level":              defaultLogLevel,
 	"log.file_json":          defaultLogFileJson,
 	"log.console_json":       defaultLogConsoleJson,
@@ -219,6 +227,8 @@ var defaultEnvVarBindings = map[string]string{
 	"application.working_dir":        "IPCTL_APPLICATION_WORKING_DIR",
 	"application.default_profile":    "IPCTL_APPLICATION_DEFAULT_PROFILE",
 	"application.default_repository": "IPCTL_APPLICATION_DEFAULT_REPOSITORY",
+
+	"features.datasets_enabled": "IPCTL_FEATURES_DATASETS_ENABLED",
 
 	"log.level":              "IPCTL_LOG_LEVEL",
 	"log.file_json":          "IPCTL_LOG_FILE_JSON",
