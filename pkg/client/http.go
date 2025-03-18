@@ -65,7 +65,7 @@ func (c *HttpClient) authenticate() {
 		logger.Fatal(err, "could not marshal credentials")
 	}
 
-	req := NewRequest("/login", WithBody(b))
+	req := NewRequest("/login", WithBody(b), WithNoLog(true))
 
 	res, err := c.send("POST", req)
 	if err != nil {
@@ -113,17 +113,13 @@ func (c *HttpClient) send(method string, request *Request) (*Response, error) {
 
 	logger.Info("%s %s", method, u.String())
 
-	debugOutput := string(request.Body)
-
-	if debugOutput != "" {
-		// FIXME (privateip) this is a quick hack to prevent the logger from
-		// showing the username and password used to authenticate to the
-		// server.  A better mechanism should be implemented
-		if request.Path != "/login" {
+	if !request.NoLog {
+		debugOutput := string(request.Body)
+		if debugOutput != "" {
 			logger.Debug(string(request.Body))
+		} else {
+			logger.Debug("Request body is empty")
 		}
-	} else {
-		logger.Debug("Request body is empty")
 	}
 
 	client := &http.Client{Jar: c.jar}
