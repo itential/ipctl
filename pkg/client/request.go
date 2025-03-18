@@ -18,6 +18,9 @@ type Request struct {
 
 	// The HTTP body to be send to the remote host
 	Body []byte
+
+	// Enable or disable logging this request
+	NoLog bool
 }
 
 // Defines a new HTTP request object.
@@ -52,5 +55,15 @@ func WithParams(v map[string]string) RequestOption {
 func WithBody(v []byte) RequestOption {
 	return func(r *Request) {
 		r.Body = v
+	}
+}
+
+// NoLog allows a calling function to disable logging to stdout or file for
+// this request.  This is useful when making API calls where the calling
+// function does not want reveal sensitive information such as calling
+// `/login` for example.
+func WithNoLog(v bool) RequestOption {
+	return func(r *Request) {
+		r.NoLog = v
 	}
 }
