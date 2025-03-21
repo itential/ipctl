@@ -290,6 +290,7 @@ func (r *WorkflowRunner) Export(in Request) (*Response, error) {
 
 	return NewResponse(
 		fmt.Sprintf("Successfully exported workflow `%s`", workflow.Name),
+		WithObject(workflow),
 	), nil
 }
 
