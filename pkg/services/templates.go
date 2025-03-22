@@ -27,7 +27,7 @@ type Template struct {
 	LastUpdated   string                 `json:"lastUpdated"`
 	LastUpdatedBy any                    `json:"lastUpdateBy,omitempty"`
 	Namespace     map[string]interface{} `json:"namespace,omitempty"`
-	Tags          []string               `json:"tags"`
+	Tags          []interface{}          `json:"tags"`
 }
 
 type TemplateService struct {
