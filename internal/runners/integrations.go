@@ -10,6 +10,7 @@ import (
 	"strings"
 
 	"github.com/itential/ipctl/internal/flags"
+	"github.com/itential/ipctl/internal/terminal"
 	"github.com/itential/ipctl/internal/utils"
 	"github.com/itential/ipctl/pkg/client"
 	"github.com/itential/ipctl/pkg/config"
@@ -19,15 +20,23 @@ import (
 
 type IntegrationRunner struct {
 	config  *config.Config
+	client  client.Client
 	service *services.IntegrationService
 }
 
 func NewIntegrationRunner(c client.Client, cfg *config.Config) *IntegrationRunner {
 	return &IntegrationRunner{
 		service: services.NewIntegrationService(c),
+		client:  c,
 		config:  cfg,
 	}
 }
+
+/*
+******************************************************************************
+Reader interface
+******************************************************************************
+*/
 
 // Get implements the `get integration-models` command
 func (r *IntegrationRunner) Get(in Request) (*Response, error) {
@@ -69,14 +78,19 @@ func (r *IntegrationRunner) Describe(in Request) (*Response, error) {
 	), nil
 }
 
+/*
+******************************************************************************
+Writer interface
+******************************************************************************
+*/
+
 // Create implements the `create integration <name>` command
 func (r *IntegrationRunner) Create(in Request) (*Response, error) {
 	logger.Trace()
 
 	name := in.Args[0]
 
-	var options flags.IntegrationCreateOptions
-	utils.LoadObject(in.Options, &options)
+	options := in.Options.(*flags.IntegrationCreateOptions)
 
 	if options.Replace {
 		existing, err := r.service.Get(name)
@@ -138,6 +152,12 @@ func (r *IntegrationRunner) Clear(in Request) (*Response, error) {
 	), nil
 }
 
+/*
+******************************************************************************
+Copier interface
+******************************************************************************
+*/
+
 // Copy implements the `copy integration <name>` command
 func (r *IntegrationRunner) Copy(in Request) (*Response, error) {
 	logger.Trace()
@@ -185,5 +205,75 @@ func (r *IntegrationRunner) Copy(in Request) (*Response, error) {
 
 	return NewResponse(
 		fmt.Sprintf("Successfully copied integration `%s` from `%s` to `%s`", name, common.From, common.To),
+	), nil
+}
+
+/*
+*******************************************************************************
+Exporter interface
+*******************************************************************************
+*/
+
+// Export implements the `export integration ...` command
+func (r *IntegrationRunner) Export(in Request) (*Response, error) {
+	logger.Trace()
+
+	name := in.Args[0]
+
+	res, err := r.service.Get(name)
+	if err != nil {
+		return nil, err
+	}
+
+	fn := fmt.Sprintf("%s.integration.json", name)
+
+	if err := exportAssetFromRequest(in, res, fn); err != nil {
+		return nil, err
+	}
+
+	return NewResponse(
+		fmt.Sprintf("Successfully exported integration `%s`", res.Name),
+		WithObject(res),
+	), nil
+}
+
+/*
+*******************************************************************************
+Importer interface
+*******************************************************************************
+*/
+
+// Import implements the `import integration ...` command
+func (r *IntegrationRunner) Import(in Request) (*Response, error) {
+	logger.Trace()
+
+	common := in.Common.(*flags.AssetImportCommon)
+
+	if common.Replace {
+		terminal.Warning("`--replace` is not supported for this command and will be ignored")
+	}
+
+	var integration services.Integration
+
+	if err := importUnmarshalFromRequest(in, &integration); err != nil {
+		return nil, err
+	}
+
+	if _, err := r.service.Get(integration.Name); err != nil {
+		if !strings.HasSuffix(err.Error(), "does not exist.\"") {
+			return nil, errors.New(
+				fmt.Sprintf("integration `%s` already exists", integration.Name),
+			)
+		}
+	}
+
+	res, err := r.service.Create(integration)
+	if err != nil {
+		return nil, err
+	}
+
+	return NewResponse(
+		fmt.Sprintf("Successfully imported integration `%s`", res.Name),
+		WithObject(res),
 	), nil
 }
