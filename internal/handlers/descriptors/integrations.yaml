@@ -1,8 +1,4 @@
 ---
-##############################################################################
-# Reader Commands
-##############################################################################
-
 get:
   use: integrations
   group: admin-essentials
@@ -24,10 +20,6 @@ describe:
     The `describe integration` command will return details about the
     specified integration.   If the integration does not exist, this command
     will return an error.
-
-##############################################################################
-# Writer Commands
-##############################################################################
 
 create:
   use: integration <name> --model <string>
@@ -77,3 +69,15 @@ clear:
   example: |
     # Delete all configured integrations
     $ ipctl clear integrations
+
+import:
+  use: integration <path>
+  group: admin-essentials
+  description: |
+    Import an integration
+
+export:
+  use: integration <name>
+  group: admin-essentials
+  description: |
+    Export an integration

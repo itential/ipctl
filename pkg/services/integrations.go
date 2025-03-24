@@ -35,23 +35,23 @@ func NewIntegrationService(iapClient client.Client) *IntegrationService {
 
 func NewIntegration(name, integrationType string) Integration {
 	logger.Trace()
-	return Integration{Name: name, Type: integrationType}
+
+	return Integration{
+		Name: name,
+		Properties: map[string]interface{}{
+			"id":   name,
+			"type": integrationType,
+		},
+	}
 }
 
 func (svc *IntegrationService) Create(in Integration) (*Integration, error) {
 	logger.Trace()
 
-	body := map[string]interface{}{
-		"properties": map[string]interface{}{
-			"name": in.Name,
-			"properties": map[string]interface{}{
-				"id":   in.Name,
-				"type": in.Type,
-			},
-			"type":    "Adapter",
-			"virtual": true,
-		},
-	}
+	// Make sure to set the Type and Virtual fields to these values otherwise
+	// the POST call will return an error
+	in.Type = "Adapter"
+	in.Virtual = true
 
 	type Response struct {
 		Status  string       `json:"status"`
@@ -63,7 +63,7 @@ func (svc *IntegrationService) Create(in Integration) (*Integration, error) {
 
 	if err := svc.client.PostRequest(&Request{
 		uri:                "/integrations",
-		body:               &body,
+		body:               map[string]interface{}{"properties": in},
 		expectedStatusCode: http.StatusOK,
 	}, &res); err != nil {
 		return nil, err

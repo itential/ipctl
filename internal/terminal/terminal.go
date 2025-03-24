@@ -42,6 +42,10 @@ func Error(err error, terminalNoColor bool) {
 	}
 }
 
+func Warning(format string, args ...interface{}) {
+	Display(fmt.Sprintf("WARNING: %s", format), args)
+}
+
 // DisplayTabWriter takes in a string for a table that already has tab and newlines set
 // and prints a properly spaced table
 // E.g. DisplayTabWriter("COL1\tCOL2\nVal1\tVal2\n", 3, false)
