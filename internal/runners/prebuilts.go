@@ -34,9 +34,11 @@ func NewPrebuiltRunner(client client.Client, cfg *config.Config) *PrebuiltRunner
 	}
 }
 
-//////////////////////////////////////////////////////////////////////////////
-// Reader Interface
-//
+/*
+******************************************************************************
+Reader interface
+******************************************************************************
+*/
 
 // Get implements the "get prebuilts ..." command
 func (r *PrebuiltRunner) Get(in Request) (*Response, error) {
@@ -77,9 +79,11 @@ func (r *PrebuiltRunner) Describe(in Request) (*Response, error) {
 	), nil
 }
 
-//////////////////////////////////////////////////////////////////////////////
-// Writer Interface
-//
+/*
+******************************************************************************
+Writer interface
+******************************************************************************
+*/
 
 // Create implements the `create prebuilt ...` command
 func (r *PrebuiltRunner) Create(in Request) (*Response, error) {
@@ -235,9 +239,11 @@ func (r *PrebuiltRunner) Clear(in Request) (*Response, error) {
 	return NewResponse(fmt.Sprintf("Deleted %v prebuilt(s)", cnt)), nil
 }
 
-//////////////////////////////////////////////////////////////////////////////
-// Importer Interface
-//
+/*
+******************************************************************************
+Importer interface
+******************************************************************************
+*/
 
 // Import implements the `import prebuilt ...` command
 func (r *PrebuiltRunner) Import(in Request) (*Response, error) {
@@ -267,8 +273,8 @@ func (r *PrebuiltRunner) Import(in Request) (*Response, error) {
 	for _, ele := range mPkg["bundles"].([]interface{}) {
 		item := ele.(map[string]interface{})
 
-		if _, exists := item["filename"]; exists {
-			fp := filepath.Join(wd, item["filename"].(string))
+		if strings.HasPrefix(item["data"].(string), "@") {
+			fp := filepath.Join(wd, item["data"].(string)[1:])
 
 			var b map[string]interface{}
 
@@ -308,9 +314,11 @@ func (r *PrebuiltRunner) Import(in Request) (*Response, error) {
 
 }
 
-//////////////////////////////////////////////////////////////////////////////
-// Exporter Interface
-//
+/*
+******************************************************************************
+Exporter interface
+******************************************************************************
+*/
 
 // Export implements the `export prebuilt ...` command
 func (r *PrebuiltRunner) Export(in Request) (*Response, error) {
@@ -377,9 +385,11 @@ func (r *PrebuiltRunner) Export(in Request) (*Response, error) {
 	), nil
 }
 
-//////////////////////////////////////////////////////////////////////////////
-// Private functions
-//
+/*
+******************************************************************************
+Private functions
+******************************************************************************
+*/
 
 func (r *PrebuiltRunner) validatePackage(in services.PrebuiltPackage) error {
 	logger.Trace()
@@ -510,8 +520,8 @@ func (r *PrebuiltRunner) expandPrebuilt(pkg *services.PrebuiltPackage, path stri
 		}
 
 		bundles = append(bundles, map[string]interface{}{
-			"type":     ele.Type,
-			"filename": filepath.Join(fmt.Sprintf("bundles/%ss", ele.Type), fn),
+			"type": ele.Type,
+			"data": fmt.Sprintf("@%s", filepath.Join(fmt.Sprintf("bundles/%ss", ele.Type), fn)),
 		})
 	}
 
