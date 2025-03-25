@@ -5,6 +5,7 @@
 package services
 
 import (
+	"errors"
 	"fmt"
 	"net/http"
 
@@ -79,12 +80,74 @@ func (svc *GoldenConfigService) Delete(id string) error {
 // GetAll calls `GET /configuration_manager/configs`
 func (svc *GoldenConfigService) GetAll() ([]GoldenConfigTreeSummary, error) {
 	logger.Trace()
+
 	var res []GoldenConfigTreeSummary
 	var uri = "/configuration_manager/configs"
+
 	if err := svc.client.Get(uri, &res); err != nil {
 		return nil, err
 	}
+
 	return res, nil
+}
+
+func (svc *GoldenConfigService) GetByName(name string) (*GoldenConfigTreeSummary, error) {
+	logger.Trace()
+
+	trees, err := svc.GetAll()
+	if err != nil {
+		return nil, err
+	}
+
+	var res *GoldenConfigTreeSummary
+
+	for _, ele := range trees {
+		if ele.Name == name {
+			res = &ele
+			break
+		}
+	}
+
+	if res == nil {
+		return nil, errors.New("gctree not found")
+	}
+
+	return res, nil
+}
+
+// Import will attempt to import a golden configuraiton tree specified by the
+// `in` argument and import it to the server.  This function will return an
+// error or nil if no error is encountered
+func (svc *GoldenConfigService) Import(in GoldenConfigTree) error {
+	logger.Trace()
+
+	body := map[string]interface{}{
+		"trees": []map[string]interface{}{
+			map[string]interface{}{
+				"data": []GoldenConfigTree{in},
+			},
+		},
+		"options": map[string]interface{}{},
+	}
+
+	type Response struct {
+		Status  string `json:"status"`
+		Message string `json:"message"`
+	}
+
+	var res Response
+
+	if err := svc.client.PostRequest(&Request{
+		uri:                "/configuration_manager/import/goldenconfigs",
+		body:               &body,
+		expectedStatusCode: http.StatusOK,
+	}, &res); err != nil {
+		return err
+	}
+
+	logger.Info(res.Message)
+
+	return nil
 }
 
 // Export calls `POST /configuration_manager/export/goldenconfigs`
