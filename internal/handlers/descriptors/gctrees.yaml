@@ -1,7 +1,4 @@
 ---
-##############################################################################
-# Reader Commands
-##############################################################################
 get:
   use: gctrees
   group: configuration-manager
@@ -15,9 +12,6 @@ describe:
   description: |
     Display details about a gctree
 
-##############################################################################
-# Writer Commands
-##############################################################################
 create:
   use: gctree <name> <type>
   group: configuration-manager
@@ -41,13 +35,9 @@ clear:
   description: |
     Delete all configured gctrees
 
-##############################################################################
-# Promoter Commands
-##############################################################################
 import:
   use: gctree <path>
   group: configuration-manager
-  disabled: true
   description: |
     Import a Golden Config tree
 

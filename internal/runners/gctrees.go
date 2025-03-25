@@ -10,7 +10,6 @@ import (
 	"strings"
 
 	"github.com/itential/ipctl/internal/flags"
-	"github.com/itential/ipctl/internal/utils"
 	"github.com/itential/ipctl/pkg/client"
 	"github.com/itential/ipctl/pkg/config"
 	"github.com/itential/ipctl/pkg/logger"
@@ -28,6 +27,12 @@ func NewGoldenConfigRunner(client client.Client, cfg *config.Config) *GoldenConf
 		service: services.NewGoldenConfigService(client),
 	}
 }
+
+/*
+******************************************************************************
+Reader interface
+******************************************************************************
+*/
 
 // Get implements the `get golden-config <name>` command
 func (r *GoldenConfigRunner) Get(in Request) (*Response, error) {
@@ -52,6 +57,12 @@ func (r *GoldenConfigRunner) Get(in Request) (*Response, error) {
 func (r *GoldenConfigRunner) Describe(in Request) (*Response, error) {
 	return NotImplemented(in)
 }
+
+/*
+******************************************************************************
+Writer interface
+******************************************************************************
+*/
 
 // Create implements the `create golden-config <name> <type>` command
 func (r *GoldenConfigRunner) Create(in Request) (*Response, error) {
@@ -98,56 +109,95 @@ func (r *GoldenConfigRunner) Clear(in Request) (*Response, error) {
 	return NotImplemented(in)
 }
 
-func (r *GoldenConfigRunner) Copy(in Request) (*Response, error) {
-	return NotImplemented(in)
-}
+/*
+******************************************************************************
+Importer interface
+******************************************************************************
+*/
 
+// Import implements the `import gctree ...` command
 func (r *GoldenConfigRunner) Import(in Request) (*Response, error) {
-	return NotImplemented(in)
-}
-
-// Export is the implementation of the command `export golden-config <name>`
-func (r *GoldenConfigRunner) Export(in Request) (*Response, error) {
 	logger.Trace()
 
-	var common flags.AssetExportCommon
-	utils.LoadObject(in.Common, &common)
+	common := in.Common.(*flags.AssetImportCommon)
 
-	if common.Path != "" {
-		utils.EnsurePathExists(common.Path)
-	}
+	var gctree services.GoldenConfigTree
 
-	name := in.Args[0]
-
-	trees, err := r.service.GetAll()
-	if err != nil {
+	if err := importUnmarshalFromRequest(in, &gctree); err != nil {
 		return nil, err
 	}
 
-	var id string
-	for _, ele := range trees {
-		if ele.Name == name {
-			id = ele.Id
-		}
-	}
-
-	if id == "" {
-		return nil, errors.New(fmt.Sprintf("Unable to find tree with name %s", name))
-	}
-
-	tree, err := r.service.Export(id)
-	if err != nil {
-		return nil, err
-	}
-
-	fn := fmt.Sprintf("%s.gctree.json", name)
-	if err := utils.WriteJsonToDisk(tree, fn, common.Path); err != nil {
+	if err := r.importTree(gctree, common.Replace); err != nil {
 		return nil, err
 	}
 
 	return NewResponse(
-		fmt.Sprintf("Successfully exported golden config tree `%s`", tree.Name),
+		fmt.Sprintf("Successfully imported gctree `%s`", gctree.Name),
+		WithObject(gctree),
 	), nil
+}
+
+/*
+******************************************************************************
+Exporter interface
+******************************************************************************
+*/
+
+// Export implements the `export gctree ...` command
+func (r *GoldenConfigRunner) Export(in Request) (*Response, error) {
+	logger.Trace()
+
+	name := in.Args[0]
+
+	gctree, err := r.service.GetByName(name)
+	if err != nil {
+		return nil, err
+	}
+
+	res, err := r.service.Export(gctree.Id)
+	if err != nil {
+		return nil, err
+	}
+
+	fn := fmt.Sprintf("%s.gctree.json", res.Name)
+
+	if err := exportAssetFromRequest(in, res, fn); err != nil {
+		return nil, err
+	}
+
+	return NewResponse(
+		fmt.Sprintf("Successfully exported gctree `%s`", gctree.Name),
+		WithObject(gctree),
+	), nil
+}
+
+/*
+*******************************************************************************
+Private functions
+*******************************************************************************
+*/
+
+func (r *GoldenConfigRunner) importTree(in services.GoldenConfigTree, replace bool) error {
+	logger.Trace()
+
+	res, err := r.service.GetByName(in.Name)
+	if err == nil {
+		if res != nil {
+			if replace {
+				if err := r.service.Delete(res.Id); err != nil {
+					return err
+				}
+			} else {
+				return errors.New(
+					fmt.Sprintf("gctree with name `%s` already exists, use `--replace` to overwrite it", in.Name),
+				)
+			}
+		} else {
+			return err
+		}
+	}
+
+	return r.service.Import(in)
 }
 
 func (r *GoldenConfigRunner) getTreeIdFromName(name string) (string, error) {
