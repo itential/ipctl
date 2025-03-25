@@ -5,6 +5,7 @@
 package handlers
 
 import (
+	"github.com/itential/ipctl/internal/flags"
 	"github.com/itential/ipctl/internal/runners"
 	"github.com/itential/ipctl/pkg/client"
 	"github.com/itential/ipctl/pkg/config"
@@ -14,6 +15,8 @@ func NewDeviceGroupHandler(c client.Client, cfg *config.Config, desc Descriptors
 	return NewAssetHandler(
 		runners.NewDeviceGroupRunner(c, cfg),
 		desc[deviceGroupsDescriptor],
-		nil,
+		&AssetHandlerFlags{
+			Create: &flags.DeviceGroupCreateOptions{},
+		},
 	)
 }
