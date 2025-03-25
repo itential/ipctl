@@ -5,6 +5,7 @@
 package services
 
 import (
+	"errors"
 	"fmt"
 	"net/http"
 
@@ -28,9 +29,12 @@ type DeviceGroupService struct {
 	client *ServiceClient
 }
 
-func NewDevice(name, desc string) DeviceGroup {
+func NewDeviceGroup(name, desc string) DeviceGroup {
 	logger.Trace()
-	return DeviceGroup{Name: name, Description: desc}
+	return DeviceGroup{
+		Name:        name,
+		Description: desc,
+	}
 }
 
 func NewDeviceGroupService(iapClient client.Client) *DeviceGroupService {
@@ -60,16 +64,39 @@ func (svc *DeviceGroupService) GetAll() ([]DeviceGroup, error) {
 	}
 
 	return res, nil
-
 }
 
-func (svc *DeviceGroupService) Create(name, desc string, devices []string) (*DeviceGroup, error) {
+func (svc *DeviceGroupService) GetByName(name string) (*DeviceGroup, error) {
+	logger.Trace()
+
+	groups, err := svc.GetAll()
+	if err != nil {
+		return nil, err
+	}
+
+	var deviceGroup *DeviceGroup
+
+	for _, ele := range groups {
+		if ele.Name == name {
+			deviceGroup = &ele
+			break
+		}
+	}
+
+	if deviceGroup == nil {
+		return nil, errors.New("device group not found")
+	}
+
+	return deviceGroup, nil
+}
+
+func (svc *DeviceGroupService) Create(in DeviceGroup) (*DeviceGroup, error) {
 	logger.Trace()
 
 	body := map[string]interface{}{
-		"groupName":        name,
-		"groupDescription": desc,
-		"deviceNames":      devices,
+		"groupName":        in.Name,
+		"groupDescription": in.Description,
+		"deviceNames":      "",
 	}
 
 	type Response struct {
