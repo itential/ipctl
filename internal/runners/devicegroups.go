@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/itential/ipctl/internal/flags"
 	"github.com/itential/ipctl/pkg/client"
 	"github.com/itential/ipctl/pkg/config"
 	"github.com/itential/ipctl/pkg/logger"
@@ -26,7 +27,13 @@ func NewDeviceGroupRunner(client client.Client, cfg *config.Config) *DeviceGroup
 	}
 }
 
-// Get is the implementation of the command `get devices`
+/*
+*******************************************************************************
+Reader interface
+*******************************************************************************
+*/
+
+// Get implements the `get devices ...` command
 func (r *DeviceGroupRunner) Get(in Request) (*Response, error) {
 	logger.Trace()
 
@@ -49,6 +56,7 @@ func (r *DeviceGroupRunner) Get(in Request) (*Response, error) {
 
 }
 
+// Describe implements the `describe device-group ...` command
 func (r *DeviceGroupRunner) Describe(in Request) (*Response, error) {
 	logger.Trace()
 
@@ -62,5 +70,71 @@ func (r *DeviceGroupRunner) Describe(in Request) (*Response, error) {
 	return NewResponse(
 		fmt.Sprintf("Name: %s", res.Name),
 		WithObject(res),
+	), nil
+}
+
+/*
+*******************************************************************************
+Writer interface
+*******************************************************************************
+*/
+
+// Create implements the `create device-group ...` command
+func (r *DeviceGroupRunner) Create(in Request) (*Response, error) {
+	logger.Trace()
+
+	options := in.Options.(*flags.DeviceGroupCreateOptions)
+
+	name := in.Args[0]
+
+	res, err := r.service.Create(services.NewDeviceGroup(name, options.Description))
+	if err != nil {
+		return nil, err
+	}
+
+	return NewResponse(
+		fmt.Sprintf("Successfully created new device-group `%s` (%s)", res.Name, res.Id),
+		WithObject(res),
+	), nil
+}
+
+// Delete implements the `delete device-group ...` command
+func (r *DeviceGroupRunner) Delete(in Request) (*Response, error) {
+	logger.Trace()
+
+	name := in.Args[0]
+
+	deviceGroup, err := r.service.GetByName(name)
+	if err != nil {
+		return nil, err
+	}
+
+	if err := r.service.Delete(deviceGroup.Id); err != nil {
+		return nil, err
+	}
+
+	return NewResponse(
+		fmt.Sprintf("Successfully deleted device-group `%s` (%s)", deviceGroup.Name, deviceGroup.Id),
+		WithObject(deviceGroup),
+	), nil
+}
+
+// Clear implements the `clear device-group ...` command
+func (r *DeviceGroupRunner) Clear(in Request) (*Response, error) {
+	logger.Trace()
+
+	groups, err := r.service.GetAll()
+	if err != nil {
+		return nil, err
+	}
+
+	for _, ele := range groups {
+		if err := r.service.Delete(ele.Id); err != nil {
+			return nil, err
+		}
+	}
+
+	return NewResponse(
+		fmt.Sprintf("Deleted %v device-groups", len(groups)),
 	), nil
 }

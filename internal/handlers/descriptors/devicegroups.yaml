@@ -1,8 +1,4 @@
 ---
-##############################################################################
-# Reader commands
-##############################################################################
-#
 get:
   use: device-groups
   group: configuration-manager
@@ -14,3 +10,21 @@ describe:
   group: configuration-manager
   description: |
     Display details about a device group
+
+create:
+  use: device-group <name>
+  group: configuration-manager
+  description: |
+    Create new device-group
+
+delete:
+  use: device-group <name>
+  group: configuration-manager
+  description: |
+    Delete existing device-group
+
+clear:
+  use: device-groups
+  group: configuration-manager
+  description: |
+    Delete all device-groups
