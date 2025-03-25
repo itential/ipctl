@@ -37,6 +37,7 @@ const (
 
 	defaultGitName  = ""
 	defaultGitEmail = ""
+	defaultGitUser  = "git"
 )
 
 type Config struct {
@@ -69,6 +70,7 @@ type Config struct {
 	// Git settings
 	GitName  string `json:"git_name"`
 	GitEmail string `json:"git_email"`
+	GitUser  string `json:"git_user"`
 }
 
 func NewConfig(defaults map[string]interface{}, envBinding map[string]string, appWorkingDir, sysConfigPath, fileName string) *Config {
@@ -200,6 +202,7 @@ func (ac *Config) populateFields() {
 
 	ac.GitName = viper.GetString("git.name")
 	ac.GitEmail = viper.GetString("git.email")
+	ac.GitUser = viper.GetString("git.user")
 }
 
 var defaultValues = map[string]interface{}{
@@ -221,6 +224,7 @@ var defaultValues = map[string]interface{}{
 
 	"git.name":  defaultGitName,
 	"git.email": defaultGitEmail,
+	"git.user":  defaultGitUser,
 }
 
 var defaultEnvVarBindings = map[string]string{
@@ -242,6 +246,7 @@ var defaultEnvVarBindings = map[string]string{
 
 	"git.name":  "IPCTL_GIT_NAME",
 	"git.email": "IPCTL_GIT_EMAIL",
+	"git.user":  "IPCTL_GIT_USER",
 }
 
 // getConfigFileFromFlag reads in the file passed in using the --config flag on the cli

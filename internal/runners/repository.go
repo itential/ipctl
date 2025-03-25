@@ -79,10 +79,11 @@ func (r Repository) Clone() (string, error) {
 	logger.Trace()
 
 	repo := repositories.Repository{
-		Url: r.Url,
+		Url:  r.Url,
+		User: "git",
 	}
 	if r.PrivateKeyFile != "" {
-		pk, err := utils.ReadStringFromFile(r.PrivateKeyFile)
+		pk, err := utils.ReadFromFile(r.PrivateKeyFile)
 		if err != nil {
 			return "", err
 		}

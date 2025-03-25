@@ -11,14 +11,17 @@ import (
 
 	"github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/plumbing"
+	gitssh "github.com/go-git/go-git/v5/plumbing/transport/ssh"
 	"github.com/itential/ipctl/pkg/logger"
 	giturls "github.com/whilp/git-urls"
+	"golang.org/x/crypto/ssh"
 )
 
 type Repository struct {
 	Url        string
 	Reference  string
-	PrivateKey string
+	User       string
+	PrivateKey []byte
 }
 
 func (r Repository) Clone() (string, error) {
@@ -36,7 +39,23 @@ func (r Repository) Clone() (string, error) {
 
 	cloneOptions := &git.CloneOptions{
 		URL: r.Url,
-		//Auth: r.PrivateKey,
+	}
+
+	if r.PrivateKey != nil {
+		logger.Debug("setting up auth using private key")
+
+		signer, err := ssh.ParsePrivateKey(r.PrivateKey)
+		if err != nil {
+			return "", err
+		}
+
+		cloneOptions.Auth = &gitssh.PublicKeys{
+			User:   r.User,
+			Signer: signer,
+			HostKeyCallbackHelper: gitssh.HostKeyCallbackHelper{
+				HostKeyCallback: ssh.InsecureIgnoreHostKey(),
+			},
+		}
 	}
 
 	// Git will default to main/master if no repo is specified

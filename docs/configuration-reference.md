@@ -142,6 +142,34 @@ messages to any desired timezone.
 
 The default value for `timestamp_timezone` is `utc`
 
+### Git settings
+
+Whenw working with git repositories, there are some global settings that should
+be configured.  This section provides a configuration settings for setting
+global git options.
+
+#### `name`
+
+Configures the name to use when making commits using git.  The name configured
+here will be displayed in the commit message.
+
+The default value for `name` is `null`
+
+#### `email`
+
+Configures the email address to use when making git commits.  The email address
+will be used in commit messages.
+
+The default value for `email` is `null`
+
+#### `user`
+
+Sets the default user to use when connecting to a git repository over SSH.
+Most git server implementations require this value to be `git` which is the
+default; however it can be changed here if needed.
+
+The default value for `user` is `git`.
+
 ### Profiles
 
 Profiles provide server specific configuration settings for working with
