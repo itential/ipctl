@@ -220,14 +220,23 @@ func (svc *ProfileService) Import(in Profile) (*Profile, error) {
 func (svc *ProfileService) Export(name string) (*Profile, error) {
 	logger.Trace()
 
-	var res Profile
-	var uri = fmt.Sprintf("/profiles/%s/export", name)
+	type Response struct {
+		Metadata Metadata `json:"metadata"`
+		Profile  *Profile `json:"profile"`
+	}
+
+	var res Response
+
+	// XXX (privateip): The export URI returns an error from the server so
+	// using the get profile route instead
+	//var uri = fmt.Sprintf("/profiles/%s/export", name)
+	var uri = fmt.Sprintf("/profiles/%s", name)
 
 	if err := svc.client.Get(uri, &res); err != nil {
 		return nil, err
 	}
 
-	return &res, nil
+	return res.Profile, nil
 }
 
 func (svc *ProfileService) Activate(name string) error {
