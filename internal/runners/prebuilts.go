@@ -272,19 +272,22 @@ func (r *PrebuiltRunner) Import(in Request) (*Response, error) {
 
 	for _, ele := range mPkg["bundles"].([]interface{}) {
 		item := ele.(map[string]interface{})
+		data := item["data"].(map[string]interface{})
 
-		if strings.HasPrefix(item["data"].(string), "@") {
-			fp := filepath.Join(wd, item["data"].(string)[1:])
+		if f, exists := data["filename"]; exists {
+			if strings.HasPrefix(f.(string), "@") {
+				fp := filepath.Join(wd, f.(string)[1:])
 
-			var b map[string]interface{}
+				var b map[string]interface{}
 
-			if err := importLoadFromDisk(fp, &b); err != nil {
-				return nil, err
-			}
+				if err := importLoadFromDisk(fp, &b); err != nil {
+					return nil, err
+				}
 
-			item = map[string]interface{}{
-				"type": item["type"].(string),
-				"data": b,
+				item = map[string]interface{}{
+					"type": item["type"].(string),
+					"data": b,
+				}
 			}
 		}
 
@@ -519,9 +522,11 @@ func (r *PrebuiltRunner) expandPrebuilt(pkg *services.PrebuiltPackage, path stri
 			return err
 		}
 
+		filename := fmt.Sprintf("@%s", filepath.Join(fmt.Sprintf("bundles/%ss", ele.Type), fn))
+
 		bundles = append(bundles, map[string]interface{}{
 			"type": ele.Type,
-			"data": fmt.Sprintf("@%s", filepath.Join(fmt.Sprintf("bundles/%ss", ele.Type), fn)),
+			"data": map[string]interface{}{"filename": filename},
 		})
 	}
 
