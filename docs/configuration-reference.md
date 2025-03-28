@@ -181,7 +181,7 @@ instance, to create a new provide called `staging`, the section would be
 `[profile staging]`.  Once created, the profile can be invoked by name to the
 `--profile` command line argument.
 
-There is one special profile called `defaults`.  The `defaults` profile can be
+There is one special profile called `default`.  The `default` profile can be
 used to configure profile default values that will be applied to every profile
 unless specifically overridden.
 
