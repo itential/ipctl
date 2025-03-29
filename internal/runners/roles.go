@@ -68,6 +68,7 @@ func (r *RoleRunner) Get(in Request) (*Response, error) {
 
 }
 
+// Describe implements the `describe role ...` command
 func (r *RoleRunner) Describe(in Request) (*Response, error) {
 	logger.Trace()
 
@@ -99,8 +100,13 @@ func (r *RoleRunner) Describe(in Request) (*Response, error) {
 		return nil, errors.New(fmt.Sprintf("role `%s` does not exist", in.Args[0]))
 	}
 
+	var output = []string{
+		fmt.Sprintf("Name: %s (%s), Type: %s", role.Name, role.Id, role.Provenance),
+		fmt.Sprintf("Description: %s", role.Description),
+	}
+
 	return NewResponse(
-		"",
+		strings.Join(output, "\n"),
 		WithObject(role),
 	), nil
 }
@@ -278,10 +284,14 @@ func (r *RoleRunner) Import(in Request) (*Response, error) {
 	if common.Replace {
 		existing, err := GetByName(r.service, role.Name)
 		if err != nil {
-			return nil, err
+			if !strings.HasSuffix(err.Error(), "does not exist") {
+				return nil, err
+			}
 		}
-		if err := r.service.Delete(existing.Id); err != nil {
-			return nil, err
+		if existing != nil {
+			if err := r.service.Delete(existing.Id); err != nil {
+				return nil, err
+			}
 		}
 	}
 
