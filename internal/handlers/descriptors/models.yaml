@@ -1,7 +1,4 @@
 ---
-##############################################################################
-# Reader Commands
-##############################################################################
 get:
   use: models
   group: lifecycle-manager
@@ -23,10 +20,6 @@ describe:
   description: |
     Display details about a model
 
-
-##############################################################################
-# Reader Commands
-##############################################################################
 create:
   use: model <name>
   group: lifecycle-manager
@@ -36,8 +29,33 @@ create:
 delete:
   use: model <name>
   group: lifecycle-manager
+
   description: |
     Delete a model
+
+    The delete command will atempt to delete the resource model from the
+    specified server.   In order to delete a model successfully, the model
+    cannot have any current instances.
+
+    If the model has any current instances, the command will return an
+    error.   This command supports an optional command line argument that
+    will delete all instances.  To delete all instances associated with the
+    model use `--delete-instances`.
+
+    Note the use of `--delete-instances` does not transition the instance
+    using the delete action, it simply deletes the instance.
+
+    This command has an additional option `--all`.  When specified, the
+    `--all` command will also delete any workflows and/or transformations
+    attached to the model.
+
+  example: |
+    # Delete a model called 'Firewall rules'
+    $ ipctl delete model "Firewall rules"
+
+    # Delete the model and all associated instances
+    $ ipctl delete model "Firewall rules" --delete-instances
+
 
 copy:
   use: model <name> --from <profile> --to <profile
@@ -51,10 +69,6 @@ clear:
   description: |
     Delete all configured models
 
-
-##############################################################################
-# Promoter Commands
-##############################################################################
 import:
   use: model <path>
   group: lifecycle-manager
@@ -91,17 +105,3 @@ export:
     # Export a resource model called `CLI Test`
     $ ipctl export model "CLI Test"
 
-##############################################################################
-# Gitter Commands
-##############################################################################
-push:
-  use: model <name> <repository>
-  group: lifecycle-manager
-  description: |
-    Push a lifecycle manager model to a repository
-
-pull:
-  use: model <filename> <repository>
-  group: lifecycle-manager
-  description: |
-    Pull a lifecycle manager mode from a repository

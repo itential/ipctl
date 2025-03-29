@@ -5,9 +5,7 @@
 package services
 
 import (
-	"errors"
 	"fmt"
-	"net/http"
 
 	"github.com/itential/ipctl/pkg/client"
 	"github.com/itential/ipctl/pkg/logger"
@@ -43,13 +41,14 @@ type Instance struct {
 }
 
 type InstanceService struct {
-	client *client.IapClient
+	client *ServiceClient
 }
 
-func NewInstanceService(iapClient *client.IapClient) *InstanceService {
-	return &InstanceService{client: iapClient}
+func NewInstanceService(iapClient client.Client) *InstanceService {
+	return &InstanceService{client: NewServiceClient(iapClient)}
 }
 
+/*
 func (svc *InstanceService) Get(modelId, instanceId string) (*Instance, error) {
 	logger.Trace()
 
@@ -75,18 +74,46 @@ func (svc *InstanceService) Get(modelId, instanceId string) (*Instance, error) {
 	}
 
 	return instance, nil
-
 }
+*/
 
 func (svc *InstanceService) GetAll(modelId string) ([]Instance, error) {
-	var response InstanceOperation
+	logger.Trace()
 
-	Do(&Request{
-		client:   svc.client.Http(),
-		method:   http.MethodGet,
-		uri:      fmt.Sprintf("/lifecycle-manager/resources/%s/instances", modelId),
-		response: &response,
-	})
+	type Response struct {
+		Message  string     `json:"message"`
+		Metadata Metadata   `json:"metadata"`
+		Data     []Instance `json:"data"`
+	}
 
-	return response.Data, nil
+	var res Response
+	var uri = fmt.Sprintf("/lifecycle-manager/resources/%s/instances", modelId)
+
+	var results []Instance
+
+	var limit = 100
+	var skip = 0
+
+	for {
+		if err := svc.client.GetRequest(&Request{
+			uri:    uri,
+			params: &QueryParams{Limit: limit, Skip: skip, Raw: map[string]string{"include-deleted": "true"}},
+		}, &res); err != nil {
+			return nil, err
+		}
+
+		for _, ele := range res.Data {
+			results = append(results, ele)
+		}
+
+		if len(results) == res.Metadata.Total {
+			break
+		}
+
+		skip += limit
+	}
+
+	logger.Info(res.Message)
+
+	return results, nil
 }

@@ -166,9 +166,22 @@ func (svc *ModelService) Create(in Model) (*Model, error) {
 	return res.Data, nil
 }
 
-func (svc *ModelService) Delete(id string) error {
+func (svc *ModelService) Delete(id string, deleteInstances bool) error {
 	logger.Trace()
-	return svc.client.Delete(fmt.Sprintf("/lifecycle-manager/resources/%s", id))
+
+	req := &Request{
+		uri: fmt.Sprintf("/lifecycle-manager/resources/%s", id),
+	}
+
+	if deleteInstances {
+		req.body = map[string]interface{}{
+			"queryParameters": map[string]interface{}{
+				"delete-associated-instances": "true",
+			},
+		}
+	}
+
+	return svc.client.DeleteRequest(req, nil)
 }
 
 func (svc *ModelService) RunAction(model string, in RunActionRequest) (*RunActionResponse, error) {
