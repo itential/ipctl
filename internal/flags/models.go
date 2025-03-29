@@ -21,11 +21,13 @@ func (o *ModelCreateOptions) Flags(cmd *cobra.Command) {
 }
 
 type ModelDeleteOptions struct {
-	All bool
+	All             bool
+	DeleteInstances bool
 }
 
 func (o *ModelDeleteOptions) Flags(cmd *cobra.Command) {
 	cmd.Flags().BoolVar(&o.All, "all", o.All, "Include all action assets")
+	cmd.Flags().BoolVar(&o.DeleteInstances, "delete-instances", o.DeleteInstances, "Delete all instances for this model")
 }
 
 type ModelExportOptions struct {

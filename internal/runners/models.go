@@ -10,6 +10,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/itential/ipctl/internal/flags"
 	"github.com/itential/ipctl/internal/utils"
@@ -33,11 +34,13 @@ func NewModelRunner(client client.Client, cfg *config.Config) *ModelRunner {
 	}
 }
 
-//////////////////////////////////////////////////////////////////////////////
-// Reader Interface
-//
+/*
+*******************************************************************************
+Reader interface
+*******************************************************************************
+*/
 
-// GetModels() is the implementation of the command `get models`
+// Get implements the `get model ...` command
 func (r *ModelRunner) Get(in Request) (*Response, error) {
 	logger.Trace()
 
@@ -59,6 +62,7 @@ func (r *ModelRunner) Get(in Request) (*Response, error) {
 
 }
 
+// Describe implements the `describe model ....` command
 func (r *ModelRunner) Describe(in Request) (*Response, error) {
 	logger.Trace()
 
@@ -75,11 +79,13 @@ func (r *ModelRunner) Describe(in Request) (*Response, error) {
 	), nil
 }
 
-//////////////////////////////////////////////////////////////////////////////
-// Writer Interface
-//
+/*
+*******************************************************************************
+Writer interface
+*******************************************************************************
+*/
 
-// Create implements the `create model <name>` command
+// Create implements the `create model ...` command
 func (r *ModelRunner) Create(in Request) (*Response, error) {
 	logger.Trace()
 
@@ -92,7 +98,7 @@ func (r *ModelRunner) Create(in Request) (*Response, error) {
 		existing, err := r.service.GetByName(name)
 
 		if existing != nil {
-			if err := r.service.Delete(existing.Id); err != nil {
+			if err := r.service.Delete(existing.Id, false); err != nil {
 				return nil, err
 			}
 		} else if err != nil {
@@ -130,7 +136,7 @@ func (r *ModelRunner) Create(in Request) (*Response, error) {
 	), nil
 }
 
-// Delete implements the `delete model <name>` command
+// Delete implements the `delete model ...` command
 func (r *ModelRunner) Delete(in Request) (*Response, error) {
 	logger.Trace()
 
@@ -154,6 +160,15 @@ func (r *ModelRunner) Delete(in Request) (*Response, error) {
 
 	if model == nil {
 		return nil, errors.New(fmt.Sprintf("model `%s` not found", name))
+	}
+
+	instances, err := r.modelInstances(model.Id)
+	if err != nil {
+		return nil, err
+	}
+
+	if !options.DeleteInstances && len(instances) > 0 {
+		return nil, fmt.Errorf("Model `%s` has attached instances, use `--delete-instances` to delete all instances", name)
 	}
 
 	if options.All {
@@ -209,7 +224,7 @@ func (r *ModelRunner) Delete(in Request) (*Response, error) {
 		}
 	}
 
-	if err := r.service.Delete(model.Id); err != nil {
+	if err := r.service.Delete(model.Id, options.DeleteInstances); err != nil {
 		return nil, err
 	}
 
@@ -228,7 +243,7 @@ func (r *ModelRunner) Clear(in Request) (*Response, error) {
 	}
 
 	for _, ele := range models {
-		if err := r.service.Delete(ele.Id); err != nil {
+		if err := r.service.Delete(ele.Id, false); err != nil {
 			return nil, err
 		}
 	}
@@ -238,7 +253,13 @@ func (r *ModelRunner) Clear(in Request) (*Response, error) {
 	), nil
 }
 
-// Copy implements the `copy model <name>` command
+/*
+******************************************************************************
+Copier interface
+******************************************************************************
+*/
+
+// Copy implements the `copy model ...` command
 func (r *ModelRunner) Copy(in Request) (*Response, error) {
 	logger.Trace()
 
@@ -252,11 +273,69 @@ func (r *ModelRunner) Copy(in Request) (*Response, error) {
 	), nil
 }
 
-//////////////////////////////////////////////////////////////////////////////
-// Importer Interface
-//
+func (r *ModelRunner) CopyFrom(profile, name string) (any, error) {
+	logger.Trace()
 
-// Import implements the command `import model <path>`
+	client, cancel, err := NewClient(profile, r.config)
+	if err != nil {
+		return nil, err
+	}
+	defer cancel()
+
+	svc := services.NewModelService(client)
+
+	p, err := svc.GetByName(name)
+	if err != nil {
+		return nil, err
+	}
+
+	res, err := svc.Export(p.Id)
+	if err != nil {
+		return nil, err
+	}
+
+	return *res, err
+}
+
+func (r *ModelRunner) CopyTo(profile string, in any, replace bool) (any, error) {
+	logger.Trace()
+
+	client, cancel, err := NewClient(profile, r.config)
+	if err != nil {
+		return nil, err
+	}
+	defer cancel()
+
+	svc := services.NewModelService(client)
+
+	name := in.(services.Model).Name
+
+	if exists, err := svc.GetByName(name); exists != nil {
+		if !replace {
+			return nil, errors.New(fmt.Sprintf("model `%s` exists on the destination server, use --replace to overwrite", name))
+		} else if err != nil {
+			return nil, err
+		}
+		if err := svc.Delete(name, false); err != nil {
+			return nil, err
+		}
+	}
+
+	res, err := svc.Import(in.(services.Model))
+	if err != nil {
+		return nil, err
+	}
+
+	return res, nil
+}
+
+/*
+******************************************************************************
+Importer interface
+******************************************************************************
+*/
+
+// Import implements the `import model ...` command
 func (r *ModelRunner) Import(in Request) (*Response, error) {
 	logger.Trace()
 
@@ -299,6 +378,31 @@ func (r *ModelRunner) Import(in Request) (*Response, error) {
 		return nil, err
 	}
 
+	if common.Replace {
+		m, err := r.service.GetByName(model.Name)
+
+		if err != nil {
+			if !strings.HasSuffix(err.Error(), "not found") {
+				return nil, err
+			}
+		}
+
+		if m != nil {
+			instances, err := r.modelInstances(m.Id)
+			if err != nil {
+				return nil, err
+			}
+
+			if len(instances) > 0 {
+				return nil, fmt.Errorf("cannot replace a model that has instances")
+			}
+
+			if err := r.service.Delete(m.Id, false); err != nil {
+				return nil, err
+			}
+		}
+	}
+
 	res, err := r.service.Import(model)
 	if err != nil {
 		return nil, err
@@ -310,9 +414,11 @@ func (r *ModelRunner) Import(in Request) (*Response, error) {
 	), nil
 }
 
-//////////////////////////////////////////////////////////////////////////////
-// Exporter Interface
-//
+/*
+******************************************************************************
+Exporter interface
+******************************************************************************
+*/
 
 // Export implements the `export model ...` command
 func (r *ModelRunner) Export(in Request) (*Response, error) {
@@ -380,6 +486,14 @@ func (r *ModelRunner) Export(in Request) (*Response, error) {
 	), nil
 }
 
+/*
+*******************************************************************************
+Private functions
+*******************************************************************************
+*/
+
+// expandModel will take a model and export the assets associated with the
+// actions in the model.
 func (r *ModelRunner) expandModel(in Request, model *services.Model, path string) error {
 	logger.Trace()
 
@@ -457,66 +571,6 @@ func (r *ModelRunner) expandModel(in Request, model *services.Model, path string
 
 	return nil
 }
-
-func (r *ModelRunner) CopyFrom(profile, name string) (any, error) {
-	logger.Trace()
-
-	client, cancel, err := NewClient(profile, r.config)
-	if err != nil {
-		return nil, err
-	}
-	defer cancel()
-
-	svc := services.NewModelService(client)
-
-	p, err := svc.GetByName(name)
-	if err != nil {
-		return nil, err
-	}
-
-	res, err := svc.Export(p.Id)
-	if err != nil {
-		return nil, err
-	}
-
-	return *res, err
-}
-
-func (r *ModelRunner) CopyTo(profile string, in any, replace bool) (any, error) {
-	logger.Trace()
-
-	client, cancel, err := NewClient(profile, r.config)
-	if err != nil {
-		return nil, err
-	}
-	defer cancel()
-
-	svc := services.NewModelService(client)
-
-	name := in.(services.Model).Name
-
-	if exists, err := svc.GetByName(name); exists != nil {
-		if !replace {
-			return nil, errors.New(fmt.Sprintf("model `%s` exists on the destination server, use --replace to overwrite", name))
-		} else if err != nil {
-			return nil, err
-		}
-		if err := svc.Delete(name); err != nil {
-			return nil, err
-		}
-	}
-
-	res, err := svc.Import(in.(services.Model))
-	if err != nil {
-		return nil, err
-	}
-
-	return res, nil
-}
-
-//////////////////////////////////////////////////////////////////////////////
-// Private functions
-//
 
 func (r *ModelRunner) importActionMap(action map[string]interface{}, path string, skipChecks bool) error {
 	logger.Trace()
@@ -606,4 +660,10 @@ func (r *ModelRunner) importActionMap(action map[string]interface{}, path string
 	}
 
 	return nil
+}
+
+func (r *ModelRunner) modelInstances(modelId string) ([]services.Instance, error) {
+	logger.Trace()
+	return services.NewInstanceService(r.client).GetAll(modelId)
+
 }

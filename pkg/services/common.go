@@ -68,10 +68,15 @@ type QueryParams struct {
 	Sort            string
 	Order           int
 	SkipActiveSync  bool
+	Raw             map[string]string
 }
 
 func (p *QueryParams) Query() map[string]string {
 	m := make(map[string]string)
+
+	for key, value := range p.Raw {
+		m[key] = value
+	}
 
 	if p.Contains != "" {
 		m["contains"] = p.Contains
