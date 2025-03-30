@@ -50,7 +50,6 @@ func DisplayTabWriterWithPager(tabbedMsg string, maxlen, padding int, limitColLe
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 
-	//tw := tabwriter.NewWriter(os.Stdout, maxlen, 1, padding, ' ', 0)
 	tw := tabwriter.NewWriter(stdin, maxlen, 1, padding, ' ', 0)
 
 	if limitColLen {

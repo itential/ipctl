@@ -44,10 +44,6 @@ type Controller interface {
 	Restart(Request) (*Response, error)
 }
 
-type Shower interface {
-	Show(Request) (*Response, error)
-}
-
 type Inspector interface {
 	Inspect(Request) (*Response, error)
 }

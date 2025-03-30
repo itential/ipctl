@@ -40,25 +40,25 @@ func (r *CommandTemplateRunner) Get(in Request) (*Response, error) {
 	var options flags.CommandTemplateGetOptions
 	utils.LoadObject(in.Options, &options)
 
-	templates, err := r.service.GetAll()
+	res, err := r.service.GetAll()
 	if err != nil {
 		return nil, err
 	}
 
-	display := []string{"NAME"}
-	for _, ele := range templates {
+	var templates []services.CommandTemplate
+
+	for _, ele := range res {
 		if strings.HasPrefix(ele.Name, "@") && options.All {
-			display = append(display, ele.Name)
+			templates = append(templates, ele)
 		} else if !strings.HasPrefix(ele.Name, "@") {
-			display = append(display, ele.Name)
+			templates = append(templates, ele)
 		}
 	}
 
-	return NewResponse(
-		"",
-		WithTable(display),
-		WithObject(templates),
-	), nil
+	return &Response{
+		Keys:   []string{"name"},
+		Object: templates,
+	}, nil
 
 }
 
@@ -73,14 +73,10 @@ func (r *CommandTemplateRunner) Describe(in Request) (*Response, error) {
 		return nil, err
 	}
 
-	output := []string{
-		fmt.Sprintf("Name: %s (%s)", res.Name, res.Id),
-	}
-
-	return NewResponse(
-		strings.Join(output, "\n"),
-		WithObject(res),
-	), nil
+	return &Response{
+		Object:   res,
+		Template: "Name: {{.Name}} ({{.Id}})",
+	}, nil
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -97,10 +93,10 @@ func (r *CommandTemplateRunner) Create(in Request) (*Response, error) {
 		return nil, err
 	}
 
-	return NewResponse(
-		fmt.Sprintf("Successfully created command template `%s` (%s)", res.Name, res.Id),
-		WithObject(res),
-	), nil
+	return &Response{
+		Object:   res,
+		Template: "Successfully created command template `{{.Name}}` ({{.Id}})",
+	}, nil
 }
 
 func (r *CommandTemplateRunner) Delete(in Request) (*Response, error) {
@@ -112,9 +108,9 @@ func (r *CommandTemplateRunner) Delete(in Request) (*Response, error) {
 		return nil, err
 	}
 
-	return NewResponse(
-		fmt.Sprintf("Successfully deleted command-template `%s`", name),
-	), nil
+	return &Response{
+		Template: "Successfully deleted command-template `{{.Name}}`",
+	}, nil
 }
 
 func (r *CommandTemplateRunner) Clear(in Request) (*Response, error) {
@@ -131,7 +127,9 @@ func (r *CommandTemplateRunner) Clear(in Request) (*Response, error) {
 		}
 	}
 
-	return NewResponse(fmt.Sprintf("Deleted %v command template(s)", len(elements))), nil
+	return &Response{
+		Text: fmt.Sprintf("Deleted %v command template(s)", len(elements)),
+	}, nil
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -153,9 +151,9 @@ func (r *CommandTemplateRunner) Import(in Request) (*Response, error) {
 		return nil, err
 	}
 
-	return NewResponse(
-		fmt.Sprintf("Successfully imported command template `%s`", ct.Name),
-	), nil
+	return &Response{
+		Text: fmt.Sprintf("Successfully imported command template `%s`", ct.Name),
+	}, nil
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -178,9 +176,9 @@ func (r *CommandTemplateRunner) Export(in Request) (*Response, error) {
 		return nil, err
 	}
 
-	return NewResponse(
-		fmt.Sprintf("Successfully exported command template `%s`", ct.Name),
-	), nil
+	return &Response{
+		Text: fmt.Sprintf("Successfully exported command template `%s`", ct.Name),
+	}, nil
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -195,9 +193,9 @@ func (r *CommandTemplateRunner) Copy(in Request) (*Response, error) {
 		return nil, err
 	}
 
-	return NewResponse(
-		fmt.Sprintf("Successfully copied command template `%s` from `%s` to `%s`", res.Name, res.From, res.To),
-	), nil
+	return &Response{
+		Text: fmt.Sprintf("Successfully copied command template `%s` from `%s` to `%s`", res.Name, res.From, res.To),
+	}, nil
 }
 
 func (r *CommandTemplateRunner) CopyFrom(profile, name string) (any, error) {

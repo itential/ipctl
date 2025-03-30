@@ -49,16 +49,10 @@ func (r *PrebuiltRunner) Get(in Request) (*Response, error) {
 		return nil, err
 	}
 
-	display := []string{"NAME\tDESCRIPTION"}
-	for _, ele := range prebuilts {
-		display = append(display, fmt.Sprintf("%s\t%s", ele.Name, ele.Description))
-	}
-
-	return NewResponse(
-		"",
-		WithTable(display),
-		WithObject(prebuilts),
-	), nil
+	return &Response{
+		Keys:   []string{"name", "description"},
+		Object: prebuilts,
+	}, nil
 
 }
 
@@ -73,10 +67,10 @@ func (r *PrebuiltRunner) Describe(in Request) (*Response, error) {
 		return nil, err
 	}
 
-	return NewResponse(
-		fmt.Sprintf("Name: %s", prebuilt.Name),
-		WithObject(prebuilt),
-	), nil
+	return &Response{
+		Text:   fmt.Sprintf("Name: %s", prebuilt.Name),
+		Object: prebuilt,
+	}, nil
 }
 
 /*
@@ -88,7 +82,7 @@ Writer interface
 // Create implements the `create prebuilt ...` command
 func (r *PrebuiltRunner) Create(in Request) (*Response, error) {
 	logger.Trace()
-	return NotImplemented(in)
+	return notImplemented(in)
 }
 
 // Delete implementes the `delete prebuilt ...` command
@@ -215,9 +209,9 @@ func (r *PrebuiltRunner) Delete(in Request) (*Response, error) {
 		return nil, err
 	}
 
-	return NewResponse(
-		fmt.Sprintf("Successfully deleted prebuilt `%s` (%s)", name, prebuilt.Id),
-	), nil
+	return &Response{
+		Text: fmt.Sprintf("Successfully deleted prebuilt `%s` (%s)", name, prebuilt.Id),
+	}, nil
 }
 
 // Clear implements the `clear prebuilts ...` command
@@ -236,7 +230,9 @@ func (r *PrebuiltRunner) Clear(in Request) (*Response, error) {
 		cnt++
 	}
 
-	return NewResponse(fmt.Sprintf("Deleted %v prebuilt(s)", cnt)), nil
+	return &Response{
+		Text: fmt.Sprintf("Deleted %v prebuilt(s)", cnt),
+	}, nil
 }
 
 /*
@@ -311,9 +307,9 @@ func (r *PrebuiltRunner) Import(in Request) (*Response, error) {
 		return nil, err
 	}
 
-	return NewResponse(
-		fmt.Sprintf("Successfully imported prebuilt `%s` (%s)", pb.Name, pb.Id),
-	), nil
+	return &Response{
+		Text: fmt.Sprintf("Successfully imported prebuilt `%s` (%s)", pb.Name, pb.Id),
+	}, nil
 
 }
 
@@ -383,9 +379,9 @@ func (r *PrebuiltRunner) Export(in Request) (*Response, error) {
 		}
 	}
 
-	return NewResponse(
-		fmt.Sprintf("Successfully exported prebuilt `%s`", name),
-	), nil
+	return &Response{
+		Text: fmt.Sprintf("Successfully exported prebuilt `%s`", name),
+	}, nil
 }
 
 /*
@@ -530,7 +526,7 @@ func (r *PrebuiltRunner) expandPrebuilt(pkg *services.PrebuiltPackage, path stri
 		})
 	}
 
-	res, err := ToMap(pkg)
+	res, err := toMap(pkg)
 	if err != nil {
 		return err
 	}

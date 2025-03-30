@@ -41,11 +41,10 @@ func (r *DeviceRunner) Get(in Request) (*Response, error) {
 		display = append(display, strings.Join(lines, "\t"))
 	}
 
-	return NewResponse(
-		"",
-		WithTable(display),
-		WithObject(devices),
-	), nil
+	return &Response{
+		Keys:   []string{"name", "ostype"},
+		Object: devices,
+	}, nil
 
 }
 
@@ -59,8 +58,8 @@ func (r *DeviceRunner) Describe(in Request) (*Response, error) {
 		return nil, err
 	}
 
-	return NewResponse(
-		fmt.Sprintf("Name: %s", res.Name),
-		WithObject(res),
-	), nil
+	return &Response{
+		Text:   fmt.Sprintf("Name: %s", res.Name),
+		Object: res,
+	}, nil
 }

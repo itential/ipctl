@@ -39,13 +39,12 @@ func (r *MethodRunner) Get(in Request) (*Response, error) {
 		display = append(display, line)
 	}
 
-	return NewResponse(
-		"",
-		WithTable(display),
-		WithObject(methods),
-	), nil
+	return &Response{
+		Keys:   []string{"name", "type"},
+		Object: methods,
+	}, nil
 }
 
 func (r *MethodRunner) Describe(in Request) (*Response, error) {
-	return NotImplemented(in)
+	return notImplemented(in)
 }

@@ -40,17 +40,16 @@ func (r *ConfigurationParserRunner) Get(in Request) (*Response, error) {
 		display = append(display, strings.Join(lines, "\t"))
 	}
 
-	return NewResponse(
-		"",
-		WithTable(display),
-		WithObject(devices),
-	), nil
+	return &Response{
+		Keys:   []string{"name"},
+		Object: devices,
+	}, nil
 
 }
 
 func (r *ConfigurationParserRunner) Describe(in Request) (*Response, error) {
 	logger.Trace()
-	return NotImplemented(in)
+	return notImplemented(in)
 	/*
 
 		name := in.Args[0]
@@ -60,10 +59,10 @@ func (r *ConfigurationParserRunner) Describe(in Request) (*Response, error) {
 			return nil, err
 		}
 
-		return NewResponse(
+		return &Response{
 			fmt.Sprintf("Name: %s", res.Name),
 			WithUrl(fmt.Sprintf("/configuration_manager/#/devices/%s", res.Name)),
-			WithObject(res),
-		), nil
+			Object: (res),
+		}, nil
 	*/
 }

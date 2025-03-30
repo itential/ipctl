@@ -86,6 +86,10 @@ func checkError(err error, runtime *Runtime) {
 	cmdutils.CheckError(err, runtime.Config.TerminalNoColor)
 }
 
+func unableToDisplayOutput(nocolor bool) {
+	terminal.Error(fmt.Errorf("unable to display response"), nocolor)
+}
+
 func NewCommand(c *CommandRunner) *cobra.Command {
 	desc, exists := c.Descriptors[c.Key]
 
@@ -127,28 +131,35 @@ func NewCommand(c *CommandRunner) *cobra.Command {
 			resp, err := c.Run(req)
 			checkError(err, c.Runtime)
 
-			if c.Runtime.Config.TerminalDefaultOutput == "json" {
-				checkError(terminal.DisplayJson(resp.Object), c.Runtime)
-
-			} else if c.Runtime.Config.TerminalDefaultOutput == "yaml" {
-				checkError(terminal.DisplayYaml(resp.Object), c.Runtime)
-
-			} else if len(resp.Lines) > 0 {
-				if c.Runtime.Config.TerminalPager {
-					terminal.DisplayTabWriterStringWithPager(resp.Lines, 3, 3, true)
+			switch c.Runtime.Config.TerminalDefaultOutput {
+			case "json":
+				if resp.Object != nil {
+					checkError(terminal.DisplayJson(resp.Object), c.Runtime)
 				} else {
-					terminal.DisplayTabWriterString(resp.Lines, 3, 3, true)
+					unableToDisplayOutput(c.Runtime.Config.TerminalNoColor)
 				}
-
-			} else {
-				if resp.Text != "" {
-					terminal.Display(resp.String())
+			case "yaml":
+				if resp.Object != nil {
+					checkError(terminal.DisplayYaml(resp.Object), c.Runtime)
 				} else {
-					terminal.Display("unable to display response")
+					unableToDisplayOutput(c.Runtime.Config.TerminalNoColor)
 				}
-				terminal.Display("")
+			case "human":
+				if len(resp.Keys) > 0 {
+					output := strings.Split(resp.String(), "\n")
+					if c.Runtime.Config.TerminalPager {
+						terminal.DisplayTabWriterStringWithPager(output, 3, 3, true)
+					} else {
+						terminal.DisplayTabWriterString(output, 3, 3, true)
+					}
+				} else {
+					output := resp.String()
+					if output == "" {
+						unableToDisplayOutput(c.Runtime.Config.TerminalNoColor)
+					}
+					terminal.Display(fmt.Sprintf("%s\n", output))
+				}
 			}
-
 		},
 	}
 

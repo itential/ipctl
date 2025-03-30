@@ -29,7 +29,6 @@ func TestGet(t *testing.T) {
 	assert.Nil(t, err)
 	assert.NotNil(t, res)
 	assert.Empty(t, res.Text)
-	assert.NotEmpty(t, res.Lines)
 }
 
 func TestDescribe(t *testing.T) {
@@ -45,5 +44,4 @@ func TestDescribe(t *testing.T) {
 	assert.Nil(t, err)
 	assert.NotNil(t, res)
 	assert.Empty(t, res.Text)
-	assert.NotEmpty(t, res.Lines)
 }

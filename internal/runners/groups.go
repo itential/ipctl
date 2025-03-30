@@ -40,17 +40,10 @@ func (r *GroupRunner) Get(in Request) (*Response, error) {
 		return nil, err
 	}
 
-	display := []string{"NAME\tDESCRIPTION"}
-	for _, ele := range groups {
-		line := fmt.Sprintf("%s\t%s", ele.Name, ele.Description)
-		display = append(display, line)
-	}
-
-	return NewResponse(
-		"",
-		WithTable(display),
-		WithObject(groups),
-	), nil
+	return &Response{
+		Keys:   []string{"name", "description"},
+		Object: groups,
+	}, nil
 
 }
 
@@ -79,10 +72,9 @@ func (r *GroupRunner) Describe(in Request) (*Response, error) {
 		)
 	}
 
-	return NewResponse(
-		"",
-		WithObject(grp),
-	), nil
+	return &Response{
+		Object: grp,
+	}, nil
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -102,10 +94,10 @@ func (r *GroupRunner) Create(in Request) (*Response, error) {
 		return nil, err
 	}
 
-	return NewResponse(
-		fmt.Sprintf("Successfully created group `%s`", in.Args[0]),
-		WithObject(res),
-	), nil
+	return &Response{
+		Text:   fmt.Sprintf("Successfully created group `%s`", in.Args[0]),
+		Object: res,
+	}, nil
 }
 
 func (r *GroupRunner) Delete(in Request) (*Response, error) {
@@ -124,9 +116,9 @@ func (r *GroupRunner) Delete(in Request) (*Response, error) {
 		return nil, err
 	}
 
-	return NewResponse(
-		fmt.Sprintf("Successfully deleted group `%s`", group.Name),
-	), nil
+	return &Response{
+		Text: fmt.Sprintf("Successfully deleted group `%s`", group.Name),
+	}, nil
 }
 
 func (r *GroupRunner) Clear(in Request) (*Response, error) {
@@ -148,9 +140,9 @@ func (r *GroupRunner) Clear(in Request) (*Response, error) {
 		}
 	}
 
-	return NewResponse(
-		fmt.Sprintf("Successfully deleted %v group(s)", cnt),
-	), nil
+	return &Response{
+		Text: fmt.Sprintf("Successfully deleted %v group(s)", cnt),
+	}, nil
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -165,9 +157,9 @@ func (r *GroupRunner) Copy(in Request) (*Response, error) {
 		return nil, err
 	}
 
-	return NewResponse(
-		fmt.Sprintf("Successfully copied group `%s` from `%s` to `%s`", res.Name, res.From, res.To),
-	), nil
+	return &Response{
+		Text: fmt.Sprintf("Successfully copied group `%s` from `%s` to `%s`", res.Name, res.From, res.To),
+	}, nil
 }
 
 func (r *GroupRunner) CopyFrom(profile, name string) (any, error) {
@@ -239,9 +231,9 @@ func (r *GroupRunner) Import(in Request) (*Response, error) {
 		return nil, err
 	}
 
-	return NewResponse(
-		fmt.Sprintf("Successfully imported group `%s`", grp.Name),
-	), nil
+	return &Response{
+		Text: fmt.Sprintf("Successfully imported group `%s`", grp.Name),
+	}, nil
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -264,9 +256,9 @@ func (r *GroupRunner) Export(in Request) (*Response, error) {
 		return nil, err
 	}
 
-	return NewResponse(
-		fmt.Sprintf("Successfully exported gropu `%s` (%s)", grp.Name, grp.Id),
-	), nil
+	return &Response{
+		Text: fmt.Sprintf("Successfully exported gropu `%s` (%s)", grp.Name, grp.Id),
+	}, nil
 }
 
 //////////////////////////////////////////////////////////////////////////////
