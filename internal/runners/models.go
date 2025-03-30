@@ -49,17 +49,10 @@ func (r *ModelRunner) Get(in Request) (*Response, error) {
 		return nil, err
 	}
 
-	display := []string{"NAME\tDESCRIPTION"}
-	for _, ele := range models {
-		display = append(display, fmt.Sprintf("%s\t%s", ele.Name, ele.Description))
-	}
-
-	return NewResponse(
-		"",
-		WithTable(display),
-		WithObject(models),
-	), nil
-
+	return &Response{
+		Object: models,
+		Keys:   []string{"name", "description"},
+	}, nil
 }
 
 // Describe implements the `describe model ....` command
@@ -73,10 +66,10 @@ func (r *ModelRunner) Describe(in Request) (*Response, error) {
 		return nil, err
 	}
 
-	return NewResponse(
-		fmt.Sprintf("Name: %s", model.Name),
-		WithObject(model),
-	), nil
+	return &Response{
+		Object:   model,
+		Template: "Name: {{.Name}} ({{.Id}})",
+	}, nil
 }
 
 /*
@@ -91,8 +84,7 @@ func (r *ModelRunner) Create(in Request) (*Response, error) {
 
 	name := in.Args[0]
 
-	var options flags.ModelCreateOptions
-	utils.LoadObject(in.Options, &options)
+	options := in.Options.(*flags.ModelCreateOptions)
 
 	if options.Replace {
 		existing, err := r.service.GetByName(name)
@@ -125,15 +117,15 @@ func (r *ModelRunner) Create(in Request) (*Response, error) {
 		model.Schema = schema
 	}
 
-	jf, err := r.service.Create(model)
+	res, err := r.service.Create(model)
 	if err != nil {
 		return nil, err
 	}
 
-	return NewResponse(
-		fmt.Sprintf("Successfully created model `%s`", jf.Name),
-		WithObject(jf),
-	), nil
+	return &Response{
+		Template: "Successfully created model `{{.Name}}`",
+		Object:   res,
+	}, nil
 }
 
 // Delete implements the `delete model ...` command
@@ -228,9 +220,9 @@ func (r *ModelRunner) Delete(in Request) (*Response, error) {
 		return nil, err
 	}
 
-	return NewResponse(
-		fmt.Sprintf("Successfully deleted model `%s`", name),
-	), nil
+	return &Response{
+		Text: fmt.Sprintf("Successfully deleted model `%s`", name),
+	}, nil
 }
 
 // Clear implements the `clear models` command
@@ -248,9 +240,9 @@ func (r *ModelRunner) Clear(in Request) (*Response, error) {
 		}
 	}
 
-	return NewResponse(
-		fmt.Sprintf("Deleted %v model(s)", len(models)),
-	), nil
+	return &Response{
+		Text: fmt.Sprintf("Deleted %v model(s)", len(models)),
+	}, nil
 }
 
 /*
@@ -268,9 +260,9 @@ func (r *ModelRunner) Copy(in Request) (*Response, error) {
 		return nil, err
 	}
 
-	return NewResponse(
-		fmt.Sprintf("Successfully copied model `%s` from `%s` to `%s`", res.Name, res.From, res.To),
-	), nil
+	return &Response{
+		Text: fmt.Sprintf("Successfully copied model `%s` from `%s` to `%s`", res.Name, res.From, res.To),
+	}, nil
 }
 
 func (r *ModelRunner) CopyFrom(profile, name string) (any, error) {
@@ -408,10 +400,10 @@ func (r *ModelRunner) Import(in Request) (*Response, error) {
 		return nil, err
 	}
 
-	return NewResponse(
-		fmt.Sprintf("Successfully imported model `%s` (%s)", res.Name, res.Id),
-		WithObject(model),
-	), nil
+	return &Response{
+		Text:   fmt.Sprintf("Successfully imported model `%s` (%s)", res.Name, res.Id),
+		Object: model,
+	}, nil
 }
 
 /*
@@ -481,9 +473,9 @@ func (r *ModelRunner) Export(in Request) (*Response, error) {
 		}
 	}
 
-	return NewResponse(
-		fmt.Sprintf("Successfull exported model `%s`", model.Name),
-	), nil
+	return &Response{
+		Text: fmt.Sprintf("Successfull exported model `%s`", model.Name),
+	}, nil
 }
 
 /*
@@ -497,7 +489,7 @@ Private functions
 func (r *ModelRunner) expandModel(in Request, model *services.Model, path string) error {
 	logger.Trace()
 
-	mModel, err := ToMap(model)
+	mModel, err := toMap(model)
 	if err != nil {
 		return err
 	}

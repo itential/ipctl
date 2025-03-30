@@ -5,8 +5,6 @@
 package runners
 
 import (
-	"strings"
-
 	"github.com/itential/ipctl/internal/flags"
 	"github.com/itential/ipctl/internal/terminal"
 	"github.com/itential/ipctl/internal/utils"
@@ -69,18 +67,10 @@ func (r *LocalAAARunner) GetGroups(in Request) (*Response, error) {
 		return nil, err
 	}
 
-	display := []string{"NAME"}
-	for _, ele := range res {
-		lines := []string{ele.Name}
-		display = append(display, strings.Join(lines, "\t"))
-
-	}
-
-	return NewResponse(
-		"",
-		WithTable(display),
-		WithObject(res),
-	), nil
+	return &Response{
+		Keys:   []string{"name"},
+		Object: res,
+	}, nil
 }
 
 func (r *LocalAAARunner) CreateGroup(in Request) (*Response, error) {
@@ -92,9 +82,9 @@ func (r *LocalAAARunner) CreateGroup(in Request) (*Response, error) {
 		return nil, err
 	}
 
-	return NewResponse(
-		"Successfully created new group",
-	), nil
+	return &Response{
+		Text: "Successfully created new group",
+	}, nil
 
 }
 
@@ -105,9 +95,9 @@ func (r *LocalAAARunner) DeleteGroup(in Request) (*Response, error) {
 		return nil, err
 	}
 
-	return NewResponse(
-		"Successfully deleted group",
-	), nil
+	return &Response{
+		Text: "Successfully deleted group",
+	}, nil
 }
 
 func (r *LocalAAARunner) GetAccounts(in Request) (*Response, error) {
@@ -118,18 +108,10 @@ func (r *LocalAAARunner) GetAccounts(in Request) (*Response, error) {
 		return nil, err
 	}
 
-	display := []string{"USERNAME"}
-	for _, ele := range res {
-		lines := []string{ele.Username}
-		display = append(display, strings.Join(lines, "\t"))
-
-	}
-
-	return NewResponse(
-		"",
-		WithTable(display),
-		WithObject(res),
-	), nil
+	return &Response{
+		Keys:   []string{"username"},
+		Object: res,
+	}, nil
 }
 
 func (r *LocalAAARunner) CreateAccount(in Request) (*Response, error) {
@@ -147,9 +129,9 @@ func (r *LocalAAARunner) CreateAccount(in Request) (*Response, error) {
 		return nil, err
 	}
 
-	return NewResponse(
-		"Successfully created new user",
-	), nil
+	return &Response{
+		Text: "Successfully created new user",
+	}, nil
 }
 
 func (r *LocalAAARunner) DeleteAccount(in Request) (*Response, error) {
@@ -159,7 +141,7 @@ func (r *LocalAAARunner) DeleteAccount(in Request) (*Response, error) {
 		return nil, err
 	}
 
-	return NewResponse(
-		"Successfully deleted user",
-	), nil
+	return &Response{
+		Text: "Successfully deleted user",
+	}, nil
 }

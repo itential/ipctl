@@ -45,26 +45,18 @@ func (r *RoleRunner) Get(in Request) (*Response, error) {
 
 	var filtered []services.Role
 
-	display := []string{"NAME\tTYPE"}
 	for _, ele := range roles {
-		line := fmt.Sprintf("%s\t%s", ele.Name, ele.Provenance)
-
 		if options.All || ele.Provenance == "Custom" {
-			display = append(display, line)
 			filtered = append(filtered, ele)
-
 		} else if options.Type != "" && ele.Provenance == options.Type {
-			display = append(display, line)
 			filtered = append(filtered, ele)
 		}
-
 	}
 
-	return NewResponse(
-		"",
-		WithTable(display),
-		WithObject(filtered),
-	), nil
+	return &Response{
+		Keys:   []string{"name", "type"},
+		Object: filtered,
+	}, nil
 
 }
 
@@ -105,10 +97,10 @@ func (r *RoleRunner) Describe(in Request) (*Response, error) {
 		fmt.Sprintf("Description: %s", role.Description),
 	}
 
-	return NewResponse(
-		strings.Join(output, "\n"),
-		WithObject(role),
-	), nil
+	return &Response{
+		Text:   strings.Join(output, "\n"),
+		Object: role,
+	}, nil
 }
 
 // Delete implements the `delete role <name>` command
@@ -124,9 +116,9 @@ func (r *RoleRunner) Delete(in Request) (*Response, error) {
 		return nil, err
 	}
 
-	return NewResponse(
-		fmt.Sprintf("Successfully deleted role `%s`", in.Args[0]),
-	), nil
+	return &Response{
+		Text: fmt.Sprintf("Successfully deleted role `%s`", in.Args[0]),
+	}, nil
 }
 
 // Clear implements the `clear roles` command
@@ -149,9 +141,9 @@ func (r *RoleRunner) Clear(in Request) (*Response, error) {
 		}
 	}
 
-	return NewResponse(
-		fmt.Sprintf("Deleted %v role(s)", cnt),
-	), nil
+	return &Response{
+		Text: fmt.Sprintf("Deleted %v role(s)", cnt),
+	}, nil
 }
 
 func (r *RoleRunner) Create(in Request) (*Response, error) {
@@ -204,9 +196,9 @@ func (r *RoleRunner) Create(in Request) (*Response, error) {
 		return nil, err
 	}
 
-	return NewResponse(
-		fmt.Sprintf("Successfully created new role `%s`", res.Name),
-	), nil
+	return &Response{
+		Text: fmt.Sprintf("Successfully created new role `%s`", res.Name),
+	}, nil
 }
 
 func (r *RoleRunner) Copy(in Request) (*Response, error) {
@@ -255,9 +247,9 @@ func (r *RoleRunner) Copy(in Request) (*Response, error) {
 		return nil, err
 	}
 
-	return NewResponse(
-		fmt.Sprintf("Successfully copied role `%s` from `%s` to `%s`", name, common.From, common.To),
-	), nil
+	return &Response{
+		Text: fmt.Sprintf("Successfully copied role `%s` from `%s` to `%s`", name, common.From, common.To),
+	}, nil
 }
 
 // Import implements the `import role <path>` command
@@ -300,9 +292,9 @@ func (r *RoleRunner) Import(in Request) (*Response, error) {
 		return nil, err
 	}
 
-	return NewResponse(
-		fmt.Sprintf("Successfully imported role `%s`", res.Name),
-	), nil
+	return &Response{
+		Text: fmt.Sprintf("Successfully imported role `%s`", res.Name),
+	}, nil
 
 }
 
@@ -358,9 +350,9 @@ func (r *RoleRunner) Export(in Request) (*Response, error) {
 		return nil, err
 	}
 
-	return NewResponse(
-		fmt.Sprintf("Successfully exported role `%s` to `%s`", role.Name, fn),
-	), nil
+	return &Response{
+		Text: fmt.Sprintf("Successfully exported role `%s` to `%s`", role.Name, fn),
+	}, nil
 }
 
 func GetByName(svc *services.RoleService, name string) (*services.Role, error) {

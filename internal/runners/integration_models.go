@@ -43,11 +43,10 @@ func (r *IntegrationModelRunner) Get(in Request) (*Response, error) {
 		display = append(display, ele.VersionId)
 	}
 
-	return NewResponse(
-		"",
-		WithTable(display),
-		WithObject(res),
-	), nil
+	return &Response{
+		Keys:   []string{"model"},
+		Object: res,
+	}, nil
 
 }
 
@@ -62,10 +61,10 @@ func (r *IntegrationModelRunner) Describe(in Request) (*Response, error) {
 		return nil, err
 	}
 
-	return NewResponse(
-		fmt.Sprintf("Name: %s", res.Model),
-		WithObject(res),
-	), nil
+	return &Response{
+		Text:   fmt.Sprintf("Name: %s", res.Model),
+		Object: res,
+	}, nil
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -86,10 +85,10 @@ func (r *IntegrationModelRunner) Create(in Request) (*Response, error) {
 		return nil, err
 	}
 
-	return NewResponse(
-		fmt.Sprintf("Successfully created integration model `%s`", res.Model),
-		WithObject(res),
-	), nil
+	return &Response{
+		Text:   fmt.Sprintf("Successfully created integration model `%s`", res.Model),
+		Object: res,
+	}, nil
 
 }
 
@@ -102,9 +101,9 @@ func (r *IntegrationModelRunner) Delete(in Request) (*Response, error) {
 		return nil, err
 	}
 
-	return NewResponse(
-		fmt.Sprintf("Successfully deleted integration model `%s`", name),
-	), nil
+	return &Response{
+		Text: fmt.Sprintf("Successfully deleted integration model `%s`", name),
+	}, nil
 }
 
 func (r *IntegrationModelRunner) Clear(in Request) (*Response, error) {
@@ -121,9 +120,9 @@ func (r *IntegrationModelRunner) Clear(in Request) (*Response, error) {
 		}
 	}
 
-	return NewResponse(
-		fmt.Sprintf("Suuccessfully deleted %v integration models", len(res)),
-	), nil
+	return &Response{
+		Text: fmt.Sprintf("Suuccessfully deleted %v integration models", len(res)),
+	}, nil
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -145,10 +144,10 @@ func (r *IntegrationModelRunner) Import(in Request) (*Response, error) {
 		return nil, err
 	}
 
-	return NewResponse(
-		fmt.Sprintf("Successfully imported integration model `%s`", res.VersionId),
-		WithObject(res),
-	), nil
+	return &Response{
+		Text:   fmt.Sprintf("Successfully imported integration model `%s`", res.VersionId),
+		Object: res,
+	}, nil
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -174,7 +173,7 @@ func (r *IntegrationModelRunner) Export(in Request) (*Response, error) {
 		return nil, err
 	}
 
-	return NewResponse(
-		fmt.Sprintf("Successfully exported integration_model `%s`", name),
-	), nil
+	return &Response{
+		Text: fmt.Sprintf("Successfully exported integration_model `%s`", name),
+	}, nil
 }

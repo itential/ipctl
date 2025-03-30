@@ -79,10 +79,9 @@ func (r *ApiRunner) Get(in Request) (*Response, error) {
 		return nil, err
 	}
 
-	return NewResponse(
-		res,
-		WithObject(jsonRes),
-	), nil
+	return &Response{
+		Object: jsonRes,
+	}, nil
 }
 
 func (r *ApiRunner) Delete(in Request) (*Response, error) {
@@ -101,10 +100,9 @@ func (r *ApiRunner) Delete(in Request) (*Response, error) {
 		return nil, err
 	}
 
-	return NewResponse(
-		res,
-		WithObject(jsonRes),
-	), nil
+	return &Response{
+		Object: jsonRes,
+	}, nil
 }
 
 func (r *ApiRunner) Post(in Request) (*Response, error) {
@@ -128,10 +126,9 @@ func (r *ApiRunner) Post(in Request) (*Response, error) {
 		return nil, err
 	}
 
-	return NewResponse(
-		res,
-		WithObject(jsonRes),
-	), nil
+	return &Response{
+		Object: jsonRes,
+	}, nil
 }
 
 func (r *ApiRunner) Put(in Request) (*Response, error) {
@@ -155,10 +152,9 @@ func (r *ApiRunner) Put(in Request) (*Response, error) {
 		return nil, err
 	}
 
-	return NewResponse(
-		res,
-		WithObject(jsonRes),
-	), nil
+	return &Response{
+		Object: jsonRes,
+	}, nil
 }
 
 func (r *ApiRunner) Patch(in Request) (*Response, error) {
@@ -182,8 +178,7 @@ func (r *ApiRunner) Patch(in Request) (*Response, error) {
 		return nil, err
 	}
 
-	return NewResponse(
-		res,
-		WithObject(jsonRes),
-	), nil
+	return &Response{
+		Object: jsonRes,
+	}, nil
 }

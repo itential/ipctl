@@ -6,7 +6,6 @@ package runners
 
 import (
 	"context"
-	"encoding/json"
 	"errors"
 	"strings"
 	"time"
@@ -24,16 +23,25 @@ func normalizeFilename(s string) string {
 	return strings.Replace(s, "/", "_", -1)
 }
 
-func ToMap(in any) (map[string]interface{}, error) {
+// toMap takes a single required argument `in` and marshals it to a map using
+// json.Marshal and json>Unmarshal.  This function will return the map or an
+// error if one occurring during marshaling
+func toMap(in any) (map[string]interface{}, error) {
 	logger.Trace()
 
-	b, err := json.Marshal(in)
-	if err != nil {
+	var m map[string]interface{}
+	if err := utils.ToMap(in, &m); err != nil {
 		return nil, err
 	}
 
-	var m map[string]interface{}
-	if err := json.Unmarshal(b, &m); err != nil {
+	return m, nil
+}
+
+func toArrayOfMaps(in any) ([]map[string]interface{}, error) {
+	logger.Trace()
+
+	var m []map[string]interface{}
+	if err := utils.ToMap(in, &m); err != nil {
 		return nil, err
 	}
 
@@ -83,24 +91,4 @@ func NormalizePath(in Request) (string, error) {
 	}
 
 	return path, nil
-}
-
-// toMap will take any object and attempt to convert it into a map.   This
-// function is primarily used to convert a struct into a map structure.  The
-// function accepts a single argument `in` which is the struct to convert into
-// a map.
-func toMap(in any) (map[string]interface{}, error) {
-	logger.Trace()
-
-	b, err := json.Marshal(in)
-	if err != nil {
-		return nil, err
-	}
-
-	var res map[string]interface{}
-	if err := json.Unmarshal(b, &res); err != nil {
-		return nil, err
-	}
-
-	return res, nil
 }

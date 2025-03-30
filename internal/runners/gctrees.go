@@ -48,14 +48,14 @@ func (r *GoldenConfigRunner) Get(in Request) (*Response, error) {
 		display = append(display, ele.Name)
 	}
 
-	return NewResponse(
-		strings.Join(display, "\n"),
-		WithObject(trees),
-	), nil
+	return &Response{
+		Text:   strings.Join(display, "\n"),
+		Object: trees,
+	}, nil
 }
 
 func (r *GoldenConfigRunner) Describe(in Request) (*Response, error) {
-	return NotImplemented(in)
+	return notImplemented(in)
 }
 
 /*
@@ -79,10 +79,10 @@ func (r *GoldenConfigRunner) Create(in Request) (*Response, error) {
 		return nil, err
 	}
 
-	return NewResponse(
-		"Successfully create new golden configuration",
-		WithObject(gc),
-	), nil
+	return &Response{
+		Text:   "Successfully create new golden configuration",
+		Object: gc,
+	}, nil
 }
 
 // Delete implemetns the `delete golden-config <name>` command
@@ -100,13 +100,13 @@ func (r *GoldenConfigRunner) Delete(in Request) (*Response, error) {
 		return nil, err
 	}
 
-	return NewResponse(
-		fmt.Sprintf("Successfully deleted Golden Config tree `%s`", name),
-	), nil
+	return &Response{
+		Text: fmt.Sprintf("Successfully deleted Golden Config tree `%s`", name),
+	}, nil
 }
 
 func (r *GoldenConfigRunner) Clear(in Request) (*Response, error) {
-	return NotImplemented(in)
+	return notImplemented(in)
 }
 
 /*
@@ -131,10 +131,10 @@ func (r *GoldenConfigRunner) Import(in Request) (*Response, error) {
 		return nil, err
 	}
 
-	return NewResponse(
-		fmt.Sprintf("Successfully imported gctree `%s`", gctree.Name),
-		WithObject(gctree),
-	), nil
+	return &Response{
+		Text:   fmt.Sprintf("Successfully imported gctree `%s`", gctree.Name),
+		Object: gctree,
+	}, nil
 }
 
 /*
@@ -165,10 +165,10 @@ func (r *GoldenConfigRunner) Export(in Request) (*Response, error) {
 		return nil, err
 	}
 
-	return NewResponse(
-		fmt.Sprintf("Successfully exported gctree `%s`", gctree.Name),
-		WithObject(gctree),
-	), nil
+	return &Response{
+		Text:   fmt.Sprintf("Successfully exported gctree `%s`", gctree.Name),
+		Object: gctree,
+	}, nil
 }
 
 /*

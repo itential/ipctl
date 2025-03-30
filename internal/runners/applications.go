@@ -41,17 +41,10 @@ func (r *ApplicationRunner) Get(in Request) (*Response, error) {
 		return nil, err
 	}
 
-	var display = []string{"NAME\tMODEL"}
-
-	for _, ele := range res {
-		display = append(display, fmt.Sprintf("%s\t%s", ele.Name, ele.Model))
-	}
-
-	return NewResponse(
-		"",
-		WithTable(display),
-		WithObject(res),
-	), nil
+	return &Response{
+		Keys:   []string{"name", "model"},
+		Object: res,
+	}, nil
 
 }
 
@@ -69,10 +62,10 @@ func (r *ApplicationRunner) Describe(in Request) (*Response, error) {
 		logger.Fatal(err, "failed to marshal data")
 	}
 
-	return NewResponse(
-		string(b),
-		WithObject(res),
-	), nil
+	return &Response{
+		Text:   string(b),
+		Object: res,
+	}, nil
 }
 
 func (r *ApplicationRunner) Start(in Request) (*Response, error) {
@@ -84,9 +77,9 @@ func (r *ApplicationRunner) Start(in Request) (*Response, error) {
 		return nil, err
 	}
 
-	return NewResponse(
-		fmt.Sprintf("Successfully started application `%s`", name),
-	), nil
+	return &Response{
+		Text: fmt.Sprintf("Successfully started application `%s`", name),
+	}, nil
 }
 
 func (r *ApplicationRunner) Stop(in Request) (*Response, error) {
@@ -98,9 +91,9 @@ func (r *ApplicationRunner) Stop(in Request) (*Response, error) {
 		return nil, err
 	}
 
-	return NewResponse(
-		fmt.Sprintf("Successfully stopped application `%s`", name),
-	), nil
+	return &Response{
+		Text: fmt.Sprintf("Successfully stopped application `%s`", name),
+	}, nil
 }
 
 func (r *ApplicationRunner) Restart(in Request) (*Response, error) {
@@ -112,31 +105,21 @@ func (r *ApplicationRunner) Restart(in Request) (*Response, error) {
 		return nil, err
 	}
 
-	return NewResponse(
-		fmt.Sprintf("Successfully restarted application `%s`", name),
-	), nil
+	return &Response{
+		Text: fmt.Sprintf("Successfully restarted application `%s`", name),
+	}, nil
 }
 
 func (r *ApplicationRunner) Inspect(in Request) (*Response, error) {
 	logger.Trace()
 
-	svc := services.NewHealthService(r.client)
-	res, err := svc.GetApplicationHealth()
+	res, err := services.NewHealthService(r.client).GetApplicationHealth()
 	if err != nil {
 		return nil, err
 	}
 
-	var display = []string{"NAME\tSTATUS\tVERSION"}
-
-	for _, ele := range res {
-		display = append(display, fmt.Sprintf(
-			"%s\t%s\t%s", ele.Id, ele.State, ele.Version,
-		))
-	}
-
-	return NewResponse(
-		"",
-		WithTable(display),
-		WithObject(res),
-	), nil
+	return &Response{
+		Keys:   []string{"name", "status", "version"},
+		Object: res,
+	}, nil
 }

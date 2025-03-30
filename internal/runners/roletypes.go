@@ -5,9 +5,6 @@
 package runners
 
 import (
-	"sort"
-
-	"github.com/itential/ipctl/internal/utils"
 	"github.com/itential/ipctl/pkg/client"
 	"github.com/itential/ipctl/pkg/config"
 	"github.com/itential/ipctl/pkg/logger"
@@ -37,25 +34,13 @@ func (r *RoleTypeRunner) Get(in Request) (*Response, error) {
 		return nil, err
 	}
 
-	var display []string
-
-	for _, ele := range roles {
-		if !utils.StringExists(display, ele.Provenance) {
-			display = append(display, ele.Provenance)
-		}
-	}
-
-	sort.Strings(display)
-
-	utils.StringInsert(display, 0, "TYPE")
-
-	return NewResponse(
-		"",
-		WithTable(display),
-	), nil
+	return &Response{
+		Keys:   []string{"name", "provenance"},
+		Object: roles,
+	}, nil
 
 }
 
 func (r *RoleTypeRunner) Describe(in Request) (*Response, error) {
-	return NotImplemented(in)
+	return notImplemented(in)
 }

@@ -29,36 +29,36 @@ func NewAnalyticTemplateRunner(c client.Client, cfg *config.Config) *AnalyticTem
 	}
 }
 
-//////////////////////////////////////////////////////////////////////////////
-// Reader Interface
-//
+/*
+******************************************************************************
+Reader interface
+******************************************************************************
+*/
 
 // Get implements the `get command-templates` command
 func (r *AnalyticTemplateRunner) Get(in Request) (*Response, error) {
 	logger.Trace()
 
-	var options flags.AnalyticTemplateGetOptions
-	utils.LoadObject(in.Options, &options)
+	options := in.Options.(*flags.AnalyticTemplateGetOptions)
 
-	templates, err := r.service.GetAll()
+	res, err := r.service.GetAll()
 	if err != nil {
 		return nil, err
 	}
 
-	display := []string{"NAME"}
-	for _, ele := range templates {
+	var templates []services.AnalyticTemplate
+	for _, ele := range res {
 		if strings.HasPrefix(ele.Name, "@") && options.All {
-			display = append(display, ele.Name)
+			templates = append(templates, ele)
 		} else if !strings.HasPrefix(ele.Name, "@") {
-			display = append(display, ele.Name)
+			templates = append(templates, ele)
 		}
 	}
 
-	return NewResponse(
-		"",
-		WithTable(display),
-		WithObject(templates),
-	), nil
+	return &Response{
+		Keys:   []string{"name"},
+		Object: templates,
+	}, nil
 
 }
 
@@ -73,15 +73,17 @@ func (r *AnalyticTemplateRunner) Describe(in Request) (*Response, error) {
 		return nil, err
 	}
 
-	return NewResponse(
-		fmt.Sprintf("Name: %s", template.Name),
-		WithObject(template),
-	), nil
+	return &Response{
+		Text:   fmt.Sprintf("Name: %s", template.Name),
+		Object: template,
+	}, nil
 }
 
-//////////////////////////////////////////////////////////////////////////////
-// Writer Interface
-//
+/*
+******************************************************************************
+Writer Interface
+******************************************************************************
+*/
 
 func (r *AnalyticTemplateRunner) Create(in Request) (*Response, error) {
 	logger.Trace()
@@ -110,10 +112,10 @@ func (r *AnalyticTemplateRunner) Create(in Request) (*Response, error) {
 		return nil, err
 	}
 
-	return NewResponse(
-		fmt.Sprintf("Successfully created analytic template `%s`", name),
-		WithObject(res),
-	), nil
+	return &Response{
+		Text:   fmt.Sprintf("Successfully created analytic template `%s`", name),
+		Object: res,
+	}, nil
 }
 
 func (r *AnalyticTemplateRunner) Delete(in Request) (*Response, error) {
@@ -130,9 +132,9 @@ func (r *AnalyticTemplateRunner) Delete(in Request) (*Response, error) {
 		return nil, err
 	}
 
-	return NewResponse(
-		fmt.Sprintf("Successfully deleted analytic-template `%s`", name),
-	), nil
+	return &Response{
+		Text: fmt.Sprintf("Successfully deleted analytic-template `%s`", name),
+	}, nil
 }
 
 func (r *AnalyticTemplateRunner) Clear(in Request) (*Response, error) {
@@ -149,12 +151,16 @@ func (r *AnalyticTemplateRunner) Clear(in Request) (*Response, error) {
 		}
 	}
 
-	return NewResponse(fmt.Sprintf("Deleted %v analytic-template(s)", len(elements))), nil
+	return &Response{
+		Text: fmt.Sprintf("Deleted %v analytic-template(s)", len(elements)),
+	}, nil
 }
 
-//////////////////////////////////////////////////////////////////////////////
-// Importer Interface
-//
+/*
+******************************************************************************
+Importer Interface
+******************************************************************************
+*/
 
 func (r *AnalyticTemplateRunner) Import(in Request) (*Response, error) {
 	logger.Trace()
@@ -171,14 +177,16 @@ func (r *AnalyticTemplateRunner) Import(in Request) (*Response, error) {
 		return nil, err
 	}
 
-	return NewResponse(
-		fmt.Sprintf("Successfully imported analytic template `%s`", ct.Name),
-	), nil
+	return &Response{
+		Text: fmt.Sprintf("Successfully imported analytic template `%s`", ct.Name),
+	}, nil
 }
 
-//////////////////////////////////////////////////////////////////////////////
-// Exporter Interface
-//
+/*
+******************************************************************************
+Exporter Interface
+******************************************************************************
+*/
 
 func (r *AnalyticTemplateRunner) Export(in Request) (*Response, error) {
 	logger.Trace()
@@ -196,14 +204,16 @@ func (r *AnalyticTemplateRunner) Export(in Request) (*Response, error) {
 		return nil, err
 	}
 
-	return NewResponse(
-		fmt.Sprintf("Successfully exported analytic template `%s`", ct.Name),
-	), nil
+	return &Response{
+		Text: fmt.Sprintf("Successfully exported analytic template `%s`", ct.Name),
+	}, nil
 }
 
-//////////////////////////////////////////////////////////////////////////////
-// Copier Interface
-//
+/*
+******************************************************************************
+Copier Interface
+******************************************************************************
+*/
 
 func (r *AnalyticTemplateRunner) Copy(in Request) (*Response, error) {
 	logger.Trace()
@@ -213,9 +223,9 @@ func (r *AnalyticTemplateRunner) Copy(in Request) (*Response, error) {
 		return nil, err
 	}
 
-	return NewResponse(
-		fmt.Sprintf("Successfully copied analytic template `%s` from `%s` to `%s`", res.Name, res.From, res.To),
-	), nil
+	return &Response{
+		Text: fmt.Sprintf("Successfully copied analytic template `%s` from `%s` to `%s`", res.Name, res.From, res.To),
+	}, nil
 }
 
 func (r *AnalyticTemplateRunner) CopyFrom(profile, name string) (any, error) {
@@ -266,9 +276,11 @@ func (r *AnalyticTemplateRunner) CopyTo(profile string, in any, replace bool) (a
 	return nil, nil
 }
 
-//////////////////////////////////////////////////////////////////////////////
-// Private functions
-//
+/*
+******************************************************************************
+Private functions
+******************************************************************************
+*/
 
 func (r *AnalyticTemplateRunner) importAnalyticTemplate(in services.AnalyticTemplate, replace bool) error {
 	logger.Trace()

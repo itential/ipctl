@@ -44,25 +44,25 @@ func (r *JsonFormRunner) Get(in Request) (*Response, error) {
 	var options flags.WorkflowGetOptions
 	utils.LoadObject(in.Options, &options)
 
-	json_forms, err := r.service.GetAll()
+	res, err := r.service.GetAll()
 	if err != nil {
 		return nil, err
 	}
 
-	display := []string{"NAME"}
-	for _, ele := range json_forms {
+	var jsonforms []services.JsonForm
+
+	for _, ele := range res {
 		if strings.HasPrefix(ele.Name, "@") && options.All {
-			display = append(display, ele.Name)
+			jsonforms = append(jsonforms, ele)
 		} else if !strings.HasPrefix(ele.Name, "@") {
-			display = append(display, ele.Name)
+			jsonforms = append(jsonforms, ele)
 		}
 	}
 
-	return NewResponse(
-		"",
-		WithTable(display),
-		WithObject(json_forms),
-	), nil
+	return &Response{
+		Keys:   []string{"name"},
+		Object: jsonforms,
+	}, nil
 
 }
 
@@ -75,10 +75,10 @@ func (r *JsonFormRunner) Describe(in Request) (*Response, error) {
 		return nil, err
 	}
 
-	return NewResponse(
-		fmt.Sprintf("Name: %s (%s)", res.Name, res.Id),
-		WithObject(res),
-	), nil
+	return &Response{
+		Text:   fmt.Sprintf("Name: %s (%s)", res.Name, res.Id),
+		Object: res,
+	}, nil
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -112,10 +112,10 @@ func (r *JsonFormRunner) Create(in Request) (*Response, error) {
 		return nil, err
 	}
 
-	return NewResponse(
-		fmt.Sprintf("Successfully created jsonform `%s` (%s)", jf.Name, jf.Id),
-		WithObject(jf),
-	), nil
+	return &Response{
+		Text:   fmt.Sprintf("Successfully created jsonform `%s` (%s)", jf.Name, jf.Id),
+		Object: jf,
+	}, nil
 }
 
 // Delete implements the `delete jsonform <name>` command
@@ -146,9 +146,9 @@ func (r *JsonFormRunner) Delete(in Request) (*Response, error) {
 		return nil, err
 	}
 
-	return NewResponse(
-		fmt.Sprintf("Successfully deleted jsonform `%s`", name),
-	), nil
+	return &Response{
+		Text: fmt.Sprintf("Successfully deleted jsonform `%s`", name),
+	}, nil
 }
 
 // Clear implements the `clear jsonforms` command
@@ -170,7 +170,9 @@ func (r *JsonFormRunner) Clear(in Request) (*Response, error) {
 		return nil, err
 	}
 
-	return NewResponse(fmt.Sprintf("Deleted %v jsonform(s)", len(ids))), nil
+	return &Response{
+		Text: fmt.Sprintf("Deleted %v jsonform(s)", len(ids)),
+	}, nil
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -186,9 +188,9 @@ func (r *JsonFormRunner) Copy(in Request) (*Response, error) {
 		return nil, err
 	}
 
-	return NewResponse(
-		fmt.Sprintf("Successfully copied jsonform `%s` from `%s` to `%s`", res.Name, res.From, res.To),
-	), nil
+	return &Response{
+		Text: fmt.Sprintf("Successfully copied jsonform `%s` from `%s` to `%s`", res.Name, res.From, res.To),
+	}, nil
 }
 
 func (r *JsonFormRunner) CopyFrom(profile, name string) (any, error) {
@@ -253,10 +255,10 @@ func (r *JsonFormRunner) Import(in Request) (*Response, error) {
 		return nil, err
 	}
 
-	return NewResponse(
-		fmt.Sprintf("Successfully imported jsonform `%s` (%s)", jf.Name, jf.Id),
-		WithObject(jf),
-	), nil
+	return &Response{
+		Text:   fmt.Sprintf("Successfully imported jsonform `%s` (%s)", jf.Name, jf.Id),
+		Object: jf,
+	}, nil
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -283,9 +285,9 @@ func (r *JsonFormRunner) Export(in Request) (*Response, error) {
 		return nil, err
 	}
 
-	return NewResponse(
-		fmt.Sprintf("Successfully exported jsonform `%s`", jsonform.Name),
-	), nil
+	return &Response{
+		Text: fmt.Sprintf("Successfully exported jsonform `%s`", jsonform.Name),
+	}, nil
 }
 
 //////////////////////////////////////////////////////////////////////////////

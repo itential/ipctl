@@ -32,20 +32,13 @@ func (r *AdapterModelRunner) Get(in Request) (*Response, error) {
 		return nil, err
 	}
 
-	display := []string{"MODEL"}
-	for _, ele := range res {
-		display = append(display, ele)
-	}
-
-	return NewResponse(
-		"",
-		WithTable(display),
-		WithObject(res),
-	), nil
+	return &Response{
+		Object: res,
+	}, nil
 
 }
 
 func (r *AdapterModelRunner) Describe(in Request) (*Response, error) {
 	logger.Trace()
-	return NotImplemented(in)
+	return notImplemented(in)
 }

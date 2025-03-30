@@ -47,17 +47,10 @@ func (r *IntegrationRunner) Get(in Request) (*Response, error) {
 		return nil, err
 	}
 
-	display := []string{"NAME\tMODEL"}
-	for _, ele := range res {
-		model := strings.Replace(ele.Model, "@itential/adapter_", "", -1)
-		display = append(display, fmt.Sprintf("%s\t%s", ele.Name, model))
-	}
-
-	return NewResponse(
-		"",
-		WithTable(display),
-		WithObject(res),
-	), nil
+	return &Response{
+		Keys:   []string{"name", "model"},
+		Object: res,
+	}, nil
 
 }
 
@@ -72,10 +65,10 @@ func (r *IntegrationRunner) Describe(in Request) (*Response, error) {
 		return nil, err
 	}
 
-	return NewResponse(
-		fmt.Sprintf("Name: %s", res.Name),
-		WithObject(res),
-	), nil
+	return &Response{
+		Text:   fmt.Sprintf("Name: %s", res.Name),
+		Object: res,
+	}, nil
 }
 
 /*
@@ -111,10 +104,10 @@ func (r *IntegrationRunner) Create(in Request) (*Response, error) {
 		return nil, err
 	}
 
-	return NewResponse(
-		fmt.Sprintf("Successfully created integration `%s`", name),
-		WithObject(res),
-	), nil
+	return &Response{
+		Text:   fmt.Sprintf("Successfully created integration `%s`", name),
+		Object: res,
+	}, nil
 }
 
 // Delete implements the `delete integration <name>` command
@@ -127,9 +120,9 @@ func (r *IntegrationRunner) Delete(in Request) (*Response, error) {
 		return nil, err
 	}
 
-	return NewResponse(
-		fmt.Sprintf("Successfully deleted integration `%s`", name),
-	), nil
+	return &Response{
+		Text: fmt.Sprintf("Successfully deleted integration `%s`", name),
+	}, nil
 }
 
 // Clear implements the `clear integrations` command
@@ -147,9 +140,9 @@ func (r *IntegrationRunner) Clear(in Request) (*Response, error) {
 		}
 	}
 
-	return NewResponse(
-		fmt.Sprintf("Deleted %v integration(s)", len(elements)),
-	), nil
+	return &Response{
+		Text: fmt.Sprintf("Deleted %v integration(s)", len(elements)),
+	}, nil
 }
 
 /*
@@ -203,9 +196,9 @@ func (r *IntegrationRunner) Copy(in Request) (*Response, error) {
 		return nil, err
 	}
 
-	return NewResponse(
-		fmt.Sprintf("Successfully copied integration `%s` from `%s` to `%s`", name, common.From, common.To),
-	), nil
+	return &Response{
+		Text: fmt.Sprintf("Successfully copied integration `%s` from `%s` to `%s`", name, common.From, common.To),
+	}, nil
 }
 
 /*
@@ -231,10 +224,10 @@ func (r *IntegrationRunner) Export(in Request) (*Response, error) {
 		return nil, err
 	}
 
-	return NewResponse(
-		fmt.Sprintf("Successfully exported integration `%s`", res.Name),
-		WithObject(res),
-	), nil
+	return &Response{
+		Text:   fmt.Sprintf("Successfully exported integration `%s`", res.Name),
+		Object: res,
+	}, nil
 }
 
 /*
@@ -272,8 +265,8 @@ func (r *IntegrationRunner) Import(in Request) (*Response, error) {
 		return nil, err
 	}
 
-	return NewResponse(
-		fmt.Sprintf("Successfully imported integration `%s`", res.Name),
-		WithObject(res),
-	), nil
+	return &Response{
+		Text:   fmt.Sprintf("Successfully imported integration `%s`", res.Name),
+		Object: res,
+	}, nil
 }

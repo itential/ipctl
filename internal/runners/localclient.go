@@ -32,8 +32,8 @@ func (r *LocalClientRunner) ShowConfig(in Request) (*Response, error) {
 		return nil, err
 	}
 
-	return NewResponse(
-		string(b),
-		WithObject(r.client),
-	), nil
+	return &Response{
+		Text:   string(b),
+		Object: r.client,
+	}, nil
 }

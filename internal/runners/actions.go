@@ -29,7 +29,5 @@ func (r *ActionRunner) Render(in Request) (*Response, error) {
 		Options:   map[string]interface{}{},
 	})
 
-	return NewResponse(
-		"rendered",
-	), nil
+	return notImplemented(in)
 }

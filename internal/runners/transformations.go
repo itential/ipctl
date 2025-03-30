@@ -38,25 +38,25 @@ func (r *TransformationRunner) Get(in Request) (*Response, error) {
 
 	options := in.Options.(*flags.TransformationGetOptions)
 
-	transformations, err := r.service.GetAll()
+	res, err := r.service.GetAll()
 	if err != nil {
 		return nil, err
 	}
 
-	display := []string{"NAME\tDESCRIPTION"}
-	for _, ele := range transformations {
+	var transformations []services.Transformation
+
+	for _, ele := range res {
 		if strings.HasPrefix(ele.Name, "@") && options.All {
-			display = append(display, fmt.Sprintf("%s\t%s", ele.Name, ele.Description))
+			transformations = append(transformations, ele)
 		} else if !strings.HasPrefix(ele.Name, "@") {
-			display = append(display, fmt.Sprintf("%s\t%s", ele.Name, ele.Description))
+			transformations = append(transformations, ele)
 		}
 	}
 
-	return NewResponse(
-		"",
-		WithTable(display),
-		WithObject(transformations),
-	), nil
+	return &Response{
+		Keys:   []string{"name", "description"},
+		Object: transformations,
+	}, nil
 
 }
 
@@ -78,10 +78,10 @@ func (r *TransformationRunner) Describe(in Request) (*Response, error) {
 		fmt.Sprintf("Updated: %s", res.LastUpdated),
 	}
 
-	return NewResponse(
-		strings.Join(output, "\n"),
-		WithObject(res),
-	), nil
+	return &Response{
+		Text:   strings.Join(output, "\n"),
+		Object: res,
+	}, nil
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -103,10 +103,10 @@ func (r *TransformationRunner) Create(in Request) (*Response, error) {
 		return nil, err
 	}
 
-	return NewResponse(
-		fmt.Sprintf("Successfully created transformation `%s` (%s)", res.Name, res.Id),
-		WithObject(res),
-	), nil
+	return &Response{
+		Text:   fmt.Sprintf("Successfully created transformation `%s` (%s)", res.Name, res.Id),
+		Object: res,
+	}, nil
 }
 
 // Delete is the implementation of the command `delete transformation <name>`
@@ -124,9 +124,9 @@ func (r *TransformationRunner) Delete(in Request) (*Response, error) {
 		return nil, err
 	}
 
-	return NewResponse(
-		fmt.Sprintf("Successfully deleted transformation `%s` (%s)", res.Name, res.Id),
-	), nil
+	return &Response{
+		Text: fmt.Sprintf("Successfully deleted transformation `%s` (%s)", res.Name, res.Id),
+	}, nil
 }
 
 // Clear is the implementation of the command `clear transformations`
@@ -145,9 +145,9 @@ func (r *TransformationRunner) Clear(in Request) (*Response, error) {
 		}
 	}
 
-	return NewResponse(
-		fmt.Sprintf("Deleted %v transformation(s)", len(transformations)),
-	), nil
+	return &Response{
+		Text: fmt.Sprintf("Deleted %v transformation(s)", len(transformations)),
+	}, nil
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -162,9 +162,9 @@ func (r *TransformationRunner) Copy(in Request) (*Response, error) {
 		return nil, err
 	}
 
-	return NewResponse(
-		fmt.Sprintf("Successfully copied transformation `%s` from `%s` to `%s`", res.Name, res.From, res.To),
-	), nil
+	return &Response{
+		Text: fmt.Sprintf("Successfully copied transformation `%s` from `%s` to `%s`", res.Name, res.From, res.To),
+	}, nil
 
 }
 
@@ -236,9 +236,9 @@ func (r *TransformationRunner) Import(in Request) (*Response, error) {
 		return nil, err
 	}
 
-	return NewResponse(
-		fmt.Sprintf("Successfully imported transformation `%s` (%s)", res.Name, res.Id),
-	), nil
+	return &Response{
+		Text: fmt.Sprintf("Successfully imported transformation `%s` (%s)", res.Name, res.Id),
+	}, nil
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -261,9 +261,9 @@ func (r *TransformationRunner) Export(in Request) (*Response, error) {
 		return nil, err
 	}
 
-	return NewResponse(
-		fmt.Sprintf("Successfully exported transformation `%s` (%s)", res.Name, res.Id),
-	), nil
+	return &Response{
+		Text: fmt.Sprintf("Successfully exported transformation `%s` (%s)", res.Name, res.Id),
+	}, nil
 }
 
 //////////////////////////////////////////////////////////////////////////////

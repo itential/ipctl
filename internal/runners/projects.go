@@ -51,16 +51,10 @@ func (r *ProjectRunner) Get(in Request) (*Response, error) {
 		return nil, err
 	}
 
-	display := []string{"NAME\tDESCRIPTION"}
-	for _, ele := range projects {
-		display = append(display, fmt.Sprintf("%s\t%s", ele.Name, ele.Description))
-	}
-
-	return NewResponse(
-		"",
-		WithTable(display),
-		WithObject(projects),
-	), nil
+	return &Response{
+		Keys:   []string{"name", "description"},
+		Object: projects,
+	}, nil
 
 }
 
@@ -85,10 +79,10 @@ func (r *ProjectRunner) Describe(in Request) (*Response, error) {
 		fmt.Sprintf("Updated: %s, by: %s", res.LastUpdated, updatedBy),
 	}
 
-	return NewResponse(
-		strings.Join(output, "\n"),
-		WithObject(res),
-	), nil
+	return &Response{
+		Text:   strings.Join(output, "\n"),
+		Object: res,
+	}, nil
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -111,10 +105,10 @@ func (r *ProjectRunner) Create(in Request) (*Response, error) {
 		return nil, err
 	}
 
-	return NewResponse(
-		fmt.Sprintf("Successfully created project `%s` (%s)", project.Name, project.Id),
-		WithObject(project),
-	), nil
+	return &Response{
+		Text:   fmt.Sprintf("Successfully created project `%s` (%s)", project.Name, project.Id),
+		Object: project,
+	}, nil
 }
 
 // Delete is the implementation of the command `delete project <name>`
@@ -130,9 +124,9 @@ func (r *ProjectRunner) Delete(in Request) (*Response, error) {
 		return nil, err
 	}
 
-	return NewResponse(
-		fmt.Sprintf("Successfully deleted project `%s` (%s)", project.Name, project.Id),
-	), nil
+	return &Response{
+		Text: fmt.Sprintf("Successfully deleted project `%s` (%s)", project.Name, project.Id),
+	}, nil
 }
 
 // Clear is the implementation of the command `clear projects`
@@ -151,9 +145,9 @@ func (r *ProjectRunner) Clear(in Request) (*Response, error) {
 		}
 	}
 
-	return NewResponse(
-		fmt.Sprintf("Deleted %v project(s)", len(projects)),
-	), nil
+	return &Response{
+		Text: fmt.Sprintf("Deleted %v project(s)", len(projects)),
+	}, nil
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -232,9 +226,9 @@ func (r *ProjectRunner) Copy(in Request) (*Response, error) {
 		}
 	}
 
-	return NewResponse(
-		fmt.Sprintf("Successfully copied project `%s` from `%s` to `%s`", res.Name, res.From, res.To),
-	), nil
+	return &Response{
+		Text: fmt.Sprintf("Successfully copied project `%s` from `%s` to `%s`", res.Name, res.From, res.To),
+	}, nil
 }
 
 func (r *ProjectRunner) CopyFrom(profile, name string) (any, error) {
@@ -323,9 +317,9 @@ func (r *ProjectRunner) Import(in Request) (*Response, error) {
 		return nil, err
 	}
 
-	return NewResponse(
-		fmt.Sprintf("Successfully imported project `%s` (%s)", project.Name, project.Id),
-	), nil
+	return &Response{
+		Text: fmt.Sprintf("Successfully imported project `%s` (%s)", project.Name, project.Id),
+	}, nil
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -408,9 +402,9 @@ func (r *ProjectRunner) Export(in Request) (*Response, error) {
 		}
 	}
 
-	return NewResponse(
-		fmt.Sprintf("Successfully exported project `%s`", project.Name),
-	), nil
+	return &Response{
+		Text: fmt.Sprintf("Successfully exported project `%s`", project.Name),
+	}, nil
 }
 
 //////////////////////////////////////////////////////////////////////////////

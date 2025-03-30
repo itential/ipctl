@@ -38,17 +38,10 @@ func (r *TagRunner) Get(in Request) (*Response, error) {
 		return nil, err
 	}
 
-	display := []string{"NAME\tDESCRIPTION"}
-	for _, ele := range tags {
-		lines := []string{ele.Name, ele.Description}
-		display = append(display, strings.Join(lines, "\t"))
-	}
-
-	return NewResponse(
-		"",
-		WithTable(display),
-		WithObject(tags),
-	), nil
+	return &Response{
+		Keys:   []string{"name", "description"},
+		Object: tags,
+	}, nil
 }
 
 // Describe implements the `describe tag <name>` command
@@ -62,10 +55,9 @@ func (r *TagRunner) Describe(in Request) (*Response, error) {
 		return nil, err
 	}
 
-	return NewResponse(
-		"",
-		WithObject(tag),
-	), nil
+	return &Response{
+		Object: tag,
+	}, nil
 }
 
 func (r *TagRunner) Create(in Request) (*Response, error) {
@@ -86,9 +78,9 @@ func (r *TagRunner) Create(in Request) (*Response, error) {
 		}
 	}
 
-	return NewResponse(
-		fmt.Sprintf("Successfully created new tag `%s`", name),
-	), nil
+	return &Response{
+		Text: fmt.Sprintf("Successfully created new tag `%s`", name),
+	}, nil
 }
 
 func (r *TagRunner) Delete(in Request) (*Response, error) {
@@ -105,9 +97,9 @@ func (r *TagRunner) Delete(in Request) (*Response, error) {
 		return nil, err
 	}
 
-	return NewResponse(
-		fmt.Sprintf("Successfully deleted tag `%s`", name),
-	), nil
+	return &Response{
+		Text: fmt.Sprintf("Successfully deleted tag `%s`", name),
+	}, nil
 }
 
 func (r *TagRunner) Clear(in Request) (*Response, error) {
@@ -124,9 +116,9 @@ func (r *TagRunner) Clear(in Request) (*Response, error) {
 		}
 	}
 
-	return NewResponse(
-		fmt.Sprintf("Successfully deleted %v tag(s)", len(tags)),
-	), nil
+	return &Response{
+		Text: fmt.Sprintf("Successfully deleted %v tag(s)", len(tags)),
+	}, nil
 }
 
 func (r *TagRunner) Copy(in Request) (*Response, error) {
@@ -137,9 +129,9 @@ func (r *TagRunner) Copy(in Request) (*Response, error) {
 		return nil, err
 	}
 
-	return NewResponse(
-		fmt.Sprintf("Successfully copied tag `%s` from `%s` to `%s`", res.Name, res.From, res.To),
-	), nil
+	return &Response{
+		Text: fmt.Sprintf("Successfully copied tag `%s` from `%s` to `%s`", res.Name, res.From, res.To),
+	}, nil
 
 }
 
