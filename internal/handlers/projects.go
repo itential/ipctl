@@ -7,13 +7,11 @@ package handlers
 import (
 	"github.com/itential/ipctl/internal/flags"
 	"github.com/itential/ipctl/internal/runners"
-	"github.com/itential/ipctl/pkg/client"
-	"github.com/itential/ipctl/pkg/config"
 )
 
-func NewProjectHandler(iapClient client.Client, cfg *config.Config, desc Descriptors) AssetHandler {
+func NewProjectHandler(r Runtime, desc Descriptors) AssetHandler {
 	return NewAssetHandler(
-		runners.NewProjectRunner(iapClient, cfg),
+		runners.NewProjectRunner(r.Client, r.Config),
 		desc[projectsDescriptor],
 		&AssetHandlerFlags{
 			Import: &flags.ProjectImportOptions{},

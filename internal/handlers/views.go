@@ -6,13 +6,11 @@ package handlers
 
 import (
 	"github.com/itential/ipctl/internal/runners"
-	"github.com/itential/ipctl/pkg/client"
-	"github.com/itential/ipctl/pkg/config"
 )
 
-func NewViewHandler(c client.Client, cfg *config.Config, desc Descriptors) AssetHandler {
+func NewViewHandler(r Runtime, desc Descriptors) AssetHandler {
 	return NewAssetHandler(
-		runners.NewViewRunner(c, cfg),
+		runners.NewViewRunner(r.Client, r.Config),
 		desc[viewsDescriptor],
 		nil,
 	)

@@ -6,13 +6,11 @@ package handlers
 
 import (
 	"github.com/itential/ipctl/internal/runners"
-	"github.com/itential/ipctl/pkg/client"
-	"github.com/itential/ipctl/pkg/config"
 )
 
-func NewRoleTypesHandler(c client.Client, cfg *config.Config, desc Descriptors) AssetHandler {
+func NewRoleTypesHandler(r Runtime, desc Descriptors) AssetHandler {
 	return NewAssetHandler(
-		runners.NewRoleTypeRunner(c, cfg),
+		runners.NewRoleTypeRunner(r.Client, r.Config),
 		desc[roleTypesDescriptor],
 		&AssetHandlerFlags{},
 	)

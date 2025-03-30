@@ -26,13 +26,13 @@ const description = `Manage Itential Platform
   Find more information at: https://docs.itential.com
 `
 
-func loadCommands(cmd *cobra.Command, h handlers.Handler, cfg *config.Config) {
-	addCommandGroup(cmd, h, "Asset Commands:", assetCommands)
-	if cfg.FeaturesDatasetsEnabled {
-		addCommandGroup(cmd, h, "Dataset Commands:", datasetCommands)
+func loadCommands(cmd *cobra.Command, runtime handlers.Runtime) {
+	addCommandGroup(cmd, runtime, "Asset Commands:", assetCommands)
+	if runtime.Config.FeaturesDatasetsEnabled {
+		addCommandGroup(cmd, runtime, "Dataset Commands:", datasetCommands)
 	}
-	addCommandGroup(cmd, h, "Platform Commands:", platformCommands)
-	addCommandGroup(cmd, h, "Plugin Commands:", pluginCommands)
+	addCommandGroup(cmd, runtime, "Platform Commands:", platformCommands)
+	addCommandGroup(cmd, runtime, "Plugin Commands:", pluginCommands)
 }
 
 func versionCommand() *cobra.Command {
@@ -50,7 +50,7 @@ func versionCommand() *cobra.Command {
 	return cmd
 }
 
-func Do(iapClient *client.IapClient, cfg *config.Config) *cobra.Command {
+func Do(c client.Client, cfg *config.Config) *cobra.Command {
 	var cmd = &cobra.Command{
 		Use:   "ipctl",
 		Short: strings.Split(description, "\n")[0],
@@ -60,16 +60,16 @@ func Do(iapClient *client.IapClient, cfg *config.Config) *cobra.Command {
 	cmd.CompletionOptions.HiddenDefaultCmd = true
 	cmd.SetHelpCommand(&cobra.Command{Hidden: true})
 
-	h := handlers.NewHandler(iapClient, cfg)
+	runtime := handlers.NewRuntime(c, cfg)
 
-	cmd.PersistentFlags().BoolVar(&h.Runtime.Verbose, "verbose", h.Runtime.Verbose, "Enable verbose output")
-	cmd.PersistentFlags().StringVar(&h.Runtime.Config.TerminalDefaultOutput, "output", h.Runtime.Config.TerminalDefaultOutput, "Output format")
+	cmd.PersistentFlags().BoolVar(&runtime.Verbose, "verbose", runtime.Verbose, "Enable verbose output")
+	cmd.PersistentFlags().StringVar(&runtime.Config.TerminalDefaultOutput, "output", runtime.Config.TerminalDefaultOutput, "Output format")
 
 	// Note: Values are read during /pkg/config's initialization
 	cmd.PersistentFlags().String("config", "", "Path to the configuration file")
 	cmd.PersistentFlags().String("profile", "", "Connection profile to use")
 
-	loadCommands(cmd, h, cfg)
+	loadCommands(cmd, runtime)
 
 	cmd.AddCommand(versionCommand())
 

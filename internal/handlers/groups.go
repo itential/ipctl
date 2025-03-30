@@ -7,13 +7,11 @@ package handlers
 import (
 	"github.com/itential/ipctl/internal/flags"
 	"github.com/itential/ipctl/internal/runners"
-	"github.com/itential/ipctl/pkg/client"
-	"github.com/itential/ipctl/pkg/config"
 )
 
-func NewGroupHandler(c client.Client, cfg *config.Config, desc Descriptors) AssetHandler {
+func NewGroupHandler(r Runtime, desc Descriptors) AssetHandler {
 	return NewAssetHandler(
-		runners.NewGroupRunner(c, cfg),
+		runners.NewGroupRunner(r.Client, r.Config),
 		desc[groupsDescriptor],
 		&AssetHandlerFlags{
 			Create: &flags.GroupCreateOptions{},

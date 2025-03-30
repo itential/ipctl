@@ -7,13 +7,11 @@ package handlers
 import (
 	"github.com/itential/ipctl/internal/flags"
 	"github.com/itential/ipctl/internal/runners"
-	"github.com/itential/ipctl/pkg/client"
-	"github.com/itential/ipctl/pkg/config"
 )
 
-func NewModelHandler(c client.Client, cfg *config.Config, desc Descriptors) AssetHandler {
+func NewModelHandler(r Runtime, desc Descriptors) AssetHandler {
 	return NewAssetHandler(
-		runners.NewModelRunner(c, cfg),
+		runners.NewModelRunner(r.Client, r.Config),
 		desc[modelsDescriptor],
 		&AssetHandlerFlags{
 			Create: &flags.ModelCreateOptions{},
