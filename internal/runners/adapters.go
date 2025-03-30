@@ -48,17 +48,10 @@ func (r *AdapterRunner) Get(in Request) (*Response, error) {
 		return nil, err
 	}
 
-	var display = []string{"NAME\tMODEL"}
-
-	for _, ele := range adapters {
-		display = append(display, fmt.Sprintf("%s\t%s", ele.Name, ele.Model))
-	}
-
-	return NewResponse(
-		"",
-		WithTable(display),
-		WithObject(adapters),
-	), nil
+	return &Response{
+		Keys:   []string{"name", "model"},
+		Object: adapters,
+	}, nil
 }
 
 // Describe is the implementation of the `describe adapters` command
@@ -75,10 +68,10 @@ func (r *AdapterRunner) Describe(in Request) (*Response, error) {
 		logger.Fatal(err, "failed to marshal data")
 	}
 
-	return NewResponse(
-		string(b),
-		WithObject(res),
-	), nil
+	return &Response{
+		Text:   string(b),
+		Object: res,
+	}, nil
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -148,9 +141,9 @@ func (r *AdapterRunner) Create(in Request) (*Response, error) {
 		return nil, err
 	}
 
-	return NewResponse(
-		fmt.Sprintf("Successfully created adapter `%s`", res.Name),
-	), nil
+	return &Response{
+		Text: fmt.Sprintf("Successfully created adapter `%s`", res.Name),
+	}, nil
 }
 
 // Delete is the implementation of `delete adatper <name>`
@@ -161,13 +154,13 @@ func (r *AdapterRunner) Delete(in Request) (*Response, error) {
 		return nil, err
 	}
 
-	return NewResponse(
-		fmt.Sprintf("Successfully deleted adapter `%s`", in.Args[0]),
-	), nil
+	return &Response{
+		Text: fmt.Sprintf("Successfully deleted adapter `%s`", in.Args[0]),
+	}, nil
 }
 
 func (r *AdapterRunner) Clear(in Request) (*Response, error) {
-	return NotImplemented(in)
+	return notImplemented(in)
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -195,9 +188,9 @@ func (r *AdapterRunner) Edit(in Request) (*Response, error) {
 		return nil, err
 	}
 
-	return NewResponse(
-		fmt.Sprintf("Successfully updated adapter `%s`", name),
-	), nil
+	return &Response{
+		Text: fmt.Sprintf("Successfully updated adapter `%s`", name),
+	}, nil
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -212,9 +205,9 @@ func (r *AdapterRunner) Copy(in Request) (*Response, error) {
 		return nil, err
 	}
 
-	return NewResponse(
-		fmt.Sprintf("Successfully copied adapter `%s` from `%s` to `%s`", res.Name, res.From, res.To),
-	), nil
+	return &Response{
+		Text: fmt.Sprintf("Successfully copied adapter `%s` from `%s` to `%s`", res.Name, res.From, res.To),
+	}, nil
 }
 
 func (r *AdapterRunner) CopyFrom(profile, name string) (any, error) {
@@ -307,9 +300,9 @@ func (r *AdapterRunner) Import(in Request) (*Response, error) {
 		return nil, err
 	}
 
-	return NewResponse(
-		fmt.Sprintf("Successfully imported adapter `%s`", adapter.Name),
-	), nil
+	return &Response{
+		Text: fmt.Sprintf("Successfully imported adapter `%s`", adapter.Name),
+	}, nil
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -333,9 +326,9 @@ func (r *AdapterRunner) Export(in Request) (*Response, error) {
 		return nil, err
 	}
 
-	return NewResponse(
-		fmt.Sprintf("Successfully exported adapter `%s`", adapter.Name),
-	), nil
+	return &Response{
+		Text: fmt.Sprintf("Successfully exported adapter `%s`", adapter.Name),
+	}, nil
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -359,11 +352,10 @@ func (r *AdapterRunner) Inspect(in Request) (*Response, error) {
 		))
 	}
 
-	return NewResponse(
-		"",
-		WithTable(display),
-		WithObject(adapters),
-	), nil
+	return &Response{
+		Keys:   []string{"name", "status", "version"},
+		Object: adapters,
+	}, nil
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -379,9 +371,9 @@ func (r *AdapterRunner) Start(in Request) (*Response, error) {
 		return nil, err
 	}
 
-	return NewResponse(
-		fmt.Sprintf("Successfully started adapter `%s`", name),
-	), nil
+	return &Response{
+		Text: fmt.Sprintf("Successfully started adapter `%s`", name),
+	}, nil
 }
 
 func (r *AdapterRunner) Stop(in Request) (*Response, error) {
@@ -393,9 +385,9 @@ func (r *AdapterRunner) Stop(in Request) (*Response, error) {
 		return nil, err
 	}
 
-	return NewResponse(
-		fmt.Sprintf("Successfully stopped adapter `%s`", name),
-	), nil
+	return &Response{
+		Text: fmt.Sprintf("Successfully stopped adapter `%s`", name),
+	}, nil
 }
 
 func (r *AdapterRunner) Restart(in Request) (*Response, error) {
@@ -407,9 +399,9 @@ func (r *AdapterRunner) Restart(in Request) (*Response, error) {
 		return nil, err
 	}
 
-	return NewResponse(
-		fmt.Sprintf("Successfully restarted adapter `%s`", name),
-	), nil
+	return &Response{
+		Text: fmt.Sprintf("Successfully restarted adapter `%s`", name),
+	}, nil
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -435,9 +427,9 @@ func (r *AdapterRunner) Dump(in Request) (*Response, error) {
 		return nil, err
 	}
 
-	return NewResponse(
-		fmt.Sprintf("Dumped %v adapter(s)", len(assets)),
-	), nil
+	return &Response{
+		Text: fmt.Sprintf("Dumped %v adapter(s)", len(assets)),
+	}, nil
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -482,9 +474,9 @@ func (r *AdapterRunner) Load(in Request) (*Response, error) {
 		"\nSuccessfully loaded %v and skipped %v files from `%s`", loaded, skipped, in.Args[0],
 	))
 
-	return NewResponse(
-		strings.Join(output, "\n"),
-	), nil
+	return &Response{
+		Text: strings.Join(output, "\n"),
+	}, nil
 }
 
 //////////////////////////////////////////////////////////////////////////////

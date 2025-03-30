@@ -59,8 +59,7 @@ func (r *ServerRunner) Inspect(in Request) (*Response, error) {
 		"adapters":    adapter,
 	}
 
-	return NewResponse(
-		"",
-		WithObject(res),
-	), nil
+	return &Response{
+		Object: res,
+	}, nil
 }

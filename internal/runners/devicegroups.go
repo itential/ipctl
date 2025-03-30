@@ -48,11 +48,10 @@ func (r *DeviceGroupRunner) Get(in Request) (*Response, error) {
 		display = append(display, strings.Join(lines, "\t"))
 	}
 
-	return NewResponse(
-		"",
-		WithTable(display),
-		WithObject(devices),
-	), nil
+	return &Response{
+		Keys:   []string{"name", "description"},
+		Object: devices,
+	}, nil
 
 }
 
@@ -67,10 +66,10 @@ func (r *DeviceGroupRunner) Describe(in Request) (*Response, error) {
 		return nil, err
 	}
 
-	return NewResponse(
-		fmt.Sprintf("Name: %s", res.Name),
-		WithObject(res),
-	), nil
+	return &Response{
+		Text:   fmt.Sprintf("Name: %s", res.Name),
+		Object: res,
+	}, nil
 }
 
 /*
@@ -92,10 +91,10 @@ func (r *DeviceGroupRunner) Create(in Request) (*Response, error) {
 		return nil, err
 	}
 
-	return NewResponse(
-		fmt.Sprintf("Successfully created new device-group `%s` (%s)", res.Name, res.Id),
-		WithObject(res),
-	), nil
+	return &Response{
+		Text:   fmt.Sprintf("Successfully created new device-group `%s` (%s)", res.Name, res.Id),
+		Object: res,
+	}, nil
 }
 
 // Delete implements the `delete device-group ...` command
@@ -113,10 +112,10 @@ func (r *DeviceGroupRunner) Delete(in Request) (*Response, error) {
 		return nil, err
 	}
 
-	return NewResponse(
-		fmt.Sprintf("Successfully deleted device-group `%s` (%s)", deviceGroup.Name, deviceGroup.Id),
-		WithObject(deviceGroup),
-	), nil
+	return &Response{
+		Text:   fmt.Sprintf("Successfully deleted device-group `%s` (%s)", deviceGroup.Name, deviceGroup.Id),
+		Object: deviceGroup,
+	}, nil
 }
 
 // Clear implements the `clear device-group ...` command
@@ -134,7 +133,7 @@ func (r *DeviceGroupRunner) Clear(in Request) (*Response, error) {
 		}
 	}
 
-	return NewResponse(
-		fmt.Sprintf("Deleted %v device-groups", len(groups)),
-	), nil
+	return &Response{
+		Text: fmt.Sprintf("Deleted %v device-groups", len(groups)),
+	}, nil
 }

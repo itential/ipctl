@@ -56,11 +56,10 @@ func (r *AutomationRunner) Get(in Request) (*Response, error) {
 		display = append(display, fmt.Sprintf("%s\t%s", ele.Name, desc))
 	}
 
-	return NewResponse(
-		"",
-		WithTable(display),
-		WithObject(automations),
-	), nil
+	return &Response{
+		Keys:   []string{"name", "description"},
+		Object: automations,
+	}, nil
 }
 
 func (r *AutomationRunner) Describe(in Request) (*Response, error) {
@@ -81,7 +80,7 @@ func (r *AutomationRunner) Describe(in Request) (*Response, error) {
 	var triggers []string
 
 	for _, ele := range res.Triggers {
-		m, err := ToMap(ele)
+		m, err := toMap(ele)
 		if err != nil {
 			return nil, err
 		}
@@ -110,10 +109,10 @@ func (r *AutomationRunner) Describe(in Request) (*Response, error) {
 		fmt.Sprintf("Updated: %s, By: %s", res.LastUpdated, res.LastUpdatedBy),
 	}
 
-	return NewResponse(
-		strings.Join(output, "\n"),
-		WithObject(res),
-	), nil
+	return &Response{
+		Text:   strings.Join(output, "\n"),
+		Object: res,
+	}, nil
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -147,10 +146,10 @@ func (r *AutomationRunner) Create(in Request) (*Response, error) {
 		return nil, err
 	}
 
-	return NewResponse(
-		fmt.Sprintf("Successfully created automation `%s`", res.Name),
-		WithObject(res),
-	), nil
+	return &Response{
+		Text:   fmt.Sprintf("Successfully created automation `%s`", res.Name),
+		Object: res,
+	}, nil
 }
 
 func (r *AutomationRunner) Delete(in Request) (*Response, error) {
@@ -178,9 +177,9 @@ func (r *AutomationRunner) Delete(in Request) (*Response, error) {
 		}
 	}
 
-	return NewResponse(
-		fmt.Sprintf("Successfully deleted automation `%s`", name),
-	), nil
+	return &Response{
+		Text: fmt.Sprintf("Successfully deleted automation `%s`", name),
+	}, nil
 }
 
 // Clear implements the `clear automations` command
@@ -198,9 +197,9 @@ func (r *AutomationRunner) Clear(in Request) (*Response, error) {
 		}
 	}
 
-	return NewResponse(
-		fmt.Sprintf("Deleted %v automations(s)", len(automations)),
-	), nil
+	return &Response{
+		Text: fmt.Sprintf("Deleted %v automations(s)", len(automations)),
+	}, nil
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -215,9 +214,9 @@ func (r *AutomationRunner) Copy(in Request) (*Response, error) {
 		return nil, err
 	}
 
-	return NewResponse(
-		fmt.Sprintf("Successfully copied automation `%s` from `%s` to `%s`", res.Name, res.From, res.To),
-	), nil
+	return &Response{
+		Text: fmt.Sprintf("Successfully copied automation `%s` from `%s` to `%s`", res.Name, res.From, res.To),
+	}, nil
 }
 
 func (r *AutomationRunner) CopyFrom(profile, name string) (any, error) {
@@ -293,10 +292,10 @@ func (r *AutomationRunner) Import(in Request) (*Response, error) {
 		return nil, err
 	}
 
-	return NewResponse(
-		fmt.Sprintf("Successfully imported automation `%s` with %v trigger(s)", res.Name, len(automation.Triggers)),
-		WithObject(res),
-	), nil
+	return &Response{
+		Text:   fmt.Sprintf("Successfully imported automation `%s` with %v trigger(s)", res.Name, len(automation.Triggers)),
+		Object: res,
+	}, nil
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -325,9 +324,9 @@ func (r *AutomationRunner) Export(in Request) (*Response, error) {
 		return nil, err
 	}
 
-	return NewResponse(
-		fmt.Sprintf("Successfully exported automation `%s`", name),
-	), nil
+	return &Response{
+		Text: fmt.Sprintf("Successfully exported automation `%s`", name),
+	}, nil
 
 }
 
@@ -360,9 +359,9 @@ func (r *AutomationRunner) Dump(in Request) (*Response, error) {
 		return nil, err
 	}
 
-	return NewResponse(
-		fmt.Sprintf("Dumped %v automation(s)", len(assets)),
-	), nil
+	return &Response{
+		Text: fmt.Sprintf("Dumped %v automation(s)", len(assets)),
+	}, nil
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -408,9 +407,9 @@ func (r *AutomationRunner) Load(in Request) (*Response, error) {
 		"\nSuccessfully loaded %v and skipped %v files from `%s`", loaded, skipped, in.Args[0],
 	))
 
-	return NewResponse(
-		strings.Join(output, "\n"),
-	), nil
+	return &Response{
+		Text: strings.Join(output, "\n"),
+	}, nil
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -471,7 +470,7 @@ func (r *AutomationRunner) formatImportErrorMessage(e error) string {
 func (r *AutomationRunner) updateTriggers(in services.Automation) ([]services.Trigger, error) {
 	logger.Trace()
 
-	data, err := ToMap(in)
+	data, err := toMap(in)
 	if err != nil {
 		return nil, err
 	}

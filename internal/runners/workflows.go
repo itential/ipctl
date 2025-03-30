@@ -41,25 +41,25 @@ func (r *WorkflowRunner) Get(in Request) (*Response, error) {
 	var options flags.WorkflowGetOptions
 	utils.LoadObject(in.Options, &options)
 
-	workflows, err := r.service.GetAll()
+	res, err := r.service.GetAll()
 	if err != nil {
 		return nil, err
 	}
 
-	display := []string{"NAME\tDESCRIPTION"}
-	for _, ele := range workflows {
+	var workflows []services.Workflow
+
+	for _, ele := range res {
 		if strings.HasPrefix(ele.Name, "@") && options.All {
-			display = append(display, fmt.Sprintf("%s\t%s", ele.Name, ele.Description))
+			workflows = append(workflows, ele)
 		} else if !strings.HasPrefix(ele.Name, "@") {
-			display = append(display, fmt.Sprintf("%s\t%s", ele.Name, ele.Description))
+			workflows = append(workflows, ele)
 		}
 	}
 
-	return NewResponse(
-		"",
-		WithTable(display),
-		WithObject(workflows),
-	), nil
+	return &Response{
+		Keys:   []string{"name", "description"},
+		Object: workflows,
+	}, nil
 
 }
 
@@ -89,10 +89,10 @@ func (r *WorkflowRunner) Describe(in Request) (*Response, error) {
 		fmt.Sprintf("Updated: %s, By: %s", res.LastUpdated, updatedBy),
 	}
 
-	return NewResponse(
-		strings.Join(output, "\n"),
-		WithObject(res),
-	), nil
+	return &Response{
+		Text:   strings.Join(output, "\n"),
+		Object: res,
+	}, nil
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -110,10 +110,10 @@ func (r *WorkflowRunner) Create(in Request) (*Response, error) {
 		return nil, err
 	}
 
-	return NewResponse(
-		fmt.Sprintf("Successfully created workflow `%s` (%s)", name, wf.Id),
-		WithObject(wf),
-	), nil
+	return &Response{
+		Text:   fmt.Sprintf("Successfully created workflow `%s` (%s)", name, wf.Id),
+		Object: wf,
+	}, nil
 }
 
 // Delete is the implementation of the `delete workflow ...` command
@@ -124,9 +124,9 @@ func (r *WorkflowRunner) Delete(in Request) (*Response, error) {
 		return nil, err
 	}
 
-	return NewResponse(
-		fmt.Sprintf("Successfully deleted workflow `%s`", in.Args[0]),
-	), nil
+	return &Response{
+		Text: fmt.Sprintf("Successfully deleted workflow `%s`", in.Args[0]),
+	}, nil
 }
 
 // Clear is the implementation of the `clear workflows` command
@@ -145,9 +145,9 @@ func (r *WorkflowRunner) Clear(in Request) (*Response, error) {
 		cnt++
 	}
 
-	return NewResponse(
-		fmt.Sprintf("Deleted %v workflow(s)", cnt),
-	), nil
+	return &Response{
+		Text: fmt.Sprintf("Deleted %v workflow(s)", cnt),
+	}, nil
 }
 
 func (r *WorkflowRunner) Edit(in Request) (*Response, error) {
@@ -170,9 +170,9 @@ func (r *WorkflowRunner) Edit(in Request) (*Response, error) {
 		return nil, err
 	}
 
-	return NewResponse(
-		fmt.Sprintf("Successfully updated workflow `%s`", name),
-	), nil
+	return &Response{
+		Text: fmt.Sprintf("Successfully updated workflow `%s`", name),
+	}, nil
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -188,9 +188,9 @@ func (r *WorkflowRunner) Copy(in Request) (*Response, error) {
 		return nil, err
 	}
 
-	return NewResponse(
-		fmt.Sprintf("Successfully copied workflow `%s` from `%s` to `%s`", res.Name, res.From, res.To),
-	), nil
+	return &Response{
+		Text: fmt.Sprintf("Successfully copied workflow `%s` from `%s` to `%s`", res.Name, res.From, res.To),
+	}, nil
 }
 
 func (r *WorkflowRunner) CopyFrom(profile, name string) (any, error) {
@@ -262,9 +262,9 @@ func (r *WorkflowRunner) Import(in Request) (*Response, error) {
 		return nil, err
 	}
 
-	return NewResponse(
-		fmt.Sprintf("Successfully imported workflow `%s`", workflow.Name),
-	), nil
+	return &Response{
+		Text: fmt.Sprintf("Successfully imported workflow `%s`", workflow.Name),
+	}, nil
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -288,10 +288,10 @@ func (r *WorkflowRunner) Export(in Request) (*Response, error) {
 		return nil, err
 	}
 
-	return NewResponse(
-		fmt.Sprintf("Successfully exported workflow `%s`", workflow.Name),
-		WithObject(workflow),
-	), nil
+	return &Response{
+		Text:   fmt.Sprintf("Successfully exported workflow `%s`", workflow.Name),
+		Object: workflow,
+	}, nil
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -320,9 +320,9 @@ func (r *WorkflowRunner) Dump(in Request) (*Response, error) {
 		return nil, err
 	}
 
-	return NewResponse(
-		fmt.Sprintf("Dumped %v workflow(s)", len(assets)),
-	), nil
+	return &Response{
+		Text: fmt.Sprintf("Dumped %v workflow(s)", len(assets)),
+	}, nil
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -367,9 +367,9 @@ func (r *WorkflowRunner) Load(in Request) (*Response, error) {
 		"\nSuccessfully loaded %v and skipped %v files from `%s`", loaded, skipped, in.Args[0],
 	))
 
-	return NewResponse(
-		strings.Join(output, "\n"),
-	), nil
+	return &Response{
+		Text: strings.Join(output, "\n"),
+	}, nil
 }
 
 //////////////////////////////////////////////////////////////////////////////

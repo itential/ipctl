@@ -45,18 +45,10 @@ func (r *ProfileRunner) Get(in Request) (*Response, error) {
 		return nil, err
 	}
 
-	display := []string{"NAME\tDESCRIPTION"}
-	for _, ele := range profiles {
-		lines := []string{ele.Id, ele.Description}
-		display = append(display, strings.Join(lines, "\t"))
-	}
-
-	return NewResponse(
-		"",
-		WithTable(display),
-		WithObject(profiles),
-		WithObject(profiles),
-	), nil
+	return &Response{
+		Keys:   []string{"name", "description"},
+		Object: profiles,
+	}, nil
 }
 
 // Describe implements the `describe profile <name>` command
@@ -70,10 +62,9 @@ func (r *ProfileRunner) Describe(in Request) (*Response, error) {
 		return nil, err
 	}
 
-	return NewResponse(
-		"",
-		WithObject(profile),
-	), nil
+	return &Response{
+		Object: profile,
+	}, nil
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -95,9 +86,9 @@ func (r *ProfileRunner) Create(in Request) (*Response, error) {
 		return nil, err
 	}
 
-	return NewResponse(
-		fmt.Sprintf("Successfully created profile `%s`", name),
-	), nil
+	return &Response{
+		Text: fmt.Sprintf("Successfully created profile `%s`", name),
+	}, nil
 }
 
 // Delete is the implementation of the command `delete profile <name>`
@@ -132,7 +123,9 @@ func (r *ProfileRunner) Clear(in Request) (*Response, error) {
 		cnt++
 	}
 
-	return NewResponse(fmt.Sprintf("Deleted %v profile(s)", cnt)), nil
+	return &Response{
+		Text: fmt.Sprintf("Deleted %v profile(s)", cnt),
+	}, nil
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -148,9 +141,9 @@ func (r *ProfileRunner) Copy(in Request) (*Response, error) {
 		return nil, err
 	}
 
-	return NewResponse(
-		fmt.Sprintf("Successfully copied profile `%s` from `%s` to `%s`", res.Name, res.From, res.To),
-	), nil
+	return &Response{
+		Text: fmt.Sprintf("Successfully copied profile `%s` from `%s` to `%s`", res.Name, res.From, res.To),
+	}, nil
 }
 
 func (r *ProfileRunner) CopyFrom(profile, name string) (any, error) {
@@ -218,9 +211,9 @@ func (r *ProfileRunner) Import(in Request) (*Response, error) {
 		return nil, err
 	}
 
-	return NewResponse(
-		fmt.Sprintf("Successfully imported profile `%s`", profile.Id),
-	), nil
+	return &Response{
+		Text: fmt.Sprintf("Successfully imported profile `%s`", profile.Id),
+	}, nil
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -244,9 +237,9 @@ func (r *ProfileRunner) Export(in Request) (*Response, error) {
 		return nil, err
 	}
 
-	return NewResponse(
-		fmt.Sprintf("Successfully exported profile `%s`", profile.Id),
-	), nil
+	return &Response{
+		Text: fmt.Sprintf("Successfully exported profile `%s`", profile.Id),
+	}, nil
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -272,9 +265,9 @@ func (r *ProfileRunner) Dump(in Request) (*Response, error) {
 		return nil, err
 	}
 
-	return NewResponse(
-		fmt.Sprintf("Dumped %v profile(s)", len(assets)),
-	), nil
+	return &Response{
+		Text: fmt.Sprintf("Dumped %v profile(s)", len(assets)),
+	}, nil
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -320,9 +313,9 @@ func (r *ProfileRunner) Load(in Request) (*Response, error) {
 		"\nSuccessfully loaded %v and skipped %v files from `%s`", loaded, skipped, in.Args[0],
 	))
 
-	return NewResponse(
-		strings.Join(output, "\n"),
-	), nil
+	return &Response{
+		Text: strings.Join(output, "\n"),
+	}, nil
 }
 
 //////////////////////////////////////////////////////////////////////////////

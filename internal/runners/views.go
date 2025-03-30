@@ -5,8 +5,6 @@
 package runners
 
 import (
-	"fmt"
-
 	"github.com/itential/ipctl/pkg/client"
 	"github.com/itential/ipctl/pkg/config"
 	"github.com/itential/ipctl/pkg/logger"
@@ -33,19 +31,12 @@ func (r *ViewRunner) Get(in Request) (*Response, error) {
 		return nil, err
 	}
 
-	display := []string{"PATH\tTYPE"}
-	for _, ele := range views {
-		line := fmt.Sprintf("%s\t%s", ele.Path, ele.Provenance)
-		display = append(display, line)
-	}
-
-	return NewResponse(
-		"",
-		WithTable(display),
-		WithObject(views),
-	), nil
+	return &Response{
+		Keys:   []string{"path", "provenance"},
+		Object: views,
+	}, nil
 }
 
 func (r *ViewRunner) Describe(in Request) (*Response, error) {
-	return NotImplemented(in)
+	return notImplemented(in)
 }

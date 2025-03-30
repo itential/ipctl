@@ -5,15 +5,17 @@
 package runners
 
 import (
-	"errors"
+	"embed"
 	"fmt"
-	"strings"
 
 	"github.com/itential/ipctl/pkg/client"
 	"github.com/itential/ipctl/pkg/config"
 	"github.com/itential/ipctl/pkg/logger"
 	"github.com/itential/ipctl/pkg/services"
 )
+
+//go:embed templates/accounts/*.tmpl
+var content embed.FS
 
 type AccountRunner struct {
 	config  *config.Config
@@ -27,6 +29,12 @@ func NewAccountRunner(client client.Client, cfg *config.Config) *AccountRunner {
 	}
 }
 
+/*
+i******************************************************************************
+Reader interface
+*******************************************************************************
+*/
+
 // Get implements the `get accounts` command
 func (r *AccountRunner) Get(in Request) (*Response, error) {
 	logger.Trace()
@@ -36,45 +44,48 @@ func (r *AccountRunner) Get(in Request) (*Response, error) {
 		return nil, err
 	}
 
-	display := []string{"NAME\tSOURCE"}
-	for _, ele := range accounts {
-		lines := []string{ele.Username, ele.Provenance}
-		display = append(display, strings.Join(lines, "\t"))
-	}
-
-	return NewResponse(
-		"",
-		WithTable(display),
-		WithObject(accounts),
-	), nil
+	return &Response{
+		Keys:   []string{"username", "provenance"},
+		Object: accounts,
+	}, nil
 }
 
 // Describe implements the `describe account <name>` command
 func (r *AccountRunner) Describe(in Request) (*Response, error) {
 	logger.Trace()
 
-	name := in.Args[0]
-
 	accounts, err := r.service.GetAll()
 	if err != nil {
 		return nil, err
 	}
 
-	var account *services.Account
-
-	for _, ele := range accounts {
-		if ele.Username == name {
-			account = &ele
-			break
-		}
-	}
+	account := r.selectAccountByName(in.Args[0], accounts)
 
 	if account == nil {
-		return nil, errors.New(fmt.Sprintf("account `%s` does not exist", name))
+		return nil, fmt.Errorf("account `%s` does not exist", in.Args[0])
 	}
 
-	return NewResponse(
-		"",
-		WithObject(account),
-	), nil
+	tmpl, err := content.ReadFile("describe.tmpl")
+	if err != nil {
+		logger.Fatal(err, "failed to load template")
+	}
+
+	return &Response{
+		Object:   account,
+		Template: string(tmpl),
+		//Template: "Username: {{.Username}}",
+	}, nil
+}
+
+// selectAccountByUsername takes a list of service.Accounts and iterates over
+// them looking for the first instance of username.   If found, the Account is
+// returned.  If the username is not found, nil is returend.
+func (r *AccountRunner) selectAccountByName(username string, accounts []services.Account) *services.Account {
+	logger.Trace()
+	for _, ele := range accounts {
+		if ele.Username == username {
+			return &ele
+		}
+	}
+	return nil
 }
