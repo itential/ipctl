@@ -7,13 +7,11 @@ package handlers
 import (
 	"github.com/itential/ipctl/internal/flags"
 	"github.com/itential/ipctl/internal/runners"
-	"github.com/itential/ipctl/pkg/client"
-	"github.com/itential/ipctl/pkg/config"
 )
 
-func NewProfileHandler(c client.Client, cfg *config.Config, desc Descriptors) AssetHandler {
+func NewProfileHandler(r Runtime, desc Descriptors) AssetHandler {
 	return NewAssetHandler(
-		runners.NewProfileRunner(c, cfg),
+		runners.NewProfileRunner(r.Client, r.Config),
 		desc[profilesDescriptor],
 		&AssetHandlerFlags{
 			Create: &flags.ProfileCreateOptions{},

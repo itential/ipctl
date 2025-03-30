@@ -7,13 +7,11 @@ package handlers
 import (
 	"github.com/itential/ipctl/internal/flags"
 	"github.com/itential/ipctl/internal/runners"
-	"github.com/itential/ipctl/pkg/client"
-	"github.com/itential/ipctl/pkg/config"
 )
 
-func NewWorkflowHandler(c client.Client, cfg *config.Config, desc Descriptors) AssetHandler {
+func NewWorkflowHandler(r Runtime, desc Descriptors) AssetHandler {
 	return NewAssetHandler(
-		runners.NewWorkflowRunner(c, cfg),
+		runners.NewWorkflowRunner(r.Client, r.Config),
 		desc[workflowsDescriptor],
 		&AssetHandlerFlags{
 			Get: &flags.WorkflowGetOptions{},

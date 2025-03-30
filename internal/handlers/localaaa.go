@@ -7,8 +7,6 @@ package handlers
 import (
 	"github.com/itential/ipctl/internal/flags"
 	"github.com/itential/ipctl/internal/runners"
-	"github.com/itential/ipctl/pkg/client"
-	"github.com/itential/ipctl/pkg/config"
 	"github.com/itential/ipctl/pkg/logger"
 	"github.com/spf13/cobra"
 )
@@ -18,9 +16,9 @@ type LocalAAAHandler struct {
 	Descriptor DescriptorMap
 }
 
-func NewLocalAAAHandler(c client.Client, cfg *config.Config, desc Descriptors) LocalAAAHandler {
+func NewLocalAAAHandler(r Runtime, desc Descriptors) LocalAAAHandler {
 	return LocalAAAHandler{
-		Runner:     runners.NewLocalAAARunner(c, cfg),
+		Runner:     runners.NewLocalAAARunner(r.Client, r.Config),
 		Descriptor: desc[localAAADescriptor],
 	}
 

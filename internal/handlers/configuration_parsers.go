@@ -6,13 +6,11 @@ package handlers
 
 import (
 	"github.com/itential/ipctl/internal/runners"
-	"github.com/itential/ipctl/pkg/client"
-	"github.com/itential/ipctl/pkg/config"
 )
 
-func NewConfigurationParserHandler(c client.Client, cfg *config.Config, desc Descriptors) AssetHandler {
+func NewConfigurationParserHandler(r Runtime, desc Descriptors) AssetHandler {
 	return NewAssetHandler(
-		runners.NewConfigurationParserRunner(c, cfg),
+		runners.NewConfigurationParserRunner(r.Client, r.Config),
 		desc[configurationParsersDescriptor],
 		nil,
 	)

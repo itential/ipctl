@@ -7,13 +7,11 @@ package handlers
 import (
 	"github.com/itential/ipctl/internal/flags"
 	"github.com/itential/ipctl/internal/runners"
-	"github.com/itential/ipctl/pkg/client"
-	"github.com/itential/ipctl/pkg/config"
 )
 
-func NewIntegrationHandler(c client.Client, cfg *config.Config, desc Descriptors) AssetHandler {
+func NewIntegrationHandler(r Runtime, desc Descriptors) AssetHandler {
 	return NewAssetHandler(
-		runners.NewIntegrationRunner(c, cfg),
+		runners.NewIntegrationRunner(r.Client, r.Config),
 		desc[integrations],
 		&AssetHandlerFlags{
 			Create: &flags.IntegrationCreateOptions{},

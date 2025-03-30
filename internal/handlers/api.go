@@ -7,8 +7,6 @@ package handlers
 import (
 	"github.com/itential/ipctl/internal/flags"
 	"github.com/itential/ipctl/internal/runners"
-	"github.com/itential/ipctl/pkg/client"
-	"github.com/itential/ipctl/pkg/config"
 	"github.com/spf13/cobra"
 )
 
@@ -17,9 +15,9 @@ type ApiHandler struct {
 	Descriptor DescriptorMap
 }
 
-func NewApiHandler(c client.Client, cfg *config.Config, desc Descriptors) ApiHandler {
+func NewApiHandler(r Runtime, desc Descriptors) ApiHandler {
 	return ApiHandler{
-		Runner:     runners.NewApiRunner(c),
+		Runner:     runners.NewApiRunner(r.Client),
 		Descriptor: desc[apiDescriptor],
 	}
 

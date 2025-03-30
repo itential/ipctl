@@ -7,8 +7,6 @@ package handlers
 import (
 	"github.com/itential/ipctl/internal/flags"
 	"github.com/itential/ipctl/internal/runners"
-	"github.com/itential/ipctl/pkg/client"
-	"github.com/itential/ipctl/pkg/config"
 	"github.com/itential/ipctl/pkg/logger"
 	"github.com/spf13/cobra"
 )
@@ -18,9 +16,9 @@ type LocalClientHandler struct {
 	Descriptor DescriptorMap
 }
 
-func NewLocalClientHandler(c client.Client, cfg *config.Config, desc Descriptors) LocalClientHandler {
+func NewLocalClientHandler(r Runtime, desc Descriptors) LocalClientHandler {
 	return LocalClientHandler{
-		Runner:     runners.NewLocalClientRunner(c, cfg),
+		Runner:     runners.NewLocalClientRunner(r.Client, r.Config),
 		Descriptor: desc[localClientDescriptor],
 	}
 

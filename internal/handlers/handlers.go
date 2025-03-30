@@ -14,71 +14,73 @@ import (
 
 type Handler struct {
 	Runtime     *Runtime
-	Config      *config.Config
-	Client      client.Client
 	Descriptors Descriptors
 }
 
 type Runtime struct {
+	Client  client.Client
 	Config  *config.Config
 	Verbose bool
 }
 
 var commands []any
 
-func NewHandler(iapClient client.Client, cfg *config.Config) Handler {
+func NewRuntime(c client.Client, cfg *config.Config) Runtime {
+	return Runtime{
+		Client: c,
+		Config: cfg,
+	}
+}
+
+func NewHandler(r Runtime) Handler {
 	descriptors := loadDescriptors()
 
 	register(
 		// Automation Studio handlers
-		NewProjectHandler(iapClient, cfg, descriptors),
-		NewWorkflowHandler(iapClient, cfg, descriptors),
-		NewTransformationHandler(iapClient, cfg, descriptors),
-		NewJsonFormHandler(iapClient, cfg, descriptors),
-		NewCommandTemplateHandler(iapClient, cfg, descriptors),
-		NewAnalyticTemplateHandler(iapClient, cfg, descriptors),
-		NewTemplateHandler(iapClient, cfg, descriptors),
+		NewProjectHandler(r, descriptors),
+		NewWorkflowHandler(r, descriptors),
+		NewTransformationHandler(r, descriptors),
+		NewJsonFormHandler(r, descriptors),
+		NewCommandTemplateHandler(r, descriptors),
+		NewAnalyticTemplateHandler(r, descriptors),
+		NewTemplateHandler(r, descriptors),
 
 		// Operations Manager Handlers
-		NewAutomationHandler(iapClient, cfg, descriptors),
+		NewAutomationHandler(r, descriptors),
 
 		// Admin Essentials handlers
-		NewAccountHandler(iapClient, cfg, descriptors),
-		NewProfileHandler(iapClient, cfg, descriptors),
-		NewRoleHandler(iapClient, cfg, descriptors),
-		NewRoleTypesHandler(iapClient, cfg, descriptors),
-		NewGroupHandler(iapClient, cfg, descriptors),
-		NewMethodHandler(iapClient, cfg, descriptors),
-		NewViewHandler(iapClient, cfg, descriptors),
-		NewPrebuiltHandler(iapClient, cfg, descriptors),
-		NewIntegrationModelHandler(iapClient, cfg, descriptors),
-		NewIntegrationHandler(iapClient, cfg, descriptors),
-		NewAdapterHandler(iapClient, cfg, descriptors),
-		NewAdapterModelHandler(iapClient, cfg, descriptors),
-		NewTagHandler(iapClient, cfg, descriptors),
-		NewApplicationHandler(iapClient, cfg, descriptors),
+		NewAccountHandler(r, descriptors),
+		NewProfileHandler(r, descriptors),
+		NewRoleHandler(r, descriptors),
+		NewRoleTypesHandler(r, descriptors),
+		NewGroupHandler(r, descriptors),
+		NewMethodHandler(r, descriptors),
+		NewViewHandler(r, descriptors),
+		NewPrebuiltHandler(r, descriptors),
+		NewIntegrationModelHandler(r, descriptors),
+		NewIntegrationHandler(r, descriptors),
+		NewAdapterHandler(r, descriptors),
+		NewAdapterModelHandler(r, descriptors),
+		NewTagHandler(r, descriptors),
+		NewApplicationHandler(r, descriptors),
 
 		// Configuration Manager handlers
-		NewDeviceHandler(iapClient, cfg, descriptors),
-		NewDeviceGroupHandler(iapClient, cfg, descriptors),
-		NewConfigurationParserHandler(iapClient, cfg, descriptors),
-		NewGoldenConfigHandler(iapClient, cfg, descriptors),
+		NewDeviceHandler(r, descriptors),
+		NewDeviceGroupHandler(r, descriptors),
+		NewConfigurationParserHandler(r, descriptors),
+		NewGoldenConfigHandler(r, descriptors),
 
 		// Lifecycle Manager handlers
-		NewModelHandler(iapClient, cfg, descriptors),
+		NewModelHandler(r, descriptors),
 
-		NewServerHandler(iapClient, cfg, descriptors),
+		NewServerHandler(r, descriptors),
 
-		NewLocalAAAHandler(iapClient, cfg, descriptors),
-		NewLocalClientHandler(iapClient, cfg, descriptors),
+		NewLocalAAAHandler(r, descriptors),
+		NewLocalClientHandler(r, descriptors),
 	)
 
 	return Handler{
-		Runtime: &Runtime{
-			Config: cfg,
-		},
-		Config:      cfg,
-		Client:      iapClient,
+		Runtime:     &r,
 		Descriptors: descriptors,
 	}
 }
@@ -225,7 +227,7 @@ func (h Handler) InspectCommands() []*cobra.Command {
 
 func (h Handler) ApiCommands() []*cobra.Command {
 	logger.Trace()
-	handler := NewApiHandler(h.Client, h.Config, h.Descriptors)
+	handler := NewApiHandler(*h.Runtime, h.Descriptors)
 	var commands = []*cobra.Command{
 		handler.Get(h.Runtime),
 		handler.Delete(h.Runtime),
@@ -269,13 +271,13 @@ func (h Handler) LoadCommands() []*cobra.Command {
 }
 
 func (h Handler) LocalAAACommands() []*cobra.Command {
-	p, err := h.Config.ActiveProfile()
+	p, err := h.Runtime.Config.ActiveProfile()
 	if err != nil {
 		logger.Fatal(err, "")
 	}
 
 	if p.MongoUrl != "" {
-		handler := NewLocalAAAHandler(h.Client, h.Config, h.Descriptors)
+		handler := NewLocalAAAHandler(*h.Runtime, h.Descriptors)
 		logger.Info("adding LocalAAA commands")
 		return []*cobra.Command{
 			handler.Get(h.Runtime),
@@ -288,7 +290,7 @@ func (h Handler) LocalAAACommands() []*cobra.Command {
 }
 
 func (h Handler) LocalClientCommands() []*cobra.Command {
-	handler := NewLocalClientHandler(h.Client, h.Config, h.Descriptors)
+	handler := NewLocalClientHandler(*h.Runtime, h.Descriptors)
 	var commands = []*cobra.Command{
 		handler.Show(h.Runtime),
 	}

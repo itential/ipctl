@@ -19,9 +19,9 @@ type GroupCommand struct {
 	Descriptor string
 }
 
-func addCommandGroup(cmd *cobra.Command, h handlers.Handler, title string, f func(handlers.Handler, string) []*cobra.Command) {
+func addCommandGroup(cmd *cobra.Command, r handlers.Runtime, title string, f func(handlers.Runtime, string) []*cobra.Command) {
 	id := uuid.New().String()
-	children := f(h, id)
+	children := f(r, id)
 	if len(children) > 0 {
 		cmd.AddGroup(&cobra.Group{ID: id, Title: title})
 		for _, ele := range children {
@@ -85,7 +85,8 @@ func makeCommand(name, group string, f func() []*cobra.Command, desc string) *co
 	return cmd
 }
 
-func assetCommands(h handlers.Handler, id string) []*cobra.Command {
+func assetCommands(r handlers.Runtime, id string) []*cobra.Command {
+	h := handlers.NewHandler(r)
 	return makeGroupCommand([]GroupCommand{
 		GroupCommand{"get", id, h.GetCommands, "asset"},
 		GroupCommand{"describe", id, h.DescribeCommands, "asset"},
@@ -104,7 +105,8 @@ func assetCommands(h handlers.Handler, id string) []*cobra.Command {
 	})
 }
 
-func platformCommands(h handlers.Handler, id string) []*cobra.Command {
+func platformCommands(r handlers.Runtime, id string) []*cobra.Command {
+	h := handlers.NewHandler(r)
 	return makeGroupCommand([]GroupCommand{
 		GroupCommand{"api", id, h.ApiCommands, "platform"},
 		GroupCommand{"inspect", id, h.InspectCommands, "platform"},
@@ -114,14 +116,16 @@ func platformCommands(h handlers.Handler, id string) []*cobra.Command {
 	})
 }
 
-func datasetCommands(h handlers.Handler, id string) []*cobra.Command {
+func datasetCommands(r handlers.Runtime, id string) []*cobra.Command {
+	h := handlers.NewHandler(r)
 	return makeGroupCommand([]GroupCommand{
 		GroupCommand{"load", id, h.LoadCommands, "dataset"},
 		GroupCommand{"dump", id, h.DumpCommands, "dataset"},
 	})
 }
 
-func pluginCommands(h handlers.Handler, id string) []*cobra.Command {
+func pluginCommands(r handlers.Runtime, id string) []*cobra.Command {
+	h := handlers.NewHandler(r)
 	return makeGroupCommand([]GroupCommand{
 		GroupCommand{"local-aaa", id, h.LocalAAACommands, "localaaa"},
 		GroupCommand{"client", id, h.LocalClientCommands, "localclient"},
