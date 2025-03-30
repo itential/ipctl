@@ -7,13 +7,11 @@ package handlers
 import (
 	"github.com/itential/ipctl/internal/flags"
 	"github.com/itential/ipctl/internal/runners"
-	"github.com/itential/ipctl/pkg/client"
-	"github.com/itential/ipctl/pkg/config"
 )
 
-func NewTemplateHandler(c client.Client, cfg *config.Config, desc Descriptors) AssetHandler {
+func NewTemplateHandler(r Runtime, desc Descriptors) AssetHandler {
 	return NewAssetHandler(
-		runners.NewTemplateRunner(c, cfg),
+		runners.NewTemplateRunner(r.Client, r.Config),
 		desc[templatesDescriptor],
 		&AssetHandlerFlags{
 			Create: &flags.TemplateCreateOptions{},

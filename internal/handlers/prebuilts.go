@@ -7,13 +7,11 @@ package handlers
 import (
 	"github.com/itential/ipctl/internal/flags"
 	"github.com/itential/ipctl/internal/runners"
-	"github.com/itential/ipctl/pkg/client"
-	"github.com/itential/ipctl/pkg/config"
 )
 
-func NewPrebuiltHandler(iapClient client.Client, cfg *config.Config, desc Descriptors) AssetHandler {
+func NewPrebuiltHandler(r Runtime, desc Descriptors) AssetHandler {
 	return NewAssetHandler(
-		runners.NewPrebuiltRunner(iapClient, cfg),
+		runners.NewPrebuiltRunner(r.Client, r.Config),
 		desc[prebuiltsDescriptor],
 		&AssetHandlerFlags{
 			Delete: &flags.PrebuiltDeleteOptions{},

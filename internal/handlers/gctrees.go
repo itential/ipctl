@@ -6,13 +6,11 @@ package handlers
 
 import (
 	"github.com/itential/ipctl/internal/runners"
-	"github.com/itential/ipctl/pkg/client"
-	"github.com/itential/ipctl/pkg/config"
 )
 
-func NewGoldenConfigHandler(c client.Client, cfg *config.Config, desc Descriptors) AssetHandler {
+func NewGoldenConfigHandler(r Runtime, desc Descriptors) AssetHandler {
 	return NewAssetHandler(
-		runners.NewGoldenConfigRunner(c, cfg),
+		runners.NewGoldenConfigRunner(r.Client, r.Config),
 		desc[gctreesDescriptor],
 		nil,
 	)

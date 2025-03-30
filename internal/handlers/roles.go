@@ -7,13 +7,11 @@ package handlers
 import (
 	"github.com/itential/ipctl/internal/flags"
 	"github.com/itential/ipctl/internal/runners"
-	"github.com/itential/ipctl/pkg/client"
-	"github.com/itential/ipctl/pkg/config"
 )
 
-func NewRoleHandler(c client.Client, cfg *config.Config, desc Descriptors) AssetHandler {
+func NewRoleHandler(r Runtime, desc Descriptors) AssetHandler {
 	return NewAssetHandler(
-		runners.NewRoleRunner(c, cfg),
+		runners.NewRoleRunner(r.Client, r.Config),
 		desc[rolesDescriptor],
 		&AssetHandlerFlags{
 			Get:      &flags.RoleGetOptions{},
