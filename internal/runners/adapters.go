@@ -331,9 +331,11 @@ func (r *AdapterRunner) Export(in Request) (*Response, error) {
 	}, nil
 }
 
-//////////////////////////////////////////////////////////////////////////////
-// Inspector interface
-//
+/*
+*******************************************************************************
+Inspector interfaceo
+*******************************************************************************
+*/
 
 func (r *AdapterRunner) Inspect(in Request) (*Response, error) {
 	logger.Trace()
@@ -344,16 +346,8 @@ func (r *AdapterRunner) Inspect(in Request) (*Response, error) {
 		return nil, err
 	}
 
-	var display = []string{"NAME\tSTATUS\tVERSION"}
-
-	for _, ele := range adapters {
-		display = append(display, fmt.Sprintf(
-			"%s\t%s\t%s", ele.Id, ele.State, ele.Version,
-		))
-	}
-
 	return &Response{
-		Keys:   []string{"name", "status", "version"},
+		Keys:   []string{"id", "state", "version"},
 		Object: adapters,
 	}, nil
 }

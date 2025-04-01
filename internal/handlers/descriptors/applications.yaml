@@ -1,7 +1,4 @@
 ---
-#############################################################################
-# Asset commands
-#############################################################################
 get:
   use: applications
   group: admin-essentials
@@ -13,11 +10,6 @@ describe:
   group: admin-essentials
   description: |
     Display detailed information about an application
-
-
-#############################################################################
-# Inspector commands
-#############################################################################
 
 inspect:
   use: applications
@@ -38,5 +30,3 @@ restart:
   use: application <name>
   description: |
     Restart an application
-
-

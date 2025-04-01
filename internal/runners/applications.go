@@ -110,6 +110,12 @@ func (r *ApplicationRunner) Restart(in Request) (*Response, error) {
 	}, nil
 }
 
+/*
+*******************************************************************************
+Inspector interfaceo
+*******************************************************************************
+*/
+
 func (r *ApplicationRunner) Inspect(in Request) (*Response, error) {
 	logger.Trace()
 
@@ -119,7 +125,7 @@ func (r *ApplicationRunner) Inspect(in Request) (*Response, error) {
 	}
 
 	return &Response{
-		Keys:   []string{"name", "status", "version"},
+		Keys:   []string{"id", "state", "version"},
 		Object: res,
 	}, nil
 }
