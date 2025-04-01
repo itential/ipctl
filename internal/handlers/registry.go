@@ -11,8 +11,12 @@ import (
 var registry []any
 
 func register(types ...any) {
-	for _, ele := range types {
-		registry = append(registry, ele)
+	// FIXME (privateip) this is a short term work around for the fact that the
+	// handler is now loaded multiple times.
+	if len(registry) == 0 {
+		for _, ele := range types {
+			registry = append(registry, ele)
+		}
 	}
 }
 
