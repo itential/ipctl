@@ -7,72 +7,86 @@ package handlers
 import (
 	"github.com/itential/ipctl/internal/flags"
 	"github.com/itential/ipctl/internal/runners"
+	"github.com/itential/ipctl/pkg/logger"
 	"github.com/spf13/cobra"
 )
 
 type ApiHandler struct {
 	Runner     runners.ApiRunner
+	Runtime    Runtime
 	Descriptor DescriptorMap
 }
 
-func NewApiHandler(r Runtime, desc Descriptors) ApiHandler {
+func NewApiHandler(r Runtime) ApiHandler {
 	return ApiHandler{
 		Runner:     runners.NewApiRunner(r.Client),
-		Descriptor: desc[apiDescriptor],
+		Runtime:    r,
+		Descriptor: r.Descriptors[apiDescriptor],
 	}
 
 }
 
-func (h ApiHandler) newCommand(key string, runtime *Runtime, runner runners.RunnerFunc, options flags.Flagger, opts ...CommandRunnerOption) *cobra.Command {
+func (h ApiHandler) newCommand(key string, runner runners.RunnerFunc, options flags.Flagger, opts ...CommandRunnerOption) *cobra.Command {
 	r := NewCommandRunner(
 		key,
 		h.Descriptor,
 		runner,
-		runtime,
+		&h.Runtime,
 		options,
 		opts...,
 	)
 	return NewCommand(r)
 }
 
-// Adds the `api get <path>` command
-func (h ApiHandler) Get(runtime *Runtime) *cobra.Command {
-	cmd := h.newCommand("get", runtime, h.Runner.Get, nil)
+func (h ApiHandler) Commands() []*cobra.Command {
+	logger.Trace()
+	return []*cobra.Command{
+		h.Get(),
+		h.Delete(),
+		h.Put(),
+		h.Post(),
+		h.Patch(),
+	}
+}
+
+// Adds the `api get <path> ...` command
+func (h ApiHandler) Get() *cobra.Command {
+	cmd := h.newCommand("get", h.Runner.Get, nil)
 	cmd.Args = cobra.ExactArgs(1)
 	return cmd
 }
 
-// Adds the `api delete <path>` command
-func (h ApiHandler) Delete(runtime *Runtime) *cobra.Command {
+// Adds the `api delete <path> ...` command
+func (h ApiHandler) Delete() *cobra.Command {
 	options := flags.ApiDeleteOptions{}
-	cmd := h.newCommand("delete", runtime, h.Runner.Delete, &options)
+	cmd := h.newCommand("delete", h.Runner.Delete, &options)
 	cmd.Args = cobra.ExactArgs(1)
 	options.Flags(cmd)
 	return cmd
 }
 
-// Adds the `api put <path>` command
-func (h ApiHandler) Put(runtime *Runtime) *cobra.Command {
+// Adds the `api put <path> ...` command
+func (h ApiHandler) Put() *cobra.Command {
 	options := &flags.ApiPutOptions{}
-	cmd := h.newCommand("put", runtime, h.Runner.Put, options)
+	cmd := h.newCommand("put", h.Runner.Put, options)
 	cmd.Args = cobra.ExactArgs(1)
 	options.Flags(cmd)
 	return cmd
 }
 
-// Adds the `api post <path>` command
-func (h ApiHandler) Post(runtime *Runtime) *cobra.Command {
+// Adds the `api post <path> ...` command
+func (h ApiHandler) Post() *cobra.Command {
 	options := &flags.ApiPostOptions{}
-	cmd := h.newCommand("post", runtime, h.Runner.Post, options)
+	cmd := h.newCommand("post", h.Runner.Post, options)
 	cmd.Args = cobra.ExactArgs(1)
 	options.Flags(cmd)
 	return cmd
 }
 
-// Adds the `api path <path>` command
-func (h ApiHandler) Patch(runtime *Runtime) *cobra.Command {
+// Adds the `api path <path> ...` command
+func (h ApiHandler) Patch() *cobra.Command {
 	options := &flags.ApiPatchOptions{}
-	cmd := h.newCommand("patch", runtime, h.Runner.Post, options)
+	cmd := h.newCommand("patch", h.Runner.Post, options)
 	cmd.Args = cobra.ExactArgs(1)
 	options.Flags(cmd)
 	return cmd
