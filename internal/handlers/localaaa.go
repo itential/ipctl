@@ -13,23 +13,25 @@ import (
 
 type LocalAAAHandler struct {
 	Runner     runners.LocalAAARunner
+	Runtime    Runtime
 	Descriptor DescriptorMap
 }
 
-func NewLocalAAAHandler(r Runtime, desc Descriptors) LocalAAAHandler {
+func NewLocalAAAHandler(r Runtime) LocalAAAHandler {
 	return LocalAAAHandler{
 		Runner:     runners.NewLocalAAARunner(r.Client, r.Config),
-		Descriptor: desc[localAAADescriptor],
+		Runtime:    r,
+		Descriptor: r.Descriptors[localAAADescriptor],
 	}
 
 }
 
-func (h LocalAAAHandler) newCommand(key string, runtime *Runtime, runner runners.RunnerFunc, options flags.Flagger, opts ...CommandRunnerOption) *cobra.Command {
+func (h LocalAAAHandler) newCommand(key string, runner runners.RunnerFunc, options flags.Flagger, opts ...CommandRunnerOption) *cobra.Command {
 	r := NewCommandRunner(
 		key,
 		h.Descriptor,
 		runner,
-		runtime,
+		&h.Runtime,
 		nil,
 		opts...,
 	)
@@ -37,7 +39,34 @@ func (h LocalAAAHandler) newCommand(key string, runtime *Runtime, runner runners
 	return NewCommand(r)
 }
 
-func (h LocalAAAHandler) Get(runtime *Runtime) *cobra.Command {
+// Commands returns a list of commands that are attached to the root command
+// for this handler
+func (h LocalAAAHandler) Commands() []*cobra.Command {
+	logger.Trace()
+
+	p, err := h.Runtime.Config.ActiveProfile()
+	if err != nil {
+		logger.Fatal(err, "failed to load active profile")
+	}
+
+	if p.MongoUrl != "" {
+		return []*cobra.Command{
+			h.Get(),
+			h.Create(),
+			h.Delete(),
+		}
+	}
+
+	return nil
+}
+
+/*
+*******************************************************************************
+Get commands
+*******************************************************************************
+*/
+
+func (h LocalAAAHandler) Get() *cobra.Command {
 	logger.Trace()
 
 	cmd := &cobra.Command{
@@ -46,24 +75,30 @@ func (h LocalAAAHandler) Get(runtime *Runtime) *cobra.Command {
 	}
 
 	cmd.AddCommand(
-		h.getAccounts(runtime),
-		h.getGroups(runtime),
+		h.getAccounts(),
+		h.getGroups(),
 	)
 
 	return cmd
 }
 
-func (h LocalAAAHandler) getAccounts(runtime *Runtime) *cobra.Command {
+func (h LocalAAAHandler) getAccounts() *cobra.Command {
 	logger.Trace()
-	return h.newCommand("get-accounts", runtime, h.Runner.GetAccounts, nil)
+	return h.newCommand("get-accounts", h.Runner.GetAccounts, nil)
 }
 
-func (h LocalAAAHandler) getGroups(runtime *Runtime) *cobra.Command {
+func (h LocalAAAHandler) getGroups() *cobra.Command {
 	logger.Trace()
-	return h.newCommand("get-groups", runtime, h.Runner.GetGroups, nil)
+	return h.newCommand("get-groups", h.Runner.GetGroups, nil)
 }
 
-func (h LocalAAAHandler) Create(runtime *Runtime) *cobra.Command {
+/*
+*******************************************************************************
+Create commands
+*******************************************************************************
+*/
+
+func (h LocalAAAHandler) Create() *cobra.Command {
 	logger.Trace()
 
 	cmd := &cobra.Command{
@@ -72,30 +107,36 @@ func (h LocalAAAHandler) Create(runtime *Runtime) *cobra.Command {
 	}
 
 	cmd.AddCommand(
-		h.createAccount(runtime),
-		h.createGroup(runtime),
+		h.createAccount(),
+		h.createGroup(),
 	)
 
 	return cmd
 }
 
-func (h LocalAAAHandler) createAccount(runtime *Runtime) *cobra.Command {
+func (h LocalAAAHandler) createAccount() *cobra.Command {
 	logger.Trace()
 	options := &flags.LocalAAAOptions{}
-	cmd := h.newCommand("create-account", runtime, h.Runner.CreateAccount, options)
+	cmd := h.newCommand("create-account", h.Runner.CreateAccount, options)
 	cmd.Args = cobra.ExactArgs(1)
 	options.Flags(cmd)
 	return cmd
 }
 
-func (h LocalAAAHandler) createGroup(runtime *Runtime) *cobra.Command {
+func (h LocalAAAHandler) createGroup() *cobra.Command {
 	logger.Trace()
-	cmd := h.newCommand("create-group", runtime, h.Runner.CreateGroup, nil)
+	cmd := h.newCommand("create-group", h.Runner.CreateGroup, nil)
 	cmd.Args = cobra.ExactArgs(1)
 	return cmd
 }
 
-func (h LocalAAAHandler) Delete(runtime *Runtime) *cobra.Command {
+/*
+*******************************************************************************
+Delete commands
+*******************************************************************************
+*/
+
+func (h LocalAAAHandler) Delete() *cobra.Command {
 	logger.Trace()
 
 	cmd := &cobra.Command{
@@ -104,23 +145,23 @@ func (h LocalAAAHandler) Delete(runtime *Runtime) *cobra.Command {
 	}
 
 	cmd.AddCommand(
-		h.deleteAccount(runtime),
-		h.deleteGroup(runtime),
+		h.deleteAccount(),
+		h.deleteGroup(),
 	)
 
 	return cmd
 }
 
-func (h LocalAAAHandler) deleteAccount(runtime *Runtime) *cobra.Command {
+func (h LocalAAAHandler) deleteAccount() *cobra.Command {
 	logger.Trace()
-	cmd := h.newCommand("delete-account", runtime, h.Runner.DeleteAccount, nil)
+	cmd := h.newCommand("delete-account", h.Runner.DeleteAccount, nil)
 	cmd.Args = cobra.ExactArgs(1)
 	return cmd
 }
 
-func (h LocalAAAHandler) deleteGroup(runtime *Runtime) *cobra.Command {
+func (h LocalAAAHandler) deleteGroup() *cobra.Command {
 	logger.Trace()
-	cmd := h.newCommand("delete-group", runtime, h.Runner.DeleteGroup, nil)
+	cmd := h.newCommand("delete-group", h.Runner.DeleteGroup, nil)
 	cmd.Args = cobra.ExactArgs(1)
 	return cmd
 }

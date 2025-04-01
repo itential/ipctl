@@ -26,15 +26,20 @@ const description = `Manage Itential Platform
   Find more information at: https://docs.itential.com
 `
 
+// loadCommands will load the command tree for the application.  All top level
+// comamnds are defined by this function except for the `version` command which
+// is defined below.
 func loadCommands(cmd *cobra.Command, runtime handlers.Runtime) {
-	addCommandGroup(cmd, runtime, "Asset Commands:", assetCommands)
+	addRootCommand(cmd, runtime, "Asset Commands:", assetCommands)
 	if runtime.Config.FeaturesDatasetsEnabled {
-		addCommandGroup(cmd, runtime, "Dataset Commands:", datasetCommands)
+		addRootCommand(cmd, runtime, "Dataset Commands:", datasetCommands)
 	}
-	addCommandGroup(cmd, runtime, "Platform Commands:", platformCommands)
-	addCommandGroup(cmd, runtime, "Plugin Commands:", pluginCommands)
+	addRootCommand(cmd, runtime, "Platform Commands:", platformCommands)
+	addRootCommand(cmd, runtime, "Plugin Commands:", pluginCommands)
 }
 
+// versionCommand is a top level command that display's the current application
+// version.
 func versionCommand() *cobra.Command {
 	var cmd = &cobra.Command{
 		Use:   "version",

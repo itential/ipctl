@@ -18,17 +18,20 @@ type Handler struct {
 }
 
 type Runtime struct {
-	Client  client.Client
-	Config  *config.Config
-	Verbose bool
+	Client      client.Client
+	Config      *config.Config
+	Descriptors Descriptors
+	Verbose     bool
 }
 
 var commands []any
 
 func NewRuntime(c client.Client, cfg *config.Config) Runtime {
+	descriptors := loadDescriptors()
 	return Runtime{
-		Client: c,
-		Config: cfg,
+		Client:      c,
+		Config:      cfg,
+		Descriptors: descriptors,
 	}
 }
 
@@ -74,9 +77,6 @@ func NewHandler(r Runtime) Handler {
 		NewModelHandler(r, descriptors),
 
 		NewServerHandler(r, descriptors),
-
-		NewLocalAAAHandler(r, descriptors),
-		NewLocalClientHandler(r, descriptors),
 	)
 
 	return Handler{
@@ -266,33 +266,6 @@ func (h Handler) LoadCommands() []*cobra.Command {
 		if cmd != nil {
 			commands = append(commands, cmd)
 		}
-	}
-	return commands
-}
-
-func (h Handler) LocalAAACommands() []*cobra.Command {
-	p, err := h.Runtime.Config.ActiveProfile()
-	if err != nil {
-		logger.Fatal(err, "")
-	}
-
-	if p.MongoUrl != "" {
-		handler := NewLocalAAAHandler(*h.Runtime, h.Descriptors)
-		logger.Info("adding LocalAAA commands")
-		return []*cobra.Command{
-			handler.Get(h.Runtime),
-			handler.Create(h.Runtime),
-			handler.Delete(h.Runtime),
-		}
-	}
-
-	return nil
-}
-
-func (h Handler) LocalClientCommands() []*cobra.Command {
-	handler := NewLocalClientHandler(*h.Runtime, h.Descriptors)
-	var commands = []*cobra.Command{
-		handler.Show(h.Runtime),
 	}
 	return commands
 }
