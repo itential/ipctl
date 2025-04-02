@@ -66,8 +66,8 @@ func NewAutomation(name, desc string) Automation {
 	}
 }
 
-func NewAutomationService(iapClient client.Client) *AutomationService {
-	return &AutomationService{client: NewServiceClient(iapClient)}
+func NewAutomationService(c client.Client) *AutomationService {
+	return &AutomationService{client: NewServiceClient(c)}
 }
 
 // Get implements `GET /operations-manager/automations/{id}`

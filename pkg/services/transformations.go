@@ -53,8 +53,8 @@ func NewTransformation(name, description string) Transformation {
 	}
 }
 
-func NewTransformationService(iapClient client.Client) *TransformationService {
-	return &TransformationService{client: NewServiceClient(iapClient)}
+func NewTransformationService(c client.Client) *TransformationService {
+	return &TransformationService{client: NewServiceClient(c)}
 }
 
 // GetAll will retrieve all configured transformations from the server and

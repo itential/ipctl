@@ -24,7 +24,7 @@ func tobytes(obj any) []byte {
 }
 
 type Request struct {
-	client                 client.Http
+	client                 client.Client
 	method                 string
 	uri                    string
 	params                 Params

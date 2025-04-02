@@ -106,8 +106,8 @@ type HealthService struct {
 	client *ServiceClient
 }
 
-func NewHealthService(iapClient client.Client) *HealthService {
-	return &HealthService{client: NewServiceClient(iapClient)}
+func NewHealthService(c client.Client) *HealthService {
+	return &HealthService{client: NewServiceClient(c)}
 }
 
 func (svc *HealthService) GetStatus() (*HealthStatus, error) {

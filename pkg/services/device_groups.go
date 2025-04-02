@@ -37,8 +37,8 @@ func NewDeviceGroup(name, desc string) DeviceGroup {
 	}
 }
 
-func NewDeviceGroupService(iapClient client.Client) *DeviceGroupService {
-	return &DeviceGroupService{client: NewServiceClient(iapClient)}
+func NewDeviceGroupService(c client.Client) *DeviceGroupService {
+	return &DeviceGroupService{client: NewServiceClient(c)}
 }
 
 func (svc *DeviceGroupService) Get(id string) (*DeviceGroup, error) {

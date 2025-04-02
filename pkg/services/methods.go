@@ -26,8 +26,8 @@ type MethodService struct {
 	client *ServiceClient
 }
 
-func NewMethodService(iapClient client.Client) *MethodService {
-	return &MethodService{client: NewServiceClient(iapClient)}
+func NewMethodService(c client.Client) *MethodService {
+	return &MethodService{client: NewServiceClient(c)}
 }
 
 // GetAll implements `GET /authorization/methods`

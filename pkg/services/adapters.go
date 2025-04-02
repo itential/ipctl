@@ -39,8 +39,8 @@ type AdapterService struct {
 	client *ServiceClient
 }
 
-func NewAdapterService(iapClient client.Client) *AdapterService {
-	return &AdapterService{client: NewServiceClient(iapClient)}
+func NewAdapterService(c client.Client) *AdapterService {
+	return &AdapterService{client: NewServiceClient(c)}
 }
 
 // GetAll will retrieve all configured adapter instances and return them to the

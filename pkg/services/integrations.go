@@ -29,8 +29,8 @@ type IntegrationService struct {
 	client *ServiceClient
 }
 
-func NewIntegrationService(iapClient client.Client) *IntegrationService {
-	return &IntegrationService{client: NewServiceClient(iapClient)}
+func NewIntegrationService(c client.Client) *IntegrationService {
+	return &IntegrationService{client: NewServiceClient(c)}
 }
 
 func NewIntegration(name, integrationType string) Integration {

@@ -80,8 +80,8 @@ func NewModel(name, desc string) Model {
 	}
 }
 
-func NewModelService(iapClient client.Client) *ModelService {
-	return &ModelService{client: NewServiceClient(iapClient)}
+func NewModelService(c client.Client) *ModelService {
+	return &ModelService{client: NewServiceClient(c)}
 }
 
 func (svc *ModelService) Get(id string) (*Model, error) {

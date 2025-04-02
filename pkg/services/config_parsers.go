@@ -28,8 +28,8 @@ func NewConfigurationParser(name string) ConfigurationParser {
 	return ConfigurationParser{Name: name}
 }
 
-func NewConfigurationParserService(iapClient client.Client) *ConfigurationParserService {
-	return &ConfigurationParserService{client: NewServiceClient(iapClient)}
+func NewConfigurationParserService(c client.Client) *ConfigurationParserService {
+	return &ConfigurationParserService{client: NewServiceClient(c)}
 }
 
 func (svc *ConfigurationParserService) GetAll() ([]ConfigurationParser, error) {

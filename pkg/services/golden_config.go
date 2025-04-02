@@ -44,8 +44,8 @@ type GoldenConfigService struct {
 	client *ServiceClient
 }
 
-func NewGoldenConfigService(iapClient client.Client) *GoldenConfigService {
-	return &GoldenConfigService{client: NewServiceClient(iapClient)}
+func NewGoldenConfigService(c client.Client) *GoldenConfigService {
+	return &GoldenConfigService{client: NewServiceClient(c)}
 }
 
 // Create calls `POST /configuration_manager/configs`

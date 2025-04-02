@@ -44,8 +44,8 @@ type CommandTemplateService struct {
 	client *ServiceClient
 }
 
-func NewCommandTemplateService(iapClient client.Client) *CommandTemplateService {
-	return &CommandTemplateService{client: NewServiceClient(iapClient)}
+func NewCommandTemplateService(c client.Client) *CommandTemplateService {
+	return &CommandTemplateService{client: NewServiceClient(c)}
 }
 
 func NewCommandTemplate(name string) CommandTemplate {

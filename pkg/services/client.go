@@ -23,7 +23,7 @@ func NewServiceClient(c client.Client) *ServiceClient {
 func (http *ServiceClient) Do(req *Request, ptr any) error {
 	logger.Trace()
 
-	req.client = http.client.Http()
+	req.client = http.client
 
 	res, err := Do(req)
 

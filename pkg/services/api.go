@@ -16,8 +16,8 @@ type ApiService struct {
 	client client.Client
 }
 
-func NewApiService(iapClient client.Client) *ApiService {
-	return &ApiService{client: iapClient}
+func NewApiService(c client.Client) *ApiService {
+	return &ApiService{client: c}
 }
 
 func (svc *ApiService) request(m string, uri string, body map[string]interface{}, expectedStatusCode int) (string, error) {
@@ -36,7 +36,7 @@ func (svc *ApiService) request(m string, uri string, body map[string]interface{}
 	params := &RawParams{Values: values}
 
 	req := &Request{
-		client:             svc.client.Http(),
+		client:             svc.client,
 		method:             m,
 		uri:                uri,
 		params:             params,

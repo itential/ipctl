@@ -20,8 +20,8 @@ type MetricService struct {
 	client *ServiceClient
 }
 
-func NewMetricService(iapClient *client.IapClient) *MetricService {
-	return &MetricService{client: NewServiceClient(iapClient)}
+func NewMetricService(c client.Client) *MetricService {
+	return &MetricService{client: NewServiceClient(c)}
 }
 
 // Get will retrieve the server Prometheus metrics and return them to to

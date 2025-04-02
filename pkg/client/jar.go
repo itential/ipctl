@@ -15,6 +15,8 @@ type Jar struct {
 	cookies map[string][]*http.Cookie
 }
 
+// NewJar will create a new instance of Jar and return it to the calling
+// function.
 func NewJar() *Jar {
 	jar := new(Jar)
 	jar.cookies = make(map[string][]*http.Cookie)

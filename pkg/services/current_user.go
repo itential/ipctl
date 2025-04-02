@@ -26,10 +26,10 @@ type CurrentUser struct {
 	Routes     []string               `json:"routes"`
 }
 
-func GetCurrentUser(iapClient client.Client) (*CurrentUser, error) {
+func GetCurrentUser(c client.Client) (*CurrentUser, error) {
 	logger.Trace()
 
-	svc := NewServiceClient(iapClient)
+	svc := NewServiceClient(c)
 
 	var res *CurrentUser
 

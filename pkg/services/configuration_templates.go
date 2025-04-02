@@ -31,8 +31,8 @@ type ConfigurationTemplateService struct {
 	client *ServiceClient
 }
 
-func NewConfigurationTemplateService(iapClient *client.IapClient) *ConfigurationTemplateService {
-	return &ConfigurationTemplateService{client: NewServiceClient(iapClient)}
+func NewConfigurationTemplateService(c client.Client) *ConfigurationTemplateService {
+	return &ConfigurationTemplateService{client: NewServiceClient(c)}
 }
 
 func (svc *ConfigurationTemplateService) GetAll() ([]ConfigurationTemplate, error) {

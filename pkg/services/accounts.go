@@ -51,10 +51,10 @@ type AccountService struct {
 }
 
 // Returns a new instance of AccountService using the conneciton as specified
-// by iapClient
-func NewAccountService(iapClient client.Client) *AccountService {
+// by c
+func NewAccountService(c client.Client) *AccountService {
 	return &AccountService{
-		client: NewServiceClient(iapClient),
+		client: NewServiceClient(c),
 	}
 }
 

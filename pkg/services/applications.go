@@ -30,8 +30,8 @@ type ApplicationService struct {
 	client *ServiceClient
 }
 
-func NewApplicationService(iapClient client.Client) *ApplicationService {
-	return &ApplicationService{client: NewServiceClient(iapClient)}
+func NewApplicationService(c client.Client) *ApplicationService {
+	return &ApplicationService{client: NewServiceClient(c)}
 }
 
 func (svc *ApplicationService) GetAll() ([]Application, error) {

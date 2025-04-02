@@ -4,6 +4,10 @@
 
 package client
 
+// RequestOption is an optional parameter that can be set on a request object
+// when it is created.
+type RequestOption func(r *Request)
+
 // A Request instance is used to send a HTTP request to a remote host.
 type Request struct {
 	// The request path to be used.  This value is appened to the BaseUrl set
@@ -31,8 +35,6 @@ func NewRequest(path string, opts ...RequestOption) *Request {
 	}
 	return req
 }
-
-type RequestOption func(r *Request)
 
 // Sets the HTTP headers to be sent to the remote host for the specified
 // request.
