@@ -8,7 +8,6 @@ import (
 	"github.com/google/uuid"
 	"github.com/itential/ipctl/pkg/client"
 	"github.com/itential/ipctl/pkg/config"
-	"github.com/itential/ipctl/pkg/logger"
 	"github.com/spf13/cobra"
 )
 
@@ -221,18 +220,6 @@ func (h Handler) InspectCommands() []*cobra.Command {
 		if cmd != nil {
 			commands = append(commands, cmd)
 		}
-	}
-	return commands
-}
-
-func (h Handler) ApiCommands() []*cobra.Command {
-	logger.Trace()
-	handler := NewApiHandler(*h.Runtime, h.Descriptors)
-	var commands = []*cobra.Command{
-		handler.Get(h.Runtime),
-		handler.Delete(h.Runtime),
-		handler.Put(h.Runtime),
-		handler.Post(h.Runtime),
 	}
 	return commands
 }
