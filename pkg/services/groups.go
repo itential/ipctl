@@ -44,8 +44,8 @@ type GroupService struct {
 	client *ServiceClient
 }
 
-func NewGroupService(iapClient client.Client) *GroupService {
-	return &GroupService{client: NewServiceClient(iapClient)}
+func NewGroupService(c client.Client) *GroupService {
+	return &GroupService{client: NewServiceClient(c)}
 }
 
 func NewGroup(name, desc string) Group {

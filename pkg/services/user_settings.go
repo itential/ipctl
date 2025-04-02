@@ -30,9 +30,9 @@ type UserSettingsService struct {
 	client *ServiceClient
 }
 
-func NewUserSettingsService(iapClient client.Client) *UserSettingsService {
+func NewUserSettingsService(c client.Client) *UserSettingsService {
 	return &UserSettingsService{
-		client: NewServiceClient(iapClient),
+		client: NewServiceClient(c),
 	}
 }
 

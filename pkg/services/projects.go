@@ -94,9 +94,9 @@ type ProjectService struct {
 	client *ServiceClient
 }
 
-func NewProjectService(iapClient client.Client) *ProjectService {
+func NewProjectService(c client.Client) *ProjectService {
 	return &ProjectService{
-		client: NewServiceClient(iapClient),
+		client: NewServiceClient(c),
 	}
 }
 

@@ -34,8 +34,8 @@ type TemplateService struct {
 	client *ServiceClient
 }
 
-func NewTemplateService(iapClient client.Client) *TemplateService {
-	return &TemplateService{client: NewServiceClient(iapClient)}
+func NewTemplateService(c client.Client) *TemplateService {
+	return &TemplateService{client: NewServiceClient(c)}
 }
 
 func NewTemplate(name, group, description, t string) Template {

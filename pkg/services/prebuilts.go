@@ -107,15 +107,15 @@ type PrebuiltService struct {
 	client client.Client
 }
 
-func NewPrebuiltService(iapClient client.Client) *PrebuiltService {
-	return &PrebuiltService{client: iapClient}
+func NewPrebuiltService(c client.Client) *PrebuiltService {
+	return &PrebuiltService{client: c}
 }
 
 func (svc *PrebuiltService) Get(id string) (*Prebuilt, error) {
 	logger.Trace()
 
 	res, err := Do(&Request{
-		client: svc.client.Http(),
+		client: svc.client,
 		method: http.MethodGet,
 		uri:    fmt.Sprintf("/prebuilts/%s", id),
 	})
@@ -164,7 +164,7 @@ func (svc *PrebuiltService) GetAll() ([]Prebuilt, error) {
 	logger.Trace()
 
 	res, err := Do(&Request{
-		client: svc.client.Http(),
+		client: svc.client,
 		method: http.MethodGet,
 		uri:    "/prebuilts",
 	})
@@ -193,7 +193,7 @@ func (svc *PrebuiltService) Delete(id string) error {
 	logger.Trace()
 
 	_, err := Do(&Request{
-		client: svc.client.Http(),
+		client: svc.client,
 		method: http.MethodDelete,
 		uri:    fmt.Sprintf("/prebuilts/%s", id),
 	})
@@ -226,7 +226,7 @@ func (svc *PrebuiltService) ImportRaw(in any, overwrite bool) (*Prebuilt, error)
 	}
 
 	res, err := Do(&Request{
-		client:             svc.client.Http(),
+		client:             svc.client,
 		method:             http.MethodPost,
 		uri:                "/prebuilts/import",
 		body:               &body,
@@ -255,7 +255,7 @@ func (svc *PrebuiltService) Export(id string) (*PrebuiltPackage, error) {
 	logger.Trace()
 
 	res, err := Do(&Request{
-		client: svc.client.Http(),
+		client: svc.client,
 		method: http.MethodGet,
 		uri:    fmt.Sprintf("/prebuilts/%s/export", id),
 	})

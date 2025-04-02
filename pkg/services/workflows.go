@@ -58,8 +58,8 @@ type WorkflowService struct {
 	client *ServiceClient
 }
 
-func NewWorkflowService(iapClient client.Client) *WorkflowService {
-	return &WorkflowService{client: NewServiceClient(iapClient)}
+func NewWorkflowService(c client.Client) *WorkflowService {
+	return &WorkflowService{client: NewServiceClient(c)}
 }
 
 // NewWorkflow returns a minimum viable workflow struct.

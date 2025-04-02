@@ -13,8 +13,8 @@ type AdapterModelService struct {
 	client *ServiceClient
 }
 
-func NewAdapterModelService(iapClient client.Client) *AdapterModelService {
-	return &AdapterModelService{client: NewServiceClient(iapClient)}
+func NewAdapterModelService(c client.Client) *AdapterModelService {
+	return &AdapterModelService{client: NewServiceClient(c)}
 }
 
 // GetAll will retrieve all of the adapter models that are avalalbe on the
