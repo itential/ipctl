@@ -37,8 +37,8 @@ type RoleService struct {
 	client client.Client
 }
 
-func NewRoleService(iapClient client.Client) *RoleService {
-	return &RoleService{client: iapClient}
+func NewRoleService(c client.Client) *RoleService {
+	return &RoleService{client: c}
 }
 
 // Create implements `http.MethodPost /authorization/roles`
@@ -75,7 +75,7 @@ func (svc *RoleService) Create(in Role) (*Role, error) {
 	}
 
 	resp, err := Do(&Request{
-		client:             svc.client.Http(),
+		client:             svc.client,
 		method:             http.MethodPost,
 		uri:                "/authorization/roles",
 		body:               map[string]interface{}{"role": body},
@@ -99,7 +99,7 @@ func (svc *RoleService) Delete(id string) error {
 	logger.Trace()
 
 	resp, err := Do(&Request{
-		client: svc.client.Http(),
+		client: svc.client,
 		method: http.MethodDelete,
 		uri:    fmt.Sprintf("/authorization/roles/%s", id),
 	})
@@ -141,7 +141,7 @@ func (svc *RoleService) GetAll() ([]Role, error) {
 
 	for {
 		resp, err := Do(&Request{
-			client:   svc.client.Http(),
+			client:   svc.client,
 			method:   http.MethodGet,
 			uri:      "/authorization/roles",
 			params:   &QueryParams{Limit: limit, Skip: skip},
@@ -178,7 +178,7 @@ func (svc *RoleService) Get(id string) (*Role, error) {
 	var response map[string]interface{}
 
 	res, err := Do(&Request{
-		client:   svc.client.Http(),
+		client:   svc.client,
 		method:   http.MethodGet,
 		uri:      fmt.Sprintf("/authorization/roles/%s", id),
 		response: &response,
@@ -211,7 +211,7 @@ func (svc *RoleService) Import(in Role) (*Role, error) {
 	}
 
 	res, err := Do(&Request{
-		client:             svc.client.Http(),
+		client:             svc.client,
 		method:             http.MethodPost,
 		uri:                "/authorization/roles",
 		body:               &body,

@@ -28,8 +28,8 @@ type ConfigTemplateService struct {
 	client *ServiceClient
 }
 
-func NewConfigTemplateService(iapClient client.Client) *ConfigTemplateService {
-	return &ConfigTemplateService{client: NewServiceClient(iapClient)}
+func NewConfigTemplateService(c client.Client) *ConfigTemplateService {
+	return &ConfigTemplateService{client: NewServiceClient(c)}
 }
 
 func NewConfigTemplate(name string) ConfigTemplate {

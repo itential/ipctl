@@ -44,8 +44,8 @@ type InstanceService struct {
 	client *ServiceClient
 }
 
-func NewInstanceService(iapClient client.Client) *InstanceService {
-	return &InstanceService{client: NewServiceClient(iapClient)}
+func NewInstanceService(c client.Client) *InstanceService {
+	return &InstanceService{client: NewServiceClient(c)}
 }
 
 /*
@@ -54,7 +54,7 @@ func (svc *InstanceService) Get(modelId, instanceId string) (*Instance, error) {
 
 	var response map[string]interface{}
 	resp, err := Do(&Request{
-		client:   svc.client.Http(),
+		client:   svc.client,
 		method:   http.MethodGet,
 		uri:      fmt.Sprintf("/lifecycle-manager/resources/%s/instances/%s", modelId, instanceId),
 		response: &response,

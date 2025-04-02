@@ -27,9 +27,9 @@ type DeviceService struct {
 	client *ServiceClient
 }
 
-func NewDeviceService(iapClient client.Client) *DeviceService {
+func NewDeviceService(c client.Client) *DeviceService {
 	return &DeviceService{
-		client: NewServiceClient(iapClient),
+		client: NewServiceClient(c),
 	}
 }
 

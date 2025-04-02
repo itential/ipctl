@@ -44,8 +44,8 @@ type AnalyticTemplateService struct {
 	client *ServiceClient
 }
 
-func NewAnalyticTemplateService(iapClient client.Client) *AnalyticTemplateService {
-	return &AnalyticTemplateService{client: NewServiceClient(iapClient)}
+func NewAnalyticTemplateService(c client.Client) *AnalyticTemplateService {
+	return &AnalyticTemplateService{client: NewServiceClient(c)}
 }
 
 func NewAnalyticTemplate(name string) AnalyticTemplate {

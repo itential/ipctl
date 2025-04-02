@@ -41,8 +41,8 @@ type IntegrationModelService struct {
 	client *ServiceClient
 }
 
-func NewIntegrationModelService(iapClient client.Client) *IntegrationModelService {
-	return &IntegrationModelService{client: NewServiceClient(iapClient)}
+func NewIntegrationModelService(c client.Client) *IntegrationModelService {
+	return &IntegrationModelService{client: NewServiceClient(c)}
 }
 
 func (svc *IntegrationModelService) GetAll() ([]IntegrationModel, error) {

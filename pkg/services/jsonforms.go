@@ -33,8 +33,8 @@ type JsonFormService struct {
 	client *ServiceClient
 }
 
-func NewJsonFormService(iapClient client.Client) *JsonFormService {
-	return &JsonFormService{client: NewServiceClient(iapClient)}
+func NewJsonFormService(c client.Client) *JsonFormService {
+	return &JsonFormService{client: NewServiceClient(c)}
 }
 
 // NewJsonForm will create and return an instance of JsorForm with all fields

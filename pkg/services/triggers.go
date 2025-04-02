@@ -138,8 +138,8 @@ type TriggerService struct {
 	client *ServiceClient
 }
 
-func NewTriggerService(iapClient client.Client) *TriggerService {
-	return &TriggerService{client: NewServiceClient(iapClient)}
+func NewTriggerService(c client.Client) *TriggerService {
+	return &TriggerService{client: NewServiceClient(c)}
 }
 
 func NewEndpointTrigger(name, desc, route, action string) Trigger {

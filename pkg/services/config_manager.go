@@ -19,8 +19,8 @@ type ConfigManagerService struct {
 	client *ServiceClient
 }
 
-func NewConfigManagerService(iapClient *client.IapClient) *ConfigManagerService {
-	return &ConfigManagerService{client: NewServiceClient(iapClient)}
+func NewConfigManagerService(c client.Client) *ConfigManagerService {
+	return &ConfigManagerService{client: NewServiceClient(c)}
 }
 
 func (svc *ConfigManagerService) Render(in ConfigManagerJinja2Template) {

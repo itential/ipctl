@@ -65,8 +65,8 @@ type ProfileService struct {
 	client *ServiceClient
 }
 
-func NewProfileService(iapClient client.Client) *ProfileService {
-	return &ProfileService{client: NewServiceClient(iapClient)}
+func NewProfileService(c client.Client) *ProfileService {
+	return &ProfileService{client: NewServiceClient(c)}
 }
 
 func NewProfile(name, desc string) Profile {

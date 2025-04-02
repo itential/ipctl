@@ -14,7 +14,7 @@ type ActionRunner struct {
 	config_manager *services.ConfigManagerService
 }
 
-func NewActionRunner(client *client.IapClient) *ActionRunner {
+func NewActionRunner(client client.Client) *ActionRunner {
 	return &ActionRunner{
 		config_manager: services.NewConfigManagerService(client),
 	}

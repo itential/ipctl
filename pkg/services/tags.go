@@ -28,8 +28,8 @@ func NewTag(name, desc string) Tag {
 
 }
 
-func NewTagService(iapClient client.Client) *TagService {
-	return &TagService{client: NewServiceClient(iapClient)}
+func NewTagService(c client.Client) *TagService {
+	return &TagService{client: NewServiceClient(c)}
 }
 
 // GetAll implements `GET /tags/all`

@@ -18,8 +18,8 @@ type ViewService struct {
 	client *ServiceClient
 }
 
-func NewViewService(iapClient client.Client) *ViewService {
-	return &ViewService{client: NewServiceClient(iapClient)}
+func NewViewService(c client.Client) *ViewService {
+	return &ViewService{client: NewServiceClient(c)}
 }
 
 // GetAll will retrieve all authorization views from the service and return
