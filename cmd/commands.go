@@ -120,9 +120,11 @@ func assetCommands(r handlers.Runtime, id string) []*cobra.Command {
 // platformCommands define the set of commands that can be performed on a
 // speific server instance.
 func platformCommands(r handlers.Runtime, id string) []*cobra.Command {
+	apiHandler := handlers.NewApiHandler(r)
 	h := handlers.NewHandler(r)
+
 	return makeRootCommand([]RootCommand{
-		RootCommand{"api", id, h.ApiCommands, "platform"},
+		RootCommand{"api", id, apiHandler.Commands, "platform"},
 		RootCommand{"inspect", id, h.InspectCommands, "platform"},
 		RootCommand{"start", id, h.StartCommands, "platform"},
 		RootCommand{"stop", id, h.StopCommands, "platform"},
