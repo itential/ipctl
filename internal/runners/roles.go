@@ -54,7 +54,7 @@ func (r *RoleRunner) Get(in Request) (*Response, error) {
 	}
 
 	return &Response{
-		Keys:   []string{"name", "type"},
+		Keys:   []string{"name", "provenance"},
 		Object: filtered,
 	}, nil
 
