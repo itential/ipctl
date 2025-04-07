@@ -5,6 +5,7 @@
 package services
 
 import (
+	"path/filepath"
 	"reflect"
 	"testing"
 
@@ -13,8 +14,8 @@ import (
 )
 
 var (
-	accountsGetResponse    = testlib.Fixture("testdata/authorization/accounts/get.json")
-	accountsGetAllResponse = testlib.Fixture("testdata/authorization/accounts/getall.json")
+	accountsGetSuccess    = "authorization/accounts/get.success.json"
+	accountsGetAllSuccess = "authorization/accounts/getall.success.json"
 )
 
 func setupAccountService() *AccountService {
@@ -27,12 +28,17 @@ func TestAccountGetAll(t *testing.T) {
 	svc := setupAccountService()
 	defer testlib.Teardown()
 
-	testlib.AddGetResponseToMux("/authorization/accounts", accountsGetAllResponse, 0)
+	for _, ele := range fixtureSuites {
+		response := testlib.Fixture(
+			filepath.Join(fixtureRoot, ele, accountsGetAllSuccess),
+		)
+		testlib.AddGetResponseToMux("/authorization/accounts", response, 0)
 
-	res, err := svc.GetAll()
+		res, err := svc.GetAll()
 
-	assert.Nil(t, err)
-	assert.Equal(t, 2, len(res))
+		assert.Nil(t, err)
+		assert.Equal(t, 2, len(res))
+	}
 }
 
 func TestAccountGetAllError(t *testing.T) {
@@ -51,14 +57,20 @@ func TestAccountGet(t *testing.T) {
 	svc := setupAccountService()
 	defer testlib.Teardown()
 
-	testlib.AddGetResponseToMux("/authorization/accounts/{id}", accountsGetResponse, 0)
+	for _, ele := range fixtureSuites {
+		response := testlib.Fixture(
+			filepath.Join(fixtureRoot, ele, accountsGetSuccess),
+		)
 
-	res, err := svc.Get("ID")
+		testlib.AddGetResponseToMux("/authorization/accounts/{id}", response, 0)
 
-	assert.Nil(t, err)
-	assert.NotNil(t, res)
-	assert.Equal(t, reflect.TypeOf((*Account)(nil)), reflect.TypeOf(res))
-	assert.True(t, res.Id != "")
+		res, err := svc.Get("ID")
+
+		assert.Nil(t, err)
+		assert.NotNil(t, res)
+		assert.Equal(t, reflect.TypeOf((*Account)(nil)), reflect.TypeOf(res))
+		assert.True(t, res.Id != "")
+	}
 }
 
 func TestAccountGetError(t *testing.T) {
@@ -77,15 +89,21 @@ func TestAccountGetByName(t *testing.T) {
 	svc := setupAccountService()
 	defer testlib.Teardown()
 
-	testlib.AddGetResponseToMux("/authorization/accounts", accountsGetAllResponse, 0)
+	for _, ele := range fixtureSuites {
+		response := testlib.Fixture(
+			filepath.Join(fixtureRoot, ele, accountsGetAllSuccess),
+		)
+		testlib.AddGetResponseToMux("/authorization/accounts", response, 0)
 
-	res, err := svc.GetByName("admin@pronghorn")
+		res, err := svc.GetByName("admin@pronghorn")
 
-	assert.Nil(t, err)
-	assert.NotNil(t, res)
-	assert.Equal(t, reflect.TypeOf((*Account)(nil)), reflect.TypeOf(res))
-	assert.True(t, res.Id != "")
-	assert.True(t, res.Username == "admin@pronghorn")
+		assert.Nil(t, err)
+		assert.NotNil(t, res)
+		assert.Equal(t, reflect.TypeOf((*Account)(nil)), reflect.TypeOf(res))
+		assert.True(t, res.Id != "")
+		assert.True(t, res.Username == "admin@pronghorn")
+
+	}
 }
 
 func TestAccountGetByNameError(t *testing.T) {

@@ -5,6 +5,7 @@
 package services
 
 import (
+	"path/filepath"
 	"testing"
 
 	"github.com/itential/ipctl/internal/testlib"
@@ -12,7 +13,7 @@ import (
 )
 
 var (
-	methodsGetAllResponse = testlib.Fixture("testdata/authorization/methods/getall.json")
+	methodsGetAllSuccess = "authorization/methods/getall.success.json"
 )
 
 func setupMethodService() *MethodService {
@@ -25,11 +26,17 @@ func TestMethodsGetAll(t *testing.T) {
 	svc := setupMethodService()
 	defer testlib.Teardown()
 
-	testlib.AddGetResponseToMux("/authorization/methods", methodsGetAllResponse, 0)
+	for _, ele := range fixtureSuites {
+		response := testlib.Fixture(
+			filepath.Join(fixtureRoot, ele, methodsGetAllSuccess),
+		)
 
-	res, err := svc.GetAll()
+		testlib.AddGetResponseToMux("/authorization/methods", response, 0)
 
-	assert.Nil(t, err)
-	assert.NotNil(t, res)
-	assert.Equal(t, 523, len(res))
+		res, err := svc.GetAll()
+
+		assert.Nil(t, err)
+		assert.NotNil(t, res)
+		assert.Equal(t, 523, len(res))
+	}
 }

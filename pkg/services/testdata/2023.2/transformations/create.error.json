@@ -1,0 +1,9 @@
+{
+  "apiVersion": "1",
+  "method": "transformations.create",
+  "error": {
+    "code": 400,
+    "message": "Transformation with given name already exists",
+    "errors": null
+  }
+}

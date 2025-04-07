@@ -5,6 +5,7 @@
 package services
 
 import (
+	"path/filepath"
 	"reflect"
 	"testing"
 
@@ -13,8 +14,8 @@ import (
 )
 
 var (
-	adaptersGetResponse    = testlib.Fixture("testdata/adapters/get.json")
-	adaptersGetAllResponse = testlib.Fixture("testdata/adapters/getall.json")
+	adaptersGetSuccess    = "adapters/get.success.json"
+	adaptersGetAllSuccess = "adapters/getall.success.json"
 )
 
 func setupAdapterService() *AdapterService {
@@ -27,26 +28,38 @@ func TestAdaptersGetAll(t *testing.T) {
 	svc := setupAdapterService()
 	defer testlib.Teardown()
 
-	testlib.AddGetResponseToMux("/adapters", adaptersGetAllResponse, 0)
+	for _, ele := range fixtureSuites {
+		response := testlib.Fixture(
+			filepath.Join(fixtureRoot, ele, adaptersGetAllSuccess),
+		)
 
-	res, err := svc.GetAll()
+		testlib.AddGetResponseToMux("/adapters", response, 0)
 
-	assert.Nil(t, err)
-	assert.Equal(t, 1, len(res))
+		res, err := svc.GetAll()
+
+		assert.Nil(t, err)
+		assert.Equal(t, 1, len(res))
+	}
 }
 
 func TestAdapterGet(t *testing.T) {
 	svc := setupAdapterService()
 	defer testlib.Teardown()
 
-	testlib.AddGetResponseToMux("/adapters/{name}", adaptersGetResponse, 0)
+	for _, ele := range fixtureSuites {
+		response := testlib.Fixture(
+			filepath.Join(fixtureRoot, ele, adaptersGetSuccess),
+		)
 
-	res, err := svc.Get("local_aaa")
+		testlib.AddGetResponseToMux("/adapters/{name}", response, 0)
 
-	assert.Nil(t, err)
-	assert.NotNil(t, res)
-	assert.Equal(t, reflect.TypeOf((*Adapter)(nil)), reflect.TypeOf(res))
-	assert.True(t, res.Name == "local_aaa")
+		res, err := svc.Get("local_aaa")
+
+		assert.Nil(t, err)
+		assert.NotNil(t, res)
+		assert.Equal(t, reflect.TypeOf((*Adapter)(nil)), reflect.TypeOf(res))
+		assert.True(t, res.Name == "local_aaa")
+	}
 }
 
 func TestAdapterGetError(t *testing.T) {

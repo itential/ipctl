@@ -5,6 +5,7 @@
 package services
 
 import (
+	"path/filepath"
 	"reflect"
 	"testing"
 
@@ -13,8 +14,8 @@ import (
 )
 
 var (
-	jsonFormsGetAllResponse = testlib.Fixture("testdata/json-forms/forms/getall.json")
-	jsonFormsGetResponse    = testlib.Fixture("testdata/json-forms/forms/get.json")
+	jsonFormsGetAllSuccess = "json-forms/forms/getall.success.json"
+	jsonFormsGetSuccess    = "json-forms/forms/get.success.json"
 )
 
 func setupJsonFormService() *JsonFormService {
@@ -27,25 +28,37 @@ func TestJsonFormGetAll(t *testing.T) {
 	svc := setupJsonFormService()
 	defer testlib.Teardown()
 
-	testlib.AddGetResponseToMux("/json-forms/forms", jsonFormsGetAllResponse, 0)
+	for _, ele := range fixtureSuites {
+		response := testlib.Fixture(
+			filepath.Join(fixtureRoot, ele, jsonFormsGetAllSuccess),
+		)
 
-	res, err := svc.GetAll()
+		testlib.AddGetResponseToMux("/json-forms/forms", response, 0)
 
-	assert.Nil(t, err)
-	assert.Equal(t, 2, len(res))
+		res, err := svc.GetAll()
+
+		assert.Nil(t, err)
+		assert.Equal(t, 2, len(res))
+	}
 }
 
 func TestJsonFormGet(t *testing.T) {
 	svc := setupJsonFormService()
 	defer testlib.Teardown()
 
-	testlib.AddGetResponseToMux("/json-forms/forms/test", jsonFormsGetResponse, 0)
+	for _, ele := range fixtureSuites {
+		response := testlib.Fixture(
+			filepath.Join(fixtureRoot, ele, jsonFormsGetSuccess),
+		)
 
-	res, err := svc.Get("test")
+		testlib.AddGetResponseToMux("/json-forms/forms/test", response, 0)
 
-	assert.Nil(t, err)
-	assert.NotNil(t, res)
-	assert.Equal(t, reflect.TypeOf((*JsonForm)(nil)), reflect.TypeOf(res))
-	assert.True(t, res.Id != "")
-	assert.True(t, res.Name == "test")
+		res, err := svc.Get("test")
+
+		assert.Nil(t, err)
+		assert.NotNil(t, res)
+		assert.Equal(t, reflect.TypeOf((*JsonForm)(nil)), reflect.TypeOf(res))
+		assert.True(t, res.Id != "")
+		assert.True(t, res.Name == "test")
+	}
 }

@@ -5,6 +5,7 @@
 package services
 
 import (
+	"path/filepath"
 	"testing"
 
 	"github.com/itential/ipctl/internal/testlib"
@@ -12,18 +13,24 @@ import (
 )
 
 var (
-	getCurrentUserResponse = testlib.Fixture("testdata/whoami.json")
+	getCurrentUserSuccess = "whoami.success.json"
 )
 
 func TestGetCurrentUser(t *testing.T) {
 	testClient := testlib.Setup()
 	defer testlib.Teardown()
 
-	testlib.AddGetResponseToMux("/whoami", getCurrentUserResponse, 0)
+	for _, ele := range fixtureSuites {
+		response := testlib.Fixture(
+			filepath.Join(fixtureRoot, ele, getCurrentUserSuccess),
+		)
 
-	res, err := GetCurrentUser(testClient)
+		testlib.AddGetResponseToMux("/whoami", response, 0)
 
-	assert.Nil(t, err)
-	assert.NotNil(t, res)
-	assert.Equal(t, "admin@pronghorn", res.Username)
+		res, err := GetCurrentUser(testClient)
+
+		assert.Nil(t, err)
+		assert.NotNil(t, res)
+		assert.Equal(t, "admin@pronghorn", res.Username)
+	}
 }
