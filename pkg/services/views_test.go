@@ -5,6 +5,7 @@
 package services
 
 import (
+	"path/filepath"
 	"testing"
 
 	"github.com/itential/ipctl/internal/testlib"
@@ -12,7 +13,7 @@ import (
 )
 
 var (
-	viewsGetAllResponse = testlib.Fixture("testdata/authorization/views/getall.json")
+	viewsGetAllSuccess = "authorization/views/getall.success.json"
 )
 
 func setupViewService() *ViewService {
@@ -25,10 +26,23 @@ func TestViewsGetAll(t *testing.T) {
 	svc := setupViewService()
 	defer testlib.Teardown()
 
-	testlib.AddGetResponseToMux("/authorization/views", viewsGetAllResponse, 0)
+	for _, ele := range fixtureSuites {
+		response := testlib.Fixture(
+			filepath.Join(fixtureRoot, ele, viewsGetAllSuccess),
+		)
 
-	res, err := svc.GetAll()
+		data, err := fixtureDataToMap(response)
+		if err != nil {
+			t.FailNow()
+		}
 
-	assert.Nil(t, err)
-	assert.Equal(t, 51, len(res))
+		testlib.AddGetResponseToMux("/authorization/views", response, 0)
+
+		res, err := svc.GetAll()
+
+		total := data["total"].(float64)
+
+		assert.Nil(t, err)
+		assert.Equal(t, int(total), len(res))
+	}
 }
