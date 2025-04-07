@@ -1,8 +1,7 @@
+# Copyright 2025 Itential Inc. All Rights Reserved
+# Unauthorized copying of this file, via any medium is strictly prohibited
+# Proprietary and confidential
 ---
-#############################################################################
-# Asset commands
-#############################################################################
-
 get:
   use: adapters
   group: admin-essentials
@@ -71,10 +70,6 @@ dump:
   group: admin-essentials
   description: |
     Dump all adapters
-
-#############################################################################
-# Platform commands
-#############################################################################
 
 start:
   use: adapter <name>

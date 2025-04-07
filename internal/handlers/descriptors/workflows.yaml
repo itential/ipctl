@@ -1,7 +1,7 @@
----
-##############################################################################
-# Reader Commands
-##############################################################################
+# Copyright 2025 Itential Inc. All Rights Reserved
+# Unauthorized copying of this file, via any medium is strictly prohibited
+# Proprietary and confidential
+----
 get:
   use: workflows
   group: automation-studio
@@ -14,9 +14,6 @@ describe:
   description: |
     Display details about a workflow
 
-##############################################################################
-# Writer Commands
-##############################################################################
 create:
   use: workflow <name>
   group: automation-studio
@@ -72,10 +69,6 @@ clear:
   description: |
     Delete all configured workflows
 
-##############################################################################
-# Import/Export Commands
-##############################################################################
-
 import:
   use: workflow <path>
   group: automation-studio
@@ -108,11 +101,6 @@ export:
   group: automation-studio
   description: |
     Export a workflow
-
-
-##############################################################################
-# Dataset Commands
-##############################################################################
 
 load:
   use: workflows <path>

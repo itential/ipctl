@@ -1,8 +1,7 @@
----
-##############################################################################
-# Reader Commands
-##############################################################################
-
+# Copyright 2025 Itential Inc. All Rights Reserved
+# Unauthorized copying of this file, via any medium is strictly prohibited
+# Proprietary and confidential
+----
 get:
   use: prebuilts
   group: admin-essentials
@@ -16,10 +15,6 @@ describe:
 
   description: |
     Display detailed information about a prebuilt
-
-##############################################################################
-# Writer Commands
-##############################################################################
 
 delete:
   use: prebuilt <name>
@@ -35,9 +30,6 @@ clear:
   description: |
     Delete all prebuilts
 
-##############################################################################
-# Promoter Commands
-##############################################################################
 import:
   use: prebuilt <path>
   group: admin-essentials

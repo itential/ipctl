@@ -1,7 +1,7 @@
----
-##############################################################################
-# Reader Commands
-##############################################################################
+# Copyright 2025 Itential Inc. All Rights Reserved
+# Unauthorized copying of this file, via any medium is strictly prohibited
+# Proprietary and confidential
+----
 get:
   use: templates
   group: automation-studio
@@ -22,9 +22,6 @@ describe:
   description: |
     Display details about a template
 
-##############################################################################
-# Writer Commands
-##############################################################################
 create:
   use: template <name> --group <name> --type [textfsm, jinja2]
   group: automation-studio
@@ -63,9 +60,6 @@ clear:
   description: |
     Delete all configured templates
 
-##############################################################################
-# Import/Export Commands
-##############################################################################
 export:
   use: template <name>
   group: automation-studio
@@ -77,20 +71,3 @@ import:
   group: automation-studio
   description: |
     Import a template
-
-##############################################################################
-# Gitter commands
-##############################################################################
-
-push:
-  use: template <name> <repository>
-  group: automation-studio
-  description: |
-    Push a template to a repository
-
-pull:
-  use: template <path> <repository>
-  group: automation-studio
-  description: |
-    Pull a template from a repository
-
