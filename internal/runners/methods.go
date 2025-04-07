@@ -5,8 +5,6 @@
 package runners
 
 import (
-	"fmt"
-
 	"github.com/itential/ipctl/pkg/client"
 	"github.com/itential/ipctl/pkg/config"
 	"github.com/itential/ipctl/pkg/logger"
@@ -33,14 +31,8 @@ func (r *MethodRunner) Get(in Request) (*Response, error) {
 		return nil, err
 	}
 
-	display := []string{"NAME\tTYPE"}
-	for _, ele := range methods {
-		line := fmt.Sprintf("%s\t%s", ele.Name, ele.Provenance)
-		display = append(display, line)
-	}
-
 	return &Response{
-		Keys:   []string{"name", "type"},
+		Keys:   []string{"name", "provenance"},
 		Object: methods,
 	}, nil
 }
