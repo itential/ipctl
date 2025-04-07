@@ -5,6 +5,7 @@
 package services
 
 import (
+	"path/filepath"
 	"testing"
 
 	"github.com/itential/ipctl/internal/testlib"
@@ -12,7 +13,7 @@ import (
 )
 
 var (
-	userSettingsGetResponse = testlib.Fixture("testdata/user/settings/get.json")
+	userSettingsGetSuccess = "user/settings/get.success.json"
 )
 
 func setupUserSettingsService() *UserSettingsService {
@@ -25,11 +26,24 @@ func TestUserSettingssGetAll(t *testing.T) {
 	svc := setupUserSettingsService()
 	defer testlib.Teardown()
 
-	testlib.AddGetResponseToMux("/user/settings", userSettingsGetResponse, 0)
+	for _, ele := range fixtureSuites {
+		response := testlib.Fixture(
+			filepath.Join(fixtureRoot, ele, userSettingsGetSuccess),
+		)
 
-	res, err := svc.Get()
+		data, err := fixtureDataToMap(response)
+		if err != nil {
+			t.FailNow()
+		}
 
-	assert.Nil(t, err)
-	assert.NotNil(t, res)
-	assert.True(t, res.Id != "")
+		id := data["_id"].(string)
+
+		testlib.AddGetResponseToMux("/user/settings", response, 0)
+
+		res, err := svc.Get()
+
+		assert.Nil(t, err)
+		assert.NotNil(t, res)
+		assert.Equal(t, id, res.Id)
+	}
 }

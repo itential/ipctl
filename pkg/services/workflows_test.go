@@ -5,7 +5,9 @@
 package services
 
 import (
+	"fmt"
 	"net/http"
+	"path/filepath"
 	"reflect"
 	"testing"
 
@@ -14,14 +16,14 @@ import (
 )
 
 var (
-	workflowsGetResponse           = testlib.Fixture("testdata/automation-studio/workflows/get.json")
-	workflowsGetAllResponse        = testlib.Fixture("testdata/automation-studio/workflows/getall.json")
-	workflowsDeleteSuccessResponse = testlib.Fixture("testdata/automation-studio/workflows/delete/success.json")
-	workflowsDeleteErrorResponse   = testlib.Fixture("testdata/automation-studio/workflows/delete/error.json")
-	workflowsCreateResponse        = testlib.Fixture("testdata/automation-studio/automations/create.json")
-	workflowsExportResponse        = testlib.Fixture("testdata/workflow_builder/export/post.json")
-	workflowsImportSuccessResponse = testlib.Fixture("testdata/automation-studio/automations/import.success.json")
-	workflowsImportErrorResponse   = testlib.Fixture("testdata/automation-studio/automations/import.error.json")
+	workflowsGetSuccess     = "automation-studio/workflows/get.success.json"
+	workflowsGetAllSuccess  = "automation-studio/workflows/getall.success.json"
+	workflowsDeleteSuccess  = "automation-studio/workflows/delete.success.json"
+	workflowsDeleteNotFound = "automation-studio/workflows/delete.notfound.json"
+	workflowsCreateSuccess  = "automation-studio/automations/create.success.json"
+	workflowsExportSuccess  = "workflow_builder/export/export.success.json"
+	workflowsImportSuccess  = "automation-studio/automations/import.success.json"
+	workflowsImportError    = "automation-studio/automations/import.error.json"
 )
 
 func setupWorkflowService() *WorkflowService {
@@ -34,26 +36,50 @@ func TestWorkflowGetAll(t *testing.T) {
 	svc := setupWorkflowService()
 	defer testlib.Teardown()
 
-	testlib.AddGetResponseToMux("/automation-studio/workflows", workflowsGetAllResponse, 0)
+	for _, ele := range fixtureSuites {
+		response := testlib.Fixture(
+			filepath.Join(fixtureRoot, ele, workflowsGetAllSuccess),
+		)
 
-	res, err := svc.GetAll()
+		testlib.AddGetResponseToMux("/automation-studio/workflows", response, 0)
 
-	assert.Nil(t, err)
-	assert.Equal(t, 5, len(res))
+		res, err := svc.GetAll()
+
+		assert.Nil(t, err)
+		assert.Equal(t, 5, len(res))
+	}
 }
 
 func TestWorkflowGet(t *testing.T) {
 	svc := setupWorkflowService()
 	defer testlib.Teardown()
 
-	testlib.AddGetResponseToMux("/automation-studio/workflows", workflowsGetResponse, 0)
+	for _, ele := range fixtureSuites {
+		response := testlib.Fixture(
+			filepath.Join(fixtureRoot, ele, workflowsGetSuccess),
+		)
 
-	res, err := svc.Get("UI-Test-1")
+		testlib.AddGetResponseToMux("/automation-studio/workflows", response, 0)
 
-	assert.Nil(t, err)
-	assert.NotNil(t, res)
-	assert.Equal(t, reflect.TypeOf((*Workflow)(nil)), reflect.TypeOf(res))
-	assert.True(t, res.Id != "")
+		data, err := fixtureDataToMap(response)
+		if err != nil {
+			t.FailNow()
+		}
+
+		items := data["items"].([]interface{})
+
+		name := items[0].(map[string]interface{})["name"].(string)
+		id := items[0].(map[string]interface{})["_id"].(string)
+
+		res, err := svc.Get(name)
+
+		assert.Nil(t, err)
+		assert.NotNil(t, res)
+		assert.Equal(t, reflect.TypeOf((*Workflow)(nil)), reflect.TypeOf(res))
+		assert.Equal(t, id, res.Id)
+		assert.Equal(t, name, res.Name)
+	}
+
 }
 
 func TestWorkflowGetError(t *testing.T) {
@@ -62,7 +88,7 @@ func TestWorkflowGetError(t *testing.T) {
 
 	testlib.AddGetErrorToMux("/automation-studio/workflows", "", 0)
 
-	res, err := svc.Get("TEST")
+	res, err := svc.Get("test")
 
 	assert.NotNil(t, err)
 	assert.Nil(t, res)
@@ -72,16 +98,31 @@ func TestWorkflowCreate(t *testing.T) {
 	svc := setupWorkflowService()
 	defer testlib.Teardown()
 
-	testlib.AddPostResponseToMux("/automation-studio/automations", workflowsCreateResponse, http.StatusOK)
+	for _, ele := range fixtureSuites {
+		response := testlib.Fixture(
+			filepath.Join(fixtureRoot, ele, workflowsCreateSuccess),
+		)
 
-	doc := NewWorkflow("UI-Test-1")
+		testlib.AddPostResponseToMux("/automation-studio/automations", response, http.StatusOK)
 
-	res, err := svc.Create(doc)
+		data, err := fixtureDataToMap(response)
+		if err != nil {
+			t.FailNow()
+		}
 
-	assert.Nil(t, err)
-	assert.NotNil(t, res)
-	assert.Equal(t, reflect.TypeOf((*Workflow)(nil)), reflect.TypeOf(res))
-	assert.True(t, res.Id != "")
+		name := data["created"].(map[string]interface{})["name"].(string)
+		id := data["created"].(map[string]interface{})["_id"].(string)
+
+		doc := NewWorkflow(name)
+
+		res, err := svc.Create(doc)
+
+		assert.Nil(t, err)
+		assert.NotNil(t, res)
+		assert.Equal(t, reflect.TypeOf((*Workflow)(nil)), reflect.TypeOf(res))
+		assert.Equal(t, name, res.Name)
+		assert.Equal(t, id, res.Id)
+	}
 }
 
 func TestWorkflowCreateError(t *testing.T) {
@@ -102,65 +143,118 @@ func TestWorkflowDelete(t *testing.T) {
 	svc := setupWorkflowService()
 	defer testlib.Teardown()
 
-	testlib.AddDeleteResponseToMux("/workflow_builder/workflows/delete/test", workflowsDeleteSuccessResponse, http.StatusOK)
+	for _, ele := range fixtureSuites {
+		response := testlib.Fixture(
+			filepath.Join(fixtureRoot, ele, workflowsDeleteSuccess),
+		)
 
-	err := svc.Delete("test")
+		data, err := fixtureDataToMap(response)
+		if err != nil {
+			t.FailNow()
+		}
 
-	assert.Nil(t, err)
+		name := data["value"].(map[string]interface{})["name"].(string)
+
+		testlib.AddDeleteResponseToMux(
+			fmt.Sprintf("/workflow_builder/workflows/delete/%s", name), response, http.StatusOK,
+		)
+
+		err = svc.Delete(name)
+
+		assert.Nil(t, err)
+	}
 }
 
-func TestWorkflowDeleteError(t *testing.T) {
+func TestWorkflowDeleteNotFound(t *testing.T) {
 	svc := setupWorkflowService()
 	defer testlib.Teardown()
 
-	testlib.AddDeleteErrorToMux("/workflow_builder/workflows/delete/test", workflowsDeleteErrorResponse, 0)
+	for _, ele := range fixtureSuites {
+		response := testlib.Fixture(
+			filepath.Join(fixtureRoot, ele, workflowsDeleteNotFound),
+		)
 
-	err := svc.Delete("test")
+		testlib.AddDeleteErrorToMux("/workflow_builder/workflows/delete/test", response, 0)
 
-	assert.NotNil(t, err)
+		err := svc.Delete("test")
+
+		assert.NotNil(t, err)
+	}
 }
 
 func TestWorkflowExport(t *testing.T) {
 	svc := setupWorkflowService()
 	defer testlib.Teardown()
 
-	testlib.AddPostErrorToMux("/workflow_builder/export", workflowsExportResponse, http.StatusOK)
+	for _, ele := range fixtureSuites {
+		response := testlib.Fixture(
+			filepath.Join(fixtureRoot, ele, workflowsExportSuccess),
+		)
 
-	res, err := svc.Export("test")
+		data, err := fixtureDataToMap(response)
+		if err != nil {
+			t.FailNow()
+		}
 
-	assert.Nil(t, err)
-	assert.NotNil(t, res)
-	assert.Equal(t, reflect.TypeOf((*Workflow)(nil)), reflect.TypeOf(res))
-	assert.True(t, res.Name == "test")
+		name := data["name"].(string)
+
+		testlib.AddPostErrorToMux("/workflow_builder/export", response, http.StatusOK)
+
+		res, err := svc.Export(name)
+
+		assert.Nil(t, err)
+		assert.NotNil(t, res)
+		assert.Equal(t, reflect.TypeOf((*Workflow)(nil)), reflect.TypeOf(res))
+		assert.Equal(t, name, res.Name)
+	}
 }
 
 func TestWorkflowImport(t *testing.T) {
 	svc := setupWorkflowService()
 	defer testlib.Teardown()
 
-	testlib.AddPostResponseToMux("/automation-studio/automations/import", workflowsImportSuccessResponse, http.StatusOK)
+	for _, ele := range fixtureSuites {
+		response := testlib.Fixture(
+			filepath.Join(fixtureRoot, ele, workflowsImportSuccess),
+		)
 
-	doc := NewWorkflow("test")
+		data, err := fixtureDataToMap(response)
+		if err != nil {
+			t.FailNow()
+		}
 
-	res, err := svc.Import(doc)
+		name := data["name"].(string)
 
-	assert.Nil(t, err)
-	assert.NotNil(t, res)
-	assert.Equal(t, reflect.TypeOf((*Workflow)(nil)), reflect.TypeOf(res))
-	assert.True(t, res.Name == "test")
+		testlib.AddPostResponseToMux("/automation-studio/automations/import", response, http.StatusOK)
+
+		doc := NewWorkflow(name)
+
+		res, err := svc.Import(doc)
+
+		assert.Nil(t, err)
+		assert.NotNil(t, res)
+		assert.Equal(t, reflect.TypeOf((*Workflow)(nil)), reflect.TypeOf(res))
+		assert.Equal(t, name, res.Name)
+	}
 }
 
 func TestWorkflowImportError(t *testing.T) {
 	svc := setupWorkflowService()
 	defer testlib.Teardown()
 
-	testlib.AddPostResponseToMux("/automation-studio/automations/import", workflowsImportErrorResponse, http.StatusInternalServerError)
+	for _, ele := range fixtureSuites {
+		response := testlib.Fixture(
+			filepath.Join(fixtureRoot, ele, workflowsImportError),
+		)
 
-	doc := NewWorkflow("test")
+		testlib.AddPostResponseToMux("/automation-studio/automations/import", response, http.StatusInternalServerError)
 
-	res, err := svc.Import(doc)
+		doc := NewWorkflow("test")
 
-	assert.NotNil(t, err)
-	assert.Nil(t, res)
-	assert.Equal(t, reflect.TypeOf((*Workflow)(nil)), reflect.TypeOf(res))
+		res, err := svc.Import(doc)
+
+		assert.NotNil(t, err)
+		assert.Nil(t, res)
+		assert.Equal(t, reflect.TypeOf((*Workflow)(nil)), reflect.TypeOf(res))
+	}
 }

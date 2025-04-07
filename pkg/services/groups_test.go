@@ -5,6 +5,7 @@
 package services
 
 import (
+	"path/filepath"
 	"reflect"
 	"testing"
 
@@ -13,8 +14,8 @@ import (
 )
 
 var (
-	groupsGetResponse    = testlib.Fixture("testdata/authorization/groups/get.json")
-	groupsGetAllResponse = testlib.Fixture("testdata/authorization/groups/getall.json")
+	groupsGetSuccess    = "authorization/groups/get.success.json"
+	groupsGetAllSuccess = "authorization/groups/getall.success.json"
 )
 
 func setupGroupService() *GroupService {
@@ -27,12 +28,18 @@ func TestGroupGetAll(t *testing.T) {
 	svc := setupGroupService()
 	defer testlib.Teardown()
 
-	testlib.AddGetResponseToMux("/authorization/groups", groupsGetAllResponse, 0)
+	for _, ele := range fixtureSuites {
+		response := testlib.Fixture(
+			filepath.Join(fixtureRoot, ele, groupsGetAllSuccess),
+		)
 
-	res, err := svc.GetAll()
+		testlib.AddGetResponseToMux("/authorization/groups", response, 0)
 
-	assert.Nil(t, err)
-	assert.Equal(t, 1, len(res))
+		res, err := svc.GetAll()
+
+		assert.Nil(t, err)
+		assert.Equal(t, 1, len(res))
+	}
 }
 
 func TestGroupGetAllError(t *testing.T) {
@@ -51,14 +58,19 @@ func TestGroupGet(t *testing.T) {
 	svc := setupGroupService()
 	defer testlib.Teardown()
 
-	testlib.AddGetResponseToMux("/authorization/groups/{id}", groupsGetResponse, 0)
+	for _, ele := range fixtureSuites {
+		response := testlib.Fixture(
+			filepath.Join(fixtureRoot, ele, groupsGetSuccess),
+		)
+		testlib.AddGetResponseToMux("/authorization/groups/{id}", response, 0)
 
-	res, err := svc.Get("ID")
+		res, err := svc.Get("ID")
 
-	assert.Nil(t, err)
-	assert.NotNil(t, res)
-	assert.Equal(t, reflect.TypeOf((*Group)(nil)), reflect.TypeOf(res))
-	assert.True(t, res.Id != "")
+		assert.Nil(t, err)
+		assert.NotNil(t, res)
+		assert.Equal(t, reflect.TypeOf((*Group)(nil)), reflect.TypeOf(res))
+		assert.True(t, res.Id != "")
+	}
 }
 
 func TestGroupGetError(t *testing.T) {
@@ -77,15 +89,20 @@ func TestGroupGetByName(t *testing.T) {
 	svc := setupGroupService()
 	defer testlib.Teardown()
 
-	testlib.AddGetResponseToMux("/authorization/groups", groupsGetAllResponse, 0)
+	for _, ele := range fixtureSuites {
+		response := testlib.Fixture(
+			filepath.Join(fixtureRoot, ele, groupsGetAllSuccess),
+		)
+		testlib.AddGetResponseToMux("/authorization/groups", response, 0)
 
-	res, err := svc.GetByName("pronghorn_admin")
+		res, err := svc.GetByName("pronghorn_admin")
 
-	assert.Nil(t, err)
-	assert.NotNil(t, res)
-	assert.Equal(t, reflect.TypeOf((*Group)(nil)), reflect.TypeOf(res))
-	assert.True(t, res.Id != "")
-	assert.True(t, res.Name == "pronghorn_admin")
+		assert.Nil(t, err)
+		assert.NotNil(t, res)
+		assert.Equal(t, reflect.TypeOf((*Group)(nil)), reflect.TypeOf(res))
+		assert.True(t, res.Id != "")
+		assert.True(t, res.Name == "pronghorn_admin")
+	}
 }
 
 func TestGroupGetByNameError(t *testing.T) {
