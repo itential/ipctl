@@ -1,8 +1,7 @@
+# Copyright 2025 Itential Inc. All Rights Reserved
+# Unauthorized copying of this file, via any medium is strictly prohibited
+# Proprietary and confidential
 ---
-##############################################################################
-# Asset commands
-##############################################################################
-
 get:
   use: automations
   group: operations-manager
@@ -50,10 +49,6 @@ export:
   group: operations-manager
   description: |
     Export an automation (including triggers)
-
-##############################################################################
-# Dataset commands
-##############################################################################
 
 dump:
   use: automations

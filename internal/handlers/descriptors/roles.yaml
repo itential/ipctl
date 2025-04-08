@@ -1,4 +1,7 @@
----
+# Copyright 2025 Itential Inc. All Rights Reserved
+# Unauthorized copying of this file, via any medium is strictly prohibited
+# Proprietary and confidential
+----
 get:
   use: roles
   group: admin-essentials
@@ -46,9 +49,6 @@ create:
 
     # Create a new role called `pe`
     $ ipctl create role pe --method name=getAdapter,type=Adapter --method name=getIntegration,type=Integrations
-
-
-
 
 delete:
   use: role <name>

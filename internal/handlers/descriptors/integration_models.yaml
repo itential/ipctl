@@ -1,8 +1,7 @@
----
-##############################################################################
-# Reader Commands
-##############################################################################
-
+# Copyright 2025 Itential Inc. All Rights Reserved
+# Unauthorized copying of this file, via any medium is strictly prohibited
+# Proprietary and confidential
+----
 get:
   use: integration-models
   group: admin-essentials
@@ -19,10 +18,6 @@ describe:
 
   description: |
     Display detailed information about a integration-model
-
-##############################################################################
-# Writer Commands
-##############################################################################
 
 create:
   use: integration-model <path>
@@ -45,9 +40,6 @@ clear:
   description: |
     Delete all integration-models
 
-##############################################################################
-# Promoter Commands
-##############################################################################
 import:
   use: integration-model <path>
   group: admin-essentials

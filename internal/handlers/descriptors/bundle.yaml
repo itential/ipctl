@@ -1,5 +1,0 @@
----
-import:
-  use: import <path>
-  description: |
-    Import an AppArtifact bundle
