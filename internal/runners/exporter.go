@@ -86,7 +86,10 @@ func exportAssets(in Request, assets map[string]interface{}) error {
 			return e
 		}
 
-		repoPath, e = repo.Clone()
+		repoPath, e = repo.Clone(
+			&FileReaderImpl{},
+			&ClonerImpl{},
+		)
 		if e != nil {
 			return e
 		}
