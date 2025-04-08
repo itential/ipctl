@@ -35,9 +35,11 @@ func NewAdapterRunner(c client.Client, cfg *config.Config) *AdapterRunner {
 	}
 }
 
-//////////////////////////////////////////////////////////////////////////////
-// Reader Interface
-//
+/*
+******************************************************************************
+Reader Interface
+******************************************************************************
+*/
 
 // Get is the implementation of the command `get adapters`
 func (r *AdapterRunner) Get(in Request) (*Response, error) {
@@ -74,9 +76,11 @@ func (r *AdapterRunner) Describe(in Request) (*Response, error) {
 	}, nil
 }
 
-//////////////////////////////////////////////////////////////////////////////
-// Writer Interface
-//
+/*
+******************************************************************************
+Writer Interface
+******************************************************************************
+*/
 
 func (r *AdapterRunner) Create(in Request) (*Response, error) {
 	logger.Trace()
@@ -163,9 +167,11 @@ func (r *AdapterRunner) Clear(in Request) (*Response, error) {
 	return notImplemented(in)
 }
 
-//////////////////////////////////////////////////////////////////////////////
-// Editor Interface
-//
+/*
+******************************************************************************
+Editor Interface
+******************************************************************************
+*/
 
 // Edit implements the `edti adapter ...` command
 func (r *AdapterRunner) Edit(in Request) (*Response, error) {
@@ -193,9 +199,11 @@ func (r *AdapterRunner) Edit(in Request) (*Response, error) {
 	}, nil
 }
 
-//////////////////////////////////////////////////////////////////////////////
-// Copier Interface
-//
+/*
+******************************************************************************
+Copier Interface
+******************************************************************************
+*/
 
 func (r *AdapterRunner) Copy(in Request) (*Response, error) {
 	logger.Trace()
@@ -280,9 +288,11 @@ func (r *AdapterRunner) CopyTo(profile string, in any, replace bool) (any, error
 
 }
 
-//////////////////////////////////////////////////////////////////////////////
-// Importer Interface
-//
+/*
+******************************************************************************
+Importer Interface
+******************************************************************************
+*/
 
 // Import provides the implementation for `import adapter <filepath>`
 func (r *AdapterRunner) Import(in Request) (*Response, error) {
@@ -305,9 +315,11 @@ func (r *AdapterRunner) Import(in Request) (*Response, error) {
 	}, nil
 }
 
-//////////////////////////////////////////////////////////////////////////////
-// Exporter Interface
-//
+/*
+******************************************************************************
+Exporter Interface
+******************************************************************************
+*/
 
 // Export) provides the implementation for `export adapter <name>`
 func (r *AdapterRunner) Export(in Request) (*Response, error) {
@@ -333,7 +345,7 @@ func (r *AdapterRunner) Export(in Request) (*Response, error) {
 
 /*
 *******************************************************************************
-Inspector interfaceo
+Inspector interface
 *******************************************************************************
 */
 
@@ -352,9 +364,11 @@ func (r *AdapterRunner) Inspect(in Request) (*Response, error) {
 	}, nil
 }
 
-//////////////////////////////////////////////////////////////////////////////
-// Controller interface
-//
+/*
+*******************************************************************************
+Controller interface
+*******************************************************************************
+*/
 
 func (r *AdapterRunner) Start(in Request) (*Response, error) {
 	logger.Trace()
@@ -398,9 +412,11 @@ func (r *AdapterRunner) Restart(in Request) (*Response, error) {
 	}, nil
 }
 
-//////////////////////////////////////////////////////////////////////////////
-// Dumper Interface
-//
+/*
+*******************************************************************************
+Dumper interface
+*******************************************************************************
+*/
 
 // Dump implements the `dump adapters...` command
 func (r *AdapterRunner) Dump(in Request) (*Response, error) {
@@ -426,9 +442,11 @@ func (r *AdapterRunner) Dump(in Request) (*Response, error) {
 	}, nil
 }
 
-//////////////////////////////////////////////////////////////////////////////
-// Loader Interface
-//
+/*
+*******************************************************************************
+Loader interface
+*******************************************************************************
+*/
 
 // Load implements the `load adapters ...` command
 func (r *AdapterRunner) Load(in Request) (*Response, error) {
@@ -473,9 +491,11 @@ func (r *AdapterRunner) Load(in Request) (*Response, error) {
 	}, nil
 }
 
-//////////////////////////////////////////////////////////////////////////////
-// Private functions
-//
+/*
+*******************************************************************************
+Private functions
+*******************************************************************************
+*/
 
 func (r *AdapterRunner) importAdapter(in services.Adapter, replace bool) error {
 	logger.Trace()

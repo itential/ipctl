@@ -4,6 +4,11 @@
 
 package runners
 
+import (
+	"github.com/go-git/go-git/v5"
+	"github.com/go-git/go-git/v5/plumbing"
+)
+
 type Runner interface {
 }
 
@@ -55,3 +60,34 @@ type Dumper interface {
 type Loader interface {
 	Load(Request) (*Response, error)
 }
+
+type FileReader interface {
+	Read(path string) ([]byte, error)
+}
+
+type Cloner interface {
+	Clone(r RepositoryPayload) (string, error)
+}
+
+type GitRepository interface {
+	Worktree() (GitWorktree, error)
+	Push(options *PushOptions) error
+}
+
+type GitWorktree interface {
+	AddGlob(pattern string) error
+	Status() (GitStatus, error)
+	Commit(msg string, opts *CommitOptions) (Hash, error)
+}
+
+type GitStatus interface {
+	IsClean() bool
+}
+
+type GitProvider interface {
+	Open(path string) (GitRepository, error)
+}
+
+type PushOptions = git.PushOptions
+type CommitOptions = git.CommitOptions
+type Hash = plumbing.Hash
