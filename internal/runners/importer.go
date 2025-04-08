@@ -74,7 +74,7 @@ func importGetPathFromRequest(in Request) (string, error) {
 			return "", err
 		}
 
-		p, err := CloneRepository(r)
+		p, err := r.Clone(&FileReaderImpl{}, &ClonerImpl{})
 		if err != nil {
 			return "", err
 		}

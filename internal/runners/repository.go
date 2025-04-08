@@ -9,13 +9,33 @@ import (
 	"os/user"
 	"time"
 
-	"github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/plumbing/object"
 	"github.com/itential/ipctl/internal/utils"
 	"github.com/itential/ipctl/pkg/logger"
 	"github.com/itential/ipctl/pkg/repositories"
 )
 
+// FileReaderImpl is a concrete file reader using utils.ReadFromFile
+type FileReaderImpl struct{}
+
+func (f *FileReaderImpl) Read(path string) ([]byte, error) {
+	return utils.ReadFromFile(path)
+}
+
+// ClonerImpl is a real cloner using repositories.Repository
+type ClonerImpl struct{}
+
+func (c *ClonerImpl) Clone(p RepositoryPayload) (string, error) {
+	repo := repositories.Repository{
+		Url:        p.Url,
+		User:       p.User,
+		Reference:  p.Reference,
+		PrivateKey: p.PrivateKey,
+	}
+	return repo.Clone()
+}
+
+// RepositoryOption provides options for configuring an instance of Repository
 type RepositoryOption func(r *Repository)
 
 type Repository struct {
@@ -26,12 +46,25 @@ type Repository struct {
 	Email          string
 }
 
-func NewRepository(url string, opts ...RepositoryOption) *Repository {
+// RepositoryPayload is a simplified struct used to pass data into the cloner
+// interface
+type RepositoryPayload struct {
+	Url        string
+	User       string
+	Reference  string
+	PrivateKey []byte
+}
+
+// userProvider is a function that returns the current OS user
+type userProvider func() (*user.User, error)
+
+// newRepository is the internal constructor that accepts a user provider (used for testing)
+func newRepository(url string, getUser userProvider, opts ...RepositoryOption) *Repository {
 	logger.Trace()
 
-	currentUser, err := user.Current()
+	currentUser, err := getUser()
 	if err != nil {
-		logger.Fatal(err, "failed get current user")
+		logger.Fatal(err, "failed to get current user")
 	}
 
 	r := &Repository{
@@ -47,18 +80,39 @@ func NewRepository(url string, opts ...RepositoryOption) *Repository {
 	return r
 }
 
+// NewRepository will create a new instance of a Repository argument.  The
+// required argument `url` defines the URL for the reposiotry.  This function
+// will accept any valid URL format.  This function will also accept one or
+// more options for configuring the repository.
+//
+// The following options are supported:
+//   - WithReference
+//   - WithPrivateKeyFile
+//   - WithName
+//   - WithEmail
+//
+// See the optional function for details about each implemenation.  If an
+// option is not passed, a default value is set for repository object.
+func NewRepository(url string, opts ...RepositoryOption) *Repository {
+	logger.Trace()
+	return newRepository(url, user.Current, opts...)
+}
+
+// WithReference sets the Git reference (branch, tag, etc.)
 func WithReference(v string) RepositoryOption {
 	return func(r *Repository) {
 		r.Reference = v
 	}
 }
 
+// WithPrivateKeyFile sets the path to the SSH private key file
 func WithPrivateKeyFile(v string) RepositoryOption {
 	return func(r *Repository) {
 		r.PrivateKeyFile = v
 	}
 }
 
+// WithName overrides the Git username if provided
 func WithName(v string) RepositoryOption {
 	return func(r *Repository) {
 		if v != "" {
@@ -67,43 +121,57 @@ func WithName(v string) RepositoryOption {
 	}
 }
 
+// WithEmail overrides the Git email if provided
 func WithEmail(v string) RepositoryOption {
 	return func(r *Repository) {
 		if v != "" {
-			r.Name = v
+			r.Email = v
 		}
 	}
 }
 
-func (r Repository) Clone() (string, error) {
+func (r *Repository) Clone(reader FileReader, cloner Cloner) (string, error) {
 	logger.Trace()
 
-	repo := repositories.Repository{
+	payload := RepositoryPayload{
 		Url:  r.Url,
 		User: "git",
 	}
+
 	if r.PrivateKeyFile != "" {
-		pk, err := utils.ReadFromFile(r.PrivateKeyFile)
+		key, err := reader.Read(r.PrivateKeyFile)
 		if err != nil {
 			return "", err
 		}
-		repo.PrivateKey = pk
-	}
-	if r.Reference != "" {
-		repo.Reference = r.Reference
-	}
-	p, err := repo.Clone()
-	if err != nil {
-		return "", err
+		payload.PrivateKey = key
 	}
 
-	return p, nil
+	if r.Reference != "" {
+		payload.Reference = r.Reference
+	}
+
+	return cloner.Clone(payload)
 }
 
-func (r Repository) CommitAndPush(path, msg string) error {
+func (r *Repository) CommitAndPush(path, msg string) error {
+	return r.commitAndPush(path, msg, &GitProviderImpl{})
+}
+
+/*
+*******************************************************************************
+Private functions
+*******************************************************************************
+*/
+
+// commitAndPush handles adding the working tree to the repository, commiting
+// the working tree and pushing it to the remote repository.  The `path`
+// argument is the path to the repo that contains the clond.  The `msg`
+// argument is the commit message.  The `provider` argument specifies the
+// provider to use.
+func (r *Repository) commitAndPush(path, msg string, provider GitProvider) error {
 	logger.Trace()
 
-	repo, err := git.PlainOpen(path)
+	repo, err := provider.Open(path)
 	if err != nil {
 		return err
 	}
@@ -123,7 +191,7 @@ func (r Repository) CommitAndPush(path, msg string) error {
 	}
 
 	if !status.IsClean() {
-		commit, err := w.Commit(msg, &git.CommitOptions{
+		commit, err := w.Commit(msg, &CommitOptions{
 			Author: &object.Signature{
 				Name:  r.Name,
 				Email: r.Email,
@@ -136,18 +204,10 @@ func (r Repository) CommitAndPush(path, msg string) error {
 
 		logger.Info("%v", commit)
 
-		if err := repo.Push(&git.PushOptions{}); err != nil {
+		if err := repo.Push(&PushOptions{}); err != nil {
 			return err
 		}
 	}
 
 	return nil
-}
-
-func CloneRepository(in *Repository) (string, error) {
-	return in.Clone()
-}
-
-func CommitAndPushRepo(in *Repository, path, msg string) error {
-	return in.CommitAndPush(path, msg)
 }
