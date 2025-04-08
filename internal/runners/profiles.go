@@ -32,9 +32,11 @@ func NewProfileRunner(client client.Client, cfg *config.Config) *ProfileRunner {
 	}
 }
 
-//////////////////////////////////////////////////////////////////////////////
-// Reader Interface
-//
+/*
+******************************************************************************
+Reader interface
+******************************************************************************
+*/
 
 // Get implements the `get profiles` command
 func (r *ProfileRunner) Get(in Request) (*Response, error) {
@@ -46,7 +48,7 @@ func (r *ProfileRunner) Get(in Request) (*Response, error) {
 	}
 
 	return &Response{
-		Keys:   []string{"name", "description"},
+		Keys:   []string{"id", "description"},
 		Object: profiles,
 	}, nil
 }
@@ -62,14 +64,22 @@ func (r *ProfileRunner) Describe(in Request) (*Response, error) {
 		return nil, err
 	}
 
+	tmpl, err := templates.ReadFile("templates/profiles/describe.tmpl")
+	if err != nil {
+		logger.Fatal(err, "failed to load template")
+	}
+
 	return &Response{
-		Object: profile,
+		Object:   profile,
+		Template: string(tmpl),
 	}, nil
 }
 
-//////////////////////////////////////////////////////////////////////////////
-// Writer Interface
-//
+/*
+******************************************************************************
+Writer interface
+******************************************************************************
+*/
 
 // Create is the implementation of the command `ccreate profile <name>`
 func (r *ProfileRunner) Create(in Request) (*Response, error) {
@@ -128,9 +138,11 @@ func (r *ProfileRunner) Clear(in Request) (*Response, error) {
 	}, nil
 }
 
-//////////////////////////////////////////////////////////////////////////////
-// Copier Interface
-//
+/*
+******************************************************************************
+Copier interface
+******************************************************************************
+*/
 
 // Copy implements the `copy profile <name> <dst>` command
 func (r *ProfileRunner) Copy(in Request) (*Response, error) {
@@ -191,9 +203,11 @@ func (r *ProfileRunner) CopyTo(profile string, in any, replace bool) (any, error
 	return svc.Import(in.(services.Profile))
 }
 
-//////////////////////////////////////////////////////////////////////////////
-// Importer Interface
-//
+/*
+******************************************************************************
+Importer interface
+******************************************************************************
+*/
 
 // Import implements the command `import profile <path>`
 func (r *ProfileRunner) Import(in Request) (*Response, error) {
@@ -216,9 +230,11 @@ func (r *ProfileRunner) Import(in Request) (*Response, error) {
 	}, nil
 }
 
-//////////////////////////////////////////////////////////////////////////////
-// Exporter Interface
-//
+/*
+******************************************************************************
+Exporter interface
+******************************************************************************
+*/
 
 // Export is the implementation of the command `export profile <name>`
 func (r *ProfileRunner) Export(in Request) (*Response, error) {
@@ -242,9 +258,11 @@ func (r *ProfileRunner) Export(in Request) (*Response, error) {
 	}, nil
 }
 
-//////////////////////////////////////////////////////////////////////////////
-// Dumper Interface
-//
+/*
+******************************************************************************
+Dumper interface
+******************************************************************************
+*/
 
 // Dump implements the `dump prorfiles` command
 func (r *ProfileRunner) Dump(in Request) (*Response, error) {
@@ -270,9 +288,11 @@ func (r *ProfileRunner) Dump(in Request) (*Response, error) {
 	}, nil
 }
 
-//////////////////////////////////////////////////////////////////////////////
-// Loader Interface
-//
+/*
+******************************************************************************
+Loader interface
+******************************************************************************
+*/
 
 // Load implements the `load profiles ...` command
 func (r *ProfileRunner) Load(in Request) (*Response, error) {
@@ -318,9 +338,11 @@ func (r *ProfileRunner) Load(in Request) (*Response, error) {
 	}, nil
 }
 
-//////////////////////////////////////////////////////////////////////////////
-// Private functions
-//
+/*
+******************************************************************************
+Private functions
+******************************************************************************
+*/
 
 func (r *ProfileRunner) importProfile(in services.Profile, replace bool) error {
 	logger.Trace()

@@ -5,7 +5,6 @@
 package runners
 
 import (
-	"embed"
 	"fmt"
 
 	"github.com/itential/ipctl/pkg/client"
@@ -13,9 +12,6 @@ import (
 	"github.com/itential/ipctl/pkg/logger"
 	"github.com/itential/ipctl/pkg/services"
 )
-
-//go:embed templates/accounts/*.tmpl
-var content embed.FS
 
 type AccountRunner struct {
 	config  *config.Config
@@ -65,7 +61,7 @@ func (r *AccountRunner) Describe(in Request) (*Response, error) {
 		return nil, fmt.Errorf("account `%s` does not exist", in.Args[0])
 	}
 
-	tmpl, err := content.ReadFile("describe.tmpl")
+	tmpl, err := templates.ReadFile("templates/accounts/describe.tmpl")
 	if err != nil {
 		logger.Fatal(err, "failed to load template")
 	}
@@ -73,7 +69,6 @@ func (r *AccountRunner) Describe(in Request) (*Response, error) {
 	return &Response{
 		Object:   account,
 		Template: string(tmpl),
-		//Template: "Username: {{.Username}}",
 	}, nil
 }
 

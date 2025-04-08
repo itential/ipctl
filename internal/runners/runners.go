@@ -3,3 +3,8 @@
 // Proprietary and confidential
 
 package runners
+
+import "embed"
+
+//go:embed templates/*
+var templates embed.FS
