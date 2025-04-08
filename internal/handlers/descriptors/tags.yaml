@@ -1,8 +1,7 @@
----
-##############################################################################
-# Reader Commands
-##############################################################################
-
+# Copyright 2025 Itential Inc. All Rights Reserved
+# Unauthorized copying of this file, via any medium is strictly prohibited
+# Proprietary and confidential
+----
 get:
   use: tags
   group: admin-essentials
@@ -14,10 +13,6 @@ describe:
   group: admin-essentials
   description: |
     Display details about a tag
-
-##############################################################################
-# Writer Commands
-##############################################################################
 
 create:
   use: tag <name>
@@ -36,10 +31,6 @@ clear:
   group: admin-essentials
   description: |
     Delete all configured tags
-
-##############################################################################
-# Copeir Commands
-##############################################################################
 
 copy:
   use: tag <name> --from <profile> --to <profile>
