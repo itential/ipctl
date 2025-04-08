@@ -10,7 +10,6 @@ import (
 	"strings"
 
 	"github.com/itential/ipctl/internal/flags"
-	"github.com/itential/ipctl/internal/terminal"
 	"github.com/itential/ipctl/internal/utils"
 	"github.com/itential/ipctl/pkg/client"
 	"github.com/itential/ipctl/pkg/config"
@@ -242,22 +241,34 @@ func (r *IntegrationRunner) Import(in Request) (*Response, error) {
 
 	common := in.Common.(*flags.AssetImportCommon)
 
-	if common.Replace {
-		terminal.Warning("`--replace` is not supported for this command and will be ignored")
-	}
-
 	var integration services.Integration
 
 	if err := importUnmarshalFromRequest(in, &integration); err != nil {
 		return nil, err
 	}
 
-	if _, err := r.service.Get(integration.Name); err != nil {
+	existing, err := r.service.Get(integration.Name)
+	if err != nil {
 		if !strings.HasSuffix(err.Error(), "does not exist.\"") {
 			return nil, errors.New(
 				fmt.Sprintf("integration `%s` already exists", integration.Name),
 			)
 		}
+	}
+
+	if existing != nil {
+		if common.Replace {
+			if err := r.service.Delete(integration.Name); err != nil {
+				return nil, err
+			}
+		} else {
+			return nil, fmt.Errorf("integration `%s` already exists, use `--replace` to overwrite it", integration.Name)
+		}
+	}
+
+	modelName := strings.Split(integration.Model, "adapter_")[1]
+	if err := r.checkIfModelExists(modelName); err != nil {
+		return nil, err
 	}
 
 	res, err := r.service.Create(integration)
@@ -269,4 +280,13 @@ func (r *IntegrationRunner) Import(in Request) (*Response, error) {
 		Text:   fmt.Sprintf("Successfully imported integration `%s`", res.Name),
 		Object: res,
 	}, nil
+}
+
+func (r *IntegrationRunner) checkIfModelExists(name string) error {
+	logger.Trace()
+	_, err := services.NewIntegrationModelService(r.client).Get(name)
+	if err != nil {
+		return err
+	}
+	return nil
 }
