@@ -1,7 +1,7 @@
 # Command Table
 
-The table below provides a quick reference for that shows which commands are
-support for which assets.
+The table below provides a quick reference that shows which commands are
+supported for which assets.
 
 | Asset                              | get | describe | create | delete | copy | clear | import | export |
 |------------------------------------|-----|----------|--------|--------|------|-------|--------|--------|

@@ -16,7 +16,7 @@ export CGO_ENABLED := 0
 	coverage \
 	licenses \
 	snapshot \
-	test 
+	test
 
 # The help target displays a help message that includes the avialable targets
 # in this `Makefile`.  It is the default target if `make` is run without any
@@ -33,9 +33,9 @@ help:
 	@echo "  test       - Run test suite"
 	@echo ""
 
-# The config target shows the current configured values that are enforce when
+# The config target shows the current configured values that are enforced when
 # any `make` target is run.
-config: 
+config:
 	@echo "GOOS=${GOOS}"
 	@echo "GOARCH=${GOARCH}"
 	@echo "CGO_ENABLED=${CGO_ENABLED}"
@@ -54,7 +54,7 @@ coverage:
 	@scripts/test.sh coverage
 
 # The licenses target is used to make sure that all source code files have the
-# appropriate license header in them.   It will also generate a license file
+# appropriate license header in them.  It will also generate a license file
 # that includes all of the applicable licenses for any 3rd party libraries that
 # have been included in this project.  To use this target, you must have the
 # `go-licenses` tool installed and available in your path.  See
@@ -84,7 +84,7 @@ build: install
 		-o bin/ipctl \
 		-ldflags="-X 'github.com/itential/ipctl/internal/metadata.Build=$$(git rev-parse --short HEAD)' -X 'github.com/itential/ipctl/internal/metadata.Version=$$(git tag | sort -V | tail -1)'"
 
-# The test target runs the unit tests for this project.   All unit tests are
+# The test target runs the unit tests for this project.  All unit tests are
 # based on mock data for the various services it connects to.  The target
 # should run without error before making any pull requests to this project.
 test:
