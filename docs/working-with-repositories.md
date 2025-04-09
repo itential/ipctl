@@ -1,7 +1,7 @@
 # Working with repositories
 
 One of the key features of `ipctl` is the opportunity to work natively with
-`git` repositories.   This integration allows you to directly push and pull
+`git` repositories.  This integration allows you to directly push and pull
 Itential Platform assets to and from git repositories using the `import` and
 `export` commands with command line options.
 
@@ -98,7 +98,7 @@ push it into a Git repository.  The file will be stored in the root of the
 repository.
 
 In some cases, it may be desirable to store the file in a specific folder
-within the repository.   In order to do that, use the `--path` command line
+within the repository.  In order to do that, use the `--path` command line
 option.
 
 For example, assume the same project as before needs to be stored in folder
@@ -117,8 +117,8 @@ path does not exist in the repository, it will be created.
 ## Pulling assets from repositories using `import`
 
 The `import` command can be used to pull an asset directly from a Git
-repository and import it into an Itential Platform server.   The `import`
-command accepts the following command line options for performing this task.
+repository and import it into an Itential Platform server.  The `import`
+command accepts the following command line options for performing this task:
 
 - `--repository`
 - `--reference`
@@ -132,7 +132,7 @@ directly from a Git repository.
 
 ```bash
 ipctl import project "My Test Project.project.json" \
-    --repository git@github.com:itential/assets.git \
+    --repository git@github.com:itential/assets.git
 ```
 
 When run, the command will connect to the Git repository defined by
@@ -148,8 +148,3 @@ repository.
 ipctl import project "test/projects/My Test Project.project.json" \
     --repository git@github.com:itential/assets.git
 ```
-
-
-
-
-

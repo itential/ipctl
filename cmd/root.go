@@ -38,7 +38,7 @@ func loadCommands(cmd *cobra.Command, runtime handlers.Runtime) {
 	addRootCommand(cmd, runtime, "Plugin Commands:", pluginCommands)
 }
 
-// versionCommand is a top level command that display's the current application
+// versionCommand is a top level command that displays the current application
 // version.
 func versionCommand() *cobra.Command {
 	var cmd = &cobra.Command{

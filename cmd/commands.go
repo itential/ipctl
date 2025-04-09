@@ -132,7 +132,7 @@ func platformCommands(r handlers.Runtime, id string) []*cobra.Command {
 	})
 }
 
-// dataserCommands provide a set of commands for performing batch operations on
+// datasetCommands provide a set of commands for performing batch operations on
 // specific asset types
 func datasetCommands(r handlers.Runtime, id string) []*cobra.Command {
 	h := handlers.NewHandler(r)
