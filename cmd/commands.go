@@ -41,7 +41,7 @@ func addRootCommand(cmd *cobra.Command, r handlers.Runtime, title string, f func
 // therefore do not direclty perform any actions.  The function accepts a
 // single argument `rootCommands` which is an array of RootCommand instances.
 func makeRootCommand(rootCommands []RootCommand) []*cobra.Command {
-	descriptors := loadDescriptors("descriptors")
+	descriptors := cmdutils.LoadDescriptorsFromContent("descriptors", &content)
 
 	var commands []*cobra.Command
 
