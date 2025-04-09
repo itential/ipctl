@@ -6,6 +6,7 @@ package cmd
 
 import (
 	"context"
+	"embed"
 	"os"
 	"path"
 	"strings"
@@ -21,6 +22,11 @@ import (
 	"github.com/spf13/cobra"
 )
 
+//go:embed descriptors/*.yaml
+var content embed.FS
+
+// Provides the general description of the application.  This should be moved
+// into descriptors.
 const description = `Manage Itential Platform
 
   Find more information at: https://docs.itential.com
@@ -55,7 +61,9 @@ func versionCommand() *cobra.Command {
 	return cmd
 }
 
-func Do(c client.Client, cfg *config.Config) *cobra.Command {
+// runCli builds and runs the CLI command.   It will create the command tree
+// using cobra and execute the command.
+func runCli(c client.Client, cfg *config.Config) *cobra.Command {
 	var cmd = &cobra.Command{
 		Use:   "ipctl",
 		Short: strings.Split(description, "\n")[0],
@@ -81,6 +89,10 @@ func Do(c client.Client, cfg *config.Config) *cobra.Command {
 	return cmd
 }
 
+// Execute is the entrypoint to the CLI called from main.  This fucntion will
+// load the configuration file, initialize the logger, create the client and
+// run the application.  It will return an int that is to be used as the return
+// code.
 func Execute() int {
 	cfg := config.NewConfig(nil, nil, "", "", "")
 	logger.InitializeLogger(cfg)
@@ -108,7 +120,7 @@ func Execute() int {
 
 	c := client.New(ctx, profile)
 
-	if err := Do(c, cfg).Execute(); err != nil {
+	if err := runCli(c, cfg).Execute(); err != nil {
 		cmdutils.CheckError(err, cfg.TerminalNoColor)
 	}
 
