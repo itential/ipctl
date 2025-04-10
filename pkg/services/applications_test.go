@@ -5,6 +5,7 @@
 package services
 
 import (
+	"path/filepath"
 	"reflect"
 	"testing"
 
@@ -13,8 +14,8 @@ import (
 )
 
 var (
-	applicationsGetAllResponse = testlib.Fixture("testdata/applications/getall.json")
-	applicationsGetResponse    = testlib.Fixture("testdata/applications/get.json")
+	applicationsGetAllSuccess = "applications/getall.success.json"
+	applicationsGetSuccess    = "applications/get.success.json"
 )
 
 func setupApplicationService() *ApplicationService {
@@ -27,25 +28,37 @@ func TestApplicationsGetAll(t *testing.T) {
 	svc := setupApplicationService()
 	defer testlib.Teardown()
 
-	testlib.AddGetResponseToMux("/applications", applicationsGetAllResponse, 0)
+	for _, ele := range fixtureSuites {
+		response := testlib.Fixture(
+			filepath.Join(fixtureRoot, ele, applicationsGetAllSuccess),
+		)
 
-	res, err := svc.GetAll()
+		testlib.AddGetResponseToMux("/applications", response, 0)
 
-	assert.Nil(t, err)
-	assert.NotNil(t, res)
-	assert.Equal(t, 18, len(res))
+		res, err := svc.GetAll()
+
+		assert.Nil(t, err)
+		assert.NotNil(t, res)
+		assert.Equal(t, 18, len(res))
+	}
 }
 
 func TestApplicationsGet(t *testing.T) {
 	svc := setupApplicationService()
 	defer testlib.Teardown()
 
-	testlib.AddGetResponseToMux("/applications/WorkFlowEngine", applicationsGetResponse, 0)
+	for _, ele := range fixtureSuites {
+		response := testlib.Fixture(
+			filepath.Join(fixtureRoot, ele, applicationsGetSuccess),
+		)
 
-	res, err := svc.Get("WorkFlowEngine")
+		testlib.AddGetResponseToMux("/applications/WorkFlowEngine", response, 0)
 
-	assert.Nil(t, err)
-	assert.NotNil(t, res)
-	assert.Equal(t, reflect.TypeOf((*Application)(nil)), reflect.TypeOf(res))
-	assert.Equal(t, "WorkFlowEngine", res.Name)
+		res, err := svc.Get("WorkFlowEngine")
+
+		assert.Nil(t, err)
+		assert.NotNil(t, res)
+		assert.Equal(t, reflect.TypeOf((*Application)(nil)), reflect.TypeOf(res))
+		assert.Equal(t, "WorkFlowEngine", res.Name)
+	}
 }

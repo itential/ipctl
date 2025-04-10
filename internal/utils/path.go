@@ -108,6 +108,8 @@ func WriteJsonToDisk(o any, fn, fp string) error {
 	return WriteBytesToDisk(b, dst, true)
 }
 
+// WRiteYamlToDisck will accept an object, marshal it to yaml encoding and
+// write it to disk.
 func WriteYamlToDisk(o any, fn, fp string) error {
 	logger.Trace()
 

@@ -352,7 +352,7 @@ func (r *PrebuiltRunner) Export(in Request) (*Response, error) {
 
 			var e error
 
-			repoPath, e = repo.Clone()
+			repoPath, e = repo.Clone(&FileReaderImpl{}, &ClonerImpl{})
 			if e != nil {
 				return nil, e
 			}

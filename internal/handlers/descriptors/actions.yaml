@@ -1,5 +1,0 @@
----
-render:
-  use: render
-  description: |
-    Render a Jinja2 template

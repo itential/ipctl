@@ -57,7 +57,7 @@ func (r *WorkflowRunner) Get(in Request) (*Response, error) {
 	}
 
 	return &Response{
-		Keys:   []string{"name", "description"},
+		Keys:   []string{"name"},
 		Object: workflows,
 	}, nil
 

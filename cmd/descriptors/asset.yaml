@@ -41,10 +41,10 @@ clear:
 
 import:
   description: |
-    Import an asset
+    Import an asset from a file or repository
   include_groups: true
 
 export:
   description: |
-    Export an asset
+    Export an asset to a file or repository
   include_groups: true

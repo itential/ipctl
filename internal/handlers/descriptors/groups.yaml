@@ -1,9 +1,12 @@
+# Copyright 2025 Itential Inc. All Rights Reserved
+# Unauthorized copying of this file, via any medium is strictly prohibited
+# Proprietary and confidential
 ---
 get:
   use: groups
   group: admin-essentials
   description: |
-    Dispaly one or more groups
+    Display one or more groups
 
 describe:
   use: group <name>

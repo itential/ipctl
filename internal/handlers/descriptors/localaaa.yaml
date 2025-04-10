@@ -1,7 +1,7 @@
+# Copyright 2025 Itential Inc. All Rights Reserved
+# Unauthorized copying of this file, via any medium is strictly prohibited
+# Proprietary and confidential
 ---
-#############################################################################
-# Account commands
-#############################################################################
 get-accounts:
   use: accounts
   description: |
@@ -17,9 +17,6 @@ delete-account:
   description: |
     Delete a local AAA account
 
-#############################################################################
-# Group commands
-#############################################################################
 get-groups:
   use: groups
   description: |

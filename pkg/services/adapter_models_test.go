@@ -5,6 +5,7 @@
 package services
 
 import (
+	"path/filepath"
 	"testing"
 
 	"github.com/itential/ipctl/internal/testlib"
@@ -12,7 +13,7 @@ import (
 )
 
 var (
-	adapterModelsGetAllResponse = testlib.Fixture("testdata/adapter-models/getall.json")
+	adapterModelsGetAllSuccess = "adapter-models/getall.success.json"
 )
 
 func setupAdapterModelService() *AdapterModelService {
@@ -25,10 +26,16 @@ func TestAdapterModelsGetAll(t *testing.T) {
 	svc := setupAdapterModelService()
 	defer testlib.Teardown()
 
-	testlib.AddGetResponseToMux("/adapter-models/types", adapterModelsGetAllResponse, 0)
+	for _, ele := range fixtureSuites {
+		response := testlib.Fixture(
+			filepath.Join(fixtureRoot, ele, adapterModelsGetAllSuccess),
+		)
 
-	res, err := svc.GetAll()
+		testlib.AddGetResponseToMux("/adapter-models/types", response, 0)
 
-	assert.Nil(t, err)
-	assert.Equal(t, 7, len(res))
+		res, err := svc.GetAll()
+
+		assert.Nil(t, err)
+		assert.Equal(t, 7, len(res))
+	}
 }
