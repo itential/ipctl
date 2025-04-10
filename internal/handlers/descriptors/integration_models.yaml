@@ -9,7 +9,7 @@ get:
   description: |
     Display one or more integration-models
 
-    The `get integraion-models` will display the list of integration models
+    The `get integration-models` will display the list of integration models
     that have been added to the server.
 
 describe:

@@ -10,7 +10,7 @@ get:
     Display one or more role types
 
   example: |
-    # Get the list of avalable role types
+    # Get the list of available role types
     $ ipctl get role-types
 
 
