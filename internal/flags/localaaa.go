@@ -13,5 +13,5 @@ type LocalAAAOptions struct {
 }
 
 func (o *LocalAAAOptions) Flags(cmd *cobra.Command) {
-	cmd.Flags().StringArrayVar(&o.Groups, "group", o.Groups, "Group to insert user into")
+	cmd.Flags().StringArrayVar(&o.Groups, "group", o.Groups, "Group to insert the user into")
 }

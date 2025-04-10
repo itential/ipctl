@@ -26,7 +26,7 @@ type RoleGetOptions struct {
 }
 
 func (o *RoleGetOptions) Flags(cmd *cobra.Command) {
-	cmd.Flags().BoolVar(&o.All, "all", o.All, "Display all roles including buitin roles")
+	cmd.Flags().BoolVar(&o.All, "all", o.All, "Display all roles including builtin roles")
 	cmd.Flags().StringVar(&o.Type, "type", o.Type, "Display only roles of a certain type")
 }
 

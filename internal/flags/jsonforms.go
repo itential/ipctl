@@ -15,7 +15,7 @@ type JsonFormCreateOptions struct {
 
 func (o *JsonFormCreateOptions) Flags(cmd *cobra.Command) {
 	cmd.Flags().StringVar(&o.Description, "description", o.Description, "Description of JSON form")
-	cmd.Flags().BoolVar(&o.Replace, "replace", o.Replace, "Replace the exist form if it exists")
+	cmd.Flags().BoolVar(&o.Replace, "replace", o.Replace, "Replace the existing form if it exists")
 }
 
 type JsonFormGetOptions struct {
