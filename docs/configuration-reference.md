@@ -263,9 +263,10 @@ The default value for `client_secret` is `null`.
 #### timeout
 
 Configure the timeout value in seconds for request messages sent to the
-server.
+server.  The timeout value can be disabled by setting the value to 0.  This is
+useful for long running jobs.
 
-The default value for `timeout` is `5`.
+The default value for `timeout` is `0`.
 
 #### mongo_url
 
