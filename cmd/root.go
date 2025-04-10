@@ -115,7 +115,17 @@ func Execute() int {
 
 	logger.Info("connection timeout is %v second(s)", profile.Timeout)
 
-	ctx, cancel := context.WithTimeout(context.Background(), time.Duration(profile.Timeout)*time.Second)
+	var ctx context.Context
+	var cancel context.CancelFunc
+
+	if profile.Timeout == 0 {
+		ctx, cancel = context.WithCancel(context.Background())
+	} else {
+		ctx, cancel = context.WithTimeout(
+			context.Background(),
+			time.Duration(profile.Timeout)*time.Second,
+		)
+	}
 	defer cancel()
 
 	c := client.New(ctx, profile)

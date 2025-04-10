@@ -24,7 +24,7 @@ const (
 	defaultClientID     = ""
 	defaultClientSecret = ""
 	defaultMongoUrl     = ""
-	defaultTimeout      = 5
+	defaultTimeout      = 0
 )
 
 type Profile struct {
