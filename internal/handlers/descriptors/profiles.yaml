@@ -37,8 +37,8 @@ copy:
     profile from one server to another.   This command has three required
     arguments.  The first argument is the name of the profile to copy and
     it must exist on the source server.  The `--from` argument accepts the
-    name of a named profile from the configuration file and designates the
-    source server.  The `--to` argument accepts the anem of a named profile
+    name of a ipctl profile from the configuration file and designates the
+    source server.  The `--to` argument accepts the name of a ipctl profile
     from the configuration file and designates the destination server.
 
     This command will first check if a profile by the same name exists on the

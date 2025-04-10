@@ -35,5 +35,5 @@ need to have `goreleaser` installed and available in your local environment.
 See [here](https://goreleaser.com/) for details on how to install `goreleaser`.
 
 Once `goreleaser` is installed, you can build your own snapshot using `make
-snapshot`  The comand will build the application for all supported platforms
+snapshot`  The command will build the application for all supported platforms
 and place them into the `dist/` folder.

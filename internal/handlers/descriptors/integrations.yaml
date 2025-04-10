@@ -9,7 +9,7 @@ get:
   description: |
     Display one or more integrations
 
-    The `get integraions` will display the list of integration models
+    The `get integrations` will display the list of integration models
     that have been added to the server.  The default output will display
     the list of the configured integrations and models.
 
@@ -36,7 +36,7 @@ create:
     on the server (regardless of the model type), this command will
     return an error
 
-    When creating a new integraiton, the `--model` argument is required and
+    When creating a new integration, the `--model` argument is required and
     must reference an Integration Model already on the server.  To see a list
     of available Integration Models, use the `get integration-models` command.
 
