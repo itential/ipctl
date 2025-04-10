@@ -11,7 +11,15 @@ func TestAssetImportCommon(t *testing.T) {
 }
 
 func TestAssetExportCommon(t *testing.T) {
-	checkFlags(t, &AssetExportCommon{}, []string{"path"})
+	checkFlags(t, &AssetExportCommon{}, []string{"path", "repository", "reference", "private-key-file", "message"})
+}
+
+func TestAssetDumpCommon(t *testing.T) {
+	checkFlags(t, &AssetDumpCommon{}, []string{"path", "repository", "reference", "private-key-file", "message"})
+}
+
+func TestAssetLoadCommon(t *testing.T) {
+	checkFlags(t, &AssetLoadCommon{}, []string{"repository", "reference", "private-key-file"})
 }
 
 func TestAssetCopyCommon(t *testing.T) {
