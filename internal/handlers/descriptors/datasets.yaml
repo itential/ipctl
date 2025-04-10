@@ -10,10 +10,10 @@ load:
 dump:
   use: dump <path>
   description: |
-    Dump a dataset
+    Dump a dataset.
 
-    The dataset dump command will connect to the running instance of Platform
-    and dump all of the configred assests into the specified path.
+    The dataset dump command will connect to the running instance of the Itential
+    Platform and dump all of the configured assets into the specified path.
 
   example: |
     # Dump all assets to `assets`

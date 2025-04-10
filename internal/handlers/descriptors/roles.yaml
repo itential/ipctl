@@ -7,20 +7,20 @@ get:
   group: admin-essentials
 
   description: |
-    Display one or more roles
+    Display one or more roles.
 
     The `get roles` command will retrieve all of the configured roles from the
     server and display them in table format.   By default, the command will
     only display `Custom` roles and filter out all of the builtin roles.
 
-    To see all roles including the built in ones, use the `--all` command line
+    To see all roles including the builtin roles, use the `--all` command line
     option.
 
   example: |
     # Display all "Custom" roles that have been configured
     $ ipctl get roles
 
-    # Display all roles including builtin ones
+    # Display all roles including builtin roles
     $ ipctl get roles --all
 
 create:
@@ -28,10 +28,10 @@ create:
   group: admin-essentials
 
   description: |
-    Create a new role
+    Create a new role.
 
     the `create role` command will add a new role to the server.  The
-    commmand accepts a single argument `name` which uniquely identifies
+    command accepts a single argument `name` which uniquely identifies
     the role.  If the role name already exists, this command will return
     an error.
 
@@ -55,7 +55,7 @@ delete:
   group: admin-essentials
 
   description: |
-    Delete a role
+    Delete a role.
 
     The `delete role <name>` command is used to delete a custom role that has
     been configured on the server.  This command can only delete roles that
@@ -70,7 +70,7 @@ describe:
   group: admin-essentials
 
   description: |
-    Display detailed information about a role
+    Display detailed information about a role.
 
     When using the describe command, the name argument can take one of type
     forms depending on what you are trying to accomplish.  The first form
@@ -78,7 +78,7 @@ describe:
     information about.  The second form is <type>:<name>.
 
     For instance, assume you want to see detailed information about the
-    adapters admin role.  In this case, you woud use Adapters:admin as the
+    adapters admin role.  In this case, you would use Adapters:admin as the
     input value to the describe command.
 
   example: |
@@ -93,10 +93,10 @@ clear:
   group: admin-essentials
 
   description: |
-    Delete all configured roles
+    Delete all configured roles.
 
     The `clear roles` command will delete all custom configured roles from
-    the server.  This is a destructive command that cannot be undone
+    the server.  This is a destructive command that cannot be undone.
 
   example: |
     # Delete all custom roles
@@ -107,14 +107,14 @@ copy:
   group: admin-essentials
 
   description: |
-    Copy a role from one server to another server
+    Copy a role from one server to another server.
 
 import:
   use: role <path>
   group: admin-essentials
 
   description: |
-    Import a role to the target server
+    Import a role to the target server.
 
     The `import role` command will attempt to import a role define in a
     JSON document.  The command accepts a single positional argument `path`
@@ -132,4 +132,4 @@ export:
   group: admin-essentials
 
   description: |
-    Export a role from the target server
+    Export a role from the target server.

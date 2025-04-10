@@ -16,8 +16,8 @@ type TemplateCreateOptions struct {
 }
 
 func (o *TemplateCreateOptions) Flags(cmd *cobra.Command) {
-	cmd.Flags().StringVar(&o.Description, "description", o.Description, "Description of JSON form")
-	cmd.Flags().BoolVar(&o.Replace, "replace", o.Replace, "Replace the exist form if it exists")
+	cmd.Flags().StringVar(&o.Description, "description", o.Description, "Description of template")
+	cmd.Flags().BoolVar(&o.Replace, "replace", o.Replace, "Replace the existing template if it exists")
 	cmd.Flags().StringVar(&o.Group, "group", o.Group, "Group name (REQUIRED)")
 	cmd.MarkFlagRequired("group")
 	cmd.Flags().StringVar(&o.Type, "type", o.Type, "Type of template to create (REQUIRED)")

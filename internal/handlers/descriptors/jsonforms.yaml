@@ -9,7 +9,7 @@ get:
   description: |
     Display one or more jsonforms
 
-    The `get jsonforms` command will retreive all of the configured JSON
+    The `get jsonforms` command will retrieve all of the configured JSON
     forms from the instance of Platform and display them.  When the output
     is set to `human` (default) this command will display the results in
     table format.
@@ -70,7 +70,7 @@ delete:
   description: |
     Delete a jsonform
 
-    The delete command will delete the specifie jsonform from the instance
+    The delete command will delete the specified jsonform from the instance
     of Itential Platform.  This is a destructive operation and cannot be
     recovered.  If the specified jsonform does not exist on the server,
     this command will return an error.
@@ -138,7 +138,7 @@ export:
     Export a jsonform
 
     Use the `export jsonform <name>` command to export a jsonform from the
-    server in JSON format.  The exported asset can be immported into the same
+    server in JSON format.  The exported asset can be imported into the same
     or another server.  If specified jsonform does not exist, an error is
     returned.
 

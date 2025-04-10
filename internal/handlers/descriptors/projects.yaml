@@ -7,9 +7,9 @@ get:
   group: automation-studio
 
   description: |
-    Display one or more projects
+    Display one or more projects.
 
-    The `get projects` command will retieve all configured projects from
+    The `get projects` command will retrieve all configured projects from
     the server and output them in table format by default.  If there are
     no configured projects, the command will return an empty table.
 
@@ -22,7 +22,7 @@ describe:
   group: automation-studio
 
   description: |
-    Display details about a project
+    Display details about a project.
 
     The `describe project <name>` command will retrieve the specified
     project from the server, if it exists, and display it.  If the
@@ -37,7 +37,7 @@ create:
   group: automation-studio
 
   description: |
-    Create a new project
+    Create a new project.
 
     The `create project` command will create a new empty project with the
     specified name on the server.  If a project with the same name already
@@ -52,11 +52,11 @@ delete:
   group: automation-studio
 
   description: |
-    Delete a project
+    Delete a project.
 
     Use the `delete project` command to delete an existing project from
     the server.  If the specified project does not exist on the server,
-    this command will return an error
+    this command will return an error.
 
   example: |
     # Delete a project named `cli test`
@@ -67,19 +67,19 @@ copy:
   group: automation-studio
 
   description: |
-    Copy a project from one server to another
+    Copy a project from one server to another.
 
     The copy command can be used to copy a project from one Itential Automation
-    Platfom server to another one.
+    Platform server to another one.
 
-    The `name` argument sepcifies the Automation Studio Project name to copy
-    from one server to another.  If it does not exist on the source server,
-    the command will return an error.
+    The `name` argument specifies the Automation Studio Project name to copy
+    from the source server to the target.  If it does not exist on the source
+    server, the command will return an error.
 
     The command has two required options, `--from` and `--to`.  The `--from`
-    option specifies the name of the profile that points to the server to
-    copy the project from.  The `--to` option specifies the name of the profile
-    that points to the server to copy the project to.
+    option specifies the name of the ipctl profile that points to the server to
+    copy the project from.  The `--to` option specifies the name of the ipctl
+    profile that points to the server to copy the project to.
 
     Both the `to` and `from` profiles must exist in the configuration file
     otherwise this command will produce an error.
@@ -116,7 +116,7 @@ clear:
   group: automation-studio
 
   description: |
-    Delete all configured projects
+    Delete all configured projects.
 
     The `clear projects` command will delete all configured projects from
     the server.  This is a destructive command and cannot be undone.
@@ -130,14 +130,14 @@ import:
   group: automation-studio
 
   description: |
-    Import a project
+    Import a project.
 
-    The import command will import a project into IAP.  The project name must
-    not already exist otherwise this command will return an error.
+    The import command will import a project into Itential Platform.  If the
+    project name already exists this command will return an error.
 
-    When importing a project into IAP, the owner of the project will be based
-    on the credentials used to authenticate the `ipctl` client.   Additional
-    members can be added to the project on import.
+    When importing a project into Itential Platform, the owner of the project
+    will be based on the credentials used to authenticate the `ipctl` client.
+    Additional members can be added to the project on import.
 
     To add a user or group account to the project on import, use the
     `--member` option.  The `--member` option accepts a set of key=value
@@ -159,4 +159,4 @@ export:
   exact_args: 1
 
   description: |
-    Export a project
+    Export a project.

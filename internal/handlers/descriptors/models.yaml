@@ -7,7 +7,7 @@ get:
   group: lifecycle-manager
 
   description: |
-    Dispaly one or more models
+    Display one or more models
 
     The `get models` command will retrieve all configured resource models from
     the server and display them in table format by default.
@@ -36,8 +36,8 @@ delete:
   description: |
     Delete a model
 
-    The delete command will atempt to delete the resource model from the
-    specified server.   In order to delete a model successfully, the model
+    The delete command will attempt to delete the resource model from the
+    specified server.  In order to delete a model successfully, the model
     cannot have any current instances.
 
     If the model has any current instances, the command will return an
@@ -84,8 +84,8 @@ import:
     required argument `path` which specifies the path to the file where the
     exported model resides.
 
-    Models can be imported direclty from Git repositories using the ``--repository`
-    otional argument.
+    Models can be imported directly from Git repositories using the ``--repository`
+    optional argument.
 
   example: |
     # Import a resource model from a file
@@ -100,11 +100,11 @@ export:
     Export resource model
 
     The `export model` command will export a resource model from the Itential
-    Platform server.   If exported model will be written to a file.   If the
+    Platform server.  If exported model will be written to a file.  If the
     model name specified by the `name` argument does not exist, this command
     will return an error.
 
-  exmaple: |
+  example: |
     # Export a resource model called `CLI Test`
     $ ipctl export model "CLI Test"
 

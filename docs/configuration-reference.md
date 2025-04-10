@@ -8,19 +8,19 @@ Values configured using environment variables take precedence over the same
 values configured in a configuration file.
 
 By default, `ipctl` will load the configuration file `~/.platform.d/config`.
-To use a different configuraiton file name and/or location, use the `--config`
+To use a different configuration file name and/or location, use the `--config`
 command line option and pass it the path to the configuration file you wish to
 use.
 
 The configuration file can also be specified using the `IPCTL_CONFIG_FILE`
 environment variable.
 
-The configuration file is organzied into sections with each section providing
+The configuration file is organized into sections with each section providing
 one or more key=value settings that can be used to configure the application.
 
 ## Avoiding security risks
 
-The `ipctl` configuration file may contain senstive configuration values used
+The `ipctl` configuration file may contain sensitive configuration values used
 to authenticate to services.  The configuration file should be secured such
 that only the current user has access to the configuration directory and file.
 
@@ -38,12 +38,12 @@ Please consult your OS documentation for specific commands.
 
 The application configuration file supports configuring multiple profiles.  A
 profile defines the connection settings for a given server.  When `ipctl`
-attempts to conect to a server, it will look up the profile settings in the
-conifguraiton file based on the profile name.
+attempts to connect to a server, it will look up the profile settings in the
+configuration file based on the profile name.
 
 The profile name can be passed to any command using the `--profile <name>`
 command line argument.  A default profile can also be set in the configuration
-file.  See `default_profile` in the [Applicaiton Settings}(#Application
+file.  See `default_profile` in the [Application Settings}(#Application
 Settings) section for a description.
 
 ## Configuration options
@@ -103,7 +103,7 @@ The default value for `level` is `info`.
 
 The terminal settings section provides configuration values for managing the
 terminal environment.  All configuration settings are maintained under the
-`[terminal]` section and can be overridded using environment variables
+`[terminal]` section and can be overridden using environment variables
 prefaced with `IPCTL_TERMINAL_<NAME>`.
 
 #### no_color
@@ -137,7 +137,7 @@ The default value for `pager` is `true`.
 #### timestamp_timezone
 
 Configures the timezone to use when converting log timestamp messages from the
-application.  This setting can be used to automatiocally translate the log
+application.  This setting can be used to automatically translate the log
 messages to any desired timezone.
 
 The default value for `timestamp_timezone` is `utc`.
@@ -190,7 +190,7 @@ instance, assume we want to pass the password in using an environment variable
 instead of storing the password in the configuration file.  This could be
 accomplished by setting `IPCTL_PROFILE_<NAME>_PASSWORD` to the desired value.
 
-For instance, to set the password for a profile callend `prod`, the environment
+For instance, to set the password for a profile called `prod`, the environment
 variable would be `IPCTL_PROFILE_PROD_PASSWORD`.  The value would override any
 value in the configuration file.
 
@@ -213,8 +213,8 @@ The default value for `port` is `0`.
 
 #### `use_tls`
 
-Enables or disables the use of TLS for the connecton.  When this value is set
-to `true`, the application will attempt to establish a TLS connecton to the
+Enables or disables the use of TLS for the connection.  When this value is set
+to `true`, the application will attempt to establish a TLS connection to the
 server.  When this value is set to `false` the application will not attempt to
 use TLS when connecting to the server.
 
@@ -224,7 +224,7 @@ The default value for `use_tls` is `true`.
 
 Enables or disables certificate validation for TLS based connections.  When
 this value is set to `true`, certificates received from the server are
-validated. When this value is set to `false`, certifcates are assumed valid.
+validated. When this value is set to `false`, certificates are assumed valid.
 This feature is useful when using self-signed certificates for TLS connections.
 
 The default value for `verify` is `true`.
@@ -233,7 +233,7 @@ The default value for `verify` is `true`.
 
 Configures the name of the user to use when authenticating to the Itential
 Platform server.  This should be the username used to login to the server and
-determines the level of authorzation.
+determines the level of authorization.
 
 The default value for `username` is `admin@pronghorn`.
 
@@ -254,7 +254,7 @@ The default value for `client_id` is `null`.
 
 #### client_secret
 
-Configures the client secret for working with Iential Platform running in
+Configures the client secret for working with Itential Platform running in
 Itential Cloud.  The client secret can be obtained when creating a service
 account in Itential Cloud.
 

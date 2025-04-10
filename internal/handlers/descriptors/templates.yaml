@@ -10,7 +10,7 @@ get:
     Display one or more templates
 
     The `get templates` command will return the list of configured templates
-    availalbe on the server.
+    available on the server.
 
   example: |
     # Get list of all templates
@@ -34,13 +34,16 @@ create:
     will return an error.
 
     When creating a new template, the `--group` and `--type` options
-    are required.   The `--group` option specifies the temaplate group
+    are required.  The `--group` option specifies the template group
     to associate the new template with.  The `--type` argument defines
     the type of template.  Valid values are `textfsm` or `jinja2`.
 
   example: |
     # Create a new TextFSM template
     $ ipctl create template ios-show --type textfsm --group cisco-ios
+
+    # Create a new Jinja2 template
+    $ ipctl create template my-config-template --type jinja2 --group config-templates
 
 delete:
   use: template <name>
