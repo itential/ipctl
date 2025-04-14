@@ -78,6 +78,10 @@ func withOptions(f *AssetHandlerFlags) CommandRunnerOption {
 			c.Options = f.Import
 		case "export":
 			c.Options = f.Export
+		case "load":
+			c.Options = f.Load
+		case "dump":
+			c.Options = f.Dump
 		}
 	}
 }

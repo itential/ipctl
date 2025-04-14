@@ -74,3 +74,15 @@ import:
   group: automation-studio
   description: |
     Import a template
+
+load:
+  use: templates <path>
+  group: automation-studio
+  description: |
+    Load templates
+
+dump:
+  use: templates
+  group: automation-studio
+  description: |
+    Dump all templates
