@@ -163,13 +163,12 @@ func (c *HttpClient) send(method string, request *Request) (*Response, error) {
 	}
 
 	// attempt to authenticate to the server using oauth
-	if !c.authenticated && c.ClientId != "" && c.ClientSecret != "" {
+	if c.ClientId != "" && c.ClientSecret != "" {
 		logger.Debug("attempting to authenticate using client id")
 		httpClient, err := c.authenticateUsingOAuth(client, scheme, remoteHost)
 		if err != nil {
 			return nil, err
 		}
-		c.authenticated = true
 		client = httpClient
 	}
 
@@ -371,8 +370,6 @@ func (c *HttpClient) authenticateUsingOAuth(httpClient *http.Client, scheme, rem
 	if c.ClientId == "" || c.ClientSecret == "" {
 		return nil, fmt.Errorf("missing client_id or client_secret, authentication failed")
 	}
-
-	logger.Debug("attempting to authenticate using oauth")
 
 	cfg := &clientcredentials.Config{
 		ClientID:     c.ClientId,
