@@ -189,3 +189,12 @@ func EnsurePathExists(p string) error {
 	}
 	return nil
 }
+
+// IsDir will check the path argument to see if it is a directory or not.
+func IsDir(path string) (bool, error) {
+	info, err := os.Stat(path)
+	if err != nil {
+		return false, err // Return false if the path doesn't exist or there's another error
+	}
+	return info.IsDir(), nil
+}
