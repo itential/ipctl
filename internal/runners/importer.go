@@ -68,10 +68,6 @@ func importGetPathFromRequest(in Request) (string, error) {
 
 	path := in.Args[0]
 
-	if dir, err := utils.IsDir(path); err != nil || !dir {
-		return "", fmt.Errorf("path `%s` is not a directory", path)
-	}
-
 	if in.Common.(flags.Gitter).GetRepository() != "" {
 		r, err := importNewRepositoryFromRequest(in)
 		if err != nil {
