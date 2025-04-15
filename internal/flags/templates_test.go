@@ -15,5 +15,5 @@ func TestTemplateGetOptions(t *testing.T) {
 }
 
 func TestTemplateLoadOptions(t *testing.T) {
-	checkFlags(t, &TemplateLoadOptions{}, []string{"type", "group", "include"})
+	checkFlags(t, &TemplateLoadOptions{}, []string{"type", "group"})
 }

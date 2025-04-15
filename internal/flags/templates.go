@@ -33,13 +33,11 @@ func (o *TemplateGetOptions) Flags(cmd *cobra.Command) {
 }
 
 type TemplateLoadOptions struct {
-	Type    string
-	Group   string
-	Include []string
+	Type  string
+	Group string
 }
 
 func (o *TemplateLoadOptions) Flags(cmd *cobra.Command) {
 	cmd.Flags().StringVar(&o.Type, "type", o.Type, "Type of template to load (valid values are textfsm, native)")
 	cmd.Flags().StringVar(&o.Group, "group", o.Group, "Group to load templates into (only valid with --type=textfsm)")
-	cmd.Flags().StringArrayVar(&o.Include, "include", o.Include, "Include files matching pattern")
 }
