@@ -13,3 +13,7 @@ func TestTemplateCreateOptions(t *testing.T) {
 func TestTemplateGetOptions(t *testing.T) {
 	checkFlags(t, &TemplateGetOptions{}, []string{"all"})
 }
+
+func TestTemplateLoadOptions(t *testing.T) {
+	checkFlags(t, &TemplateLoadOptions{}, []string{"type", "group", "include"})
+}

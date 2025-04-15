@@ -7,9 +7,11 @@ package runners
 import (
 	"errors"
 	"fmt"
+	"path/filepath"
 	"strings"
 
 	"github.com/itential/ipctl/internal/flags"
+	"github.com/itential/ipctl/internal/terminal"
 	"github.com/itential/ipctl/pkg/client"
 	"github.com/itential/ipctl/pkg/config"
 	"github.com/itential/ipctl/pkg/logger"
@@ -28,9 +30,11 @@ func NewTemplateRunner(c client.Client, cfg *config.Config) *TemplateRunner {
 	}
 }
 
-//////////////////////////////////////////////////////////////////////////////
-// Reader Interface
-//
+/*
+*******************************************************************************
+Reader interface
+*******************************************************************************
+*/
 
 // Get implements the `get command-templates` command
 func (r *TemplateRunner) Get(in Request) (*Response, error) {
@@ -86,9 +90,11 @@ func (r *TemplateRunner) Describe(in Request) (*Response, error) {
 	}, nil
 }
 
-//////////////////////////////////////////////////////////////////////////////
-// Writer Interface
-//
+/*
+*******************************************************************************
+Writer interface
+*******************************************************************************
+*/
 
 // Create implements the `create template ...` command
 func (r *TemplateRunner) Create(in Request) (*Response, error) {
@@ -154,6 +160,7 @@ func (r *TemplateRunner) Clear(in Request) (*Response, error) {
 	}
 
 	for _, ele := range elements {
+		terminal.Display("Deleting template `%s`  (%s)", ele.Name, ele.Id)
 		if err := r.service.Delete(ele.Id); err != nil {
 			logger.Debug("failed to delete template `%s` (%s)", ele.Name, ele.Id)
 			return nil, err
@@ -161,13 +168,15 @@ func (r *TemplateRunner) Clear(in Request) (*Response, error) {
 	}
 
 	return &Response{
-		Text: fmt.Sprintf("Deleted %v template(s)", len(elements)),
+		Text: fmt.Sprintf("\nDeleted %v template(s)", len(elements)),
 	}, nil
 }
 
-//////////////////////////////////////////////////////////////////////////////
-// Copier Interface
-//
+/*
+*******************************************************************************
+Copier interface
+*******************************************************************************
+*/
 
 func (r *TemplateRunner) Copy(in Request) (*Response, error) {
 	logger.Trace()
@@ -233,9 +242,11 @@ func (r *TemplateRunner) CopyTo(profile string, in any, replace bool) (any, erro
 
 }
 
-//////////////////////////////////////////////////////////////////////////////
-// Importer Interface
-//
+/*
+*******************************************************************************
+Importer interface
+*******************************************************************************
+*/
 
 func (r *TemplateRunner) Import(in Request) (*Response, error) {
 	logger.Trace()
@@ -257,9 +268,11 @@ func (r *TemplateRunner) Import(in Request) (*Response, error) {
 	}, nil
 }
 
-//////////////////////////////////////////////////////////////////////////////
-// Exporter Interface
-//
+/*
+*******************************************************************************
+Exporter interface
+*******************************************************************************
+*/
 
 func (r *TemplateRunner) Export(in Request) (*Response, error) {
 	logger.Trace()
@@ -287,16 +300,123 @@ func (r *TemplateRunner) Export(in Request) (*Response, error) {
 	}, nil
 }
 
-//////////////////////////////////////////////////////////////////////////////
-// Private functions
-//
+/*
+*******************************************************************************
+Dumper interface
+*******************************************************************************
+*/
+
+// Dump implements the `dump templates...` command
+func (r *TemplateRunner) Dump(in Request) (*Response, error) {
+	logger.Trace()
+
+	res, err := r.service.GetAll()
+	if err != nil {
+		return nil, err
+	}
+
+	var assets = map[string]interface{}{}
+
+	for _, ele := range res {
+		if !strings.HasPrefix(ele.Name, "@") {
+			key := fmt.Sprintf("%s.template.json", ele.Name)
+			assets[key] = ele
+		}
+	}
+
+	if err := dumpAssets(in, assets); err != nil {
+		return nil, err
+	}
+
+	return &Response{
+		Text: fmt.Sprintf("Dumped %v template(s)", len(assets)),
+	}, nil
+}
+
+/*
+*******************************************************************************
+Loader interface
+*******************************************************************************
+*/
+
+// Load implements the `load template ...` command
+func (r *TemplateRunner) Load(in Request) (*Response, error) {
+	logger.Trace()
+
+	options := in.Options.(*flags.TemplateLoadOptions)
+
+	var elements map[string]interface{}
+	var err error
+
+	if options.Type == "textfsm" {
+		elements, err = loadStringAssets(in, LoadOptions{})
+	} else {
+		elements, err = loadAssets(in)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	var loaded int
+	var skipped int
+
+	for fn, ele := range elements {
+		var template services.Template
+		var err error
+
+		if options.Type == "textfsm" || options.Type == "jinja2" {
+			name := strings.TrimSuffix(fn, filepath.Ext(fn))
+			template = services.NewTemplate(name, "Imported", "", options.Type)
+			template.Template = ele.(string)
+		} else {
+			err = loadUnmarshalAsset(ele, &template)
+			if err != nil {
+				terminal.Display("Failed to load template from `%s`, skipping", fn)
+				skipped++
+			}
+		}
+
+		if err == nil {
+			if err := r.importTemplate(template, false); err != nil {
+				if !strings.HasPrefix(err.Error(), "template with name") {
+					return nil, err
+				}
+				terminal.Display("Skipping `%s`, template `%s` already exists", fn, template.Name)
+				skipped++
+			} else {
+				terminal.Display("Loaded template `%s` successfully from `%s`", template.Name, fn)
+				loaded++
+			}
+		}
+	}
+
+	output := fmt.Sprintf("\nSuccessfully loaded %v and skipped %v files from `%s`", loaded, skipped, in.Args[0])
+
+	return &Response{
+		Text: output,
+	}, nil
+
+}
+
+/*
+*******************************************************************************
+Private functions
+*******************************************************************************
+*/
 
 func (r TemplateRunner) importTemplate(in services.Template, replace bool) error {
 	logger.Trace()
+	logger.Debug("attempting to import template `%s`", in.Name)
 
 	p, err := r.service.GetByName(in.Name)
-	if err == nil {
+	if err != nil {
+		if err.Error() != "template not found" {
+			return err
+		}
+	}
+	if p != nil {
 		if replace {
+			logger.Debug("template exists, deleting it")
 			r.service.Delete(p.Id)
 		} else {
 			return errors.New(fmt.Sprintf("template with name `%s` already exists, use `--replace` to overwrite", p.Name))
@@ -307,6 +427,8 @@ func (r TemplateRunner) importTemplate(in services.Template, replace bool) error
 	if err != nil {
 		return err
 	}
+
+	logger.Debug("successfully imported template `%s`", in.Name)
 
 	return nil
 }

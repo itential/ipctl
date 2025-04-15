@@ -16,6 +16,7 @@ func NewTemplateHandler(r Runtime, desc Descriptors) AssetHandler {
 		&AssetHandlerFlags{
 			Create: &flags.TemplateCreateOptions{},
 			Get:    &flags.TemplateGetOptions{},
+			Load:   &flags.TemplateLoadOptions{},
 		},
 	)
 }
