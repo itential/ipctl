@@ -322,11 +322,13 @@ func (r *ProjectRunner) Import(in Request) (*Response, error) {
 	}, nil
 }
 
-//////////////////////////////////////////////////////////////////////////////
-// Exporter Interface
-//
+/*
+*******************************************************************************
+Exporter interface
+*******************************************************************************
+*/
 
-// Export is the implementation of the command `export project <name>`
+// Export implements the `export project ...` command
 func (r *ProjectRunner) Export(in Request) (*Response, error) {
 	logger.Trace()
 
@@ -571,6 +573,10 @@ func parseMember(member string) (*Member, error) {
 	return m, nil
 }
 
+// expandProject is responsible for expanding the project file into individual
+// documents.  The in argument is the Request object and the project argument
+// is the project to exand.  The path argument specifies the directory to
+// expand the project into.
 func expandProject(in Request, project *services.Project, path string) error {
 	logger.Trace()
 
@@ -608,7 +614,9 @@ func expandProject(in Request, project *services.Project, path string) error {
 		components[idx].(map[string]interface{})["filename"] = fn
 	}
 
+	projectMap["components"] = components
+
 	fn := fmt.Sprintf("%s.project.json", strings.Replace(project.Name, "/", "_", -1))
 
-	return utils.WriteJsonToDisk(project, fn, path)
+	return utils.WriteJsonToDisk(projectMap, fn, path)
 }
