@@ -106,10 +106,10 @@ copy:
 
   example: |
     # Copy a project called `test` from `ipctl-dev` to `ipctl-staging`
-    $ ipctl copy test --from ipctl-dev --to ipctl-staging
+    $ ipctl copy project test --from ipctl-dev --to ipctl-staging
 
     # Copy a project and set the group `admins` as the owner
-    $ ipctl copy test --from ipctl-dev --to ipctl-staging --member type=group,name=admins,access=owner
+    $ ipctl copy project test --from ipctl-dev --to ipctl-staging --member type=group,name=admins,access=owner
 
 clear:
   use: projects
