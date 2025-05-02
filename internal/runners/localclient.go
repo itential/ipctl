@@ -29,7 +29,7 @@ func (r *LocalClientRunner) ShowConfig(in Request) (*Response, error) {
 
 	profile, err := r.config.ActiveProfile()
 	if err != nil {
-		return nil, err
+		logger.Warn("failed to load active profile, using defaults")
 	}
 
 	var port int

@@ -22,7 +22,7 @@ type LocalAAARunner struct {
 func NewLocalAAARunner(client client.Client, cfg *config.Config) LocalAAARunner {
 	activeProfile, err := cfg.ActiveProfile()
 	if err != nil {
-		logger.Fatal(err, "")
+		logger.Warn("failed to load active profile, using defaults")
 	}
 
 	mongoUrl := activeProfile.MongoUrl

@@ -46,7 +46,7 @@ func (h LocalAAAHandler) Commands() []*cobra.Command {
 
 	p, err := h.Runtime.Config.ActiveProfile()
 	if err != nil {
-		logger.Fatal(err, "failed to load active profile")
+		logger.Warn("failed to load active profile, using defaults")
 	}
 
 	if p.MongoUrl != "" {

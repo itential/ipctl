@@ -5,7 +5,6 @@
 package config
 
 import (
-	"errors"
 	"fmt"
 	"os"
 	"reflect"
@@ -183,7 +182,12 @@ func (ac *Config) GetProfile(name string) (*Profile, error) {
 	if cfg, exists := ac.profiles[name]; exists {
 		return cfg, nil
 	}
-	return nil, errors.New(fmt.Sprintf("profile `%s` does not exist", name))
+	p := loadProfile(
+		map[string]interface{}{},
+		map[string]interface{}{},
+		map[string]interface{}{},
+	)
+	return p, fmt.Errorf("profile `%s` not found, using defaults", name)
 }
 
 func (ac *Config) ActiveProfile() (*Profile, error) {

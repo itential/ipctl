@@ -43,7 +43,7 @@ func Error(err error, terminalNoColor bool) {
 }
 
 func Warning(format string, args ...interface{}) {
-	Display(fmt.Sprintf("WARNING: %s", format), args)
+	Display(fmt.Sprintf("WARNING: %s", format), args...)
 }
 
 // DisplayTabWriter takes in a string for a table that already has tab and newlines set

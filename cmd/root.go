@@ -110,7 +110,7 @@ func Execute() int {
 
 	profile, err := cfg.ActiveProfile()
 	if err != nil {
-		cmdutils.CheckError(err, cfg.TerminalNoColor)
+		terminal.Warning("%s\n", err.Error())
 	}
 
 	logger.Info("connection timeout is %v second(s)", profile.Timeout)
