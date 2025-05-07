@@ -9,6 +9,7 @@ import (
 	"os"
 	"reflect"
 	"strconv"
+	"strings"
 
 	"github.com/spf13/pflag"
 )
@@ -179,7 +180,7 @@ func getProfileFromFlag() string {
 }
 
 func (ac *Config) GetProfile(name string) (*Profile, error) {
-	if cfg, exists := ac.profiles[name]; exists {
+	if cfg, exists := ac.profiles[strings.ToLower(name)]; exists {
 		return cfg, nil
 	}
 	p := loadProfile(
