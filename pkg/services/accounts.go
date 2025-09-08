@@ -50,15 +50,19 @@ type AccountService struct {
 	client *ServiceClient
 }
 
-// Returns a new instance of AccountService using the conneciton as specified
-// by c
+// NewAccountService creates and returns a new instance of AccountService using the
+// client connection specified by c. The service provides methods for managing
+// Itential Platform user accounts.
 func NewAccountService(c client.Client) *AccountService {
 	return &AccountService{
 		client: NewServiceClient(c),
 	}
 }
 
-// GetAll calls `GET /authorization/accounts`
+// GetAll retrieves all user accounts from the Itential Platform by calling
+// GET /authorization/accounts. This method handles pagination automatically,
+// fetching all accounts across multiple pages if necessary. Returns a slice
+// of Account structs or an error if the request fails.
 func (svc *AccountService) GetAll() ([]Account, error) {
 	logger.Trace()
 
@@ -67,16 +71,39 @@ func (svc *AccountService) GetAll() ([]Account, error) {
 		Total   int       `json:"total"`
 	}
 
-	var res *Response
+	var accounts []Account
+	var limit = 100
+	var skip = 0
 
-	if err := svc.client.Get("/authorization/accounts", &res); err != nil {
-		return nil, err
+	for {
+		var res *Response
+
+		if err := svc.client.GetRequest(&Request{
+			uri:    "/authorization/accounts",
+			params: &QueryParams{Limit: limit, Skip: skip},
+		}, &res); err != nil {
+			return nil, err
+		}
+
+		for _, ele := range res.Results {
+			accounts = append(accounts, ele)
+		}
+
+		if len(accounts) == res.Total {
+			break
+		}
+
+		skip += limit
 	}
 
-	return res.Results, nil
+	logger.Info("Found %v account(s)", len(accounts))
+
+	return accounts, nil
 }
 
-// Get invokes `GET /authorization/accounts/{id}`
+// Get retrieves a specific user account by ID from the Itential Platform by
+// calling GET /authorization/accounts/{id}. Returns a pointer to the Account
+// struct or an error if the account is not found or the request fails.
 func (svc *AccountService) Get(id string) (*Account, error) {
 	logger.Trace()
 
@@ -91,10 +118,10 @@ func (svc *AccountService) Get(id string) (*Account, error) {
 	return res, nil
 }
 
-// GetByName accepts a single argument which is the username of the acccount to
-// retrieve.  This function will iterate through all accounts and attempt to
-// match the username against the returned data.  If a match is found, an
-// Account is returned.  If a match is not found, an error is returned.
+// GetByName retrieves a user account by username from the Itential Platform.
+// This method fetches all accounts and searches for a matching username.
+// Returns a pointer to the matching Account struct or an error if no account
+// with the specified username is found or if the request fails.
 func (svc *AccountService) GetByName(name string) (*Account, error) {
 	logger.Trace()
 
@@ -119,6 +146,9 @@ func (svc *AccountService) GetByName(name string) (*Account, error) {
 	return res, nil
 }
 
+// Deactivate sets an account to inactive status by calling PATCH /authorization/accounts/{id}
+// with inactive=true. The account will no longer be able to access the system.
+// Returns an error if the request fails or the account is not found.
 func (svc *AccountService) Deactivate(id string) error {
 	logger.Trace()
 	return svc.client.PatchRequest(&Request{
@@ -127,6 +157,9 @@ func (svc *AccountService) Deactivate(id string) error {
 	}, nil)
 }
 
+// Activate sets an account to active status by calling PATCH /authorization/accounts/{id}
+// with inactive=false. The account will be able to access the system again.
+// Returns an error if the request fails or the account is not found.
 func (svc *AccountService) Activate(id string) error {
 	logger.Trace()
 	return svc.client.PatchRequest(&Request{
