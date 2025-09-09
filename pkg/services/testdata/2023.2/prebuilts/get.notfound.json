@@ -1,0 +1,5 @@
+{
+  "error": "Not Found",
+  "message": "Prebuilt with ID 'nonexistent-id' not found",
+  "statusCode": 404
+}
