@@ -1,0 +1,17 @@
+{
+  "status": "success",
+  "message": "Successfully created application",
+  "data": {
+    "name": "TestApplication",
+    "type": "service",
+    "model": "App",
+    "properties": {
+      "version": "1.0.0",
+      "description": "Test application"
+    },
+    "isEncrypted": false,
+    "loggerProps": {
+      "level": "info"
+    }
+  }
+}

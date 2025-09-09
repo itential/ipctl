@@ -12,28 +12,33 @@ import (
 	"github.com/itential/ipctl/pkg/logger"
 )
 
+// ApplicationOperationResponse represents the response structure for application operations
 type ApplicationOperationResponse struct {
 	Status  string `json:"status"`
 	Message string `json:"message"`
 }
 
+// Application represents an application configuration in the Itential platform
 type Application struct {
-	Name             string                 `json:"name"`
-	Type             string                 `json:"type"`
-	Model            string                 `json:"model"`
-	Properties       map[string]interface{} `json:"properties"`
-	IsEncrypted      bool                   `json:"isEncrypted"`
-	LoggerProperties map[string]interface{} `json:"loggerProps"`
+	Name             string                 `json:"name"`        // Name of the application
+	Type             string                 `json:"type"`        // Type of the application
+	Model            string                 `json:"model"`       // Model used by the application
+	Properties       map[string]interface{} `json:"properties"`  // Application-specific properties
+	IsEncrypted      bool                   `json:"isEncrypted"` // Whether the application uses encryption
+	LoggerProperties map[string]interface{} `json:"loggerProps"` // Logger configuration properties
 }
 
+// ApplicationService provides methods to manage applications in the Itential platform
 type ApplicationService struct {
 	client *ServiceClient
 }
 
+// NewApplicationService creates a new ApplicationService instance with the provided client
 func NewApplicationService(c client.Client) *ApplicationService {
 	return &ApplicationService{client: NewServiceClient(c)}
 }
 
+// GetAll retrieves all applications from the Itential platform
 func (svc *ApplicationService) GetAll() ([]Application, error) {
 	logger.Trace()
 
@@ -65,6 +70,7 @@ func (svc *ApplicationService) GetAll() ([]Application, error) {
 	return values, nil
 }
 
+// Get retrieves a specific application by name from the Itential platform
 func (svc *ApplicationService) Get(name string) (*Application, error) {
 	logger.Trace()
 
@@ -86,6 +92,7 @@ func (svc *ApplicationService) Get(name string) (*Application, error) {
 	return res.Data, nil
 }
 
+// Create creates a new application in the Itential platform
 func (svc *ApplicationService) Create(in Application) (*Application, error) {
 	logger.Trace()
 
@@ -110,6 +117,7 @@ func (svc *ApplicationService) Create(in Application) (*Application, error) {
 	return res.Data, nil
 }
 
+// Start starts the specified application by name
 func (svc *ApplicationService) Start(name string) error {
 	logger.Trace()
 
@@ -130,6 +138,7 @@ func (svc *ApplicationService) Start(name string) error {
 	return nil
 }
 
+// Stop stops the specified application by name
 func (svc *ApplicationService) Stop(name string) error {
 	logger.Trace()
 
@@ -150,6 +159,7 @@ func (svc *ApplicationService) Stop(name string) error {
 	return nil
 }
 
+// Restart restarts the specified application by name
 func (svc *ApplicationService) Restart(name string) error {
 	logger.Trace()
 
