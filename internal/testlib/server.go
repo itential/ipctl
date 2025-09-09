@@ -148,3 +148,20 @@ func AddDeleteErrorToMux(uri, body string, statusCode int) {
 	}
 	addResponse(uri, body, http.MethodDelete, statusCode)
 }
+
+func AddPatchResponseToMux(uri, body string, statusCode int) {
+	if statusCode == 0 {
+		statusCode = http.StatusOK
+	}
+	if statusCode != http.StatusOK {
+		warn("non standard status code return for PATCH %s, expected %v, want %v\n", uri, http.StatusOK, statusCode)
+	}
+	addResponse(uri, body, http.MethodPatch, statusCode)
+}
+
+func AddPatchErrorToMux(uri, body string, statusCode int) {
+	if statusCode == 0 {
+		statusCode = http.StatusInternalServerError
+	}
+	addResponse(uri, body, http.MethodPatch, statusCode)
+}
