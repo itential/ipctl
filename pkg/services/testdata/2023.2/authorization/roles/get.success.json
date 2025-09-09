@@ -1,0 +1,30 @@
+{
+  "_id": "678ec1ab6d849669c6dbe952",
+  "provenance": "local_aaa",
+  "name": "admin_role",
+  "description": "Administrative role with full permissions",
+  "allowedMethods": [
+    {
+      "name": "createUser",
+      "provenance": "local_aaa"
+    },
+    {
+      "name": "deleteUser",
+      "provenance": "local_aaa"
+    },
+    {
+      "name": "updateUser",
+      "provenance": "local_aaa"
+    }
+  ],
+  "allowedViews": [
+    {
+      "provenance": "local_aaa",
+      "path": "/admin/users"
+    },
+    {
+      "provenance": "local_aaa",
+      "path": "/admin/settings"
+    }
+  ]
+}
