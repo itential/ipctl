@@ -158,3 +158,266 @@ func TestGetTzLocation(t *testing.T) {
 		}
 	}
 }
+
+func TestNewConfig(t *testing.T) {
+	testCases := []struct {
+		name           string
+		defaults       map[string]interface{}
+		envBinding     map[string]string
+		appWorkingDir  string
+		sysConfigPath  string
+		fileName       string
+		expectedFields bool
+	}{
+		{
+			name:           "New config with defaults",
+			defaults:       nil,
+			envBinding:     nil,
+			appWorkingDir:  "",
+			sysConfigPath:  "",
+			fileName:       "",
+			expectedFields: true,
+		},
+		{
+			name: "New config with custom values",
+			defaults: map[string]interface{}{
+				"application.working_dir":     "/tmp/test",
+				"application.default_profile": "test",
+				"log.level":                   "DEBUG",
+			},
+			envBinding:     map[string]string{},
+			appWorkingDir:  "/tmp/test",
+			sysConfigPath:  "/etc/test",
+			fileName:       "test",
+			expectedFields: true,
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			// Clear viper state before each test
+			viper.Reset()
+
+			config := NewConfig(tc.defaults, tc.envBinding, tc.appWorkingDir, tc.sysConfigPath, tc.fileName)
+
+			if config == nil {
+				t.Error("Expected config to be created")
+				return
+			}
+
+			if tc.expectedFields {
+				assert.NotEmpty(t, config.WorkingDir)
+				assert.NotEmpty(t, config.LogLevel)
+				assert.NotNil(t, config.LogTimestampTimezone)
+			}
+		})
+	}
+}
+
+func TestConfig_DumpConfig(t *testing.T) {
+	viper.Reset()
+	config := NewConfig(nil, nil, "", "", "")
+
+	dump := config.DumpConfig()
+	assert.NotEmpty(t, dump)
+
+	// Verify it's valid JSON
+	assert.True(t, len(dump) > 10)
+	assert.Contains(t, dump, "working_dir")
+	assert.Contains(t, dump, "log_level")
+}
+
+func TestConfig_PopulateFields(t *testing.T) {
+	viper.Reset()
+
+	// Set some test values
+	viper.Set("application.working_dir", "~/test")
+	viper.Set("application.default_profile", "testprofile")
+	viper.Set("log.level", "DEBUG")
+	viper.Set("features.datasets_enabled", true)
+	viper.Set("terminal.no_color", true)
+	viper.Set("git.name", "Test User")
+
+	config := &Config{}
+	config.populateFields()
+
+	assert.Contains(t, config.WorkingDir, "test")
+	assert.Equal(t, "testprofile", config.DefaultProfile)
+	assert.Equal(t, "DEBUG", config.LogLevel)
+	assert.True(t, config.FeaturesDatasetsEnabled)
+	assert.True(t, config.TerminalNoColor)
+	assert.Equal(t, "Test User", config.GitName)
+}
+
+func TestConfig_GetProfile(t *testing.T) {
+	viper.Reset()
+
+	testCases := []struct {
+		name          string
+		profileName   string
+		setupProfiles func(*Config)
+		expectError   bool
+		expectedHost  string
+	}{
+		{
+			name:        "Get existing profile",
+			profileName: "test",
+			setupProfiles: func(c *Config) {
+				c.profiles = map[string]*Profile{
+					"test": {
+						Host:     "test.example.com",
+						Port:     8080,
+						Username: "testuser",
+					},
+				}
+			},
+			expectError:  false,
+			expectedHost: "test.example.com",
+		},
+		{
+			name:        "Get non-existent profile returns default",
+			profileName: "nonexistent",
+			setupProfiles: func(c *Config) {
+				c.profiles = map[string]*Profile{}
+			},
+			expectError:  true,
+			expectedHost: defaultHost,
+		},
+		{
+			name:        "Case insensitive profile lookup",
+			profileName: "TEST",
+			setupProfiles: func(c *Config) {
+				c.profiles = map[string]*Profile{
+					"test": {
+						Host: "test.example.com",
+						Port: 8080,
+					},
+				}
+			},
+			expectError:  false,
+			expectedHost: "test.example.com",
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			config := &Config{}
+			tc.setupProfiles(config)
+
+			profile, err := config.GetProfile(tc.profileName)
+
+			if tc.expectError {
+				assert.Error(t, err)
+			} else {
+				assert.NoError(t, err)
+			}
+
+			assert.NotNil(t, profile)
+			assert.Equal(t, tc.expectedHost, profile.Host)
+		})
+	}
+}
+
+func TestConfig_ActiveProfile(t *testing.T) {
+	testCases := []struct {
+		name            string
+		profileName     string
+		setupProfiles   func(*Config)
+		expectedProfile string
+		expectError     bool
+	}{
+		{
+			name:        "Active profile when profileName is set",
+			profileName: "custom",
+			setupProfiles: func(c *Config) {
+				c.profiles = map[string]*Profile{
+					"custom":  {Host: "custom.example.com"},
+					"default": {Host: "default.example.com"},
+				}
+			},
+			expectedProfile: "custom.example.com",
+			expectError:     false,
+		},
+		{
+			name:        "Active profile defaults to default when profileName is empty",
+			profileName: "",
+			setupProfiles: func(c *Config) {
+				c.profiles = map[string]*Profile{
+					"default": {Host: "default.example.com"},
+				}
+			},
+			expectedProfile: "default.example.com",
+			expectError:     false,
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			config := &Config{profileName: tc.profileName}
+			tc.setupProfiles(config)
+
+			profile, err := config.ActiveProfile()
+
+			if tc.expectError {
+				assert.Error(t, err)
+			} else {
+				assert.NoError(t, err)
+			}
+
+			assert.NotNil(t, profile)
+			assert.Equal(t, tc.expectedProfile, profile.Host)
+		})
+	}
+}
+
+func TestConfig_GetRepository(t *testing.T) {
+	testCases := []struct {
+		name              string
+		repoName          string
+		setupRepositories func(*Config)
+		expectError       bool
+		expectedUrl       string
+	}{
+		{
+			name:     "Get existing repository",
+			repoName: "test-repo",
+			setupRepositories: func(c *Config) {
+				c.repositories = map[string]*Repository{
+					"test-repo": {
+						Url:       "https://github.com/test/repo.git",
+						Reference: "main",
+					},
+				}
+			},
+			expectError: false,
+			expectedUrl: "https://github.com/test/repo.git",
+		},
+		{
+			name:     "Get non-existent repository",
+			repoName: "nonexistent",
+			setupRepositories: func(c *Config) {
+				c.repositories = map[string]*Repository{}
+			},
+			expectError: true,
+			expectedUrl: "",
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			config := &Config{}
+			tc.setupRepositories(config)
+
+			repo, err := config.GetRepository(tc.repoName)
+
+			if tc.expectError {
+				assert.Error(t, err)
+				assert.Nil(t, repo)
+			} else {
+				assert.NoError(t, err)
+				assert.NotNil(t, repo)
+				assert.Equal(t, tc.expectedUrl, repo.Url)
+			}
+		})
+	}
+}
