@@ -1,0 +1,18 @@
+{
+  "message": "Successfully imported 1 JSON form(s)",
+  "status": "success",
+  "imported": [
+    {
+      "success": true,
+      "message": "Successfully imported JSON form 'test-import'",
+      "original": {
+        "name": "test-import",
+        "description": "Imported test form"
+      },
+      "created": {
+        "_id": "6795a570a209bf3192120bfc",
+        "name": "test-import"
+      }
+    }
+  ]
+}
