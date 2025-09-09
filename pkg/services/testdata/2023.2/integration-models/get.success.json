@@ -1,0 +1,22 @@
+{
+  "model": "http-adapter",
+  "versionId": "http-adapter-v1.0.0",
+  "description": "HTTP adapter model for REST API integrations",
+  "properties": {
+    "authentication": {
+      "type": "basic",
+      "username": "admin",
+      "password": "******"
+    },
+    "server": {
+      "protocol": "https",
+      "host": "api.example.com",
+      "base_path": "/api/v1"
+    },
+    "tls": {
+      "enabled": true,
+      "rejectUnauthroized": false
+    },
+    "version": "1.0.0"
+  }
+}
