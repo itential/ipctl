@@ -1,0 +1,59 @@
+{
+  "results": [
+    {
+      "data": {
+        "name": "integration-1",
+        "type": "Adapter",
+        "model": "http-adapter",
+        "properties": {
+          "id": "integration-1",
+          "type": "http",
+          "host": "api.example.com"
+        },
+        "isEncrypted": false,
+        "loggerProps": {
+          "level": "info"
+        },
+        "virtual": true,
+        "profiling": false,
+        "systemProps": {
+          "timeout": 5000
+        },
+        "eventDeduplication": {
+          "enabled": false
+        }
+      },
+      "metadata": {
+        "created": "2023-01-01T12:00:00Z"
+      }
+    },
+    {
+      "data": {
+        "name": "integration-2",
+        "type": "Adapter",
+        "model": "database-adapter",
+        "properties": {
+          "id": "integration-2",
+          "type": "database",
+          "host": "db.example.com"
+        },
+        "isEncrypted": true,
+        "loggerProps": {
+          "level": "debug"
+        },
+        "virtual": true,
+        "profiling": true,
+        "systemProps": {
+          "timeout": 10000
+        },
+        "eventDeduplication": {
+          "enabled": true
+        }
+      },
+      "metadata": {
+        "created": "2023-01-02T12:00:00Z"
+      }
+    }
+  ],
+  "total": 2
+}
