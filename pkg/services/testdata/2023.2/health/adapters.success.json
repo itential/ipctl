@@ -1,0 +1,68 @@
+{
+  "results": [
+    {
+      "id": "adapter-netmiko",
+      "package_id": "@itential/adapter-netmiko",
+      "version": "1.2.3",
+      "type": "adapter",
+      "description": "Netmiko Adapter",
+      "routePrefix": "/adapter-netmiko",
+      "state": "running",
+      "connection": {
+        "state": "connected"
+      },
+      "uptime": 3550.789,
+      "memoryUsage": {
+        "rss": 83886080,
+        "heapTotal": 41943040,
+        "heapUsed": 31457280,
+        "external": 10485760,
+        "arrayBuffers": 1310720
+      },
+      "cpuUsage": {
+        "user": 120000,
+        "system": 40000
+      },
+      "pid": 12348,
+      "logger": {
+        "console": "info",
+        "file": "debug",
+        "syslog": null
+      },
+      "timestamp": 1640995200000,
+      "prevUptime": 3450.0
+    },
+    {
+      "id": "adapter-ansible",
+      "package_id": "@itential/adapter-ansible",
+      "version": "2.1.0",
+      "type": "adapter",
+      "description": "Ansible Adapter",
+      "routePrefix": "/adapter-ansible",
+      "state": "running",
+      "connection": {
+        "state": "connected"
+      },
+      "uptime": 3580.234,
+      "memoryUsage": {
+        "rss": 92274688,
+        "heapTotal": 46137344,
+        "heapUsed": 34603008,
+        "external": 11534336,
+        "arrayBuffers": 1441792
+      },
+      "cpuUsage": {
+        "user": 140000,
+        "system": 45000
+      },
+      "pid": 12349,
+      "logger": {
+        "console": "warn",
+        "file": "info",
+        "syslog": null
+      },
+      "timestamp": 1640995200000,
+      "prevUptime": 3480.0
+    }
+  ]
+}
