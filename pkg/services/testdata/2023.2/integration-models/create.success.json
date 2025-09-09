@@ -1,0 +1,8 @@
+{
+  "status": "success",
+  "message": "Integration model created successfully",
+  "data": {
+    "versionId": "custom-adapter-v1.0.0",
+    "model": "custom-adapter"
+  }
+}

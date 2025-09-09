@@ -1,0 +1,66 @@
+{
+  "integrationModels": [
+    {
+      "model": "http-adapter",
+      "versionId": "http-adapter-v1.0.0",
+      "description": "HTTP adapter for REST API integrations",
+      "properties": {
+        "authentication": {
+          "type": "basic"
+        },
+        "server": {
+          "protocol": "https",
+          "host": "example.com",
+          "base_path": "/api"
+        },
+        "tls": {
+          "enabled": true,
+          "rejectUnauthroized": false
+        },
+        "version": "1.0.0"
+      }
+    },
+    {
+      "model": "database-adapter",
+      "versionId": "database-adapter-v2.1.0",
+      "description": "Database adapter for SQL database integrations",
+      "properties": {
+        "authentication": {
+          "type": "password",
+          "username": "dbuser"
+        },
+        "server": {
+          "protocol": "tcp",
+          "host": "db.example.com",
+          "base_path": "/database"
+        },
+        "tls": {
+          "enabled": false,
+          "rejectUnauthroized": true
+        },
+        "version": "2.1.0"
+      }
+    },
+    {
+      "model": "file-adapter",
+      "versionId": "file-adapter-v1.5.0",
+      "description": "File system adapter for file operations",
+      "properties": {
+        "authentication": {
+          "type": "none"
+        },
+        "server": {
+          "protocol": "file",
+          "host": "localhost",
+          "base_path": "/data"
+        },
+        "tls": {
+          "enabled": false,
+          "rejectUnauthroized": false
+        },
+        "version": "1.5.0"
+      }
+    }
+  ],
+  "total": 3
+}
