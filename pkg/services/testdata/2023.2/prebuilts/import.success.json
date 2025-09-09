@@ -1,0 +1,47 @@
+{
+  "message": "Prebuilt imported successfully",
+  "status": "success",
+  "data": {
+    "_id": "prebuilt-imported",
+    "name": "Imported Prebuilt",
+    "IAPDependencies": {
+      "@itential/core": "^2023.2.0"
+    },
+    "author": "Import Test Author",
+    "components": [
+      {
+        "id": "imported-component-1",
+        "name": "Imported Component",
+        "type": "workflow"
+      }
+    ],
+    "description": "Successfully imported prebuilt for testing",
+    "installed": "2024-01-17T09:15:00Z",
+    "installedBy": "import-user",
+    "keywords": ["imported", "test"],
+    "license": "MIT",
+    "manifest": {
+      "artifacts": [
+        {
+          "id": "imported-artifact-1",
+          "location": "/workflows/imported-workflow",
+          "name": "Imported Workflow",
+          "properties": {
+            "type": "workflow"
+          },
+          "type": "workflow"
+        }
+      ],
+      "bundleName": "imported-prebuilt",
+      "createdEpoch": "1705488900",
+      "fingerprint": "imported123abc"
+    },
+    "readme": "# Imported Prebuilt\n\nThis prebuilt was imported during testing.",
+    "repository": {
+      "hostname": "github.com",
+      "path": "/test/imported-prebuilt",
+      "type": "git"
+    },
+    "version": "1.0.0"
+  }
+}

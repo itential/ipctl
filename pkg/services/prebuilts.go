@@ -14,12 +14,14 @@ import (
 	"github.com/itential/ipctl/pkg/logger"
 )
 
+// PrebuiltPackageMetadataRepository represents repository information for a prebuilt package
 type PrebuiltPackageMetadataRepository struct {
 	Type     string `json:"type"`
 	Hostname string `json:"hostname"`
 	Path     string `json:"path"`
 }
 
+// PrebuiltPackageMetadata contains metadata information for a prebuilt package
 type PrebuiltPackageMetadata struct {
 	Name         string                            `json:"name"`
 	Version      string                            `json:"version"`
@@ -32,6 +34,7 @@ type PrebuiltPackageMetadata struct {
 	GitlabId     int                               `json:"gitlabId"`
 }
 
+// PrebuiltPackageManifest represents the manifest structure of a prebuilt package
 type PrebuiltPackageManifest struct {
 	Name        string                            `json:"bundleName"`
 	Fingerprint string                            `json:"fingerprint"`
@@ -39,6 +42,7 @@ type PrebuiltPackageManifest struct {
 	Artifacts   []PrebuiltPackageManifestArtifact `json:"artifacts"`
 }
 
+// PrebuiltPackageManifestArtifact represents an artifact within a prebuilt package manifest
 type PrebuiltPackageManifestArtifact struct {
 	Id         string                 `json:"id"`
 	Name       string                 `json:"name"`
@@ -47,11 +51,13 @@ type PrebuiltPackageManifestArtifact struct {
 	Properties map[string]interface{} `json:"properties"`
 }
 
+// PrebuiltPackageBundle represents a bundle within a prebuilt package
 type PrebuiltPackageBundle struct {
 	Type string                 `json:"type"`
 	Data map[string]interface{} `json:"data"`
 }
 
+// PrebuiltPackage represents a complete prebuilt package with metadata, manifest, bundles, and readme
 type PrebuiltPackage struct {
 	Metadata PrebuiltPackageMetadata `json:"metadata"`
 	Manifest PrebuiltPackageManifest `json:"manifest"`
@@ -59,18 +65,21 @@ type PrebuiltPackage struct {
 	Readme   string                  `json:"readme"`
 }
 
+// PrebuiltComponent represents a component within a prebuilt
 type PrebuiltComponent struct {
 	Id   string `json:"id"`
 	Name string `json:"name"`
 	Type string `json:"type"`
 }
 
+// PrebuiltRepository represents repository information for a prebuilt
 type PrebuiltRepository struct {
 	Hostname string `json:"hostname"`
 	Path     string `json:"path"`
 	Type     string `json:"type"`
 }
 
+// PrebuiltManifestArtifact represents an artifact in a prebuilt manifest
 type PrebuiltManifestArtifact struct {
 	Id         string                 `json:"id"`
 	Location   string                 `json:"location"`
@@ -79,6 +88,7 @@ type PrebuiltManifestArtifact struct {
 	Type       string                 `json:"type"`
 }
 
+// PrebuiltManifest represents a manifest for a prebuilt with artifacts and metadata
 type PrebuiltManifest struct {
 	Artifacts    []PrebuiltManifestArtifact `json:"artifacts"`
 	BundleName   string                     `json:"bundleName"`
@@ -86,6 +96,7 @@ type PrebuiltManifest struct {
 	Fingerprint  string                     `json:"fingerprint"`
 }
 
+// Prebuilt represents a prebuilt installed in the Itential Platform
 type Prebuilt struct {
 	Id           string                 `json:"_id"`
 	Name         string                 `json:"name"`
@@ -103,14 +114,17 @@ type Prebuilt struct {
 	Version      string                 `json:"version"`
 }
 
+// PrebuiltService provides operations for managing prebuilts in the Itential Platform
 type PrebuiltService struct {
 	client client.Client
 }
 
+// NewPrebuiltService creates a new instance of PrebuiltService with the provided client
 func NewPrebuiltService(c client.Client) *PrebuiltService {
 	return &PrebuiltService{client: c}
 }
 
+// Get retrieves a prebuilt by its ID
 func (svc *PrebuiltService) Get(id string) (*Prebuilt, error) {
 	logger.Trace()
 
@@ -133,6 +147,7 @@ func (svc *PrebuiltService) Get(id string) (*Prebuilt, error) {
 	return prebuilt, nil
 }
 
+// GetByName retrieves a prebuilt by its name
 func (p *PrebuiltService) GetByName(name string) (*Prebuilt, error) {
 	logger.Trace()
 
@@ -160,6 +175,7 @@ func (p *PrebuiltService) GetByName(name string) (*Prebuilt, error) {
 	return prebuilt, nil
 }
 
+// GetAll retrieves all prebuilts from the Itential Platform
 func (svc *PrebuiltService) GetAll() ([]Prebuilt, error) {
 	logger.Trace()
 
@@ -189,6 +205,7 @@ func (svc *PrebuiltService) GetAll() ([]Prebuilt, error) {
 	return response.Results, nil
 }
 
+// Delete removes a prebuilt by its ID
 func (svc *PrebuiltService) Delete(id string) error {
 	logger.Trace()
 
@@ -201,6 +218,7 @@ func (svc *PrebuiltService) Delete(id string) error {
 	return err
 }
 
+// Import imports a prebuilt package into the Itential Platform
 func (svc *PrebuiltService) Import(in PrebuiltPackage, overwrite bool) (*Prebuilt, error) {
 	logger.Trace()
 
@@ -217,6 +235,7 @@ func (svc *PrebuiltService) Import(in PrebuiltPackage, overwrite bool) (*Prebuil
 	return svc.ImportRaw(prebuilt, overwrite)
 }
 
+// ImportRaw imports raw prebuilt data into the Itential Platform
 func (svc *PrebuiltService) ImportRaw(in any, overwrite bool) (*Prebuilt, error) {
 	logger.Trace()
 
@@ -251,6 +270,7 @@ func (svc *PrebuiltService) ImportRaw(in any, overwrite bool) (*Prebuilt, error)
 	return response.Data, nil
 }
 
+// Export exports a prebuilt as a package from the Itential Platform
 func (svc *PrebuiltService) Export(id string) (*PrebuiltPackage, error) {
 	logger.Trace()
 

@@ -1,0 +1,106 @@
+{
+  "results": [
+    {
+      "_id": "prebuilt-1",
+      "name": "Test Prebuilt 1",
+      "IAPDependencies": {
+        "@itential/core": "^2023.2.0"
+      },
+      "author": "Test Author",
+      "components": [
+        {
+          "id": "component-1",
+          "name": "Test Component 1",
+          "type": "workflow"
+        }
+      ],
+      "description": "Test prebuilt for unit testing",
+      "installed": "2024-01-15T10:30:00Z",
+      "installedBy": "test-user",
+      "keywords": ["test", "automation"],
+      "license": "MIT",
+      "manifest": {
+        "artifacts": [
+          {
+            "id": "artifact-1",
+            "location": "/workflows/test-workflow",
+            "name": "Test Workflow",
+            "properties": {
+              "type": "workflow"
+            },
+            "type": "workflow"
+          }
+        ],
+        "bundleName": "test-prebuilt-1",
+        "createdEpoch": "1705314600",
+        "fingerprint": "abc123def456"
+      },
+      "readme": "# Test Prebuilt 1\n\nThis is a test prebuilt.",
+      "repository": {
+        "hostname": "github.com",
+        "path": "/test/prebuilt-1",
+        "type": "git"
+      },
+      "version": "1.0.0"
+    },
+    {
+      "_id": "prebuilt-2",
+      "name": "Test Prebuilt 2",
+      "IAPDependencies": {
+        "@itential/core": "^2023.2.0",
+        "@itential/adapter-utils": "^1.0.0"
+      },
+      "author": "Another Author",
+      "components": [
+        {
+          "id": "component-2",
+          "name": "Test Component 2",
+          "type": "automation"
+        },
+        {
+          "id": "component-3",
+          "name": "Test Component 3",
+          "type": "template"
+        }
+      ],
+      "description": "Second test prebuilt for unit testing",
+      "installed": "2024-01-16T14:45:00Z",
+      "installedBy": "admin-user",
+      "keywords": ["test", "integration", "adapter"],
+      "license": "Apache-2.0",
+      "manifest": {
+        "artifacts": [
+          {
+            "id": "artifact-2",
+            "location": "/automations/test-automation",
+            "name": "Test Automation",
+            "properties": {
+              "type": "automation"
+            },
+            "type": "automation"
+          },
+          {
+            "id": "artifact-3",
+            "location": "/templates/test-template",
+            "name": "Test Template",
+            "properties": {
+              "type": "template"
+            },
+            "type": "template"
+          }
+        ],
+        "bundleName": "test-prebuilt-2",
+        "createdEpoch": "1705401900",
+        "fingerprint": "def456ghi789"
+      },
+      "readme": "# Test Prebuilt 2\n\nThis is another test prebuilt with multiple components.",
+      "repository": {
+        "hostname": "gitlab.com",
+        "path": "/test/prebuilt-2",
+        "type": "git"
+      },
+      "version": "2.1.0"
+    }
+  ],
+  "total": 2
+}
