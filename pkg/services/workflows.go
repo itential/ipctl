@@ -54,10 +54,13 @@ type Workflow struct {
 	Type               string                 `json:"type"`
 }
 
+// WorkflowService provides methods for managing Itential Platform workflows.
+// It handles CRUD operations, import/export, and bulk operations on workflow assets.
 type WorkflowService struct {
 	client *ServiceClient
 }
 
+// NewWorkflowService creates a new instance of WorkflowService with the provided client.
 func NewWorkflowService(c client.Client) *WorkflowService {
 	return &WorkflowService{client: NewServiceClient(c)}
 }
@@ -187,6 +190,9 @@ func (svc *WorkflowService) Get(name string) (*Workflow, error) {
 	return &res.Items[0], nil
 }
 
+// GetById retrieves a specific workflow by its unique ID.
+// This method fetches all workflows and filters by ID, returning an error
+// if the workflow is not found.
 func (svc *WorkflowService) GetById(id string) (*Workflow, error) {
 	logger.Trace()
 
@@ -292,6 +298,9 @@ func (svc *WorkflowService) Export(name string) (*Workflow, error) {
 	return &res, nil
 }
 
+// ExportById returns an exported workflow from the server by ID.
+// An exported workflow differs from Get in that the CreatedBy and UpdatedBy
+// fields are expanded.
 func (svc *WorkflowService) ExportById(id string) (*Workflow, error) {
 	logger.Trace()
 
@@ -314,6 +323,9 @@ func (svc *WorkflowService) ExportById(id string) (*Workflow, error) {
 	return &res, nil
 }
 
+// Clear removes all workflows from the server by deleting each workflow individually.
+// This operation cannot be undone. If any deletion fails, the operation stops
+// and returns an error.
 func (svc *WorkflowService) Clear() error {
 	logger.Trace()
 
@@ -330,6 +342,9 @@ func (svc *WorkflowService) Clear() error {
 
 }
 
+// Update modifies an existing workflow on the server.
+// The workflow must have a valid ID field. Returns the updated workflow
+// or an error if the update fails.
 func (svc *WorkflowService) Update(in Workflow) (*Workflow, error) {
 	logger.Trace()
 
