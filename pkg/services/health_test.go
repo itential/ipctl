@@ -14,11 +14,11 @@ import (
 )
 
 var (
-	healthStatusSuccess      = "health/status.success.json"
-	healthSystemSuccess      = "health/system.success.json"
-	healthServerSuccess      = "health/server.success.json"
+	healthStatusSuccess       = "health/status.success.json"
+	healthSystemSuccess       = "health/system.success.json"
+	healthServerSuccess       = "health/server.success.json"
 	healthApplicationsSuccess = "health/applications.success.json"
-	healthAdaptersSuccess    = "health/adapters.success.json"
+	healthAdaptersSuccess     = "health/adapters.success.json"
 )
 
 func setupHealthService() *HealthService {
@@ -182,7 +182,7 @@ func TestHealthServiceGetApplicationHealth(t *testing.T) {
 		assert.Nil(t, err)
 		assert.NotNil(t, res)
 		assert.Equal(t, 2, len(res))
-		
+
 		// Test first application
 		app1 := res[0]
 		assert.Equal(t, "automation-studio", app1.Id)
@@ -241,7 +241,7 @@ func TestHealthServiceGetAdapterHealth(t *testing.T) {
 		assert.Nil(t, err)
 		assert.NotNil(t, res)
 		assert.Equal(t, 2, len(res))
-		
+
 		// Test first adapter
 		adapter1 := res[0]
 		assert.Equal(t, "adapter-netmiko", adapter1.Id)

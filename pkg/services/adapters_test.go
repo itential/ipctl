@@ -103,8 +103,8 @@ func TestAdapterCreate(t *testing.T) {
 	testlib.AddPostResponseToMux("/adapters", response, 200)
 
 	inputAdapter := Adapter{
-		Name: "test_adapter",
-		Type: "Adapter",
+		Name:  "test_adapter",
+		Type:  "Adapter",
 		Model: "@itential/adapter-test",
 		Properties: AdapterProperties{
 			Id:         "test_adapter",
@@ -192,8 +192,8 @@ func TestAdapterImport(t *testing.T) {
 	testlib.AddPostResponseToMux("/adapters/import", response, 200)
 
 	inputAdapter := Adapter{
-		Name: "imported_adapter",
-		Type: "Adapter",
+		Name:  "imported_adapter",
+		Type:  "Adapter",
 		Model: "@itential/adapter-imported",
 	}
 
@@ -248,9 +248,9 @@ func TestAdapterUpdate(t *testing.T) {
 	testlib.AddPutResponseToMux("/adapters/{name}", response, 200)
 
 	inputAdapter := Adapter{
-		Name: "updated_adapter",
-		Type: "Adapter",
-		Model: "@itential/adapter-updated",
+		Name:        "updated_adapter",
+		Type:        "Adapter",
+		Model:       "@itential/adapter-updated",
 		IsEncrypted: true,
 	}
 
