@@ -13,33 +13,43 @@ import (
 	"github.com/itential/ipctl/pkg/logger"
 )
 
+// JsonForm represents a JSON form asset in the Itential Platform.
+// JSON forms provide a way to dynamically generate user interfaces
+// for data collection based on JSON schema definitions.
 type JsonForm struct {
-	Id               string                 `json:"id"`
-	Name             string                 `json:"name"`
-	Description      string                 `json:"description"`
-	Struct           map[string]interface{} `json:"struct"`
-	Schema           map[string]interface{} `json:"schema"`
-	UISchema         map[string]interface{} `json:"uiSchema"`
-	BindingSchema    map[string]interface{} `json:"bindingSchema"`
-	ValidationSchema map[string]interface{} `json:"validationSchema"`
-	Created          string                 `json:"created"`
-	CreatedBy        string                 `json:"createdBy"`
-	LastUpdated      string                 `json:"lastUpdated"`
-	LastUpdatedBy    string                 `json:"lastUpdatedBy"`
-	Version          string                 `json:"version"`
+	Id               string                 `json:"id"`               // Unique identifier for the JSON form
+	Name             string                 `json:"name"`             // Human-readable name of the form
+	Description      string                 `json:"description"`      // Optional description of the form's purpose
+	Struct           map[string]interface{} `json:"struct"`           // Form structure definition
+	Schema           map[string]interface{} `json:"schema"`           // JSON schema defining form data structure
+	UISchema         map[string]interface{} `json:"uiSchema"`         // UI layout and presentation schema
+	BindingSchema    map[string]interface{} `json:"bindingSchema"`    // Data binding configuration
+	ValidationSchema map[string]interface{} `json:"validationSchema"` // Validation rules for form data
+	Created          string                 `json:"created"`          // Creation timestamp in ISO format
+	CreatedBy        string                 `json:"createdBy"`        // User ID who created the form
+	LastUpdated      string                 `json:"lastUpdated"`      // Last modification timestamp in ISO format
+	LastUpdatedBy    string                 `json:"lastUpdatedBy"`    // User ID who last modified the form
+	Version          string                 `json:"version"`          // Platform version compatibility
 }
 
+// JsonFormService provides methods for managing JSON Form assets
+// in the Itential Platform. It handles CRUD operations and bulk
+// management of forms used for dynamic UI generation.
 type JsonFormService struct {
 	client *ServiceClient
 }
 
+// NewJsonFormService creates and returns a new JsonFormService instance
+// configured with the provided client for API communication.
 func NewJsonFormService(c client.Client) *JsonFormService {
 	return &JsonFormService{client: NewServiceClient(c)}
 }
 
-// NewJsonForm will create and return an instance of JsorForm with all fields
-// set to defaults.  The returned object can be passed unchanged into the
-// JsonFormService.Create function.
+// NewJsonForm creates and returns a new JsonForm instance with all fields
+// initialized to sensible defaults. The returned object can be passed
+// unchanged to JsonFormService.Create() or customized before creation.
+// The name and description parameters are required and will be used in
+// both the form metadata and the generated JSON schema.
 func NewJsonForm(name, description string) JsonForm {
 	logger.Trace()
 
@@ -67,9 +77,9 @@ func NewJsonForm(name, description string) JsonForm {
 
 }
 
-// GetAll will retrieve all JSON Forms assests configured on the server and
-// return them as an array.  If there are no cofigured JSON Forms on the
-// server, this function will return an empty array.
+// GetAll retrieves all JSON Form assets configured on the server.
+// Returns an empty slice if no forms are configured. This method
+// does not perform any filtering or sorting of the results.
 func (svc *JsonFormService) GetAll() ([]JsonForm, error) {
 	logger.Trace()
 
@@ -102,10 +112,11 @@ func (svc *JsonFormService) Get(id string) (*JsonForm, error) {
 	return res, nil
 }
 
-// Create will create a new JSON form asset in Platform.  It accepts one
-// requirement argument `in`.  The argument must be an instance of JsonForm.
-// In order to create a JSON form with all defaults properly set, use the
-// `NewJsonForm` function.
+// Create creates a new JSON Form asset in the Itential Platform.
+// The input JsonForm must have at minimum a valid Name field.
+// For forms with proper defaults, use NewJsonForm() to create the input.
+// Returns the created form with server-generated fields populated,
+// or an error if the creation fails.
 func (svc *JsonFormService) Create(in JsonForm) (*JsonForm, error) {
 	logger.Trace()
 
@@ -132,6 +143,9 @@ func (svc *JsonFormService) Create(in JsonForm) (*JsonForm, error) {
 	return res.Doc, nil
 }
 
+// Delete removes one or more JSON Form assets from the server by their IDs.
+// This is a bulk operation that can delete multiple forms in a single request.
+// Returns an error if any of the deletions fail.
 func (svc *JsonFormService) Delete(ids []string) error {
 	logger.Trace()
 	return svc.client.DeleteRequest(&Request{
@@ -140,6 +154,10 @@ func (svc *JsonFormService) Delete(ids []string) error {
 	}, nil)
 }
 
+// GetByName retrieves a JSON Form asset by its name field.
+// This method performs a client-side search through all forms,
+// so it may be less efficient than Get() for large numbers of forms.
+// Returns an error if no form with the specified name is found.
 func (svc *JsonFormService) GetByName(name string) (*JsonForm, error) {
 	logger.Trace()
 
@@ -164,6 +182,9 @@ func (svc *JsonFormService) GetByName(name string) (*JsonForm, error) {
 	return res, nil
 }
 
+// Clear removes all JSON Form assets from the server.
+// This is a destructive operation that cannot be undone.
+// Use with caution in production environments.
 func (svc *JsonFormService) Clear() error {
 	logger.Trace()
 
@@ -187,8 +208,10 @@ func (svc *JsonFormService) Clear() error {
 	return nil
 }
 
-// Import will call the Itential Platform import API and import the specified
-// JSON Form to the server.
+// Import imports a JSON Form asset into the Itential Platform using
+// the platform's import API. This method can handle forms exported
+// from other platform instances. Returns the imported form with
+// server-generated fields populated.
 func (svc *JsonFormService) Import(in JsonForm) (*JsonForm, error) {
 	logger.Trace()
 
