@@ -1,0 +1,49 @@
+{
+  "metadata": {
+    "name": "Test Prebuilt Package",
+    "version": "1.0.0",
+    "description": "Test prebuilt package for export testing",
+    "license": "MIT",
+    "repository": {
+      "type": "git",
+      "hostname": "github.com",
+      "path": "/test/prebuilt-package"
+    },
+    "keywords": ["test", "export", "package"],
+    "author": "Export Test Author",
+    "IAPDependencies": {
+      "@itential/core": "^2023.2.0"
+    },
+    "gitlabId": 12345
+  },
+  "manifest": {
+    "bundleName": "test-prebuilt-package",
+    "fingerprint": "export123def456",
+    "createdEpoch": "1705575300",
+    "artifacts": [
+      {
+        "id": "export-artifact-1",
+        "name": "Export Test Workflow",
+        "type": "workflow",
+        "location": "/workflows/export-test-workflow",
+        "properties": {
+          "type": "workflow",
+          "category": "test"
+        }
+      }
+    ]
+  },
+  "bundles": [
+    {
+      "type": "workflows",
+      "data": {
+        "workflow-1": {
+          "name": "Export Test Workflow",
+          "description": "Test workflow for export functionality",
+          "type": "workflow"
+        }
+      }
+    }
+  ],
+  "readme": "# Test Prebuilt Package\n\nThis is a test package created for export functionality testing.\n\n## Components\n\n- Export Test Workflow: A sample workflow for testing export capabilities."
+}

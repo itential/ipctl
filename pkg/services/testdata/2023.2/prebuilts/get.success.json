@@ -1,0 +1,43 @@
+{
+  "_id": "prebuilt-1",
+  "name": "Test Prebuilt 1",
+  "IAPDependencies": {
+    "@itential/core": "^2023.2.0"
+  },
+  "author": "Test Author",
+  "components": [
+    {
+      "id": "component-1",
+      "name": "Test Component 1",
+      "type": "workflow"
+    }
+  ],
+  "description": "Test prebuilt for unit testing",
+  "installed": "2024-01-15T10:30:00Z",
+  "installedBy": "test-user",
+  "keywords": ["test", "automation"],
+  "license": "MIT",
+  "manifest": {
+    "artifacts": [
+      {
+        "id": "artifact-1",
+        "location": "/workflows/test-workflow",
+        "name": "Test Workflow",
+        "properties": {
+          "type": "workflow"
+        },
+        "type": "workflow"
+      }
+    ],
+    "bundleName": "test-prebuilt-1",
+    "createdEpoch": "1705314600",
+    "fingerprint": "abc123def456"
+  },
+  "readme": "# Test Prebuilt 1\n\nThis is a test prebuilt.",
+  "repository": {
+    "hostname": "github.com",
+    "path": "/test/prebuilt-1",
+    "type": "git"
+  },
+  "version": "1.0.0"
+}
