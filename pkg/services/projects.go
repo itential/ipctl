@@ -72,6 +72,8 @@ type Project struct {
 	AccessControl ProjectAccessControl `json:"accessControl"`
 }
 
+// Import returns a map representation of the Project suitable for importing,
+// excluding non-importable fields like componentIidIndex, members, and accessControl.
 func (p Project) Import() map[string]interface{} {
 	logger.Trace()
 	return map[string]interface{}{
@@ -94,6 +96,7 @@ type ProjectService struct {
 	client *ServiceClient
 }
 
+// NewProjectService creates a new ProjectService instance with the provided client.
 func NewProjectService(c client.Client) *ProjectService {
 	return &ProjectService{
 		client: NewServiceClient(c),
@@ -142,7 +145,7 @@ func (svc *ProjectService) GetAll() ([]Project, error) {
 	return projects, nil
 }
 
-// Get will attempt to retreive the project by its identifier.  If the project
+// Get retrieves a project by its identifier. If the project
 // does not exist, this function will return an error.
 func (svc *ProjectService) Get(id string) (*Project, error) {
 	logger.Trace()
@@ -166,8 +169,8 @@ func (svc *ProjectService) Get(id string) (*Project, error) {
 	return res.Data, nil
 }
 
-// GetByName will attempt to get a project wiht the specified name.  If the
-// project does not exist, this function will return an error
+// GetByName retrieves a project with the specified name. If the
+// project does not exist, this function will return an error.
 func (svc *ProjectService) GetByName(name string) (*Project, error) {
 	logger.Trace()
 
@@ -192,7 +195,8 @@ func (svc *ProjectService) GetByName(name string) (*Project, error) {
 	return res, nil
 }
 
-// Create implement `http.MethodPost /automation-studio/projects`
+// Create creates a new project with the specified name.
+// Returns the created project or an error if creation fails.
 func (svc *ProjectService) Create(name string) (*Project, error) {
 	logger.Trace()
 
@@ -222,7 +226,8 @@ func (svc *ProjectService) Create(name string) (*Project, error) {
 	return res.Data, nil
 }
 
-// Delete implements `http.MethodDelete /automation-studio/projects/{id}`
+// Delete removes a project by its identifier.
+// Returns an error if the deletion fails.
 func (svc *ProjectService) Delete(id string) error {
 	logger.Trace()
 	return svc.client.Delete(
@@ -230,8 +235,8 @@ func (svc *ProjectService) Delete(id string) error {
 	)
 }
 
-// This function will recusively iterate over folders in a project schema and
-// remove keys in order for the body to be accepted by the server
+// transformImport recursively iterates over folders in a project schema and
+// removes keys to prepare the body for server acceptance during import operations.
 func (svc *ProjectService) transformImport(in map[string]interface{}) {
 	if in["nodeType"].(string) == "folder" {
 		delete(in, "iid")
@@ -250,7 +255,9 @@ func (svc *ProjectService) transformImport(in map[string]interface{}) {
 	}
 }
 
-// Import implements `http.MethodPost /automation-studio/projects/import`
+// Import imports a project using the server's import endpoint with conflict mode set to "insert-new".
+// It transforms the project data by removing certain fields from folders before sending to the server.
+// Returns the imported project or an error if the import fails.
 func (svc *ProjectService) Import(in Project) (*Project, error) {
 	logger.Trace()
 
@@ -267,11 +274,12 @@ func (svc *ProjectService) Import(in Project) (*Project, error) {
 	}
 
 	project := data["project"].(map[string]interface{})
-	folders := project["folders"].([]interface{})
 
-	if folders != nil {
-		for _, ele := range folders {
-			svc.transformImport(ele.(map[string]interface{}))
+	if foldersRaw, exists := project["folders"]; exists && foldersRaw != nil {
+		if folders, ok := foldersRaw.([]interface{}); ok && folders != nil {
+			for _, ele := range folders {
+				svc.transformImport(ele.(map[string]interface{}))
+			}
 		}
 	}
 
@@ -296,7 +304,8 @@ func (svc *ProjectService) Import(in Project) (*Project, error) {
 	return res.Data, nil
 }
 
-// Export implements `http.MethodGet /automation-studio/projects/{id}/export`
+// Export retrieves a project in export format by its identifier.
+// Returns the project data suitable for export or an error if the export fails.
 func (svc *ProjectService) Export(id string) (*Project, error) {
 	logger.Trace()
 
@@ -318,6 +327,9 @@ func (svc *ProjectService) Export(id string) (*Project, error) {
 	return res.Data, nil
 }
 
+// AddMembers adds new members to an existing project by merging them with current members.
+// It first retrieves the current project, appends new members to existing ones,
+// and updates the project via PATCH request.
 func (svc *ProjectService) AddMembers(projectId string, members []ProjectMember) error {
 	logger.Trace()
 
