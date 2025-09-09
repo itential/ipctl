@@ -1,0 +1,21 @@
+{
+  "model": "custom-adapter",
+  "versionId": "custom-adapter-v1.0.0",
+  "description": "Custom adapter model created for testing",
+  "properties": {
+    "authentication": {
+      "type": "token",
+      "token": "test-token"
+    },
+    "server": {
+      "protocol": "https",
+      "host": "custom.example.com",
+      "base_path": "/custom/api"
+    },
+    "tls": {
+      "enabled": true,
+      "rejectUnauthroized": true
+    },
+    "version": "1.0.0"
+  }
+}
