@@ -14,19 +14,22 @@ import (
 	"github.com/itential/ipctl/pkg/logger"
 )
 
-// RoleMethod represents an allowed method for a role
+// RoleMethod represents an allowed method for a role in the authorization system.
+// It defines what operations a role can perform with its associated provenance.
 type RoleMethod struct {
 	Name       string `json:"name"`
 	Provenance string `json:"provenance"`
 }
 
-// RoleView represents an allowed view for a role
+// RoleView represents an allowed view for a role in the authorization system.
+// It defines what UI views or resources a role can access with its associated provenance and path.
 type RoleView struct {
 	Provenance string `json:"provenance"`
 	Path       string `json:"path"`
 }
 
-// Role represents a role in the authorization system
+// Role represents a role in the authorization system.
+// Roles define collections of allowed methods and views that can be assigned to users and groups.
 type Role struct {
 	Id             string       `json:"_id,omitempty"`
 	Provenance     string       `json:"provenance"`
@@ -36,17 +39,21 @@ type Role struct {
 	AllowedViews   []RoleView   `json:"allowedViews"`
 }
 
-// RoleService provides methods for managing roles
+// RoleService provides methods for managing roles in the Itential Platform.
+// It handles CRUD operations and import functionality for authorization roles.
 type RoleService struct {
 	client client.Client
 }
 
-// NewRoleService creates a new RoleService with the given client
+// NewRoleService creates a new RoleService instance with the provided HTTP client.
+// The client is used to communicate with the Itential Platform authorization API.
 func NewRoleService(c client.Client) *RoleService {
 	return &RoleService{client: c}
 }
 
-// Create implements `http.MethodPost /authorization/roles`
+// Create creates a new role in the authorization system.
+// It sends a POST request to /authorization/roles with the role data.
+// Returns the created role or an error if the operation fails.
 func (svc *RoleService) Create(in Role) (*Role, error) {
 	logger.Trace()
 
@@ -99,7 +106,9 @@ func (svc *RoleService) Create(in Role) (*Role, error) {
 	return response.Data, nil
 }
 
-// Delete implements `http.MethodDelete /authorization/roles/{id}`
+// Delete removes a role from the authorization system by its ID.
+// It sends a DELETE request to /authorization/roles/{id}.
+// Returns an error if the operation fails or the role is not found.
 func (svc *RoleService) Delete(id string) error {
 	logger.Trace()
 
@@ -129,7 +138,9 @@ func (svc *RoleService) Delete(id string) error {
 	return nil
 }
 
-// GetAll implements `http.MethodGet /authorization/roles`
+// GetAll retrieves all roles from the authorization system.
+// It handles pagination automatically, fetching all pages of results.
+// Returns a slice of all roles or an error if the operation fails.
 func (svc *RoleService) GetAll() ([]Role, error) {
 	logger.Trace()
 
@@ -176,7 +187,9 @@ func (svc *RoleService) GetAll() ([]Role, error) {
 	return roles, nil
 }
 
-// Get implements `http.MethodGet /authorization/roles/{id}`
+// Get retrieves a specific role by its ID from the authorization system.
+// It sends a GET request to /authorization/roles/{id}.
+// Returns the role or an error if the operation fails or the role is not found.
 func (svc *RoleService) Get(id string) (*Role, error) {
 	logger.Trace()
 
@@ -208,7 +221,10 @@ func (svc *RoleService) Get(id string) (*Role, error) {
 
 }
 
-// Import imports a role into the authorization system
+// Import imports a role into the authorization system.
+// This method creates a role using the complete role object, including all fields.
+// It's typically used when restoring roles from exports or backups.
+// Returns the imported role or an error if the operation fails.
 func (svc *RoleService) Import(in Role) (*Role, error) {
 	logger.Trace()
 
