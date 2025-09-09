@@ -1,0 +1,34 @@
+{
+  "message": "Model exported successfully",
+  "data": {
+    "_id": "64f1c2b8e4b0123456789exp",
+    "name": "exported-model",
+    "description": "An exported model",
+    "schema": {
+      "$id": "exported-model",
+      "type": "object",
+      "properties": {
+        "exportField": {
+          "type": "string"
+        }
+      }
+    },
+    "actions": [
+      {
+        "_id": "exportAction",
+        "name": "exportAction",
+        "type": "workflow"
+      }
+    ],
+    "created": "2023-09-03T14:00:00.000Z",
+    "createdBy": {
+      "_id": "user123",
+      "username": "testuser"
+    },
+    "lastUpdated": "2023-09-03T14:00:00.000Z",
+    "lastUpdatedBy": {
+      "_id": "user123",
+      "username": "testuser"
+    }
+  }
+}

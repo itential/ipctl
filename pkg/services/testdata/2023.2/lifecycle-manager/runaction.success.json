@@ -1,0 +1,25 @@
+{
+  "_id": "run123",
+  "modelId": "64f1c2b8e4b0123456789abc",
+  "instanceId": "instance123",
+  "actionId": "action1",
+  "modelName": "test-model",
+  "instanceName": "test-instance",
+  "actionName": "testAction",
+  "startTime": "2023-09-03T15:00:00.000Z",
+  "endTime": "2023-09-03T15:01:00.000Z",
+  "initiator": "testuser",
+  "jobId": "job123",
+  "status": "completed",
+  "progress": {
+    "percentage": 100,
+    "message": "Action completed successfully"
+  },
+  "errors": [],
+  "initialInstanceData": {
+    "field1": "initial-value"
+  },
+  "finalInstanceData": {
+    "field1": "final-value"
+  }
+}

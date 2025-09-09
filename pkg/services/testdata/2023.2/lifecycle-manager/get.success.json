@@ -1,0 +1,35 @@
+{
+  "_id": "64f1c2b8e4b0123456789abc",
+  "name": "test-model",
+  "description": "A test model for unit testing",
+  "schema": {
+    "$id": "test-model",
+    "type": "object",
+    "properties": {
+      "name": {
+        "type": "string"
+      },
+      "value": {
+        "type": "number"
+      }
+    }
+  },
+  "actions": [
+    {
+      "_id": "action1",
+      "name": "testAction",
+      "type": "workflow",
+      "workflow": "workflow123"
+    }
+  ],
+  "created": "2023-09-01T12:00:00.000Z",
+  "createdBy": {
+    "_id": "user123",
+    "username": "testuser"
+  },
+  "lastUpdated": "2023-09-01T12:00:00.000Z",
+  "lastUpdatedBy": {
+    "_id": "user123",
+    "username": "testuser"
+  }
+}
