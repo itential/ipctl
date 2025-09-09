@@ -165,3 +165,20 @@ func AddPatchErrorToMux(uri, body string, statusCode int) {
 	}
 	addResponse(uri, body, http.MethodPatch, statusCode)
 }
+
+func AddPutResponseToMux(uri, body string, statusCode int) {
+	if statusCode == 0 {
+		statusCode = http.StatusOK
+	}
+	if statusCode != http.StatusOK {
+		warn("non standard status code return for PUT %s, expected %v, want %v\n", uri, http.StatusOK, statusCode)
+	}
+	addResponse(uri, body, http.MethodPut, statusCode)
+}
+
+func AddPutErrorToMux(uri, body string, statusCode int) {
+	if statusCode == 0 {
+		statusCode = http.StatusInternalServerError
+	}
+	addResponse(uri, body, http.MethodPut, statusCode)
+}
