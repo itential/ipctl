@@ -1,0 +1,68 @@
+{
+  "results": [
+    {
+      "id": "automation-studio",
+      "package_id": "@itential/automation-studio",
+      "version": "4.15.2",
+      "type": "application",
+      "description": "Itential Automation Studio",
+      "routePrefix": "/automation-studio",
+      "state": "running",
+      "connection": {
+        "state": "connected"
+      },
+      "uptime": 3600.123,
+      "memoryUsage": {
+        "rss": 134217728,
+        "heapTotal": 67108864,
+        "heapUsed": 50331648,
+        "external": 16777216,
+        "arrayBuffers": 2097152
+      },
+      "cpuUsage": {
+        "user": 250000,
+        "system": 75000
+      },
+      "pid": 12346,
+      "logger": {
+        "console": "error",
+        "file": "info",
+        "syslog": null
+      },
+      "timestamp": 1640995200000,
+      "prevUptime": 3500.0
+    },
+    {
+      "id": "workflow-builder",
+      "package_id": "@itential/workflow-builder",
+      "version": "2.48.0",
+      "type": "application",
+      "description": "Itential Workflow Builder",
+      "routePrefix": "/workflow-builder",
+      "state": "running",
+      "connection": {
+        "state": "connected"
+      },
+      "uptime": 3590.456,
+      "memoryUsage": {
+        "rss": 100663296,
+        "heapTotal": 50331648,
+        "heapUsed": 37748736,
+        "external": 12582912,
+        "arrayBuffers": 1572864
+      },
+      "cpuUsage": {
+        "user": 180000,
+        "system": 60000
+      },
+      "pid": 12347,
+      "logger": {
+        "console": "warn",
+        "file": "debug",
+        "syslog": null
+      },
+      "timestamp": 1640995200000,
+      "prevUptime": 3490.0
+    }
+  ]
+}

@@ -1,0 +1,32 @@
+{
+  "arch": "x64",
+  "release": "Linux 5.4.0-74-generic",
+  "uptime": 86400.5,
+  "freemem": 4294967296,
+  "totalmem": 17179869184,
+  "loadavg": [0.1, 0.2, 0.3],
+  "cpus": [
+    {
+      "model": "Intel(R) Core(TM) i7-9750H CPU @ 2.60GHz",
+      "speed": 2600,
+      "times": {
+        "user": 1000,
+        "nice": 0,
+        "sys": 500,
+        "idle": 98500,
+        "irq": 0
+      }
+    },
+    {
+      "model": "Intel(R) Core(TM) i7-9750H CPU @ 2.60GHz",
+      "speed": 2600,
+      "times": {
+        "user": 1200,
+        "nice": 0,
+        "sys": 600,
+        "idle": 98200,
+        "irq": 0
+      }
+    }
+  ]
+}

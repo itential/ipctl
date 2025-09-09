@@ -1,0 +1,30 @@
+{
+  "version": "18.16.0",
+  "release": "node",
+  "arch": "x64",
+  "platform": "linux",
+  "versions": {
+    "node": "18.16.0",
+    "v8": "10.2.154.26-node.26",
+    "uv": "1.44.2",
+    "zlib": "1.2.13",
+    "openssl": "3.0.8+quic"
+  },
+  "memoryUsage": {
+    "rss": 67108864,
+    "heapTotal": 33554432,
+    "heapUsed": 25165824,
+    "external": 8388608,
+    "arrayBuffers": 1048576
+  },
+  "cpuUsage": {
+    "user": 150000,
+    "system": 50000
+  },
+  "uptime": 3600.25,
+  "pid": 12345,
+  "dependencies": {
+    "itential-platform": "2023.2.9",
+    "automation-studio": "4.15.2"
+  }
+}
