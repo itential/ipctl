@@ -12,14 +12,18 @@ import (
 	"github.com/rs/zerolog"
 )
 
+// logFileName is the default filename used for log files when file logging is enabled.
 const (
 	logFileName = "iap.log"
 )
 
+// supportedLogLevels defines the valid log level strings that can be parsed by getLogLevel.
+// These correspond to zerolog's built-in log levels plus a DISABLED option.
 var supportedLogLevels = []string{"DEBUG", "INFO", "WARN", "ERROR", "FATAL", "DISABLED", "TRACE"}
 
-// Returns the logging level to use.  Valid values are defined in the
-// supportedLogLevels variable
+// getLogLevel converts a string log level to a zerolog.Level constant.
+// Valid levels are defined in supportedLogLevels. If an invalid level is provided,
+// the function prints an error message and exits the application with status code 1.
 func getLogLevel(level string) zerolog.Level {
 	s := strings.ToUpper(level)
 
