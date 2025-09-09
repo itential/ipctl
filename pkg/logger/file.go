@@ -14,9 +14,10 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
-// EnableFileLogs Enables file logging. If torero is being launched as a server, logs will go
-// in the directory defined at IAP_LOG_SERVER_DIR. If launched in client mode
-// logs will go in IAP_APPLICATION_WORKING_DIR.
+// EnableFileLogs configures file-based logging to write log messages to disk.
+// Log files are created in the directory specified by cfg.WorkingDir.
+// The function creates the directory if it doesn't exist and supports both
+// JSON and console-formatted output based on configuration settings.
 func EnableFileLogs(cfg *config.Config) {
 	logDir := cfg.WorkingDir
 
