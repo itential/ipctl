@@ -1,0 +1,23 @@
+{
+  "message": "Model imported successfully",
+  "data": {
+    "_id": "64f1c2b8e4b0123456789imp",
+    "name": "imported-model",
+    "description": "An imported model",
+    "schema": {
+      "$id": "imported-model",
+      "type": "object"
+    },
+    "actions": [],
+    "created": "2023-09-03T13:00:00.000Z",
+    "createdBy": {
+      "_id": "user123",
+      "username": "testuser"
+    },
+    "lastUpdated": "2023-09-03T13:00:00.000Z",
+    "lastUpdatedBy": {
+      "_id": "user123",
+      "username": "testuser"
+    }
+  }
+}

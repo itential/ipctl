@@ -13,6 +13,7 @@ import (
 	"github.com/itential/ipctl/pkg/logger"
 )
 
+// RunActionRequest represents the payload for executing a model action
 type RunActionRequest struct {
 	ActionId     string                 `json:"actionId"`
 	Inputs       map[string]interface{} `json:"inputs"`
@@ -21,6 +22,7 @@ type RunActionRequest struct {
 	InstanceName string                 `json:"instanceName"`
 }
 
+// RunActionResponse represents the response from executing a model action
 type RunActionResponse struct {
 	Id                  string                 `json:"_id"`
 	ModelId             string                 `json:"modelId"`
@@ -40,12 +42,14 @@ type RunActionResponse struct {
 	FinalInstanceData   map[string]interface{} `json:"finalInstanceData"`
 }
 
+// ModelOperation represents the response structure for model operations that return multiple models
 type ModelOperation struct {
 	Message  string   `json:"message"`
 	Data     []Model  `json:"data"`
 	Metadata Metadata `json:"metadata"`
 }
 
+// ModelAction represents an action that can be performed on a model
 type ModelAction struct {
 	Id              string `json:"_id"`
 	Name            string `json:"name"`
@@ -55,6 +59,7 @@ type ModelAction struct {
 	Type            string `json:"type,omitempty"`
 }
 
+// Model represents a lifecycle manager resource model
 type Model struct {
 	Id            string                 `json:"_id"`
 	Name          string                 `json:"name"`
@@ -67,10 +72,12 @@ type Model struct {
 	LastUpdatedBy any                    `json:"lastUpdatedBy"`
 }
 
+// ModelService provides operations for managing lifecycle manager models
 type ModelService struct {
 	client *ServiceClient
 }
 
+// NewModel creates a new Model instance with the specified name and description
 func NewModel(name, desc string) Model {
 	logger.Trace()
 
@@ -80,10 +87,12 @@ func NewModel(name, desc string) Model {
 	}
 }
 
+// NewModelService creates a new ModelService instance with the provided client
 func NewModelService(c client.Client) *ModelService {
 	return &ModelService{client: NewServiceClient(c)}
 }
 
+// Get retrieves a model by its ID from the lifecycle manager
 func (svc *ModelService) Get(id string) (*Model, error) {
 	logger.Trace()
 
@@ -97,6 +106,7 @@ func (svc *ModelService) Get(id string) (*Model, error) {
 	return res, nil
 }
 
+// GetAll retrieves all models from the lifecycle manager
 func (svc *ModelService) GetAll() ([]Model, error) {
 	logger.Trace()
 
@@ -110,6 +120,7 @@ func (svc *ModelService) GetAll() ([]Model, error) {
 	return res.Data, nil
 }
 
+// GetByName retrieves a model by its name from the lifecycle manager
 func (svc *ModelService) GetByName(name string) (*Model, error) {
 	logger.Trace()
 
@@ -134,6 +145,7 @@ func (svc *ModelService) GetByName(name string) (*Model, error) {
 	return m, nil
 }
 
+// Create creates a new model in the lifecycle manager
 func (svc *ModelService) Create(in Model) (*Model, error) {
 	logger.Trace()
 
@@ -166,6 +178,8 @@ func (svc *ModelService) Create(in Model) (*Model, error) {
 	return res.Data, nil
 }
 
+// Delete removes a model from the lifecycle manager
+// If deleteInstances is true, associated instances will also be deleted
 func (svc *ModelService) Delete(id string, deleteInstances bool) error {
 	logger.Trace()
 
@@ -184,6 +198,7 @@ func (svc *ModelService) Delete(id string, deleteInstances bool) error {
 	return svc.client.DeleteRequest(req, nil)
 }
 
+// RunAction executes an action on a model instance
 func (svc *ModelService) RunAction(model string, in RunActionRequest) (*RunActionResponse, error) {
 	logger.Trace()
 
@@ -197,6 +212,7 @@ func (svc *ModelService) RunAction(model string, in RunActionRequest) (*RunActio
 	return res, nil
 }
 
+// Import imports a model into the lifecycle manager
 func (svc *ModelService) Import(in Model) (*Model, error) {
 	logger.Trace()
 
@@ -222,6 +238,7 @@ func (svc *ModelService) Import(in Model) (*Model, error) {
 	return res.Data, nil
 }
 
+// Export exports a model from the lifecycle manager by its ID
 func (svc *ModelService) Export(id string) (*Model, error) {
 	logger.Trace()
 
