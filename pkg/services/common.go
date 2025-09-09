@@ -9,6 +9,7 @@ import (
 	"strconv"
 )
 
+// Metadata contains pagination and response metadata
 type Metadata struct {
 	Skip             int    `json:"skip,omitempty"`
 	Limit            int    `json:"limit,omitempty"`
@@ -18,11 +19,13 @@ type Metadata struct {
 	CurrentPageSize  int    `json:"currentPageSize,omitempty"`
 }
 
+// Gbac represents Group-Based Access Control permissions
 type Gbac struct {
 	Read  []string `json:"read"`
 	Write []string `json:"write"`
 }
 
+// PaginatedResponse represents a paginated API response
 type PaginatedResponse struct {
 	Items    []interface{} `json:"items"`
 	Count    int           `json:"count"`
@@ -34,28 +37,33 @@ type PaginatedResponse struct {
 	Total    int           `json:"total"`
 }
 
+// ErrorMessage represents an API error response
 type ErrorMessage struct {
 	Message  string                 `json:"message"`
 	Data     string                 `json:"data"`
 	Metadata map[string]interface{} `json:"metadata"`
 }
 
+// Params defines the interface for query parameters
 type Params interface {
 	Query() map[string]string
 }
 
+// RawParams wraps url.Values for query parameters
 type RawParams struct {
 	Values url.Values
 }
 
+// Query converts RawParams to a map of query parameters
 func (p *RawParams) Query() map[string]string {
-	var params map[string]string
+	params := make(map[string]string)
 	for key, value := range p.Values {
 		params[key] = value[0]
 	}
 	return params
 }
 
+// QueryParams provides structured query parameter handling
 type QueryParams struct {
 	Contains        string
 	ContainsField   string
@@ -71,6 +79,7 @@ type QueryParams struct {
 	Raw             map[string]string
 }
 
+// Query converts QueryParams to a map of query parameters
 func (p *QueryParams) Query() map[string]string {
 	m := make(map[string]string)
 

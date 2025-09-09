@@ -23,12 +23,12 @@ func (m *mockFlagger) Flags(cmd *cobra.Command) {
 func TestFlaggerInterface(t *testing.T) {
 	mock := &mockFlagger{}
 	cmd := &cobra.Command{}
-	
+
 	mock.Flags(cmd)
-	
+
 	assert.True(t, mock.called, "Flags method should be called")
 	assert.True(t, cmd.Flags().HasFlags(), "Command should have flags after calling Flags method")
-	
+
 	flag := cmd.Flag("test")
 	assert.NotNil(t, flag, "Test flag should exist")
 	assert.Equal(t, "test", flag.Name)
@@ -41,7 +41,7 @@ func TestOptionStruct(t *testing.T) {
 		Abbrev: "t",
 		Usage:  "Test option for testing",
 	}
-	
+
 	assert.Equal(t, "test-option", option.Name)
 	assert.Equal(t, "t", option.Abbrev)
 	assert.Equal(t, "Test option for testing", option.Usage)
@@ -49,7 +49,7 @@ func TestOptionStruct(t *testing.T) {
 
 func TestOptionStructZeroValues(t *testing.T) {
 	option := Option{}
-	
+
 	assert.Empty(t, option.Name)
 	assert.Empty(t, option.Abbrev)
 	assert.Empty(t, option.Usage)

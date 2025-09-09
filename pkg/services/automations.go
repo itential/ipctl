@@ -14,23 +14,27 @@ import (
 	"github.com/itential/ipctl/pkg/logger"
 )
 
+// automationCollection represents a collection of automations returned by the API
 type automationCollection struct {
 	Message  string       `json:"message"`
 	Data     []Automation `json:"data"`
 	Metadata Metadata     `json:"metadata"`
 }
 
+// AutomationGbacEntry represents a GBAC (Group-Based Access Control) entry for automations
 type AutomationGbacEntry struct {
 	Name        string `json:"name"`
 	Provenance  string `json:"provenance"`
 	Description string `json:"description"`
 }
 
+// AutomationGbac represents GBAC permissions for an automation
 type AutomationGbac struct {
 	Write []interface{} `json:"write"`
 	Read  []interface{} `json:"read"`
 }
 
+// Automation represents an automation in the Itential Platform
 type Automation struct {
 	Id            string `json:"_id"`
 	Name          string `json:"name"`
@@ -53,10 +57,12 @@ type Automation struct {
 	Triggers []Trigger `json:"triggers,omitempty"`
 }
 
+// AutomationService provides methods for managing automations
 type AutomationService struct {
 	client *ServiceClient
 }
 
+// NewAutomation creates a new Automation instance with the given name and description
 func NewAutomation(name, desc string) Automation {
 	logger.Trace()
 	return Automation{
@@ -66,6 +72,7 @@ func NewAutomation(name, desc string) Automation {
 	}
 }
 
+// NewAutomationService creates a new AutomationService with the given client
 func NewAutomationService(c client.Client) *AutomationService {
 	return &AutomationService{client: NewServiceClient(c)}
 }
@@ -91,6 +98,7 @@ func (svc *AutomationService) Get(id string) (*Automation, error) {
 	return res.Data, nil
 }
 
+// GetByName retrieves an automation by its name
 func (svc *AutomationService) GetByName(name string) (*Automation, error) {
 	logger.Trace()
 
@@ -194,6 +202,7 @@ func (svc *AutomationService) GetAll() ([]*Automation, error) {
 	return automations, nil
 }
 
+// Clear deletes all automations from the server
 func (svc *AutomationService) Clear() error {
 	logger.Trace()
 
@@ -268,6 +277,7 @@ func (svc *AutomationService) Import(in Automation) (*Automation, error) {
 	return &res.Data[0].Data, nil
 }
 
+// Export exports an automation by ID, including its triggers
 func (svc *AutomationService) Export(id string) (*Automation, error) {
 	logger.Trace()
 

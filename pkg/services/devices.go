@@ -13,6 +13,7 @@ import (
 	"github.com/itential/ipctl/pkg/logger"
 )
 
+// Device represents a device in the Configuration Manager
 type Device struct {
 	OsType     string                 `json:"ostype"`
 	DeviceType string                 `json:"device-type"`
@@ -23,16 +24,19 @@ type Device struct {
 	Properties map[string]interface{} `json:"properties"`
 }
 
+// DeviceService provides methods for managing devices
 type DeviceService struct {
 	client *ServiceClient
 }
 
+// NewDeviceService creates a new DeviceService with the given client
 func NewDeviceService(c client.Client) *DeviceService {
 	return &DeviceService{
 		client: NewServiceClient(c),
 	}
 }
 
+// unmarshal converts a map to a Device struct, handling dynamic properties
 func (svc *DeviceService) unmarshal(in map[string]interface{}, d *Device) error {
 	fields := reflect.TypeOf((*Device)(nil)).Elem()
 
@@ -68,6 +72,7 @@ func (svc *DeviceService) unmarshal(in map[string]interface{}, d *Device) error 
 	return nil
 }
 
+// GetAll retrieves all devices from the Configuration Manager
 func (svc *DeviceService) GetAll() ([]Device, error) {
 	logger.Trace()
 
@@ -126,6 +131,7 @@ func (svc *DeviceService) GetAll() ([]Device, error) {
 	return devices, nil
 }
 
+// Get retrieves a device by its name
 func (svc *DeviceService) Get(name string) (*Device, error) {
 	logger.Trace()
 

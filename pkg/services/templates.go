@@ -13,6 +13,7 @@ import (
 	"github.com/itential/ipctl/pkg/logger"
 )
 
+// Template represents a template in the Automation Studio
 type Template struct {
 	Id            string                 `json:"_id,omitempty"`
 	Name          string                 `json:"name"`
@@ -30,14 +31,18 @@ type Template struct {
 	Tags          []interface{}          `json:"tags"`
 }
 
+// TemplateService provides methods for managing templates
 type TemplateService struct {
 	client *ServiceClient
 }
 
+// NewTemplateService creates a new TemplateService with the given client
 func NewTemplateService(c client.Client) *TemplateService {
 	return &TemplateService{client: NewServiceClient(c)}
 }
 
+// NewTemplate creates a new Template instance with the given parameters
+// If type t is empty, defaults to "textfsm"
 func NewTemplate(name, group, description, t string) Template {
 	logger.Trace()
 
@@ -53,7 +58,7 @@ func NewTemplate(name, group, description, t string) Template {
 	}
 }
 
-// GetAll will return all temlates from the server
+// GetAll retrieves all templates from the server
 func (svc *TemplateService) GetAll() ([]Template, error) {
 	logger.Trace()
 
@@ -94,7 +99,7 @@ func (svc *TemplateService) GetAll() ([]Template, error) {
 	return templates, nil
 }
 
-// Get will return the template specified by its id.
+// Get retrieves a template by its ID
 func (svc *TemplateService) Get(id string) (*Template, error) {
 	logger.Trace()
 
@@ -110,8 +115,8 @@ func (svc *TemplateService) Get(id string) (*Template, error) {
 	return res, nil
 }
 
-// GetByName will attempt to retrieve the template using the template name.  If
-// the template is not found, this function will return an error
+// GetByName retrieves a template by its name
+// Returns an error if the template is not found
 func (svc *TemplateService) GetByName(name string) (*Template, error) {
 	logger.Trace()
 
@@ -144,6 +149,7 @@ func (svc *TemplateService) GetByName(name string) (*Template, error) {
 	return template, nil
 }
 
+// Create creates a new template
 func (svc *TemplateService) Create(in Template) (*Template, error) {
 	logger.Trace()
 
@@ -174,6 +180,7 @@ func (svc *TemplateService) Create(in Template) (*Template, error) {
 	return res.Template, nil
 }
 
+// Delete removes a template by its ID
 func (svc *TemplateService) Delete(id string) error {
 	logger.Trace()
 	return svc.client.Delete(
@@ -181,6 +188,7 @@ func (svc *TemplateService) Delete(id string) error {
 	)
 }
 
+// Import imports a template into the system
 func (svc *TemplateService) Import(in Template) (*Template, error) {
 	logger.Trace()
 
@@ -209,6 +217,7 @@ func (svc *TemplateService) Import(in Template) (*Template, error) {
 	return res.Imported[0].Original, nil
 }
 
+// Export exports a template by its ID
 func (svc *TemplateService) Export(id string) (*Template, error) {
 	logger.Trace()
 
