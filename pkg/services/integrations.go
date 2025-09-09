@@ -12,6 +12,8 @@ import (
 	"github.com/itential/ipctl/pkg/logger"
 )
 
+// Integration represents an integration configuration in the Itential Platform.
+// Integrations connect external systems and services to the platform for automation workflows.
 type Integration struct {
 	Name               string                 `json:"name"`
 	Type               string                 `json:"type"`
@@ -25,14 +27,21 @@ type Integration struct {
 	EventDeduplciation map[string]interface{} `json:"eventDeduplication"`
 }
 
+// IntegrationService provides methods for managing integrations in the Itential Platform.
+// It handles CRUD operations for integration configurations and settings.
 type IntegrationService struct {
 	client *ServiceClient
 }
 
+// NewIntegrationService creates a new IntegrationService instance with the provided HTTP client.
+// The client is used to communicate with the Itential Platform integrations API.
 func NewIntegrationService(c client.Client) *IntegrationService {
 	return &IntegrationService{client: NewServiceClient(c)}
 }
 
+// NewIntegration creates a new Integration instance with the specified name and type.
+// It initializes the integration with default properties including ID and type fields.
+// This is a helper function for creating integration configurations programmatically.
 func NewIntegration(name, integrationType string) Integration {
 	logger.Trace()
 
@@ -45,6 +54,10 @@ func NewIntegration(name, integrationType string) Integration {
 	}
 }
 
+// Create creates a new integration in the Itential Platform.
+// It sends a POST request to /integrations with the integration configuration.
+// The Type field is automatically set to "Adapter" and Virtual to true as required by the API.
+// Returns the created integration or an error if the operation fails.
 func (svc *IntegrationService) Create(in Integration) (*Integration, error) {
 	logger.Trace()
 
@@ -75,11 +88,17 @@ func (svc *IntegrationService) Create(in Integration) (*Integration, error) {
 
 }
 
+// Delete removes an integration from the Itential Platform by its name.
+// It sends a DELETE request to /integrations/{name}.
+// Returns an error if the operation fails or the integration is not found.
 func (svc *IntegrationService) Delete(name string) error {
 	logger.Trace()
 	return svc.client.Delete(fmt.Sprintf("/integrations/%s", name))
 }
 
+// Get retrieves a specific integration by its name from the Itential Platform.
+// It sends a GET request to /integrations/{name}.
+// Returns the integration configuration or an error if the operation fails or integration is not found.
 func (svc *IntegrationService) Get(name string) (*Integration, error) {
 	logger.Trace()
 
@@ -98,6 +117,9 @@ func (svc *IntegrationService) Get(name string) (*Integration, error) {
 	return res.Data, nil
 }
 
+// GetAll retrieves all integrations from the Itential Platform.
+// It sends a GET request to /integrations and processes the paginated results.
+// Returns a slice of all integration configurations or an error if the operation fails.
 func (svc *IntegrationService) GetAll() ([]Integration, error) {
 	logger.Trace()
 

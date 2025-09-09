@@ -1,0 +1,29 @@
+{
+  "status": "success",
+  "message": "Integration created successfully",
+  "data": {
+    "name": "new-integration",
+    "type": "Adapter",
+    "model": "new-model",
+    "properties": {
+      "id": "new-integration",
+      "type": "api",
+      "endpoint": "https://api.newservice.com"
+    },
+    "isEncrypted": false,
+    "loggerProps": {
+      "level": "info",
+      "enabled": true
+    },
+    "virtual": true,
+    "profiling": false,
+    "systemProps": {
+      "timeout": 30000,
+      "retries": 5
+    },
+    "eventDeduplication": {
+      "enabled": true,
+      "window": 120000
+    }
+  }
+}
