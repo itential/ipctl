@@ -19,9 +19,13 @@ import (
 	"github.com/spf13/pflag"
 )
 
-// All loggers will be appended to this slice elsewhere in this package
+// iowriters holds all configured io.Writer instances for logging output.
+// Writers are appended by EnableConsoleLogs and EnableFileLogs functions.
 var iowriters []io.Writer
 
+// InitializeLogger sets up the global logger configuration based on the provided config.
+// It configures console and/or file logging, sets the log level, and handles timezone formatting.
+// The logger is initialized only once - subsequent calls are ignored.
 func InitializeLogger(cfg *config.Config) {
 	if iowriters != nil {
 		return
@@ -55,10 +59,10 @@ func InitializeLogger(cfg *config.Config) {
 	zerolog.SetGlobalLevel(getLogLevel(cfg.LogLevel))
 }
 
-// Trace Creates a log message intended to be used to generate extremely verbose
-// messages for debugging purposes. The Format of the trace message can be
-// changed how seen fit but it as follows:
-// pkg.<rcvr>.Method.file.lineNumber
+// Trace creates an extremely verbose log message for debugging purposes.
+// It automatically captures runtime information including package, method, file, and line number.
+// The message format is: pkg.<rcvr>.Method.file.lineNumber
+// Only generates output when the global log level is set to TraceLevel.
 func Trace() {
 	if zerolog.GlobalLevel() == zerolog.TraceLevel {
 		pc, _, _, _ := runtime.Caller(1)
@@ -72,28 +76,30 @@ func Trace() {
 	}
 }
 
-// Debug Creates a log message with fairly verbose, specific information for debugging
-// purposes
+// Debug creates a log message with detailed information for debugging purposes.
+// Use this for verbose output that helps with troubleshooting but isn't needed in production.
 func Debug(format string, args ...any) {
 	log.Debug().Msgf(format, args...)
 }
 
-// Info Creates a log message that contains important information about major actions
-// that iap performs such as API calls being made, startup info, etc
+// Info creates a log message for important operational information.
+// Use this for significant application events like API calls, startup information,
+// and major state changes that are relevant for monitoring and troubleshooting.
 func Info(format string, args ...any) {
 	log.Info().Msgf(format, args...)
 }
 
-// Warn Creates a log message that contains information about an occurrence that is
-// considered concerning but has not necessarily caused an error
+// Warn creates a log message for concerning situations that don't constitute errors.
+// Use this for conditions that are unusual but recoverable, or that may indicate
+// potential problems that should be monitored.
 func Warn(format string, args ...any) {
 	log.Warn().Msgf(format, args...)
 }
 
-// Error Creates a log message with information about the errors that has occurred.
-// If an error type is present, it should be provided in addition to a custom
-// message for each error. If no relevant error type is present, pass nil for
-// err.
+// Error creates a log message for error conditions that have occurred.
+// If an error instance is available, it should be provided for structured logging.
+// If no error instance exists, pass nil and the function will create one from the message.
+// Use this for recoverable errors and operational failures.
 func Error(err error, format string, args ...any) {
 	if err == nil {
 		err = errors.New(fmt.Sprintf(format, args...))
@@ -101,12 +107,11 @@ func Error(err error, format string, args ...any) {
 	log.Error().Err(err).Msgf(format, args...)
 }
 
-// Fatal Creates an error message with information about the error that has occurred
-// which is sever enough that torero will need to immediately shut down. This
-// function will log the message and shut torero down by calling `os.Exit(1)`.
-// If an error type is present, it should be provided in addition to a custom
-// message for each Fatal call. If no relevant error type is present, pass nil
-// for err.
+// Fatal creates a log message for critical errors that require immediate application shutdown.
+// This function logs the error and terminates the application by calling os.Exit(1).
+// If an error instance is available, it should be provided for structured logging.
+// If no error instance exists, pass nil and the function will create one from the message.
+// Use this only for unrecoverable errors that make continued operation impossible.
 func Fatal(err error, format string, args ...any) {
 	if err == nil {
 		err = errors.New(fmt.Sprintf(format, args...))
@@ -114,8 +119,9 @@ func Fatal(err error, format string, args ...any) {
 	log.Fatal().Err(err).Msgf(format, args...)
 }
 
-// timestampFormatter can be passed to a zerolog logger and will reformat any timestamp that it is given to match
-// what is given in the config variable TORERO_LOG_TIMESTAMP_TIMEZONE
+// timestampFormatter returns a function that formats timestamps according to the specified timezone.
+// It converts RFC3339 formatted timestamps to the configured timezone while maintaining RFC3339 format.
+// If timestamp parsing fails, it returns an error message with the original timestamp.
 func timestampFormatter(loc *time.Location) func(interface{}) string {
 	return func(timestamp interface{}) string {
 		t, err := time.Parse(time.RFC3339, timestamp.(string))

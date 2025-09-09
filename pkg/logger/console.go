@@ -12,18 +12,25 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
-// Used by customConsoleWriter methods
+// debugOut and errorOut are console writers configured for different output streams.
+// debugOut writes to stdout for debug, info, and warn levels.
+// errorOut writes to stderr for error and fatal levels.
 var (
 	debugOut zerolog.ConsoleWriter
 	errorOut zerolog.ConsoleWriter
 )
 
-// Define our own writers so that we can
+// customConsoleWriter implements zerolog.LevelWriter to route log messages
+// to appropriate output streams (stdout/stderr) based on log level.
 type customConsoleWriter struct{}
+
+// customConsoleJsonWriter implements zerolog.LevelWriter for JSON formatted console output
+// with level-based routing to stdout/stderr.
 type customConsoleJsonWriter struct{}
 
-// EnableConsoleLogs Enables console logs that will be displayed to the CLI user via stdout and
-// stderr.
+// EnableConsoleLogs configures console-based logging output to stdout and stderr.
+// It supports both human-readable console format and JSON format based on configuration.
+// Log messages are routed to stdout (debug, info, warn) or stderr (error, fatal) based on level.
 func EnableConsoleLogs(cfg *config.Config) {
 	if cfg.LogConsoleJSON {
 		iowriters = append(iowriters, customConsoleJsonWriter{})
@@ -49,18 +56,23 @@ func EnableConsoleLogs(cfg *config.Config) {
 	log.Logger = zerolog.New(writers).With().Timestamp().Logger()
 }
 
-// Write is required to implement io.Writer and should not be called
+// Write implements io.Writer interface for customConsoleWriter.
+// This method routes all output to stdout and should not be called directly.
+// Use WriteLevel instead for proper level-based routing.
 func (l customConsoleWriter) Write(p []byte) (n int, err error) {
 	return os.Stdout.Write(p)
 }
 
-// Write is required to implement io.Writer and should not be called
+// Write implements io.Writer interface for customConsoleJsonWriter.
+// This method routes all output to stdout and should not be called directly.
+// Use WriteLevel instead for proper level-based routing.
 func (l customConsoleJsonWriter) Write(p []byte) (n int, err error) {
 	return os.Stdout.Write(p)
 }
 
-// WriteLevel Determines the correct output destination depending on the level of the
-// request for the customConsoleWriter
+// WriteLevel implements zerolog.LevelWriter interface for customConsoleWriter.
+// It routes log messages to stdout (for levels <= warn) or stderr (for error and fatal).
+// The output is formatted using the configured console writers with proper timestamps and colors.
 func (l customConsoleWriter) WriteLevel(level zerolog.Level, p []byte) (n int, err error) {
 	if level <= zerolog.WarnLevel {
 		return debugOut.Write(p)
@@ -69,8 +81,9 @@ func (l customConsoleWriter) WriteLevel(level zerolog.Level, p []byte) (n int, e
 	}
 }
 
-// WriteLevel Determines the correct output destination depending on the level of the
-// request for the customConsoleJsonWriter
+// WriteLevel implements zerolog.LevelWriter interface for customConsoleJsonWriter.
+// It routes JSON-formatted log messages to stdout (for levels <= warn) or stderr (for error and fatal).
+// This provides structured logging output while maintaining proper stream separation.
 func (l customConsoleJsonWriter) WriteLevel(level zerolog.Level, p []byte) (n int, err error) {
 	if level <= zerolog.WarnLevel {
 		return os.Stdout.Write(p)
