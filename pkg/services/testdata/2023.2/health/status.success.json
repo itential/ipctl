@@ -1,0 +1,18 @@
+{
+  "host": "test-server.example.com",
+  "serverId": "server-123",
+  "serverName": "Test Itential Platform",
+  "services": [
+    {
+      "service": "automation-studio",
+      "status": "running"
+    },
+    {
+      "service": "workflow-builder",
+      "status": "running"
+    }
+  ],
+  "timestamp": 1640995200,
+  "apps": "running",
+  "adapters": "running"
+}
