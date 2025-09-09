@@ -14,16 +14,19 @@ import (
 	"github.com/itential/ipctl/pkg/logger"
 )
 
+// RoleMethod represents an allowed method for a role
 type RoleMethod struct {
 	Name       string `json:"name"`
 	Provenance string `json:"provenance"`
 }
 
+// RoleView represents an allowed view for a role
 type RoleView struct {
 	Provenance string `json:"provenance"`
 	Path       string `json:"path"`
 }
 
+// Role represents a role in the authorization system
 type Role struct {
 	Id             string       `json:"_id,omitempty"`
 	Provenance     string       `json:"provenance"`
@@ -33,10 +36,12 @@ type Role struct {
 	AllowedViews   []RoleView   `json:"allowedViews"`
 }
 
+// RoleService provides methods for managing roles
 type RoleService struct {
 	client client.Client
 }
 
+// NewRoleService creates a new RoleService with the given client
 func NewRoleService(c client.Client) *RoleService {
 	return &RoleService{client: c}
 }
@@ -203,6 +208,7 @@ func (svc *RoleService) Get(id string) (*Role, error) {
 
 }
 
+// Import imports a role into the authorization system
 func (svc *RoleService) Import(in Role) (*Role, error) {
 	logger.Trace()
 
