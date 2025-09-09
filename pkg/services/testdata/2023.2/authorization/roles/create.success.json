@@ -1,0 +1,22 @@
+{
+  "status": "success",
+  "message": "Role created successfully",
+  "data": {
+    "_id": "678ec1ab6d849669c6dbe954",
+    "provenance": "local_aaa",
+    "name": "test_role",
+    "description": "Test role for validation",
+    "allowedMethods": [
+      {
+        "name": "testMethod",
+        "provenance": "local_aaa"
+      }
+    ],
+    "allowedViews": [
+      {
+        "provenance": "local_aaa",
+        "path": "/test"
+      }
+    ]
+  }
+}
