@@ -21,7 +21,7 @@ type GoldenConfigTreeSummary struct {
 	Gbac        map[string]interface{} `json:"gbac"`
 	Created     string                 `json:"created"`
 	LastUpdated string                 `json:"lastUpdated"`
-	Tags        []string               `json:"tags"`
+	Tags        []Tag                  `json:"tags"`
 }
 
 type GoldenConfigTree struct {
@@ -37,7 +37,7 @@ type GoldenConfigTree struct {
 	LastUpdatedBy string                 `json:"lastUpdatedBy"`
 	Variables     map[string]interface{} `json:"variables"`
 	Base          string                 `json:"base,omitempty"`
-	Tags          []string               `json:"tags"`
+	Tags          []Tag                  `json:"tags"`
 }
 
 type GoldenConfigService struct {
