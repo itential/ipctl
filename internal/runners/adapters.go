@@ -403,9 +403,13 @@ func (r *AdapterRunner) Restart(in Request) (*Response, error) {
 
 	name := in.Args[0]
 
-	if err := r.service.Stop(name); err != nil {
-		return nil, err
-	}
+        /* Stop the adapter first, ignore any errors */
+	r.service.Stop(name);
+
+        /* Then start it, do not ignore errors */
+        if err := r.service.Start(name); err != nil {
+                return nil, err
+        }
 
 	return &Response{
 		Text: fmt.Sprintf("Successfully restarted adapter `%s`", name),
