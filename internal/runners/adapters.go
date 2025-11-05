@@ -403,7 +403,7 @@ func (r *AdapterRunner) Restart(in Request) (*Response, error) {
 
 	name := in.Args[0]
 
-	if err := r.service.Stop(name); err != nil {
+	if err := r.service.Restart(name); err != nil {
 		return nil, err
 	}
 
