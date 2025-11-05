@@ -69,7 +69,7 @@ func NewCommandTemplate(name string) CommandTemplate {
 }
 
 // Get will return the specified command template from the server.  If the
-// specified temlate does not exist, this function will return an error.
+// specified template does not exist, this function will return an error.
 func (svc *CommandTemplateService) Get(name string) (*CommandTemplate, error) {
 	logger.Trace()
 
@@ -127,7 +127,7 @@ func (svc *CommandTemplateService) Create(in CommandTemplate) (*CommandTemplate,
 	logger.Trace()
 
 	// NOTE (hashdigest) The Id must be set to the same value as the name
-	// otheriwse the document cannot be found later
+	// otherwise the document cannot be found later
 	in.Id = in.Name
 
 	body := map[string]CommandTemplate{"mop": in}
