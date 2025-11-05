@@ -403,11 +403,7 @@ func (r *AdapterRunner) Restart(in Request) (*Response, error) {
 
 	name := in.Args[0]
 
-	/* Stop the adapter first, ignore any errors */
-	r.service.Stop(name)
-
-	/* Then start it, do not ignore errors */
-	if err := r.service.Start(name); err != nil {
+	if err := r.service.Restart(name); err != nil {
 		return nil, err
 	}
 
