@@ -15,11 +15,11 @@ import (
 )
 
 var (
-	rolesGetSuccess      = "authorization/roles/get.success.json"
-	rolesGetAllSuccess   = "authorization/roles/getall.success.json"
-	rolesCreateSuccess   = "authorization/roles/create.success.json"
-	rolesDeleteSuccess   = "authorization/roles/delete.success.json"
-	rolesImportSuccess   = "authorization/roles/import.success.json"
+	rolesGetSuccess    = "authorization/roles/get.success.json"
+	rolesGetAllSuccess = "authorization/roles/getall.success.json"
+	rolesCreateSuccess = "authorization/roles/create.success.json"
+	rolesDeleteSuccess = "authorization/roles/delete.success.json"
+	rolesImportSuccess = "authorization/roles/import.success.json"
 )
 
 func setupRoleService() *RoleService {

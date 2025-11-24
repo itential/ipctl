@@ -118,7 +118,7 @@ func TestTimestampFormatter(t *testing.T) {
 	// Test with UTC timezone
 	utc := time.UTC
 	formatter := timestampFormatter(utc)
-	
+
 	// Test valid timestamp
 	timestamp := "2023-01-01T12:00:00Z"
 	result := formatter(timestamp)
@@ -136,11 +136,11 @@ func TestTimestampFormatterWithTimezone(t *testing.T) {
 	// Test with EST timezone
 	est, err := time.LoadLocation("America/New_York")
 	require.NoError(t, err)
-	
+
 	formatter := timestampFormatter(est)
 	timestamp := "2023-01-01T12:00:00Z"
 	result := formatter(timestamp)
-	
+
 	// Should be converted to EST (UTC-5 in January)
 	assert.Contains(t, result, "07:00:00")
 }
@@ -149,11 +149,11 @@ func TestTimestampFormatterWithTimezone(t *testing.T) {
 func TestInitializeLoggerFirstCall(t *testing.T) {
 	// Reset global state
 	iowriters = nil
-	
+
 	cfg := &config.Config{
-		LogLevel:               "INFO",
-		LogFileEnabled:         false,
-		LogTimestampTimezone:   time.UTC,
+		LogLevel:             "INFO",
+		LogFileEnabled:       false,
+		LogTimestampTimezone: time.UTC,
 	}
 
 	// Mock os.Args to avoid verbose flag parsing
@@ -162,7 +162,7 @@ func TestInitializeLoggerFirstCall(t *testing.T) {
 	defer func() { os.Args = originalArgs }()
 
 	InitializeLogger(cfg)
-	
+
 	assert.Equal(t, zerolog.InfoLevel, zerolog.GlobalLevel())
 	// iowriters should be empty (initialized as empty slice) when no logging is enabled
 	assert.Empty(t, iowriters)
@@ -175,13 +175,13 @@ func TestInitializeLoggerSubsequentCalls(t *testing.T) {
 	originalLevel := zerolog.GlobalLevel()
 
 	cfg := &config.Config{
-		LogLevel:               "DEBUG",
-		LogFileEnabled:         false,
-		LogTimestampTimezone:   time.UTC,
+		LogLevel:             "DEBUG",
+		LogFileEnabled:       false,
+		LogTimestampTimezone: time.UTC,
 	}
 
 	InitializeLogger(cfg)
-	
+
 	// Should not change because iowriters was already initialized
 	assert.Equal(t, originalLevel, zerolog.GlobalLevel())
 }
@@ -190,12 +190,12 @@ func TestInitializeLoggerSubsequentCalls(t *testing.T) {
 func TestInitializeLoggerWithVerboseFlag(t *testing.T) {
 	// Reset global state
 	iowriters = nil
-	
+
 	cfg := &config.Config{
-		LogLevel:               "INFO",
-		LogFileEnabled:         false,
-		LogTimestampTimezone:   time.UTC,
-		TerminalNoColor:        true,
+		LogLevel:             "INFO",
+		LogFileEnabled:       false,
+		LogTimestampTimezone: time.UTC,
+		TerminalNoColor:      true,
 	}
 
 	// Mock os.Args with verbose flag
@@ -204,7 +204,7 @@ func TestInitializeLoggerWithVerboseFlag(t *testing.T) {
 	defer func() { os.Args = originalArgs }()
 
 	InitializeLogger(cfg)
-	
+
 	// Should have enabled console logs
 	assert.NotEmpty(t, iowriters)
 }
@@ -213,12 +213,12 @@ func TestInitializeLoggerWithVerboseFlag(t *testing.T) {
 func TestLogLevelsFiltering(t *testing.T) {
 	var buf bytes.Buffer
 	log.Logger = zerolog.New(&buf)
-	
+
 	// Set to WARN level - should only show warn, error, fatal
 	zerolog.SetGlobalLevel(zerolog.WarnLevel)
 
 	Debug("debug message")
-	Info("info message") 
+	Info("info message")
 	Warn("warn message")
 	Error(nil, "error message")
 
@@ -239,21 +239,21 @@ func TestFatalLogsMessage(t *testing.T) {
 	// We can't actually call Fatal() since it would exit the test
 	// But we can test the error creation logic that's used in Fatal
 	testErr := errors.New("test fatal error")
-	
+
 	// Test the same logic used in Fatal for error handling
 	if testErr == nil {
 		testErr = errors.New("fatal error occurred")
 	}
-	
+
 	assert.NotNil(t, testErr)
 	assert.Equal(t, "test fatal error", testErr.Error())
-	
+
 	// Test with nil error (same logic as Fatal)
 	var nilErr error
 	if nilErr == nil {
 		nilErr = errors.New(fmt.Sprintf("fatal error: %s", "test"))
 	}
-	
+
 	assert.Equal(t, "fatal error: test", nilErr.Error())
 }
 
@@ -262,10 +262,10 @@ func TestPackageVariables(t *testing.T) {
 	// Reset iowriters for testing
 	originalWriters := iowriters
 	defer func() { iowriters = originalWriters }()
-	
+
 	iowriters = nil
 	assert.Nil(t, iowriters)
-	
+
 	// Test appending writers
 	iowriters = append(iowriters, os.Stdout)
 	assert.Len(t, iowriters, 1)

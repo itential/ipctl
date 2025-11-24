@@ -79,10 +79,10 @@ func TestGetLogLevelInvalidLevelValidation(t *testing.T) {
 // TestSupportedLogLevels tests the supportedLogLevels variable
 func TestSupportedLogLevels(t *testing.T) {
 	expectedLevels := []string{"DEBUG", "INFO", "WARN", "ERROR", "FATAL", "DISABLED", "TRACE"}
-	
+
 	assert.Equal(t, expectedLevels, supportedLogLevels)
 	assert.Len(t, supportedLogLevels, 7)
-	
+
 	// Test that all expected levels are present
 	for _, expected := range expectedLevels {
 		found := false
@@ -176,11 +176,11 @@ func TestGetLogLevelEdgeCases(t *testing.T) {
 func TestGetLogLevelExitBehavior(t *testing.T) {
 	// We can't actually test os.Exit(1) behavior since it would terminate the test runner
 	// But we can test that the function would identify invalid levels correctly
-	
+
 	// Test that getLogLevel would call os.Exit for invalid levels
 	// by checking the validation logic that happens before the switch statement
 	invalidLevel := "INVALID_LEVEL"
-	
+
 	// This simulates the validation logic in getLogLevel
 	supported := false
 	for _, ele := range supportedLogLevels {
@@ -188,10 +188,10 @@ func TestGetLogLevelExitBehavior(t *testing.T) {
 			supported = true
 		}
 	}
-	
+
 	// If we got here with !supported, getLogLevel would call os.Exit(1)
 	assert.False(t, supported, "Invalid level should trigger exit behavior")
-	
+
 	// In a real scenario, we might test this with a wrapper function or by
 	// checking stderr output, but direct testing of os.Exit is not practical
 }

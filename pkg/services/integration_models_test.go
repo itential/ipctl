@@ -15,11 +15,11 @@ import (
 )
 
 var (
-	integrationModelsGetSuccess       = "integration-models/get.success.json"
-	integrationModelsGetAllSuccess    = "integration-models/getall.success.json"
-	integrationModelsCreateSuccess    = "integration-models/create.success.json"
+	integrationModelsGetSuccess        = "integration-models/get.success.json"
+	integrationModelsGetAllSuccess     = "integration-models/getall.success.json"
+	integrationModelsCreateSuccess     = "integration-models/create.success.json"
 	integrationModelsGetCreatedSuccess = "integration-models/get-created.success.json"
-	integrationModelsExportSuccess    = "integration-models/export.success.json"
+	integrationModelsExportSuccess     = "integration-models/export.success.json"
 )
 
 func setupIntegrationModelService() *IntegrationModelService {
@@ -56,7 +56,7 @@ func TestIntegrationModelServiceGetAll(t *testing.T) {
 
 		assert.Nil(t, err)
 		assert.Equal(t, 3, len(res))
-		
+
 		// Verify first integration model
 		assert.Equal(t, "http-adapter", res[0].Model)
 		assert.Equal(t, "http-adapter-v1.0.0", res[0].VersionId)
@@ -68,7 +68,7 @@ func TestIntegrationModelServiceGetAll(t *testing.T) {
 		assert.Equal(t, true, res[0].Properties.Tls.Enabled)
 		assert.Equal(t, false, res[0].Properties.Tls.RefjectUnauthorized)
 		assert.NotNil(t, res[0].Properties.Authentication)
-		
+
 		// Verify second integration model
 		assert.Equal(t, "database-adapter", res[1].Model)
 		assert.Equal(t, "database-adapter-v2.1.0", res[1].VersionId)
@@ -77,7 +77,7 @@ func TestIntegrationModelServiceGetAll(t *testing.T) {
 		assert.Equal(t, "tcp", res[1].Properties.Server.Protocol)
 		assert.Equal(t, false, res[1].Properties.Tls.Enabled)
 		assert.Equal(t, true, res[1].Properties.Tls.RefjectUnauthorized)
-		
+
 		// Verify third integration model
 		assert.Equal(t, "file-adapter", res[2].Model)
 		assert.Equal(t, "file-adapter-v1.5.0", res[2].VersionId)
@@ -119,16 +119,16 @@ func TestIntegrationModelServiceGet(t *testing.T) {
 		assert.Equal(t, "http-adapter", res.Model)
 		assert.Equal(t, "http-adapter-v1.0.0", res.VersionId)
 		assert.Equal(t, "HTTP adapter model for REST API integrations", res.Description)
-		
+
 		// Verify properties structure
 		assert.Equal(t, "1.0.0", res.Properties.Version)
 		assert.NotNil(t, res.Properties.Authentication)
-		
+
 		// Verify server properties
 		assert.Equal(t, "https", res.Properties.Server.Protocol)
 		assert.Equal(t, "api.example.com", res.Properties.Server.Host)
 		assert.Equal(t, "/api/v1", res.Properties.Server.BasePath)
-		
+
 		// Verify TLS properties
 		assert.Equal(t, true, res.Properties.Tls.Enabled)
 		assert.Equal(t, false, res.Properties.Tls.RefjectUnauthorized)
@@ -159,7 +159,7 @@ func TestIntegrationModelServiceCreate(t *testing.T) {
 			filepath.Join(fixtureRoot, ele, integrationModelsCreateSuccess),
 		)
 		testlib.AddPostResponseToMux("/integration-models", createResponse, http.StatusOK)
-		
+
 		// Mock the GET response for the created model
 		getResponse := testlib.Fixture(
 			filepath.Join(fixtureRoot, ele, integrationModelsGetCreatedSuccess),
@@ -180,7 +180,7 @@ func TestIntegrationModelServiceCreate(t *testing.T) {
 					"base_path": "/custom/api",
 				},
 				"tls": map[string]interface{}{
-					"enabled":             true,
+					"enabled":            true,
 					"rejectUnauthroized": true,
 				},
 				"version": "1.0.0",
@@ -230,7 +230,7 @@ func TestIntegrationModelServiceCreateGetError(t *testing.T) {
 			filepath.Join(fixtureRoot, ele, integrationModelsCreateSuccess),
 		)
 		testlib.AddPostResponseToMux("/integration-models", createResponse, http.StatusOK)
-		
+
 		// Mock failed GET response
 		testlib.AddGetErrorToMux("/integration-models/{name}", "", 0)
 
@@ -289,13 +289,13 @@ func TestIntegrationModelServiceExport(t *testing.T) {
 		assert.NotNil(t, res["metadata"])
 		assert.NotNil(t, res["definition"])
 		assert.NotNil(t, res["schema"])
-		
+
 		// Verify metadata structure
 		metadata, ok := res["metadata"].(map[string]interface{})
 		assert.True(t, ok)
 		assert.Equal(t, "2023-01-01T12:00:00Z", metadata["created"])
 		assert.Equal(t, "system", metadata["author"])
-		
+
 		// Verify definition structure
 		definition, ok := res["definition"].(map[string]interface{})
 		assert.True(t, ok)

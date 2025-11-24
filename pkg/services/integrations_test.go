@@ -83,7 +83,7 @@ func TestIntegrationServiceGetAll(t *testing.T) {
 
 		assert.Nil(t, err)
 		assert.Equal(t, 2, len(res))
-		
+
 		// Verify first integration
 		assert.Equal(t, "integration-1", res[0].Name)
 		assert.Equal(t, "Adapter", res[0].Type)
@@ -140,24 +140,24 @@ func TestIntegrationServiceGet(t *testing.T) {
 		assert.Equal(t, true, res.Virtual)
 		assert.Equal(t, false, res.IsEncrypted)
 		assert.Equal(t, false, res.Profiling)
-		
+
 		// Verify properties
 		assert.NotNil(t, res.Properties)
 		assert.Equal(t, "test-integration", res.Properties["id"])
 		assert.Equal(t, "http", res.Properties["type"])
 		assert.Equal(t, "localhost", res.Properties["host"])
 		assert.Equal(t, float64(8080), res.Properties["port"])
-		
+
 		// Verify logger properties
 		assert.NotNil(t, res.LoggerProperties)
 		assert.Equal(t, "info", res.LoggerProperties["level"])
 		assert.Equal(t, true, res.LoggerProperties["enabled"])
-		
+
 		// Verify system properties
 		assert.NotNil(t, res.SystemProperties)
 		assert.Equal(t, float64(5000), res.SystemProperties["timeout"])
 		assert.Equal(t, float64(3), res.SystemProperties["retries"])
-		
+
 		// Verify event deduplication
 		assert.NotNil(t, res.EventDeduplciation)
 		assert.Equal(t, false, res.EventDeduplciation["enabled"])
@@ -223,7 +223,7 @@ func TestIntegrationServiceCreate(t *testing.T) {
 		assert.Equal(t, true, res.Virtual) // Should be set automatically
 		assert.Equal(t, false, res.IsEncrypted)
 		assert.Equal(t, false, res.Profiling)
-		
+
 		// Verify properties
 		assert.NotNil(t, res.Properties)
 		assert.Equal(t, "new-integration", res.Properties["id"])
