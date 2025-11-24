@@ -27,18 +27,18 @@ func TestCustomConsoleWriterWrite(t *testing.T) {
 
 	writer := customConsoleWriter{}
 	testData := []byte("test message")
-	
+
 	n, err := writer.Write(testData)
-	
+
 	// Restore stdout
 	w.Close()
 	os.Stdout = oldStdout
-	
+
 	// Read captured output
 	var buf bytes.Buffer
 	_, copyErr := buf.ReadFrom(r)
 	require.NoError(t, copyErr)
-	
+
 	assert.NoError(t, err)
 	assert.Equal(t, len(testData), n)
 	assert.Contains(t, buf.String(), "test message")
@@ -54,18 +54,18 @@ func TestCustomConsoleJsonWriterWrite(t *testing.T) {
 
 	writer := customConsoleJsonWriter{}
 	testData := []byte(`{"level":"info","message":"test"}`)
-	
+
 	n, err := writer.Write(testData)
-	
+
 	// Restore stdout
 	w.Close()
 	os.Stdout = oldStdout
-	
+
 	// Read captured output
 	var buf bytes.Buffer
 	_, copyErr := buf.ReadFrom(r)
 	require.NoError(t, copyErr)
-	
+
 	assert.NoError(t, err)
 	assert.Equal(t, len(testData), n)
 	assert.Contains(t, buf.String(), `"level":"info"`)
@@ -74,7 +74,7 @@ func TestCustomConsoleJsonWriterWrite(t *testing.T) {
 // TestCustomConsoleWriterWriteLevel tests WriteLevel with different log levels
 func TestCustomConsoleWriterWriteLevel(t *testing.T) {
 	writer := customConsoleWriter{}
-	
+
 	// Use properly formatted JSON log message that console writer can handle
 	testData := []byte(`{"level":"info","message":"test message"}`)
 
@@ -95,18 +95,18 @@ func TestCustomConsoleWriterWriteLevel(t *testing.T) {
 			var debugBuf, errorBuf bytes.Buffer
 			debugOut = zerolog.ConsoleWriter{Out: &debugBuf, NoColor: true}
 			errorOut = zerolog.ConsoleWriter{Out: &errorBuf, NoColor: true}
-			
+
 			n, err := writer.WriteLevel(tc.level, testData)
-			
+
 			assert.NoError(t, err)
 			assert.Equal(t, len(testData), n)
-			
+
 			// The actual implementation checks level <= zerolog.WarnLevel for debugOut
 			if tc.level <= zerolog.WarnLevel {
 				assert.NotEmpty(t, debugBuf.String(), "Expected output to debugOut for level %s", tc.name)
 				assert.Empty(t, errorBuf.String(), "Expected no output to errorOut for level %s", tc.name)
 			} else {
-				assert.Empty(t, debugBuf.String(), "Expected no output to debugOut for level %s", tc.name) 
+				assert.Empty(t, debugBuf.String(), "Expected no output to debugOut for level %s", tc.name)
 				assert.NotEmpty(t, errorBuf.String(), "Expected output to errorOut for level %s", tc.name)
 			}
 		})
@@ -136,33 +136,33 @@ func TestCustomConsoleJsonWriterWriteLevel(t *testing.T) {
 			// Capture stdout and stderr
 			oldStdout := os.Stdout
 			oldStderr := os.Stderr
-			
+
 			rOut, wOut, err := os.Pipe()
 			require.NoError(t, err)
 			rErr, wErr, err := os.Pipe()
 			require.NoError(t, err)
-			
+
 			os.Stdout = wOut
 			os.Stderr = wErr
-			
+
 			n, writeErr := writer.WriteLevel(tc.level, testData)
-			
+
 			// Close writers and restore
 			wOut.Close()
 			wErr.Close()
 			os.Stdout = oldStdout
 			os.Stderr = oldStderr
-			
+
 			// Read captured output
 			var stdoutBuf, stderrBuf bytes.Buffer
 			_, copyErr1 := stdoutBuf.ReadFrom(rOut)
 			_, copyErr2 := stderrBuf.ReadFrom(rErr)
 			require.NoError(t, copyErr1)
 			require.NoError(t, copyErr2)
-			
+
 			assert.NoError(t, writeErr)
 			assert.Equal(t, len(testData), n)
-			
+
 			if tc.expectStdout {
 				assert.NotEmpty(t, stdoutBuf.String(), "Expected output to stdout for level %s", tc.name)
 				assert.Empty(t, stderrBuf.String(), "Expected no output to stderr for level %s", tc.name)
@@ -178,20 +178,20 @@ func TestCustomConsoleJsonWriterWriteLevel(t *testing.T) {
 func TestEnableConsoleLogsJSON(t *testing.T) {
 	// Reset global state
 	iowriters = nil
-	
+
 	cfg := &config.Config{
 		LogConsoleJSON:       true,
 		LogTimestampTimezone: time.UTC,
 		TerminalNoColor:      false,
 	}
-	
+
 	EnableConsoleLogs(cfg)
-	
+
 	assert.Len(t, iowriters, 1)
 	// Check that the writer is of the correct type
 	_, ok := iowriters[0].(customConsoleJsonWriter)
 	assert.True(t, ok, "Expected customConsoleJsonWriter")
-	
+
 	// Verify that logger is configured
 	assert.NotNil(t, log.Logger)
 }
@@ -200,20 +200,20 @@ func TestEnableConsoleLogsJSON(t *testing.T) {
 func TestEnableConsoleLogsConsole(t *testing.T) {
 	// Reset global state
 	iowriters = nil
-	
+
 	cfg := &config.Config{
 		LogConsoleJSON:       false,
 		LogTimestampTimezone: time.UTC,
 		TerminalNoColor:      true, // Test no-color setting
 	}
-	
+
 	EnableConsoleLogs(cfg)
-	
+
 	assert.Len(t, iowriters, 1)
 	// Check that the writer is of the correct type
 	_, ok := iowriters[0].(customConsoleWriter)
 	assert.True(t, ok, "Expected customConsoleWriter")
-	
+
 	// Verify console writers are configured
 	assert.NotNil(t, debugOut)
 	assert.NotNil(t, errorOut)
@@ -221,7 +221,7 @@ func TestEnableConsoleLogsConsole(t *testing.T) {
 	assert.True(t, errorOut.NoColor, "Expected NoColor to be true")
 	assert.Equal(t, os.Stdout, debugOut.Out)
 	assert.Equal(t, os.Stderr, errorOut.Out)
-	
+
 	// Verify that logger is configured
 	assert.NotNil(t, log.Logger)
 }
@@ -230,17 +230,17 @@ func TestEnableConsoleLogsConsole(t *testing.T) {
 func TestEnableConsoleLogsWithColor(t *testing.T) {
 	// Reset global state
 	iowriters = nil
-	
+
 	cfg := &config.Config{
 		LogConsoleJSON:       false,
 		LogTimestampTimezone: time.UTC,
 		TerminalNoColor:      false, // Test with color enabled
 	}
-	
+
 	EnableConsoleLogs(cfg)
-	
+
 	assert.Len(t, iowriters, 1)
-	
+
 	// Verify console writers have color enabled
 	assert.False(t, debugOut.NoColor, "Expected NoColor to be false")
 	assert.False(t, errorOut.NoColor, "Expected NoColor to be false")
@@ -250,28 +250,28 @@ func TestEnableConsoleLogsWithColor(t *testing.T) {
 func TestEnableConsoleLogsTimestamp(t *testing.T) {
 	// Reset global state
 	iowriters = nil
-	
+
 	// Test with specific timezone
 	est, err := time.LoadLocation("America/New_York")
 	require.NoError(t, err)
-	
+
 	cfg := &config.Config{
 		LogConsoleJSON:       false,
 		LogTimestampTimezone: est,
 		TerminalNoColor:      true,
 	}
-	
+
 	EnableConsoleLogs(cfg)
-	
+
 	// Verify timestamp formatters are set
 	assert.NotNil(t, debugOut.FormatTimestamp)
 	assert.NotNil(t, errorOut.FormatTimestamp)
-	
+
 	// Test the timestamp formatter
 	testTimestamp := "2023-01-01T12:00:00Z"
 	formattedDebug := debugOut.FormatTimestamp(testTimestamp)
 	formattedError := errorOut.FormatTimestamp(testTimestamp)
-	
+
 	// Should be converted to EST
 	assert.Contains(t, formattedDebug, "07:00:00")
 	assert.Contains(t, formattedError, "07:00:00")
@@ -283,7 +283,7 @@ func TestConsoleWriterTypeImplementations(t *testing.T) {
 	var consoleWriter interface{} = customConsoleWriter{}
 	_, implementsWriter := consoleWriter.(zerolog.LevelWriter)
 	assert.True(t, implementsWriter, "customConsoleWriter should implement zerolog.LevelWriter")
-	
+
 	// Test that customConsoleJsonWriter implements required interfaces
 	var jsonWriter interface{} = customConsoleJsonWriter{}
 	_, implementsWriter = jsonWriter.(zerolog.LevelWriter)
@@ -294,21 +294,21 @@ func TestConsoleWriterTypeImplementations(t *testing.T) {
 func TestMultipleEnableConsoleLogsCalls(t *testing.T) {
 	// Reset global state
 	iowriters = nil
-	
+
 	cfg := &config.Config{
 		LogConsoleJSON:       false,
 		LogTimestampTimezone: time.UTC,
 		TerminalNoColor:      true,
 	}
-	
+
 	// First call
 	EnableConsoleLogs(cfg)
 	firstLength := len(iowriters)
-	
+
 	// Second call
 	EnableConsoleLogs(cfg)
 	secondLength := len(iowriters)
-	
+
 	// Should append another writer
 	assert.Equal(t, firstLength+1, secondLength)
 	assert.Equal(t, 2, secondLength)
