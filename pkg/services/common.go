@@ -11,12 +11,16 @@ import (
 
 // Metadata contains pagination and response metadata
 type Metadata struct {
-	Skip             int    `json:"skip,omitempty"`
-	Limit            int    `json:"limit,omitempty"`
-	Total            int    `json:"total,omitempty"`
-	NextPageSkip     string `json:"nextPageSkip,omitempty"`
-	PreviousPageSkip string `json:"previousPageSkip,omitempty"`
-	CurrentPageSize  int    `json:"currentPageSize,omitempty"`
+	Skip  int `json:"skip,omitempty"`
+	Limit int `json:"limit,omitempty"`
+	Total int `json:"total,omitempty"`
+
+	// NOTE (privateip) commenting these fields out as they are current not
+	// being used by the application and the data returned from the API is
+	// inconsistent
+	//NextPageSkip     string `json:"nextPageSkip,omitempty"`
+	//PreviousPageSkip string `json:"previousPageSkip,omitempty"`
+	//CurrentPageSize  int    `json:"currentPageSize,omitempty"`
 }
 
 // Gbac represents Group-Based Access Control permissions
