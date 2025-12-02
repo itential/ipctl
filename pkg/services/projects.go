@@ -164,7 +164,7 @@ func (svc *ProjectService) Get(id string) (*Project, error) {
 		return nil, err
 	}
 
-	logger.Info(res.Message)
+	logger.Info("%s", res.Message)
 
 	return res.Data, nil
 }
@@ -221,7 +221,7 @@ func (svc *ProjectService) Create(name string) (*Project, error) {
 		return nil, err
 	}
 
-	logger.Info(res.Message)
+	logger.Info("%s", res.Message)
 
 	return res.Data, nil
 }
@@ -299,7 +299,7 @@ func (svc *ProjectService) Import(in Project) (*Project, error) {
 		return nil, err
 	}
 
-	logger.Info(res.Message)
+	logger.Info("%s", res.Message)
 
 	return res.Data, nil
 }
@@ -322,7 +322,7 @@ func (svc *ProjectService) Export(id string) (*Project, error) {
 		return nil, err
 	}
 
-	logger.Info(res.Message)
+	logger.Info("%s", res.Message)
 
 	return res.Data, nil
 }

@@ -92,7 +92,7 @@ func addResponse(uri, body, method string, statusCode int) {
 		w.WriteHeader(statusCode)
 
 		if body != "" {
-			fmt.Fprintf(w, body)
+			fmt.Fprint(w, body)
 		}
 	})
 }

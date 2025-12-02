@@ -226,7 +226,7 @@ func (svc *TriggerService) Import(in Trigger) (*Trigger, error) {
 		return nil, err
 	}
 
-	logger.Info(res.Message)
+	logger.Info("%s", res.Message)
 
 	data := res.Data[0].Data
 

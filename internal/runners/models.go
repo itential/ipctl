@@ -188,7 +188,7 @@ func (r *ModelRunner) Delete(in Request) (*Response, error) {
 				jst, err := jstSvc.Get(ele.PreWorkflowJst)
 				if err != nil {
 					if err.Error() != "transformation not found" {
-						logger.Warn(err.Error())
+						logger.Warn("%s", err.Error())
 						//return nil, err
 					}
 				}
@@ -203,7 +203,7 @@ func (r *ModelRunner) Delete(in Request) (*Response, error) {
 				jst, err := jstSvc.Get(ele.PostWorkflowJst)
 				if err != nil {
 					if err.Error() != "transformation not found" {
-						logger.Warn(err.Error())
+						logger.Warn("%s", err.Error())
 						//return nil, err
 					}
 				}

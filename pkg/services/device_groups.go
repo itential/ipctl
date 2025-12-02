@@ -116,7 +116,7 @@ func (svc *DeviceGroupService) Create(in DeviceGroup) (*DeviceGroup, error) {
 		return nil, err
 	}
 
-	logger.Info(res.Message)
+	logger.Info("%s", res.Message)
 
 	return svc.Get(res.Id)
 }

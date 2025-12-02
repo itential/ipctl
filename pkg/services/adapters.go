@@ -142,7 +142,7 @@ func (svc *AdapterService) Create(in Adapter) (*Adapter, error) {
 		return nil, err
 	}
 
-	logger.Info(res.Message)
+	logger.Info("%s", res.Message)
 
 	return res.Data, nil
 }
@@ -175,7 +175,7 @@ func (svc *AdapterService) Import(in Adapter) (*Adapter, error) {
 		return nil, err
 	}
 
-	logger.Info(res.Message)
+	logger.Info("%s", res.Message)
 
 	return res.Data, nil
 }
@@ -199,7 +199,7 @@ func (svc *AdapterService) Update(in Adapter) (*Adapter, error) {
 		return nil, err
 	}
 
-	logger.Info(res.Message)
+	logger.Info("%s", res.Message)
 
 	return res.Data, nil
 }
