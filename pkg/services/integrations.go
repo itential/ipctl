@@ -82,7 +82,7 @@ func (svc *IntegrationService) Create(in Integration) (*Integration, error) {
 		return nil, err
 	}
 
-	logger.Info(res.Message)
+	logger.Info("%s", res.Message)
 
 	return res.Data, nil
 

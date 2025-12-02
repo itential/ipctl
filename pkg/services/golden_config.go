@@ -145,7 +145,7 @@ func (svc *GoldenConfigService) Import(in GoldenConfigTree) error {
 		return err
 	}
 
-	logger.Info(res.Message)
+	logger.Info("%s", res.Message)
 
 	return nil
 }

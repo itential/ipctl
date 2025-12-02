@@ -161,7 +161,7 @@ func (svc *GroupService) Create(in Group) (*Group, error) {
 		return nil, err
 	}
 
-	logger.Info(res.Message)
+	logger.Info("%s", res.Message)
 
 	return &res.Data, nil
 }

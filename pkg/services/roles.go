@@ -101,7 +101,7 @@ func (svc *RoleService) Create(in Role) (*Role, error) {
 		return nil, err
 	}
 
-	logger.Info(response.Message)
+	logger.Info("%s", response.Message)
 
 	return response.Data, nil
 }
@@ -133,7 +133,7 @@ func (svc *RoleService) Delete(id string) error {
 		return err
 	}
 
-	logger.Info(response.Message)
+	logger.Info("%s", response.Message)
 
 	return nil
 }
@@ -256,7 +256,7 @@ func (svc *RoleService) Import(in Role) (*Role, error) {
 		return nil, err
 	}
 
-	logger.Info(response.Message)
+	logger.Info("%s", response.Message)
 
 	return response.Data, nil
 }

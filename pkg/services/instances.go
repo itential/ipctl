@@ -113,7 +113,7 @@ func (svc *InstanceService) GetAll(modelId string) ([]Instance, error) {
 		skip += limit
 	}
 
-	logger.Info(res.Message)
+	logger.Info("%s", res.Message)
 
 	return results, nil
 }

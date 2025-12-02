@@ -290,7 +290,7 @@ func (svc *ProfileService) Create(in Profile) (*Profile, error) {
 		return nil, err
 	}
 
-	logger.Info(res.Message)
+	logger.Info("%s", res.Message)
 
 	return res.Data, nil
 }
