@@ -161,7 +161,7 @@ func NewCommand(c *CommandRunner) *cobra.Command {
 					if output == "" {
 						unableToDisplayOutput(c.Runtime.Config.TerminalNoColor)
 					}
-					terminal.Display(fmt.Sprintf("%s\n", output))
+					terminal.Display("%s\n", output)
 				}
 			}
 		},

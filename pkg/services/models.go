@@ -255,7 +255,7 @@ func (svc *ModelService) Export(id string) (*Model, error) {
 		return nil, err
 	}
 
-	logger.Info(res.Message)
+	logger.Info("%s", res.Message)
 
 	return res.Data, nil
 }

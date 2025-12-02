@@ -212,7 +212,7 @@ func (svc *TemplateService) Import(in Template) (*Template, error) {
 		return nil, err
 	}
 
-	logger.Info(res.Imported[0].Message)
+	logger.Info("%s", res.Imported[0].Message)
 
 	return res.Imported[0].Original, nil
 }

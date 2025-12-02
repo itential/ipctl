@@ -93,7 +93,7 @@ func (svc *AutomationService) Get(id string) (*Automation, error) {
 		return nil, err
 	}
 
-	logger.Info(res.Message)
+	logger.Info("%s", res.Message)
 
 	return res.Data, nil
 }
@@ -150,7 +150,7 @@ func (svc *AutomationService) Create(in Automation) (*Automation, error) {
 		return nil, err
 	}
 
-	logger.Info(res.Message)
+	logger.Info("%s", res.Message)
 
 	return res.Data, nil
 }
@@ -272,7 +272,7 @@ func (svc *AutomationService) Import(in Automation) (*Automation, error) {
 		return nil, err
 	}
 
-	logger.Info(res.Message)
+	logger.Info("%s", res.Message)
 
 	return &res.Data[0].Data, nil
 }
@@ -294,7 +294,7 @@ func (svc *AutomationService) Export(id string) (*Automation, error) {
 		return nil, err
 	}
 
-	logger.Info(res.Message)
+	logger.Info("%s", res.Message)
 
 	triggers := res.Data.Triggers
 	res.Data.Triggers = []Trigger{}

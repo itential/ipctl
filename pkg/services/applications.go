@@ -112,7 +112,7 @@ func (svc *ApplicationService) Create(in Application) (*Application, error) {
 		return nil, err
 	}
 
-	logger.Info(res.Message)
+	logger.Info("%s", res.Message)
 
 	return res.Data, nil
 }
@@ -133,7 +133,7 @@ func (svc *ApplicationService) Start(name string) error {
 		return err
 	}
 
-	logger.Info(res.Message)
+	logger.Info("%s", res.Message)
 
 	return nil
 }
@@ -154,7 +154,7 @@ func (svc *ApplicationService) Stop(name string) error {
 		return err
 	}
 
-	logger.Info(res.Message)
+	logger.Info("%s", res.Message)
 
 	return nil
 }

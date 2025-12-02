@@ -143,7 +143,7 @@ func (c *HttpClient) send(method string, request *Request) (*Response, error) {
 	if !request.NoLog {
 		debugOutput := string(request.Body)
 		if debugOutput != "" {
-			logger.Debug(string(request.Body))
+			logger.Debug("%s", string(request.Body))
 		} else {
 			logger.Debug("Request body is empty")
 		}

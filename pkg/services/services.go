@@ -92,7 +92,7 @@ func Do(r *Request) (*client.Response, error) {
 	}
 
 	if resp.Body != nil {
-		logger.Debug(string(resp.Body))
+		logger.Debug("%s", string(resp.Body))
 	}
 
 	if r.response != nil {
@@ -108,8 +108,8 @@ func Do(r *Request) (*client.Response, error) {
 func checkResponseForError(r *Request, resp *client.Response) error {
 	if !r.disableStatusCodeCheck {
 		if r.expectedStatusCode != 0 && r.expectedStatusCode != resp.StatusCode {
-			logger.Error(nil, fmt.Sprintf("status code = %v, expected status code = %v", resp.StatusCode, r.expectedStatusCode))
-			logger.Error(nil, string(resp.Body))
+			logger.Error(nil, "status code = %v, expected status code = %v", resp.StatusCode, r.expectedStatusCode)
+			logger.Error(nil, "%s", string(resp.Body))
 			if resp != nil {
 				return errors.New(string(resp.Body))
 			} else {
@@ -129,7 +129,7 @@ func checkResponseForError(r *Request, resp *client.Response) error {
 			b, _ := json.MarshalIndent(body, "", "    ")
 			logger.Debug("\n%s", string(b))
 
-			logger.Error(errors.New(resp.Status), errMsg.Message)
+			logger.Error(errors.New(resp.Status), "%s", errMsg.Message)
 		}
 	}
 

@@ -118,7 +118,7 @@ func (svc *IntegrationModelService) Create(in map[string]interface{}) (*Integrat
 		return nil, err
 	}
 
-	logger.Info(res.Message)
+	logger.Info("%s", res.Message)
 
 	model, err := svc.Get(res.Data["versionId"].(string))
 	if err != nil {

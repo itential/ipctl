@@ -242,7 +242,7 @@ func (svc *JsonFormService) Import(in JsonForm) (*JsonForm, error) {
 		return nil, err
 	}
 
-	logger.Info(res.Imported[0].Message)
+	logger.Info("%s", res.Imported[0].Message)
 
 	jf, err := svc.Get(res.Imported[0].Created["_id"].(string))
 	if err != nil {
