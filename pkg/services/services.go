@@ -15,12 +15,12 @@ import (
 	"github.com/itential/ipctl/pkg/logger"
 )
 
-func tobytes(obj any) []byte {
+func tobytes(obj any) ([]byte, error) {
 	b, err := json.Marshal(obj)
 	if err != nil {
-		logger.Fatal(err, "failed to marshal object")
+		return nil, fmt.Errorf("failed to marshal object: %w", err)
 	}
-	return b
+	return b, nil
 }
 
 type Request struct {
@@ -49,7 +49,11 @@ func Do(r *Request) (*client.Response, error) {
 	}
 
 	if r.body != nil {
-		req.Body = tobytes(r.body)
+		body, err := tobytes(r.body)
+		if err != nil {
+			return nil, err
+		}
+		req.Body = body
 	}
 
 	var resp *client.Response

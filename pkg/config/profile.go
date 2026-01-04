@@ -19,8 +19,8 @@ const (
 	defaultPort         = 0
 	defaultUseTLS       = true
 	defaultVerify       = true
-	defaultUsername     = "admin@pronghorn"
-	defaultPassword     = "admin"
+	defaultUsername     = ""
+	defaultPassword     = ""
 	defaultClientID     = ""
 	defaultClientSecret = ""
 	defaultMongoUrl     = ""
@@ -92,7 +92,7 @@ func loadProfile(values, defaults, overrides map[string]interface{}) *Profile {
 					v = "false"
 				}
 			default:
-				panic(value)
+				handleError(fmt.Sprintf("unsupported profile value type for field %q: %T", ele, value), nil)
 			}
 		}
 

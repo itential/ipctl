@@ -58,6 +58,25 @@ func (r *ProjectRunner) Get(in Request) (*Response, error) {
 
 }
 
+// extractUsername safely extracts a username from a user object, returning a fallback if extraction fails.
+func extractUsername(userObj any, fallback string) string {
+	if userObj == nil {
+		return fallback
+	}
+
+	userMap, ok := userObj.(map[string]interface{})
+	if !ok {
+		return fallback
+	}
+
+	username, ok := userMap["username"].(string)
+	if !ok {
+		return fallback
+	}
+
+	return username
+}
+
 // Describe implements the `describe project ...` command
 func (r *ProjectRunner) Describe(in Request) (*Response, error) {
 	logger.Trace()
@@ -69,8 +88,8 @@ func (r *ProjectRunner) Describe(in Request) (*Response, error) {
 		return nil, err
 	}
 
-	createdBy := res.CreatedBy.(map[string]interface{})["username"].(string)
-	updatedBy := res.LastUpdatedBy.(map[string]interface{})["username"].(string)
+	createdBy := extractUsername(res.CreatedBy, "unknown")
+	updatedBy := extractUsername(res.LastUpdatedBy, "unknown")
 
 	output := []string{
 		fmt.Sprintf("Name: %s (%s)", res.Name, res.Id),

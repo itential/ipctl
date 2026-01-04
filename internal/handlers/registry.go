@@ -4,128 +4,100 @@
 
 package handlers
 
-import (
-	"reflect"
+var (
+	registry  []any
+	readers   []Reader
+	writers   []Writer
+	copiers   []Copier
+	editors   []Editor
+	importers []Importer
+	exporters []Exporter
+	controllers []Controller
+	inspectors []Inspector
+	dumpers   []Dumper
+	loaders   []Loader
 )
-
-var registry []any
 
 func register(types ...any) {
 	// FIXME (privateip) this is a short term work around for the fact that the
 	// handler is now loaded multiple times.
-	if len(registry) == 0 {
-		for _, ele := range types {
-			registry = append(registry, ele)
+	if len(registry) > 0 {
+		return
+	}
+
+	registry = types
+
+	// Pre-compute type-specific slices once at initialization
+	for _, ele := range types {
+		if r, ok := ele.(Reader); ok {
+			readers = append(readers, r)
+		}
+		if w, ok := ele.(Writer); ok {
+			writers = append(writers, w)
+		}
+		if c, ok := ele.(Copier); ok {
+			copiers = append(copiers, c)
+		}
+		if e, ok := ele.(Editor); ok {
+			editors = append(editors, e)
+		}
+		if i, ok := ele.(Importer); ok {
+			importers = append(importers, i)
+		}
+		if e, ok := ele.(Exporter); ok {
+			exporters = append(exporters, e)
+		}
+		if c, ok := ele.(Controller); ok {
+			controllers = append(controllers, c)
+		}
+		if i, ok := ele.(Inspector); ok {
+			inspectors = append(inspectors, i)
+		}
+		if d, ok := ele.(Dumper); ok {
+			dumpers = append(dumpers, d)
+		}
+		if l, ok := ele.(Loader); ok {
+			loaders = append(loaders, l)
 		}
 	}
 }
 
 func Readers() []Reader {
-	resource := reflect.TypeOf((*Reader)(nil)).Elem()
-	var resources []Reader
-	for _, ele := range registry {
-		if reflect.TypeOf(ele).Implements(resource) {
-			resources = append(resources, ele.(Reader))
-		}
-	}
-	return resources
+	return readers
 }
 
 func Writers() []Writer {
-	resource := reflect.TypeOf((*Writer)(nil)).Elem()
-	var resources []Writer
-	for _, ele := range registry {
-		if reflect.TypeOf(ele).Implements(resource) {
-			resources = append(resources, ele.(Writer))
-		}
-	}
-	return resources
+	return writers
 }
 
 func Copiers() []Copier {
-	resource := reflect.TypeOf((*Copier)(nil)).Elem()
-	var resources []Copier
-	for _, ele := range registry {
-		if reflect.TypeOf(ele).Implements(resource) {
-			resources = append(resources, ele.(Copier))
-		}
-	}
-	return resources
+	return copiers
 }
 
 func Editors() []Editor {
-	resource := reflect.TypeOf((*Editor)(nil)).Elem()
-	var resources []Editor
-	for _, ele := range registry {
-		if reflect.TypeOf(ele).Implements(resource) {
-			resources = append(resources, ele.(Editor))
-		}
-	}
-	return resources
+	return editors
 }
 
 func Importers() []Importer {
-	resource := reflect.TypeOf((*Importer)(nil)).Elem()
-	var resources []Importer
-	for _, ele := range registry {
-		if reflect.TypeOf(ele).Implements(resource) {
-			resources = append(resources, ele.(Importer))
-		}
-	}
-	return resources
+	return importers
 }
 
 func Exporters() []Exporter {
-	resource := reflect.TypeOf((*Exporter)(nil)).Elem()
-	var resources []Exporter
-	for _, ele := range registry {
-		if reflect.TypeOf(ele).Implements(resource) {
-			resources = append(resources, ele.(Exporter))
-		}
-	}
-	return resources
+	return exporters
 }
 
 func Controllers() []Controller {
-	resource := reflect.TypeOf((*Controller)(nil)).Elem()
-	var resources []Controller
-	for _, ele := range registry {
-		if reflect.TypeOf(ele).Implements(resource) {
-			resources = append(resources, ele.(Controller))
-		}
-	}
-	return resources
+	return controllers
 }
 
 func Inspectors() []Inspector {
-	resource := reflect.TypeOf((*Inspector)(nil)).Elem()
-	var resources []Inspector
-	for _, ele := range registry {
-		if reflect.TypeOf(ele).Implements(resource) {
-			resources = append(resources, ele.(Inspector))
-		}
-	}
-	return resources
+	return inspectors
 }
 
 func Dumpers() []Dumper {
-	res := reflect.TypeOf((*Dumper)(nil)).Elem()
-	var resources []Dumper
-	for _, ele := range registry {
-		if reflect.TypeOf(ele).Implements(res) {
-			resources = append(resources, ele.(Dumper))
-		}
-	}
-	return resources
+	return dumpers
 }
 
 func Loaders() []Loader {
-	res := reflect.TypeOf((*Loader)(nil)).Elem()
-	var resources []Loader
-	for _, ele := range registry {
-		if reflect.TypeOf(ele).Implements(res) {
-			resources = append(resources, ele.(Loader))
-		}
-	}
-	return resources
+	return loaders
 }
