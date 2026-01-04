@@ -12,30 +12,29 @@ import (
 )
 
 type ApiHandler struct {
-	Runner     runners.ApiRunner
-	Runtime    Runtime
-	Descriptor DescriptorMap
+	runner     runners.ApiRunner
+	runtime    *Runtime
+	descriptor DescriptorMap
 }
 
-func NewApiHandler(r Runtime) ApiHandler {
+func NewApiHandler(rt *Runtime) ApiHandler {
 	return ApiHandler{
-		Runner:     runners.NewApiRunner(r.Client),
-		Runtime:    r,
-		Descriptor: r.Descriptors[apiDescriptor],
+		runner:     runners.NewApiRunner(rt.GetClient()),
+		runtime:    rt,
+		descriptor: rt.GetDescriptors()[apiDescriptor],
 	}
-
 }
 
 func (h ApiHandler) newCommand(key string, runner runners.RunnerFunc, options flags.Flagger, opts ...CommandRunnerOption) *cobra.Command {
-	r := NewCommandRunner(
+	cr := NewCommandRunner(
 		key,
-		h.Descriptor,
+		h.descriptor,
 		runner,
-		&h.Runtime,
+		h.runtime,
 		options,
 		opts...,
 	)
-	return NewCommand(r)
+	return NewCommand(cr)
 }
 
 func (h ApiHandler) Commands() []*cobra.Command {
@@ -49,44 +48,44 @@ func (h ApiHandler) Commands() []*cobra.Command {
 	}
 }
 
-// Adds the `api get <path> ...` command
+// Get adds the `api get <path> ...` command.
 func (h ApiHandler) Get() *cobra.Command {
-	cmd := h.newCommand("get", h.Runner.Get, nil)
+	cmd := h.newCommand("get", h.runner.Get, nil)
 	cmd.Args = cobra.ExactArgs(1)
 	return cmd
 }
 
-// Adds the `api delete <path> ...` command
+// Delete adds the `api delete <path> ...` command.
 func (h ApiHandler) Delete() *cobra.Command {
 	options := flags.ApiDeleteOptions{}
-	cmd := h.newCommand("delete", h.Runner.Delete, &options)
+	cmd := h.newCommand("delete", h.runner.Delete, &options)
 	cmd.Args = cobra.ExactArgs(1)
 	options.Flags(cmd)
 	return cmd
 }
 
-// Adds the `api put <path> ...` command
+// Put adds the `api put <path> ...` command.
 func (h ApiHandler) Put() *cobra.Command {
 	options := &flags.ApiPutOptions{}
-	cmd := h.newCommand("put", h.Runner.Put, options)
+	cmd := h.newCommand("put", h.runner.Put, options)
 	cmd.Args = cobra.ExactArgs(1)
 	options.Flags(cmd)
 	return cmd
 }
 
-// Adds the `api post <path> ...` command
+// Post adds the `api post <path> ...` command.
 func (h ApiHandler) Post() *cobra.Command {
 	options := &flags.ApiPostOptions{}
-	cmd := h.newCommand("post", h.Runner.Post, options)
+	cmd := h.newCommand("post", h.runner.Post, options)
 	cmd.Args = cobra.ExactArgs(1)
 	options.Flags(cmd)
 	return cmd
 }
 
-// Adds the `api path <path> ...` command
+// Patch adds the `api patch <path> ...` command.
 func (h ApiHandler) Patch() *cobra.Command {
 	options := &flags.ApiPatchOptions{}
-	cmd := h.newCommand("patch", h.Runner.Post, options)
+	cmd := h.newCommand("patch", h.runner.Post, options)
 	cmd.Args = cobra.ExactArgs(1)
 	options.Flags(cmd)
 	return cmd

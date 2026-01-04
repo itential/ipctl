@@ -5,89 +5,133 @@
 package handlers
 
 import (
-	"github.com/google/uuid"
+	"strings"
+
 	"github.com/itential/ipctl/pkg/client"
 	"github.com/itential/ipctl/pkg/config"
 	"github.com/spf13/cobra"
 )
 
-type Handler struct {
-	Runtime     *Runtime
-	Descriptors Descriptors
+// RuntimeContext defines the interface for what handlers need from runtime.
+// This enables dependency injection and makes handlers testable.
+type RuntimeContext interface {
+	GetClient() client.Client
+	GetConfig() *config.Config
+	GetDescriptors() Descriptors
+	IsVerbose() bool
 }
 
+// Runtime provides the execution context for handlers and commands.
 type Runtime struct {
-	Client      client.Client
-	Config      *config.Config
-	Descriptors Descriptors
-	Verbose     bool
+	client      client.Client
+	config      *config.Config
+	descriptors Descriptors
+	// Verbose is exported to allow flag binding
+	Verbose bool
 }
 
-var commands []any
+// GetClient returns the HTTP client for API communication.
+func (rt Runtime) GetClient() client.Client {
+	return rt.client
+}
 
-func NewRuntime(c client.Client, cfg *config.Config) Runtime {
+// GetConfig returns the application configuration.
+func (rt Runtime) GetConfig() *config.Config {
+	return rt.config
+}
+
+// GetDescriptors returns the command descriptors.
+func (rt Runtime) GetDescriptors() Descriptors {
+	return rt.descriptors
+}
+
+// IsVerbose returns whether verbose output is enabled.
+func (rt Runtime) IsVerbose() bool {
+	return rt.Verbose
+}
+
+// Handler coordinates command creation and manages the handler registry.
+type Handler struct {
+	runtime     *Runtime
+	registry    *Registry
+	descriptors Descriptors
+}
+
+// NewRuntime creates a new Runtime with the given client and configuration.
+// Returns a pointer to enable sharing the runtime across handlers and allowing
+// flag updates to be visible to all commands.
+func NewRuntime(c client.Client, cfg *config.Config) *Runtime {
 	descriptors := loadDescriptors()
-	return Runtime{
-		Client:      c,
-		Config:      cfg,
-		Descriptors: descriptors,
+	return &Runtime{
+		client:      c,
+		config:      cfg,
+		descriptors: descriptors,
 	}
 }
 
-func NewHandler(r Runtime) Handler {
-	descriptors := loadDescriptors()
+// NewHandler creates a new Handler with the given runtime.
+// It initializes all resource handlers and registers them in the handler registry.
+func NewHandler(rt *Runtime) Handler {
+	// Reuse descriptors from runtime instead of reloading
+	descriptors := rt.descriptors
 
-	register(
+	// Create all handlers
+	handlerInstances := []any{
 		// Automation Studio handlers
-		NewProjectHandler(r, descriptors),
-		NewWorkflowHandler(r, descriptors),
-		NewTransformationHandler(r, descriptors),
-		NewJsonFormHandler(r, descriptors),
-		NewCommandTemplateHandler(r, descriptors),
-		NewAnalyticTemplateHandler(r, descriptors),
-		NewTemplateHandler(r, descriptors),
+		NewProjectHandler(rt, descriptors),
+		NewWorkflowHandler(rt, descriptors),
+		NewTransformationHandler(rt, descriptors),
+		NewJsonFormHandler(rt, descriptors),
+		NewCommandTemplateHandler(rt, descriptors),
+		NewAnalyticTemplateHandler(rt, descriptors),
+		NewTemplateHandler(rt, descriptors),
 
 		// Operations Manager Handlers
-		NewAutomationHandler(r, descriptors),
+		NewAutomationHandler(rt, descriptors),
 
 		// Admin Essentials handlers
-		NewAccountHandler(r, descriptors),
-		NewProfileHandler(r, descriptors),
-		NewRoleHandler(r, descriptors),
-		NewRoleTypesHandler(r, descriptors),
-		NewGroupHandler(r, descriptors),
-		NewMethodHandler(r, descriptors),
-		NewViewHandler(r, descriptors),
-		NewPrebuiltHandler(r, descriptors),
-		NewIntegrationModelHandler(r, descriptors),
-		NewIntegrationHandler(r, descriptors),
-		NewAdapterHandler(r, descriptors),
-		NewAdapterModelHandler(r, descriptors),
-		NewTagHandler(r, descriptors),
-		NewApplicationHandler(r, descriptors),
+		NewAccountHandler(rt, descriptors),
+		NewProfileHandler(rt, descriptors),
+		NewRoleHandler(rt, descriptors),
+		NewRoleTypesHandler(rt, descriptors),
+		NewGroupHandler(rt, descriptors),
+		NewMethodHandler(rt, descriptors),
+		NewViewHandler(rt, descriptors),
+		NewPrebuiltHandler(rt, descriptors),
+		NewIntegrationModelHandler(rt, descriptors),
+		NewIntegrationHandler(rt, descriptors),
+		NewAdapterHandler(rt, descriptors),
+		NewAdapterModelHandler(rt, descriptors),
+		NewTagHandler(rt, descriptors),
+		NewApplicationHandler(rt, descriptors),
 
 		// Configuration Manager handlers
-		NewDeviceHandler(r, descriptors),
-		NewDeviceGroupHandler(r, descriptors),
-		NewConfigurationParserHandler(r, descriptors),
-		NewGoldenConfigHandler(r, descriptors),
+		NewDeviceHandler(rt, descriptors),
+		NewDeviceGroupHandler(rt, descriptors),
+		NewConfigurationParserHandler(rt, descriptors),
+		NewGoldenConfigHandler(rt, descriptors),
 
 		// Lifecycle Manager handlers
-		NewModelHandler(r, descriptors),
+		NewModelHandler(rt, descriptors),
 
-		NewServerHandler(r, descriptors),
-	)
+		NewServerHandler(rt, descriptors),
+	}
+
+	// Create instance-based registry
+	registry := NewRegistry(handlerInstances)
 
 	return Handler{
-		Runtime:     &r,
-		Descriptors: descriptors,
+		runtime:     rt,
+		registry:    registry,
+		descriptors: descriptors,
 	}
 }
 
+// GetCommands returns all 'get' commands from registered handlers.
 func (h Handler) GetCommands() []*cobra.Command {
 	var commands []*cobra.Command
-	for _, ele := range Readers() {
-		cmd := ele.Get(h.Runtime)
+	for _, ele := range h.registry.Readers() {
+		cmd := ele.Get(h.runtime)
 		if cmd != nil {
 			commands = append(commands, cmd)
 		}
@@ -95,10 +139,11 @@ func (h Handler) GetCommands() []*cobra.Command {
 	return commands
 }
 
+// DescribeCommands returns all 'describe' commands from registered handlers.
 func (h Handler) DescribeCommands() []*cobra.Command {
 	var commands []*cobra.Command
-	for _, ele := range Readers() {
-		cmd := ele.Describe(h.Runtime)
+	for _, ele := range h.registry.Readers() {
+		cmd := ele.Describe(h.runtime)
 		if cmd != nil {
 			commands = append(commands, cmd)
 		}
@@ -106,18 +151,21 @@ func (h Handler) DescribeCommands() []*cobra.Command {
 	return commands
 }
 
+// AddCommandGroup adds a command group with a deterministic ID based on the title.
 func (h Handler) AddCommandGroup(cmd *cobra.Command, title string, f func(Handler, string) []*cobra.Command) {
-	id := uuid.New().String()
+	// Use deterministic ID based on title instead of random UUID
+	id := strings.ToLower(strings.ReplaceAll(title, " ", "-"))
 	cmd.AddGroup(&cobra.Group{ID: id, Title: title})
 	for _, ele := range f(h, id) {
 		cmd.AddCommand(ele)
 	}
 }
 
+// CreateCommands returns all 'create' commands from registered handlers.
 func (h Handler) CreateCommands() []*cobra.Command {
 	var commands []*cobra.Command
-	for _, ele := range Writers() {
-		cmd := ele.Create(h.Runtime)
+	for _, ele := range h.registry.Writers() {
+		cmd := ele.Create(h.runtime)
 		if cmd != nil {
 			commands = append(commands, cmd)
 		}
@@ -125,10 +173,11 @@ func (h Handler) CreateCommands() []*cobra.Command {
 	return commands
 }
 
+// DeleteCommands returns all 'delete' commands from registered handlers.
 func (h Handler) DeleteCommands() []*cobra.Command {
 	var commands []*cobra.Command
-	for _, ele := range Writers() {
-		cmd := ele.Delete(h.Runtime)
+	for _, ele := range h.registry.Writers() {
+		cmd := ele.Delete(h.runtime)
 		if cmd != nil {
 			commands = append(commands, cmd)
 		}
@@ -136,10 +185,11 @@ func (h Handler) DeleteCommands() []*cobra.Command {
 	return commands
 }
 
+// CopyCommands returns all 'copy' commands from registered handlers.
 func (h Handler) CopyCommands() []*cobra.Command {
 	var commands []*cobra.Command
-	for _, ele := range Copiers() {
-		cmd := ele.Copy(h.Runtime)
+	for _, ele := range h.registry.Copiers() {
+		cmd := ele.Copy(h.runtime)
 		if cmd != nil {
 			commands = append(commands, cmd)
 		}
@@ -147,10 +197,11 @@ func (h Handler) CopyCommands() []*cobra.Command {
 	return commands
 }
 
+// ClearCommands returns all 'clear' commands from registered handlers.
 func (h Handler) ClearCommands() []*cobra.Command {
 	var commands []*cobra.Command
-	for _, ele := range Writers() {
-		cmd := ele.Clear(h.Runtime)
+	for _, ele := range h.registry.Writers() {
+		cmd := ele.Clear(h.runtime)
 		if cmd != nil {
 			commands = append(commands, cmd)
 		}
@@ -158,10 +209,11 @@ func (h Handler) ClearCommands() []*cobra.Command {
 	return commands
 }
 
+// ImportCommands returns all 'import' commands from registered handlers.
 func (h Handler) ImportCommands() []*cobra.Command {
 	var commands []*cobra.Command
-	for _, ele := range Importers() {
-		cmd := ele.Import(h.Runtime)
+	for _, ele := range h.registry.Importers() {
+		cmd := ele.Import(h.runtime)
 		if cmd != nil {
 			commands = append(commands, cmd)
 		}
@@ -169,10 +221,11 @@ func (h Handler) ImportCommands() []*cobra.Command {
 	return commands
 }
 
+// ExportCommands returns all 'export' commands from registered handlers.
 func (h Handler) ExportCommands() []*cobra.Command {
 	var commands []*cobra.Command
-	for _, ele := range Exporters() {
-		cmd := ele.Export(h.Runtime)
+	for _, ele := range h.registry.Exporters() {
+		cmd := ele.Export(h.runtime)
 		if cmd != nil {
 			commands = append(commands, cmd)
 		}
@@ -180,10 +233,11 @@ func (h Handler) ExportCommands() []*cobra.Command {
 	return commands
 }
 
+// StartCommands returns all 'start' commands from registered handlers.
 func (h Handler) StartCommands() []*cobra.Command {
 	var commands []*cobra.Command
-	for _, ele := range Controllers() {
-		cmd := ele.Start(h.Runtime)
+	for _, ele := range h.registry.Controllers() {
+		cmd := ele.Start(h.runtime)
 		if cmd != nil {
 			commands = append(commands, cmd)
 		}
@@ -191,10 +245,11 @@ func (h Handler) StartCommands() []*cobra.Command {
 	return commands
 }
 
+// StopCommands returns all 'stop' commands from registered handlers.
 func (h Handler) StopCommands() []*cobra.Command {
 	var commands []*cobra.Command
-	for _, ele := range Controllers() {
-		cmd := ele.Stop(h.Runtime)
+	for _, ele := range h.registry.Controllers() {
+		cmd := ele.Stop(h.runtime)
 		if cmd != nil {
 			commands = append(commands, cmd)
 		}
@@ -202,10 +257,11 @@ func (h Handler) StopCommands() []*cobra.Command {
 	return commands
 }
 
+// RestartCommands returns all 'restart' commands from registered handlers.
 func (h Handler) RestartCommands() []*cobra.Command {
 	var commands []*cobra.Command
-	for _, ele := range Controllers() {
-		cmd := ele.Restart(h.Runtime)
+	for _, ele := range h.registry.Controllers() {
+		cmd := ele.Restart(h.runtime)
 		if cmd != nil {
 			commands = append(commands, cmd)
 		}
@@ -213,10 +269,11 @@ func (h Handler) RestartCommands() []*cobra.Command {
 	return commands
 }
 
+// InspectCommands returns all 'inspect' commands from registered handlers.
 func (h Handler) InspectCommands() []*cobra.Command {
 	var commands []*cobra.Command
-	for _, ele := range Inspectors() {
-		cmd := ele.Inspect(h.Runtime)
+	for _, ele := range h.registry.Inspectors() {
+		cmd := ele.Inspect(h.runtime)
 		if cmd != nil {
 			commands = append(commands, cmd)
 		}
@@ -224,10 +281,11 @@ func (h Handler) InspectCommands() []*cobra.Command {
 	return commands
 }
 
+// EditCommands returns all 'edit' commands from registered handlers.
 func (h Handler) EditCommands() []*cobra.Command {
 	var commands []*cobra.Command
-	for _, ele := range Editors() {
-		cmd := ele.Edit(h.Runtime)
+	for _, ele := range h.registry.Editors() {
+		cmd := ele.Edit(h.runtime)
 		if cmd != nil {
 			commands = append(commands, cmd)
 		}
@@ -235,10 +293,11 @@ func (h Handler) EditCommands() []*cobra.Command {
 	return commands
 }
 
+// DumpCommands returns all 'dump' commands from registered handlers.
 func (h Handler) DumpCommands() []*cobra.Command {
 	var commands []*cobra.Command
-	for _, ele := range Dumpers() {
-		cmd := ele.Dump(h.Runtime)
+	for _, ele := range h.registry.Dumpers() {
+		cmd := ele.Dump(h.runtime)
 		if cmd != nil {
 			commands = append(commands, cmd)
 		}
@@ -246,10 +305,11 @@ func (h Handler) DumpCommands() []*cobra.Command {
 	return commands
 }
 
+// LoadCommands returns all 'load' commands from registered handlers.
 func (h Handler) LoadCommands() []*cobra.Command {
 	var commands []*cobra.Command
-	for _, ele := range Loaders() {
-		cmd := ele.Load(h.Runtime)
+	for _, ele := range h.registry.Loaders() {
+		cmd := ele.Load(h.runtime)
 		if cmd != nil {
 			commands = append(commands, cmd)
 		}

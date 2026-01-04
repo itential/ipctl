@@ -4,8 +4,10 @@
 
 package handlers
 
-var (
-	registry    []any
+// Registry holds categorized handlers for different command types.
+// This is an instance-based registry that avoids global mutable state,
+// making the code thread-safe and testable.
+type Registry struct {
 	readers     []Reader
 	writers     []Writer
 	copiers     []Copier
@@ -16,88 +18,96 @@ var (
 	inspectors  []Inspector
 	dumpers     []Dumper
 	loaders     []Loader
-)
+}
 
-func register(types ...any) {
-	// FIXME (privateip) this is a short term work around for the fact that the
-	// handler is now loaded multiple times.
-	if len(registry) > 0 {
-		return
-	}
+// NewRegistry creates and populates a new handler registry.
+// It categorizes handlers by their supported interfaces using type assertions.
+func NewRegistry(handlers []any) *Registry {
+	r := &Registry{}
 
-	registry = types
-
-	// Pre-compute type-specific slices once at initialization
-	for _, ele := range types {
-		if r, ok := ele.(Reader); ok {
-			readers = append(readers, r)
+	for _, handler := range handlers {
+		if reader, ok := handler.(Reader); ok {
+			r.readers = append(r.readers, reader)
 		}
-		if w, ok := ele.(Writer); ok {
-			writers = append(writers, w)
+		if writer, ok := handler.(Writer); ok {
+			r.writers = append(r.writers, writer)
 		}
-		if c, ok := ele.(Copier); ok {
-			copiers = append(copiers, c)
+		if copier, ok := handler.(Copier); ok {
+			r.copiers = append(r.copiers, copier)
 		}
-		if e, ok := ele.(Editor); ok {
-			editors = append(editors, e)
+		if editor, ok := handler.(Editor); ok {
+			r.editors = append(r.editors, editor)
 		}
-		if i, ok := ele.(Importer); ok {
-			importers = append(importers, i)
+		if importer, ok := handler.(Importer); ok {
+			r.importers = append(r.importers, importer)
 		}
-		if e, ok := ele.(Exporter); ok {
-			exporters = append(exporters, e)
+		if exporter, ok := handler.(Exporter); ok {
+			r.exporters = append(r.exporters, exporter)
 		}
-		if c, ok := ele.(Controller); ok {
-			controllers = append(controllers, c)
+		if controller, ok := handler.(Controller); ok {
+			r.controllers = append(r.controllers, controller)
 		}
-		if i, ok := ele.(Inspector); ok {
-			inspectors = append(inspectors, i)
+		if inspector, ok := handler.(Inspector); ok {
+			r.inspectors = append(r.inspectors, inspector)
 		}
-		if d, ok := ele.(Dumper); ok {
-			dumpers = append(dumpers, d)
+		if dumper, ok := handler.(Dumper); ok {
+			r.dumpers = append(r.dumpers, dumper)
 		}
-		if l, ok := ele.(Loader); ok {
-			loaders = append(loaders, l)
+		if loader, ok := handler.(Loader); ok {
+			r.loaders = append(r.loaders, loader)
 		}
 	}
+
+	return r
 }
 
-func Readers() []Reader {
-	return readers
+// Readers returns a copy of all registered Reader handlers.
+// Returns a copy to prevent external mutation of the registry.
+func (r *Registry) Readers() []Reader {
+	return append([]Reader(nil), r.readers...)
 }
 
-func Writers() []Writer {
-	return writers
+// Writers returns a copy of all registered Writer handlers.
+func (r *Registry) Writers() []Writer {
+	return append([]Writer(nil), r.writers...)
 }
 
-func Copiers() []Copier {
-	return copiers
+// Copiers returns a copy of all registered Copier handlers.
+func (r *Registry) Copiers() []Copier {
+	return append([]Copier(nil), r.copiers...)
 }
 
-func Editors() []Editor {
-	return editors
+// Editors returns a copy of all registered Editor handlers.
+func (r *Registry) Editors() []Editor {
+	return append([]Editor(nil), r.editors...)
 }
 
-func Importers() []Importer {
-	return importers
+// Importers returns a copy of all registered Importer handlers.
+func (r *Registry) Importers() []Importer {
+	return append([]Importer(nil), r.importers...)
 }
 
-func Exporters() []Exporter {
-	return exporters
+// Exporters returns a copy of all registered Exporter handlers.
+func (r *Registry) Exporters() []Exporter {
+	return append([]Exporter(nil), r.exporters...)
 }
 
-func Controllers() []Controller {
-	return controllers
+// Controllers returns a copy of all registered Controller handlers.
+func (r *Registry) Controllers() []Controller {
+	return append([]Controller(nil), r.controllers...)
 }
 
-func Inspectors() []Inspector {
-	return inspectors
+// Inspectors returns a copy of all registered Inspector handlers.
+func (r *Registry) Inspectors() []Inspector {
+	return append([]Inspector(nil), r.inspectors...)
 }
 
-func Dumpers() []Dumper {
-	return dumpers
+// Dumpers returns a copy of all registered Dumper handlers.
+func (r *Registry) Dumpers() []Dumper {
+	return append([]Dumper(nil), r.dumpers...)
 }
 
-func Loaders() []Loader {
-	return loaders
+// Loaders returns a copy of all registered Loader handlers.
+func (r *Registry) Loaders() []Loader {
+	return append([]Loader(nil), r.loaders...)
 }

@@ -8,9 +8,9 @@ import (
 	"github.com/itential/ipctl/internal/runners"
 )
 
-func NewAdapterModelHandler(r Runtime, desc Descriptors) AssetHandler {
+func NewAdapterModelHandler(rt *Runtime, desc Descriptors) AssetHandler {
 	return NewAssetHandler(
-		runners.NewAdapterModelRunner(r.Client, r.Config),
+		runners.NewAdapterModelRunner(rt.GetClient(), rt.GetConfig()),
 		desc[adapterModels],
 		nil,
 	)

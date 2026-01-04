@@ -9,9 +9,9 @@ import (
 	"github.com/itential/ipctl/internal/runners"
 )
 
-func NewCommandTemplateHandler(r Runtime, desc Descriptors) AssetHandler {
+func NewCommandTemplateHandler(rt *Runtime, desc Descriptors) AssetHandler {
 	return NewAssetHandler(
-		runners.NewCommandTemplateRunner(r.Client, r.Config),
+		runners.NewCommandTemplateRunner(rt.GetClient(), rt.GetConfig()),
 		desc[commandTemplatesDescriptor],
 		&AssetHandlerFlags{
 			Get: &flags.CommandTemplateGetOptions{},

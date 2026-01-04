@@ -9,9 +9,9 @@ import (
 	"github.com/itential/ipctl/internal/runners"
 )
 
-func NewAnalyticTemplateHandler(r Runtime, desc Descriptors) AssetHandler {
+func NewAnalyticTemplateHandler(rt *Runtime, desc Descriptors) AssetHandler {
 	return NewAssetHandler(
-		runners.NewAnalyticTemplateRunner(r.Client, r.Config),
+		runners.NewAnalyticTemplateRunner(rt.GetClient(), rt.GetConfig()),
 		desc[analyticTemplatesDescriptor],
 		&AssetHandlerFlags{
 			Get: &flags.AnalyticTemplateGetOptions{},

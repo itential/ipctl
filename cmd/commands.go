@@ -8,7 +8,6 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/google/uuid"
 	"github.com/itential/ipctl/internal/cmdutils"
 	"github.com/itential/ipctl/internal/handlers"
 	"github.com/itential/ipctl/pkg/logger"
@@ -22,12 +21,13 @@ type RootCommand struct {
 	Descriptor string
 }
 
-// addRootCommand adds a new top level command to the application.  Root
+// addRootCommand adds a new top level command to the application. Root
 // commands typically do not implement functionality, rather provide a command
 // tree for more specific commands.
-func addRootCommand(cmd *cobra.Command, r handlers.Runtime, title string, f func(handlers.Runtime, string) []*cobra.Command) {
-	id := uuid.New().String()
-	children := f(r, id)
+func addRootCommand(cmd *cobra.Command, rt *handlers.Runtime, title string, f func(*handlers.Runtime, string) []*cobra.Command) {
+	// Use deterministic ID based on title instead of random UUID
+	id := strings.ToLower(strings.ReplaceAll(title, " ", "-"))
+	children := f(rt, id)
 	if len(children) > 0 {
 		cmd.AddGroup(&cobra.Group{ID: id, Title: title})
 		for _, ele := range children {
@@ -36,9 +36,9 @@ func addRootCommand(cmd *cobra.Command, r handlers.Runtime, title string, f func
 	}
 }
 
-// makeRootCommand will create a new root command for the application.  Root
-// commands are top level commands that implement addiitonal subcommands and
-// therefore do not direclty perform any actions.  The function accepts a
+// makeRootCommand will create a new root command for the application. Root
+// commands are top level commands that implement additional subcommands and
+// therefore do not directly perform any actions. The function accepts a
 // single argument `rootCommands` which is an array of RootCommand instances.
 func makeRootCommand(rootCommands []RootCommand) []*cobra.Command {
 	descriptors := cmdutils.LoadDescriptorsFromContent("descriptors", &content)
@@ -96,9 +96,9 @@ func makeChildCommand(root RootCommand, desc map[string]cmdutils.Descriptor) *co
 	return cmd
 }
 
-// assetCommands define the aggregate set of commands for working with assets
-func assetCommands(r handlers.Runtime, id string) []*cobra.Command {
-	h := handlers.NewHandler(r)
+// assetCommands define the aggregate set of commands for working with assets.
+func assetCommands(rt *handlers.Runtime, id string) []*cobra.Command {
+	h := handlers.NewHandler(rt)
 	return makeRootCommand([]RootCommand{
 		RootCommand{"get", id, h.GetCommands, "asset"},
 		RootCommand{"describe", id, h.DescribeCommands, "asset"},
@@ -118,10 +118,10 @@ func assetCommands(r handlers.Runtime, id string) []*cobra.Command {
 }
 
 // platformCommands define the set of commands that can be performed on a
-// speific server instance.
-func platformCommands(r handlers.Runtime, id string) []*cobra.Command {
-	apiHandler := handlers.NewApiHandler(r)
-	h := handlers.NewHandler(r)
+// specific server instance.
+func platformCommands(rt *handlers.Runtime, id string) []*cobra.Command {
+	apiHandler := handlers.NewApiHandler(rt)
+	h := handlers.NewHandler(rt)
 
 	return makeRootCommand([]RootCommand{
 		RootCommand{"api", id, apiHandler.Commands, "platform"},
@@ -133,9 +133,9 @@ func platformCommands(r handlers.Runtime, id string) []*cobra.Command {
 }
 
 // datasetCommands provide a set of commands for performing batch operations on
-// specific asset types
-func datasetCommands(r handlers.Runtime, id string) []*cobra.Command {
-	h := handlers.NewHandler(r)
+// specific asset types.
+func datasetCommands(rt *handlers.Runtime, id string) []*cobra.Command {
+	h := handlers.NewHandler(rt)
 	return makeRootCommand([]RootCommand{
 		RootCommand{"load", id, h.LoadCommands, "dataset"},
 		RootCommand{"dump", id, h.DumpCommands, "dataset"},
@@ -144,9 +144,9 @@ func datasetCommands(r handlers.Runtime, id string) []*cobra.Command {
 
 // pluginCommands are commands that extend the functionality of the
 // application.
-func pluginCommands(r handlers.Runtime, id string) []*cobra.Command {
-	localAAAHandler := handlers.NewLocalAAAHandler(r)
-	localClientHandler := handlers.NewLocalClientHandler(r)
+func pluginCommands(rt *handlers.Runtime, id string) []*cobra.Command {
+	localAAAHandler := handlers.NewLocalAAAHandler(rt)
+	localClientHandler := handlers.NewLocalClientHandler(rt)
 
 	return makeRootCommand([]RootCommand{
 		RootCommand{"local-aaa", id, localAAAHandler.Commands, "localaaa"},

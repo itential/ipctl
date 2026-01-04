@@ -8,9 +8,9 @@ import (
 	"github.com/itential/ipctl/internal/runners"
 )
 
-func NewGoldenConfigHandler(r Runtime, desc Descriptors) AssetHandler {
+func NewGoldenConfigHandler(rt *Runtime, desc Descriptors) AssetHandler {
 	return NewAssetHandler(
-		runners.NewGoldenConfigRunner(r.Client, r.Config),
+		runners.NewGoldenConfigRunner(rt.GetClient(), rt.GetConfig()),
 		desc[gctreesDescriptor],
 		nil,
 	)

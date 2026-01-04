@@ -12,33 +12,33 @@ import (
 )
 
 type LocalClientHandler struct {
-	Runner     runners.LocalClientRunner
-	Runtime    Runtime
-	Descriptor DescriptorMap
+	runner     runners.LocalClientRunner
+	runtime    *Runtime
+	descriptor DescriptorMap
 }
 
-func NewLocalClientHandler(r Runtime) LocalClientHandler {
+func NewLocalClientHandler(rt *Runtime) LocalClientHandler {
 	return LocalClientHandler{
-		Runner:     runners.NewLocalClientRunner(r.Client, r.Config),
-		Runtime:    r,
-		Descriptor: r.Descriptors[localClientDescriptor],
+		runner:     runners.NewLocalClientRunner(rt.GetClient(), rt.GetConfig()),
+		runtime:    rt,
+		descriptor: rt.GetDescriptors()[localClientDescriptor],
 	}
-
 }
 
 func (h LocalClientHandler) newCommand(key string, runner runners.RunnerFunc, options flags.Flagger, opts ...CommandRunnerOption) *cobra.Command {
-	r := NewCommandRunner(
+	cr := NewCommandRunner(
 		key,
-		h.Descriptor,
+		h.descriptor,
 		runner,
-		&h.Runtime,
+		h.runtime,
 		nil,
 		opts...,
 	)
-	r.Options = options
-	return NewCommand(r)
+	cr.Options = options
+	return NewCommand(cr)
 }
 
+// Commands returns a list of commands for the local client handler.
 func (h LocalClientHandler) Commands() []*cobra.Command {
 	logger.Trace()
 	return []*cobra.Command{
@@ -46,7 +46,8 @@ func (h LocalClientHandler) Commands() []*cobra.Command {
 	}
 }
 
+// Show returns the show-config command.
 func (h LocalClientHandler) Show() *cobra.Command {
 	logger.Trace()
-	return h.newCommand("show-config", h.Runner.ShowConfig, nil)
+	return h.newCommand("show-config", h.runner.ShowConfig, nil)
 }
