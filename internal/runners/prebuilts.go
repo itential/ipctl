@@ -21,14 +21,14 @@ import (
 )
 
 type PrebuiltRunner struct {
-	config  *config.Config
+	BaseRunner
 	service *services.PrebuiltService
 	client  client.Client
 }
 
 func NewPrebuiltRunner(client client.Client, cfg *config.Config) *PrebuiltRunner {
 	return &PrebuiltRunner{
-		config:  cfg,
+		BaseRunner: NewBaseRunner(client, cfg),
 		client:  client,
 		service: services.NewPrebuiltService(client),
 	}

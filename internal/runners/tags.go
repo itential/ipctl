@@ -18,14 +18,14 @@ import (
 )
 
 type TagRunner struct {
-	config  *config.Config
+	BaseRunner
 	service *services.TagService
 }
 
 func NewTagRunner(client client.Client, cfg *config.Config) *TagRunner {
 	return &TagRunner{
-		config:  cfg,
-		service: services.NewTagService(client),
+		BaseRunner: NewBaseRunner(client, cfg),
+		service:    services.NewTagService(client),
 	}
 }
 

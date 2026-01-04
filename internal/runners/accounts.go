@@ -14,13 +14,13 @@ import (
 )
 
 type AccountRunner struct {
-	config  *config.Config
+	BaseRunner
 	service *services.AccountService
 }
 
 func NewAccountRunner(client client.Client, cfg *config.Config) *AccountRunner {
 	return &AccountRunner{
-		config:  cfg,
+		BaseRunner: NewBaseRunner(client, cfg),
 		service: services.NewAccountService(client),
 	}
 }

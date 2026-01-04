@@ -15,7 +15,7 @@ import (
 )
 
 type ApplicationRunner struct {
-	config  *config.Config
+	BaseRunner
 	client  client.Client
 	service *services.ApplicationService
 }
@@ -23,7 +23,7 @@ type ApplicationRunner struct {
 func NewApplicationRunner(c client.Client, cfg *config.Config) *ApplicationRunner {
 	return &ApplicationRunner{
 		service: services.NewApplicationService(c),
-		config:  cfg,
+		BaseRunner: NewBaseRunner(c, cfg),
 		client:  c,
 	}
 }

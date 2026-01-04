@@ -22,14 +22,14 @@ const (
 )
 
 type JsonFormRunner struct {
-	config  *config.Config
+	BaseRunner
 	service *services.JsonFormService
 }
 
 func NewJsonFormRunner(c client.Client, cfg *config.Config) *JsonFormRunner {
 	return &JsonFormRunner{
 		service: services.NewJsonFormService(c),
-		config:  cfg,
+		BaseRunner: NewBaseRunner(c, cfg),
 	}
 }
 

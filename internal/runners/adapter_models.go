@@ -12,14 +12,14 @@ import (
 )
 
 type AdapterModelRunner struct {
-	config  *config.Config
+	BaseRunner
 	service *services.AdapterModelService
 }
 
 func NewAdapterModelRunner(c client.Client, cfg *config.Config) *AdapterModelRunner {
 	return &AdapterModelRunner{
 		service: services.NewAdapterModelService(c),
-		config:  cfg,
+		BaseRunner: NewBaseRunner(c, cfg),
 	}
 }
 

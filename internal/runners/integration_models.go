@@ -14,14 +14,14 @@ import (
 )
 
 type IntegrationModelRunner struct {
-	config  *config.Config
+	BaseRunner
 	service *services.IntegrationModelService
 }
 
 func NewIntegrationModelRunner(c client.Client, cfg *config.Config) *IntegrationModelRunner {
 	return &IntegrationModelRunner{
 		service: services.NewIntegrationModelService(c),
-		config:  cfg,
+		BaseRunner: NewBaseRunner(c, cfg),
 	}
 }
 

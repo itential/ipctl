@@ -13,13 +13,13 @@ import (
 )
 
 type LocalClientRunner struct {
-	config *config.Config
+	BaseRunner
 	client client.Client
 }
 
 func NewLocalClientRunner(client client.Client, cfg *config.Config) LocalClientRunner {
 	return LocalClientRunner{
-		config: cfg,
+		BaseRunner: NewBaseRunner(client, cfg),
 		client: client,
 	}
 }

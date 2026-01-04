@@ -21,14 +21,14 @@ import (
 )
 
 type ModelRunner struct {
-	config  *config.Config
+	BaseRunner
 	service *services.ModelService
 	client  client.Client
 }
 
 func NewModelRunner(client client.Client, cfg *config.Config) *ModelRunner {
 	return &ModelRunner{
-		config:  cfg,
+		BaseRunner: NewBaseRunner(client, cfg),
 		service: services.NewModelService(client),
 		client:  client,
 	}

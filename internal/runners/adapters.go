@@ -22,7 +22,7 @@ import (
 )
 
 type AdapterRunner struct {
-	config  *config.Config
+	BaseRunner
 	client  client.Client
 	service *services.AdapterService
 }
@@ -30,7 +30,7 @@ type AdapterRunner struct {
 func NewAdapterRunner(c client.Client, cfg *config.Config) *AdapterRunner {
 	return &AdapterRunner{
 		service: services.NewAdapterService(c),
-		config:  cfg,
+		BaseRunner: NewBaseRunner(c, cfg),
 		client:  c,
 	}
 }

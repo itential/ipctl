@@ -19,14 +19,14 @@ import (
 )
 
 type ProfileRunner struct {
-	config  *config.Config
+	BaseRunner
 	service *services.ProfileService
 	client  client.Client
 }
 
 func NewProfileRunner(client client.Client, cfg *config.Config) *ProfileRunner {
 	return &ProfileRunner{
-		config:  cfg,
+		BaseRunner: NewBaseRunner(client, cfg),
 		service: services.NewProfileService(client),
 		client:  client,
 	}

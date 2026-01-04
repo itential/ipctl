@@ -14,13 +14,13 @@ import (
 )
 
 type ConfigurationParserRunner struct {
-	config  *config.Config
+	BaseRunner
 	service *services.ConfigurationParserService
 }
 
 func NewConfigurationParserRunner(client client.Client, cfg *config.Config) *ConfigurationParserRunner {
 	return &ConfigurationParserRunner{
-		config:  cfg,
+		BaseRunner: NewBaseRunner(client, cfg),
 		service: services.NewConfigurationParserService(client),
 	}
 }

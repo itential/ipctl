@@ -13,7 +13,7 @@ import (
 
 type ViewRunner struct {
 	service *services.ViewService
-	config  *config.Config
+	BaseRunner
 }
 
 func NewViewRunner(client client.Client, cfg *config.Config) *ViewRunner {

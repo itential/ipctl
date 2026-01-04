@@ -20,13 +20,13 @@ import (
 
 type TemplateRunner struct {
 	service *services.TemplateService
-	config  *config.Config
+	BaseRunner
 }
 
 func NewTemplateRunner(c client.Client, cfg *config.Config) *TemplateRunner {
 	return &TemplateRunner{
 		service: services.NewTemplateService(c),
-		config:  cfg,
+		BaseRunner: NewBaseRunner(c, cfg),
 	}
 }
 

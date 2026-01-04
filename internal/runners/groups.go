@@ -18,13 +18,13 @@ import (
 
 type GroupRunner struct {
 	service *services.GroupService
-	config  *config.Config
+	BaseRunner
 }
 
 func NewGroupRunner(c client.Client, cfg *config.Config) *GroupRunner {
 	return &GroupRunner{
 		service: services.NewGroupService(c),
-		config:  cfg,
+		BaseRunner: NewBaseRunner(c, cfg),
 	}
 }
 
