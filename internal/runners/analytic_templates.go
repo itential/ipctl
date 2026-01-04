@@ -19,13 +19,13 @@ import (
 
 type AnalyticTemplateRunner struct {
 	service *services.AnalyticTemplateService
-	config  *config.Config
+	BaseRunner
 }
 
 func NewAnalyticTemplateRunner(c client.Client, cfg *config.Config) *AnalyticTemplateRunner {
 	return &AnalyticTemplateRunner{
 		service: services.NewAnalyticTemplateService(c),
-		config:  cfg,
+		BaseRunner: NewBaseRunner(c, cfg),
 	}
 }
 

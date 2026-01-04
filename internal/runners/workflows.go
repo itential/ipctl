@@ -19,13 +19,13 @@ import (
 )
 
 type WorkflowRunner struct {
-	config  *config.Config
+	BaseRunner
 	service *services.WorkflowService
 }
 
 func NewWorkflowRunner(c client.Client, cfg *config.Config) *WorkflowRunner {
 	return &WorkflowRunner{
-		config:  cfg,
+		BaseRunner: NewBaseRunner(c, cfg),
 		service: services.NewWorkflowService(c),
 	}
 }

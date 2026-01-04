@@ -18,7 +18,7 @@ import (
 )
 
 type IntegrationRunner struct {
-	config  *config.Config
+	BaseRunner
 	client  client.Client
 	service *services.IntegrationService
 }
@@ -27,7 +27,7 @@ func NewIntegrationRunner(c client.Client, cfg *config.Config) *IntegrationRunne
 	return &IntegrationRunner{
 		service: services.NewIntegrationService(c),
 		client:  c,
-		config:  cfg,
+		BaseRunner: NewBaseRunner(c, cfg),
 	}
 }
 

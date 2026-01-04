@@ -19,13 +19,13 @@ import (
 
 type CommandTemplateRunner struct {
 	service *services.CommandTemplateService
-	config  *config.Config
+	BaseRunner
 }
 
 func NewCommandTemplateRunner(c client.Client, cfg *config.Config) *CommandTemplateRunner {
 	return &CommandTemplateRunner{
 		service: services.NewCommandTemplateService(c),
-		config:  cfg,
+		BaseRunner: NewBaseRunner(c, cfg),
 	}
 }
 

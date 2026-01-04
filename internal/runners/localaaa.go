@@ -15,7 +15,7 @@ import (
 )
 
 type LocalAAARunner struct {
-	config  *config.Config
+	BaseRunner
 	service localaaa.LocalAAAService
 }
 
@@ -49,7 +49,7 @@ func NewLocalAAARunner(client client.Client, cfg *config.Config) LocalAAARunner 
 		}
 	*/
 
-	runner := LocalAAARunner{config: cfg}
+	runner := LocalAAARunner{BaseRunner: NewBaseRunner(client, cfg)}
 
 	if mongoUrl != "" {
 		logger.Info("mongo url is %s", mongoUrl)

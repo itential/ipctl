@@ -15,13 +15,13 @@ import (
 )
 
 type DeviceRunner struct {
-	config  *config.Config
+	BaseRunner
 	service *services.DeviceService
 }
 
 func NewDeviceRunner(client client.Client, cfg *config.Config) *DeviceRunner {
 	return &DeviceRunner{
-		config:  cfg,
+		BaseRunner: NewBaseRunner(client, cfg),
 		service: services.NewDeviceService(client),
 	}
 }

@@ -12,14 +12,14 @@ import (
 )
 
 type ServerRunner struct {
-	config  *config.Config
+	BaseRunner
 	service *services.HealthService
 }
 
 func NewServerRunner(c client.Client, cfg *config.Config) *ServerRunner {
 	return &ServerRunner{
 		service: services.NewHealthService(c),
-		config:  cfg,
+		BaseRunner: NewBaseRunner(c, cfg),
 	}
 }
 

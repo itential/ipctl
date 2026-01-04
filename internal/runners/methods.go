@@ -13,7 +13,7 @@ import (
 
 type MethodRunner struct {
 	service *services.MethodService
-	config  *config.Config
+	BaseRunner
 }
 
 func NewMethodRunner(client client.Client, cfg *config.Config) *MethodRunner {

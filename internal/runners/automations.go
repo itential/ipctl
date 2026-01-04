@@ -20,7 +20,7 @@ import (
 )
 
 type AutomationRunner struct {
-	config    *config.Config
+	BaseRunner
 	client    client.Client
 	service   *services.AutomationService
 	workflows *services.AutomationService
@@ -29,7 +29,7 @@ type AutomationRunner struct {
 
 func NewAutomationRunner(c client.Client, cfg *config.Config) *AutomationRunner {
 	return &AutomationRunner{
-		config:    cfg,
+		BaseRunner: NewBaseRunner(c, cfg),
 		client:    c,
 		service:   services.NewAutomationService(c),
 		workflows: services.NewAutomationService(c),

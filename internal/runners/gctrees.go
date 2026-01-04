@@ -17,13 +17,13 @@ import (
 )
 
 type GoldenConfigRunner struct {
-	config  *config.Config
+	BaseRunner
 	service *services.GoldenConfigService
 }
 
 func NewGoldenConfigRunner(client client.Client, cfg *config.Config) *GoldenConfigRunner {
 	return &GoldenConfigRunner{
-		config:  cfg,
+		BaseRunner: NewBaseRunner(client, cfg),
 		service: services.NewGoldenConfigService(client),
 	}
 }
