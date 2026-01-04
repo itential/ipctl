@@ -101,11 +101,8 @@ func (svc *GroupService) Get(id string) (*Group, error) {
 
 }
 
-// GetByName attempts to find a group based on the group name.  The requirement
-// argument `name` should specify the group name to find.  This function will
-// iterate through all of the configured authorization gropus and return one
-// that matches the same name.  If the group does not exist, this function will
-// return an error
+// GetByName retrieves a group by name using client-side filtering.
+// DEPRECATED: Business logic method - prefer using resources.GroupResource.GetByName
 func (svc *GroupService) GetByName(name string) (*Group, error) {
 	logger.Trace()
 
@@ -114,20 +111,13 @@ func (svc *GroupService) GetByName(name string) (*Group, error) {
 		return nil, err
 	}
 
-	var res *Group
-
-	for _, ele := range groups {
-		if ele.Name == name {
-			res = &ele
-			break
+	for i := range groups {
+		if groups[i].Name == name {
+			return &groups[i], nil
 		}
 	}
 
-	if res == nil {
-		return nil, errors.New("group does not exist")
-	}
-
-	return res, nil
+	return nil, errors.New("group does not exist")
 }
 
 // Create will create a new authorization group.  This function does not check

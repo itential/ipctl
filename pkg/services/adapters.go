@@ -225,8 +225,8 @@ func (svc *AdapterService) Stop(name string) error {
 	return svc.Put(fmt.Sprintf("/adapters/%s/stop", name), nil, nil)
 }
 
-// Restart stops and then starts the specified adapter instance.
-// It returns an error if the adapter doesn't exist or if either operation fails.
+// Restart orchestrates stopping and then starting an adapter.
+// DEPRECATED: Business logic method - prefer using resources.AdapterResource.Restart
 func (svc *AdapterService) Restart(name string) error {
 	logger.Trace()
 
@@ -235,5 +235,4 @@ func (svc *AdapterService) Restart(name string) error {
 	}
 
 	return svc.Start(name)
-	//return svc.Put(fmt.Sprintf("/adapters/%s/restart", name), nil, nil)
 }

@@ -13,17 +13,18 @@ import (
 	"github.com/itential/ipctl/pkg/client"
 	"github.com/itential/ipctl/pkg/config"
 	"github.com/itential/ipctl/pkg/logger"
+	"github.com/itential/ipctl/pkg/resources"
 	"github.com/itential/ipctl/pkg/services"
 )
 
 type TransformationRunner struct {
 	BaseRunner
-	service *services.TransformationService
+	resource resources.TransformationResourcer
 }
 
 func NewTransformationRunner(c client.Client, cfg *config.Config) *TransformationRunner {
 	return &TransformationRunner{
-		service:    services.NewTransformationService(c),
+		resource:   resources.NewTransformationResource(services.NewTransformationService(c)),
 		BaseRunner: NewBaseRunner(c, cfg),
 	}
 }
@@ -38,7 +39,7 @@ func (r *TransformationRunner) Get(in Request) (*Response, error) {
 
 	options := in.Options.(*flags.TransformationGetOptions)
 
-	res, err := r.service.GetAll()
+	res, err := r.resource.GetAll()
 	if err != nil {
 		return nil, err
 	}
@@ -66,7 +67,7 @@ func (r *TransformationRunner) Describe(in Request) (*Response, error) {
 
 	name := in.Args[0]
 
-	res, err := r.service.GetByName(name)
+	res, err := r.resource.GetByName(name)
 	if err != nil {
 		return nil, err
 	}
@@ -96,7 +97,7 @@ func (r *TransformationRunner) Create(in Request) (*Response, error) {
 
 	name := in.Args[0]
 
-	res, err := r.service.Create(
+	res, err := r.resource.Create(
 		services.NewTransformation(name, options.Description),
 	)
 	if err != nil {
@@ -115,12 +116,12 @@ func (r *TransformationRunner) Delete(in Request) (*Response, error) {
 
 	name := in.Args[0]
 
-	res, err := r.service.GetByName(name)
+	res, err := r.resource.GetByName(name)
 	if err != nil {
 		return nil, err
 	}
 
-	if err := r.service.Delete(res.Id); err != nil {
+	if err := r.resource.Delete(res.Id); err != nil {
 		return nil, err
 	}
 
@@ -133,13 +134,13 @@ func (r *TransformationRunner) Delete(in Request) (*Response, error) {
 func (r *TransformationRunner) Clear(in Request) (*Response, error) {
 	logger.Trace()
 
-	transformations, err := r.service.GetAll()
+	transformations, err := r.resource.GetAll()
 	if err != nil {
 		return nil, err
 	}
 
 	for _, ele := range transformations {
-		if err := r.service.Delete(ele.Id); err != nil {
+		if err := r.resource.Delete(ele.Id); err != nil {
 			logger.Debug("failed to delete transformation `%s` (%s)", ele.Name, ele.Id)
 			return nil, err
 		}
@@ -177,12 +178,15 @@ func (r *TransformationRunner) CopyFrom(profile, name string) (any, error) {
 	}
 	defer cancel()
 
-	res, err := services.NewTransformationService(client).GetByName(name)
+	svc := services.NewTransformationService(client)
+	res := resources.NewTransformationResource(svc)
+
+	transformation, err := res.GetByName(name)
 	if err != nil {
 		return nil, err
 	}
 
-	return *res, err
+	return *transformation, err
 }
 
 func (r *TransformationRunner) CopyTo(profile string, in any, replace bool) (any, error) {
@@ -250,7 +254,7 @@ func (r *TransformationRunner) Export(in Request) (*Response, error) {
 
 	name := in.Args[0]
 
-	res, err := r.service.GetByName(name)
+	res, err := r.resource.GetByName(name)
 	if err != nil {
 		return nil, err
 	}
@@ -273,10 +277,10 @@ func (r *TransformationRunner) Export(in Request) (*Response, error) {
 func (r *TransformationRunner) importTransformation(in services.Transformation, replace bool) error {
 	logger.Trace()
 
-	p, err := r.service.GetByName(in.Name)
+	p, err := r.resource.GetByName(in.Name)
 	if err == nil {
 		if replace {
-			if err := r.service.Delete(p.Id); err != nil {
+			if err := r.resource.Delete(p.Id); err != nil {
 				return err
 			}
 		} else {
@@ -284,7 +288,7 @@ func (r *TransformationRunner) importTransformation(in services.Transformation, 
 		}
 	}
 
-	_, err = r.service.Import(in)
+	_, err = r.resource.Import(in)
 	if err != nil {
 		return err
 	}

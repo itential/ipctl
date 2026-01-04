@@ -98,32 +98,6 @@ func (svc *AutomationService) Get(id string) (*Automation, error) {
 	return res.Data, nil
 }
 
-// GetByName retrieves an automation by its name
-func (svc *AutomationService) GetByName(name string) (*Automation, error) {
-	logger.Trace()
-
-	automations, err := svc.GetAll()
-	if err != nil {
-		return nil, err
-	}
-
-	var automation *Automation
-
-	for _, ele := range automations {
-		if ele.Name == name {
-			automation = ele
-			break
-		}
-	}
-
-	if automation == nil {
-		return nil, errors.New("automation not found")
-	}
-
-	return automation, nil
-
-}
-
 // Create implements `POST /operations-manager/automations`
 func (svc *AutomationService) Create(in Automation) (*Automation, error) {
 	logger.Trace()
@@ -202,34 +176,38 @@ func (svc *AutomationService) GetAll() ([]*Automation, error) {
 	return automations, nil
 }
 
-// Clear deletes all automations from the server
-func (svc *AutomationService) Clear() error {
+// GetByName retrieves an automation by name using client-side filtering.
+// DEPRECATED: Business logic method - prefer using resources.AutomationResource.GetByName
+func (svc *AutomationService) GetByName(name string) (*Automation, error) {
 	logger.Trace()
 
 	automations, err := svc.GetAll()
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	for _, ele := range automations {
-		if err := svc.Delete(ele.Id); err != nil {
-			return err
+	for _, automation := range automations {
+		if automation.Name == name {
+			return automation, nil
 		}
 	}
 
-	return nil
+	return nil, errors.New("automation not found")
 }
 
-// Import implements the `PUT /operations-manager/automations` requuest
+// Import imports an automation with business rule validation and data transformation.
+// DEPRECATED: Business logic method - prefer using resources.AutomationResource.Import
 func (svc *AutomationService) Import(in Automation) (*Automation, error) {
 	logger.Trace()
 
+	// Business rule validation: write group must be configured when read group is present
 	if len(in.Gbac.Read) > 0 && len(in.Gbac.Write) == 0 {
 		return nil, errors.New("write group must be configured, when read group present")
 	}
 
 	var automations []any
 
+	// Transform automation data: ensure triggers array exists even if empty
 	if len(in.Triggers) == 0 {
 		b, err := json.Marshal(in)
 		if err != nil {
@@ -242,11 +220,37 @@ func (svc *AutomationService) Import(in Automation) (*Automation, error) {
 		}
 
 		item["triggers"] = []any{}
-
 		automations = append(automations, item)
 	} else {
 		automations = append(automations, in)
 	}
+
+	return svc.ImportTransformed(automations)
+}
+
+// Clear deletes all automations from the server.
+// DEPRECATED: Business logic method - prefer using resources.AutomationResource.Clear
+func (svc *AutomationService) Clear() error {
+	logger.Trace()
+
+	automations, err := svc.GetAll()
+	if err != nil {
+		return err
+	}
+
+	for _, automation := range automations {
+		if err := svc.Delete(automation.Id); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+// ImportTransformed imports pre-transformed automation data.
+// The automations parameter should contain properly validated and transformed automation data.
+func (svc *AutomationService) ImportTransformed(automations []any) (*Automation, error) {
+	logger.Trace()
 
 	body := map[string][]any{
 		"automations": automations,
@@ -277,7 +281,8 @@ func (svc *AutomationService) Import(in Automation) (*Automation, error) {
 	return &res.Data[0].Data, nil
 }
 
-// Export exports an automation by ID, including its triggers
+// Export exports an automation by ID, including its triggers in raw format.
+// Returns the automation data as received from the API without trigger transformation.
 func (svc *AutomationService) Export(id string) (*Automation, error) {
 	logger.Trace()
 
@@ -295,47 +300,6 @@ func (svc *AutomationService) Export(id string) (*Automation, error) {
 	}
 
 	logger.Info("%s", res.Message)
-
-	triggers := res.Data.Triggers
-	res.Data.Triggers = []Trigger{}
-
-	for _, ele := range triggers {
-		var trigger Trigger
-
-		b, err := json.Marshal(ele.(map[string]interface{}))
-		if err != nil {
-			logger.Fatal(err, "error trying to marshal data")
-		}
-
-		switch ele.(map[string]interface{})["type"].(string) {
-		case "endpoint":
-			var t EndpointTrigger
-			if err := json.Unmarshal(b, &t); err != nil {
-				logger.Fatal(err, "error trying to decode data")
-			}
-			trigger = t
-		case "eventSystem":
-			var t EventTrigger
-			if err := json.Unmarshal(b, &t); err != nil {
-				logger.Fatal(err, "error trying to decode data")
-			}
-			trigger = t
-		case "manual":
-			var t ManualTrigger
-			if err := json.Unmarshal(b, &t); err != nil {
-				logger.Fatal(err, "error trying to decode data")
-			}
-			trigger = t
-		case "schedule":
-			var t ScheduleTrigger
-			if err := json.Unmarshal(b, &t); err != nil {
-				logger.Fatal(err, "error trying to decode data")
-			}
-			trigger = t
-		}
-
-		res.Data.Triggers = append(res.Data.Triggers, trigger)
-	}
 
 	return res.Data, nil
 }

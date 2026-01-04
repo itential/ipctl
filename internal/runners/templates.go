@@ -15,17 +15,18 @@ import (
 	"github.com/itential/ipctl/pkg/client"
 	"github.com/itential/ipctl/pkg/config"
 	"github.com/itential/ipctl/pkg/logger"
+	"github.com/itential/ipctl/pkg/resources"
 	"github.com/itential/ipctl/pkg/services"
 )
 
 type TemplateRunner struct {
-	service *services.TemplateService
+	resource resources.TemplateResourcer
 	BaseRunner
 }
 
 func NewTemplateRunner(c client.Client, cfg *config.Config) *TemplateRunner {
 	return &TemplateRunner{
-		service:    services.NewTemplateService(c),
+		resource:   resources.NewTemplateResource(services.NewTemplateService(c)),
 		BaseRunner: NewBaseRunner(c, cfg),
 	}
 }
@@ -42,7 +43,7 @@ func (r *TemplateRunner) Get(in Request) (*Response, error) {
 
 	options := in.Options.(*flags.TemplateGetOptions)
 
-	res, err := r.service.GetAll()
+	res, err := r.resource.GetAll()
 	if err != nil {
 		return nil, err
 	}
@@ -70,7 +71,7 @@ func (r *TemplateRunner) Describe(in Request) (*Response, error) {
 
 	name := in.Args[0]
 
-	res, err := r.service.GetByName(name)
+	res, err := r.resource.GetByName(name)
 	if err != nil {
 		return nil, err
 	}
@@ -105,10 +106,10 @@ func (r *TemplateRunner) Create(in Request) (*Response, error) {
 	name := in.Args[0]
 
 	if options.Replace {
-		existing, err := r.service.GetByName(name)
+		existing, err := r.resource.GetByName(name)
 
 		if existing != nil {
-			if err := r.service.Delete(existing.Id); err != nil {
+			if err := r.resource.Delete(existing.Id); err != nil {
 				return nil, err
 			}
 		} else if err != nil {
@@ -118,7 +119,7 @@ func (r *TemplateRunner) Create(in Request) (*Response, error) {
 		}
 	}
 
-	res, err := r.service.Create(services.NewTemplate(
+	res, err := r.resource.Create(services.NewTemplate(
 		name,
 		options.Group,
 		options.Description,
@@ -137,12 +138,12 @@ func (r *TemplateRunner) Create(in Request) (*Response, error) {
 func (r *TemplateRunner) Delete(in Request) (*Response, error) {
 	logger.Trace()
 
-	t, err := r.service.GetByName(in.Args[0])
+	t, err := r.resource.GetByName(in.Args[0])
 	if err != nil {
 		return nil, err
 	}
 
-	if err := r.service.Delete(t.Id); err != nil {
+	if err := r.resource.Delete(t.Id); err != nil {
 		return nil, err
 	}
 
@@ -154,14 +155,14 @@ func (r *TemplateRunner) Delete(in Request) (*Response, error) {
 func (r *TemplateRunner) Clear(in Request) (*Response, error) {
 	logger.Trace()
 
-	elements, err := r.service.GetAll()
+	elements, err := r.resource.GetAll()
 	if err != nil {
 		return nil, err
 	}
 
 	for _, ele := range elements {
 		terminal.Display("Deleting template `%s`  (%s)", ele.Name, ele.Id)
-		if err := r.service.Delete(ele.Id); err != nil {
+		if err := r.resource.Delete(ele.Id); err != nil {
 			logger.Debug("failed to delete template `%s` (%s)", ele.Name, ele.Id)
 			return nil, err
 		}
@@ -200,11 +201,13 @@ func (r *TemplateRunner) CopyFrom(profile, name string) (any, error) {
 	}
 	defer cancel()
 
-	res, err := services.NewTemplateService(client).Export(name)
+	svc := services.NewTemplateService(client)
+
+	template, err := svc.Export(name)
 	if err != nil {
 		return nil, err
 	}
-	return *res, nil
+	return *template, nil
 
 }
 
@@ -233,7 +236,7 @@ func (r *TemplateRunner) CopyTo(profile string, in any, replace bool) (any, erro
 		}
 	}
 
-	res, err := services.NewTemplateService(client).Import(in.(services.Template))
+	res, err := svc.Import(in.(services.Template))
 	if err != nil {
 		return nil, err
 	}
@@ -279,12 +282,12 @@ func (r *TemplateRunner) Export(in Request) (*Response, error) {
 
 	name := in.Args[0]
 
-	res, err := r.service.GetByName(name)
+	res, err := r.resource.GetByName(name)
 	if err != nil {
 		return nil, err
 	}
 
-	exported, err := r.service.Export(res.Id)
+	exported, err := r.resource.Export(res.Id)
 	if err != nil {
 		return nil, err
 	}
@@ -310,7 +313,7 @@ Dumper interface
 func (r *TemplateRunner) Dump(in Request) (*Response, error) {
 	logger.Trace()
 
-	res, err := r.service.GetAll()
+	res, err := r.resource.GetAll()
 	if err != nil {
 		return nil, err
 	}
@@ -408,7 +411,7 @@ func (r TemplateRunner) importTemplate(in services.Template, replace bool) error
 	logger.Trace()
 	logger.Debug("attempting to import template `%s`", in.Name)
 
-	p, err := r.service.GetByName(in.Name)
+	p, err := r.resource.GetByName(in.Name)
 	if err != nil {
 		if err.Error() != "template not found" {
 			return err
@@ -417,13 +420,13 @@ func (r TemplateRunner) importTemplate(in services.Template, replace bool) error
 	if p != nil {
 		if replace {
 			logger.Debug("template exists, deleting it")
-			r.service.Delete(p.Id)
+			r.resource.Delete(p.Id)
 		} else {
 			return errors.New(fmt.Sprintf("template with name `%s` already exists, use `--replace` to overwrite", p.Name))
 		}
 	}
 
-	_, err = r.service.Import(in)
+	_, err = r.resource.Import(in)
 	if err != nil {
 		return err
 	}

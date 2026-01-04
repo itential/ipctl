@@ -120,7 +120,8 @@ func (svc *ModelService) GetAll() ([]Model, error) {
 	return res.Data, nil
 }
 
-// GetByName retrieves a model by its name from the lifecycle manager
+// GetByName retrieves a model by name using client-side filtering.
+// DEPRECATED: Business logic method - prefer using resources.ModelResource.GetByName
 func (svc *ModelService) GetByName(name string) (*Model, error) {
 	logger.Trace()
 
@@ -129,20 +130,13 @@ func (svc *ModelService) GetByName(name string) (*Model, error) {
 		return nil, err
 	}
 
-	var m *Model
-
-	for _, ele := range models {
-		if ele.Name == name {
-			m = &ele
-			break
+	for i := range models {
+		if models[i].Name == name {
+			return &models[i], nil
 		}
 	}
 
-	if m == nil {
-		return nil, errors.New("model not found")
-	}
-
-	return m, nil
+	return nil, errors.New("model not found")
 }
 
 // Create creates a new model in the lifecycle manager

@@ -118,47 +118,42 @@ func (svc *TransformationService) Get(id string) (*Transformation, error) {
 	return res, nil
 }
 
-// GetByName will attempt to find a transformation based on its name.  If the
-// specified transformation is found, it will be returned to the calling
-// function.  If a match is not found, this function will return a
-// "transformation not found" error.
+// GetByName retrieves a transformation by name, excluding system resources (names starting with "@").
+// DEPRECATED: Business logic method - prefer using resources.TransformationResource.GetByName
 func (svc *TransformationService) GetByName(name string) (*Transformation, error) {
 	logger.Trace()
 
-	type Response struct {
-		Results []Transformation `json:"results"`
-		Total   int              `json:"total"`
-	}
-
-	var res Response
-
-	if err := svc.GetRequest(&Request{
-		uri: "/transformations",
-		query: map[string]string{
-			"contains[name]": name,
-		},
-	}, &res); err != nil {
+	transformations, err := svc.GetAll()
+	if err != nil {
 		return nil, err
 	}
 
-	if res.Total == 0 {
-		return nil, errors.New("transformation not found")
-	}
-
-	var selected *Transformation
-
-	for _, ele := range res.Results {
-		if !strings.HasPrefix(ele.Name, "@") {
-			selected = &ele
-			break
+	for i := range transformations {
+		if transformations[i].Name == name && !strings.HasPrefix(transformations[i].Name, "@") {
+			return &transformations[i], nil
 		}
 	}
 
-	if selected == nil {
-		return nil, errors.New("transformation not found")
+	return nil, errors.New("transformation not found")
+}
+
+// Clear removes all transformations from the server.
+// DEPRECATED: Business logic method - prefer using resources.TransformationResource.Clear
+func (svc *TransformationService) Clear() error {
+	logger.Trace()
+
+	transformations, err := svc.GetAll()
+	if err != nil {
+		return err
 	}
 
-	return selected, nil
+	for _, t := range transformations {
+		if err := svc.Delete(t.Id); err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
 
 // Create all attempt to create a new transformation on the server.  This
@@ -190,23 +185,6 @@ func (svc *TransformationService) Delete(id string) error {
 		uri:                fmt.Sprintf("/transformations/%s", id),
 		expectedStatusCode: http.StatusNoContent,
 	}, nil)
-}
-
-func (svc *TransformationService) Clear() error {
-	logger.Trace()
-
-	elements, err := svc.GetAll()
-	if err != nil {
-		return err
-	}
-
-	for _, ele := range elements {
-		if err := svc.Delete(ele.Id); err != nil {
-			return err
-		}
-	}
-
-	return nil
 }
 
 // Import will attempt to import a transformation into the current server.

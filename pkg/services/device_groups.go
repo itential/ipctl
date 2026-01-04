@@ -66,6 +66,8 @@ func (svc *DeviceGroupService) GetAll() ([]DeviceGroup, error) {
 	return res, nil
 }
 
+// GetByName retrieves a device group by name using client-side filtering.
+// DEPRECATED: Business logic method - prefer using resources.DeviceGroupResource.GetByName
 func (svc *DeviceGroupService) GetByName(name string) (*DeviceGroup, error) {
 	logger.Trace()
 
@@ -74,20 +76,13 @@ func (svc *DeviceGroupService) GetByName(name string) (*DeviceGroup, error) {
 		return nil, err
 	}
 
-	var deviceGroup *DeviceGroup
-
-	for _, ele := range groups {
-		if ele.Name == name {
-			deviceGroup = &ele
-			break
+	for i := range groups {
+		if groups[i].Name == name {
+			return &groups[i], nil
 		}
 	}
 
-	if deviceGroup == nil {
-		return nil, errors.New("device group not found")
-	}
-
-	return deviceGroup, nil
+	return nil, errors.New("device group not found")
 }
 
 func (svc *DeviceGroupService) Create(in DeviceGroup) (*DeviceGroup, error) {

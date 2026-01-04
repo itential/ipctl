@@ -13,17 +13,18 @@ import (
 	"github.com/itential/ipctl/pkg/client"
 	"github.com/itential/ipctl/pkg/config"
 	"github.com/itential/ipctl/pkg/logger"
+	"github.com/itential/ipctl/pkg/resources"
 	"github.com/itential/ipctl/pkg/services"
 )
 
 type GroupRunner struct {
-	service *services.GroupService
+	resource resources.GroupResourcer
 	BaseRunner
 }
 
 func NewGroupRunner(c client.Client, cfg *config.Config) *GroupRunner {
 	return &GroupRunner{
-		service:    services.NewGroupService(c),
+		resource:   resources.NewGroupResource(services.NewGroupService(c)),
 		BaseRunner: NewBaseRunner(c, cfg),
 	}
 }
@@ -35,7 +36,7 @@ func NewGroupRunner(c client.Client, cfg *config.Config) *GroupRunner {
 func (r *GroupRunner) Get(in Request) (*Response, error) {
 	logger.Trace()
 
-	groups, err := r.service.GetAll()
+	groups, err := r.resource.GetAll()
 	if err != nil {
 		return nil, err
 	}
@@ -52,7 +53,7 @@ func (r *GroupRunner) Describe(in Request) (*Response, error) {
 
 	name := in.Args[0]
 
-	groups, err := r.service.GetAll()
+	groups, err := r.resource.GetAll()
 	if err != nil {
 		return nil, err
 	}
@@ -89,7 +90,7 @@ func (r *GroupRunner) Create(in Request) (*Response, error) {
 
 	group := services.NewGroup(in.Args[0], options.Description)
 
-	res, err := r.service.Create(group)
+	res, err := r.resource.Create(group)
 	if err != nil {
 		return nil, err
 	}
@@ -103,7 +104,7 @@ func (r *GroupRunner) Create(in Request) (*Response, error) {
 func (r *GroupRunner) Delete(in Request) (*Response, error) {
 	logger.Trace()
 
-	group, err := r.service.GetByName(in.Args[0])
+	group, err := r.resource.GetByName(in.Args[0])
 	if err != nil {
 		return nil, err
 	}
@@ -112,7 +113,7 @@ func (r *GroupRunner) Delete(in Request) (*Response, error) {
 		return nil, errors.New("cannot delete non-local group")
 	}
 
-	if err := r.service.Delete(group.Id); err != nil {
+	if err := r.resource.Delete(group.Id); err != nil {
 		return nil, err
 	}
 
@@ -124,7 +125,7 @@ func (r *GroupRunner) Delete(in Request) (*Response, error) {
 func (r *GroupRunner) Clear(in Request) (*Response, error) {
 	logger.Trace()
 
-	groups, err := r.service.GetAll()
+	groups, err := r.resource.GetAll()
 	if err != nil {
 		return nil, err
 	}
@@ -133,7 +134,7 @@ func (r *GroupRunner) Clear(in Request) (*Response, error) {
 
 	for _, ele := range groups {
 		if ele.Provenance == "Pronghorn" {
-			if err := r.service.Delete(ele.Id); err != nil {
+			if err := r.resource.Delete(ele.Id); err != nil {
 				return nil, err
 			}
 			cnt++
@@ -171,12 +172,15 @@ func (r *GroupRunner) CopyFrom(profile, name string) (any, error) {
 	}
 	defer cancel()
 
-	res, err := services.NewGroupService(client).GetByName(name)
+	svc := services.NewGroupService(client)
+	res := resources.NewGroupResource(svc)
+
+	group, err := res.GetByName(name)
 	if err != nil {
 		return nil, err
 	}
 
-	return *res, err
+	return *group, err
 }
 
 func (r *GroupRunner) CopyTo(profile string, in any, replace bool) (any, error) {
@@ -245,7 +249,7 @@ func (r *GroupRunner) Export(in Request) (*Response, error) {
 
 	name := in.Args[0]
 
-	grp, err := r.service.GetByName(name)
+	grp, err := r.resource.GetByName(name)
 	if err != nil {
 		return nil, err
 	}
@@ -268,7 +272,7 @@ func (r *GroupRunner) Export(in Request) (*Response, error) {
 func (r *GroupRunner) importGroup(in services.Group, replace bool) error {
 	logger.Trace()
 
-	existing, err := r.service.GetByName(in.Name)
+	existing, err := r.resource.GetByName(in.Name)
 
 	if err != nil {
 		if err.Error() != "group does not exist" {
@@ -278,7 +282,7 @@ func (r *GroupRunner) importGroup(in services.Group, replace bool) error {
 
 	if existing != nil {
 		if replace {
-			if err := r.service.Delete(existing.Id); err != nil {
+			if err := r.resource.Delete(existing.Id); err != nil {
 				return err
 			}
 		} else {
@@ -288,7 +292,7 @@ func (r *GroupRunner) importGroup(in services.Group, replace bool) error {
 		}
 	}
 
-	_, err = r.service.Create(in)
+	_, err = r.resource.Create(in)
 
 	return err
 

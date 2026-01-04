@@ -154,58 +154,45 @@ func (svc *JsonFormService) Delete(ids []string) error {
 	}, nil)
 }
 
-// GetByName retrieves a JSON Form asset by its name field.
-// This method performs a client-side search through all forms,
-// so it may be less efficient than Get() for large numbers of forms.
-// Returns an error if no form with the specified name is found.
+// GetByName retrieves a JSON form by name using client-side filtering.
+// DEPRECATED: Business logic method - prefer using resources.JsonFormResource.GetByName
 func (svc *JsonFormService) GetByName(name string) (*JsonForm, error) {
 	logger.Trace()
 
-	elements, err := svc.GetAll()
+	forms, err := svc.GetAll()
 	if err != nil {
 		return nil, err
 	}
 
-	var res *JsonForm
-
-	for _, ele := range elements {
-		if ele.Name == name {
-			res = &ele
-			break
+	for i := range forms {
+		if forms[i].Name == name {
+			return &forms[i], nil
 		}
 	}
 
-	if res == nil {
-		return nil, errors.New("jsonform not found")
-	}
-
-	return res, nil
+	return nil, errors.New("jsonform not found")
 }
 
-// Clear removes all JSON Form assets from the server.
-// This is a destructive operation that cannot be undone.
-// Use with caution in production environments.
+// Clear removes all JSON forms from the server.
+// DEPRECATED: Business logic method - prefer using resources.JsonFormResource.Clear
 func (svc *JsonFormService) Clear() error {
 	logger.Trace()
 
-	elements, err := svc.GetAll()
+	forms, err := svc.GetAll()
 	if err != nil {
 		return err
 	}
 
+	if len(forms) == 0 {
+		return nil
+	}
+
 	var ids []string
-
-	for _, ele := range elements {
-		ids = append(ids, ele.Id)
+	for _, form := range forms {
+		ids = append(ids, form.Id)
 	}
 
-	if len(ids) > 0 {
-		if err := svc.Delete(ids); err != nil {
-			return err
-		}
-	}
-
-	return nil
+	return svc.Delete(ids)
 }
 
 // Import imports a JSON Form asset into the Itential Platform using

@@ -15,6 +15,7 @@ import (
 	"github.com/itential/ipctl/pkg/client"
 	"github.com/itential/ipctl/pkg/config"
 	"github.com/itential/ipctl/pkg/logger"
+	"github.com/itential/ipctl/pkg/resources"
 	"github.com/itential/ipctl/pkg/services"
 	"github.com/itential/ipctl/pkg/validators"
 )
@@ -22,7 +23,7 @@ import (
 type AutomationRunner struct {
 	BaseRunner
 	client    client.Client
-	service   *services.AutomationService
+	resource  resources.AutomationResourcer
 	workflows *services.AutomationService
 	triggers  *services.TriggerService
 }
@@ -31,7 +32,7 @@ func NewAutomationRunner(c client.Client, cfg *config.Config) *AutomationRunner 
 	return &AutomationRunner{
 		BaseRunner: NewBaseRunner(c, cfg),
 		client:     c,
-		service:    services.NewAutomationService(c),
+		resource:   resources.NewAutomationResource(services.NewAutomationService(c)),
 		workflows:  services.NewAutomationService(c),
 		triggers:   services.NewTriggerService(c),
 	}
@@ -45,7 +46,7 @@ func NewAutomationRunner(c client.Client, cfg *config.Config) *AutomationRunner 
 func (r *AutomationRunner) Get(in Request) (*Response, error) {
 	logger.Trace()
 
-	automations, err := r.service.GetAll()
+	automations, err := r.resource.GetAll()
 	if err != nil {
 		return nil, err
 	}
@@ -67,12 +68,12 @@ func (r *AutomationRunner) Describe(in Request) (*Response, error) {
 
 	name := in.Args[0]
 
-	automation, err := r.service.GetByName(name)
+	automation, err := r.resource.GetByName(name)
 	if err != nil {
 		return nil, err
 	}
 
-	res, err := r.service.Export(automation.Id)
+	res, err := r.resource.Export(automation.Id)
 	if err != nil {
 		return nil, err
 	}
@@ -128,10 +129,10 @@ func (r *AutomationRunner) Create(in Request) (*Response, error) {
 	utils.LoadObject(in.Options, &options)
 
 	if options.Replace {
-		existing, err := r.service.GetByName(name)
+		existing, err := r.resource.GetByName(name)
 
 		if existing != nil {
-			if err := r.service.Delete(existing.Id); err != nil {
+			if err := r.resource.Delete(existing.Id); err != nil {
 				return nil, err
 			}
 		} else if err != nil {
@@ -141,7 +142,7 @@ func (r *AutomationRunner) Create(in Request) (*Response, error) {
 		}
 	}
 
-	res, err := r.service.Create(services.NewAutomation(name, options.Description))
+	res, err := r.resource.Create(services.NewAutomation(name, options.Description))
 	if err != nil {
 		return nil, err
 	}
@@ -157,7 +158,7 @@ func (r *AutomationRunner) Delete(in Request) (*Response, error) {
 
 	name := in.Args[0]
 
-	automations, err := r.service.GetAll()
+	automations, err := r.resource.GetAll()
 	if err != nil {
 		return nil, err
 	}
@@ -172,7 +173,7 @@ func (r *AutomationRunner) Delete(in Request) (*Response, error) {
 	}
 
 	if selected != nil {
-		if err := r.service.Delete(selected.Id); err != nil {
+		if err := r.resource.Delete(selected.Id); err != nil {
 			return nil, err
 		}
 	}
@@ -186,13 +187,13 @@ func (r *AutomationRunner) Delete(in Request) (*Response, error) {
 func (r *AutomationRunner) Clear(in Request) (*Response, error) {
 	logger.Trace()
 
-	automations, err := r.service.GetAll()
+	automations, err := r.resource.GetAll()
 	if err != nil {
 		return nil, err
 	}
 
 	for _, ele := range automations {
-		if err := r.service.Delete(ele.Id); err != nil {
+		if err := r.resource.Delete(ele.Id); err != nil {
 			return nil, err
 		}
 	}
@@ -229,18 +230,19 @@ func (r *AutomationRunner) CopyFrom(profile, name string) (any, error) {
 	defer cancel()
 
 	svc := services.NewAutomationService(client)
+	res := resources.NewAutomationResource(svc)
 
-	res, err := svc.GetByName(name)
+	automation, err := res.GetByName(name)
 	if err != nil {
 		return nil, err
 	}
 
-	automation, err := svc.Export(res.Id)
+	exported, err := res.Export(automation.Id)
 	if err != nil {
 		return nil, err
 	}
 
-	return *automation, err
+	return *exported, err
 }
 
 func (r *AutomationRunner) CopyTo(profile string, in any, replace bool) (any, error) {
@@ -262,7 +264,8 @@ func (r *AutomationRunner) CopyTo(profile string, in any, replace bool) (any, er
 		}
 	}
 
-	res, err := svc.Import(automation)
+	automationRes := resources.NewAutomationResource(svc)
+	res, err := automationRes.Import(automation)
 
 	if err != nil {
 		return nil, errors.New(r.formatImportErrorMessage(err))
@@ -308,12 +311,12 @@ func (r *AutomationRunner) Export(in Request) (*Response, error) {
 
 	name := in.Args[0]
 
-	automation, err := r.service.GetByName(name)
+	automation, err := r.resource.GetByName(name)
 	if err != nil {
 		return nil, err
 	}
 
-	res, err := r.service.Export(automation.Id)
+	res, err := r.resource.Export(automation.Id)
 	if err != nil {
 		return nil, err
 	}
@@ -338,7 +341,7 @@ func (r *AutomationRunner) Export(in Request) (*Response, error) {
 func (r *AutomationRunner) Dump(in Request) (*Response, error) {
 	logger.Trace()
 
-	res, err := r.service.GetAll()
+	res, err := r.resource.GetAll()
 	if err != nil {
 		return nil, err
 	}
@@ -346,7 +349,7 @@ func (r *AutomationRunner) Dump(in Request) (*Response, error) {
 	var assets = map[string]interface{}{}
 
 	for _, ele := range res {
-		automation, err := r.service.Export(ele.Id)
+		automation, err := r.resource.Export(ele.Id)
 		if err != nil {
 			return nil, err
 		}
@@ -431,7 +434,7 @@ func (r *AutomationRunner) importAutomation(in services.Automation, replace bool
 	}
 	in.Triggers = triggers
 
-	return r.service.Import(in)
+	return r.resource.Import(in)
 }
 
 func (r *AutomationRunner) formatImportErrorMessage(e error) string {
@@ -522,11 +525,11 @@ func (r *AutomationRunner) updateTriggers(in services.Automation) ([]services.Tr
 func (r *AutomationRunner) checkImportValidationError(e error, name string, replace bool) error {
 	if e.Error() == "automation already exists" {
 		if replace {
-			existing, err := r.service.GetByName(name)
+			existing, err := r.resource.GetByName(name)
 			if err != nil {
 				return err
 			}
-			if err := r.service.Delete(existing.Id); err != nil {
+			if err := r.resource.Delete(existing.Id); err != nil {
 				return err
 			}
 		} else {

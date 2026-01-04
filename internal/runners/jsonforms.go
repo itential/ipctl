@@ -14,6 +14,7 @@ import (
 	"github.com/itential/ipctl/pkg/client"
 	"github.com/itential/ipctl/pkg/config"
 	"github.com/itential/ipctl/pkg/logger"
+	"github.com/itential/ipctl/pkg/resources"
 	"github.com/itential/ipctl/pkg/services"
 )
 
@@ -23,12 +24,12 @@ const (
 
 type JsonFormRunner struct {
 	BaseRunner
-	service *services.JsonFormService
+	resource resources.JsonFormResourcer
 }
 
 func NewJsonFormRunner(c client.Client, cfg *config.Config) *JsonFormRunner {
 	return &JsonFormRunner{
-		service:    services.NewJsonFormService(c),
+		resource:   resources.NewJsonFormResource(services.NewJsonFormService(c)),
 		BaseRunner: NewBaseRunner(c, cfg),
 	}
 }
@@ -44,7 +45,7 @@ func (r *JsonFormRunner) Get(in Request) (*Response, error) {
 	var options flags.WorkflowGetOptions
 	utils.LoadObject(in.Options, &options)
 
-	res, err := r.service.GetAll()
+	res, err := r.resource.GetAll()
 	if err != nil {
 		return nil, err
 	}
@@ -70,7 +71,7 @@ func (r *JsonFormRunner) Get(in Request) (*Response, error) {
 func (r *JsonFormRunner) Describe(in Request) (*Response, error) {
 	logger.Trace()
 
-	res, err := r.service.Get(in.Args[0])
+	res, err := r.resource.Get(in.Args[0])
 	if err != nil {
 		return nil, err
 	}
@@ -94,10 +95,10 @@ func (r *JsonFormRunner) Create(in Request) (*Response, error) {
 	options := in.Options.(*flags.JsonFormCreateOptions)
 
 	if options.Replace {
-		existing, err := r.service.GetByName(name)
+		existing, err := r.resource.GetByName(name)
 
 		if existing != nil {
-			if err := r.service.Delete([]string{existing.Id}); err != nil {
+			if err := r.resource.Delete([]string{existing.Id}); err != nil {
 				return nil, err
 			}
 		} else if err != nil {
@@ -107,7 +108,7 @@ func (r *JsonFormRunner) Create(in Request) (*Response, error) {
 		}
 	}
 
-	jf, err := r.service.Create(services.NewJsonForm(name, options.Description))
+	jf, err := r.resource.Create(services.NewJsonForm(name, options.Description))
 	if err != nil {
 		return nil, err
 	}
@@ -124,7 +125,7 @@ func (r *JsonFormRunner) Delete(in Request) (*Response, error) {
 
 	name := in.Args[0]
 
-	elements, err := r.service.GetAll()
+	elements, err := r.resource.GetAll()
 	if err != nil {
 		return nil, err
 	}
@@ -142,7 +143,7 @@ func (r *JsonFormRunner) Delete(in Request) (*Response, error) {
 		return nil, errors.New(fmt.Sprintf("JSON form `%s` not found", name))
 	}
 
-	if err := r.service.Delete([]string{jf.Id}); err != nil {
+	if err := r.resource.Delete([]string{jf.Id}); err != nil {
 		return nil, err
 	}
 
@@ -155,7 +156,7 @@ func (r *JsonFormRunner) Delete(in Request) (*Response, error) {
 func (r *JsonFormRunner) Clear(in Request) (*Response, error) {
 	logger.Trace()
 
-	jsonforms, err := r.service.GetAll()
+	jsonforms, err := r.resource.GetAll()
 	if err != nil {
 		return nil, err
 	}
@@ -166,7 +167,7 @@ func (r *JsonFormRunner) Clear(in Request) (*Response, error) {
 		ids = append(ids, ele.Id)
 	}
 
-	if err := r.service.Delete(ids); err != nil {
+	if err := r.resource.Delete(ids); err != nil {
 		return nil, err
 	}
 
@@ -202,12 +203,15 @@ func (r *JsonFormRunner) CopyFrom(profile, name string) (any, error) {
 	}
 	defer cancel()
 
-	res, err := services.NewJsonFormService(client).GetByName(name)
+	svc := services.NewJsonFormService(client)
+	res := resources.NewJsonFormResource(svc)
+
+	jsonform, err := res.GetByName(name)
 	if err != nil {
 		return nil, err
 	}
 
-	return *res, err
+	return *jsonform, err
 }
 
 func (r *JsonFormRunner) CopyTo(profile string, in any, replace bool) (any, error) {
@@ -219,11 +223,11 @@ func (r *JsonFormRunner) CopyTo(profile string, in any, replace bool) (any, erro
 	}
 	defer cancel()
 
-	svc := services.NewJsonFormService(client)
+	resource := resources.NewJsonFormResource(services.NewJsonFormService(client))
 
 	name := in.(services.JsonForm).Name
 
-	if exists, err := svc.GetByName(name); exists != nil {
+	if exists, err := resource.GetByName(name); exists != nil {
 		if !replace {
 			return nil, errors.New(fmt.Sprintf("jsonform `%s` exists on the destination server, use --replace to overwrite", name))
 		} else if err != nil {
@@ -231,7 +235,7 @@ func (r *JsonFormRunner) CopyTo(profile string, in any, replace bool) (any, erro
 		}
 	}
 
-	return svc.Import(in.(services.JsonForm))
+	return resource.Import(in.(services.JsonForm))
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -274,7 +278,7 @@ func (r *JsonFormRunner) Export(in Request) (*Response, error) {
 
 	name := in.Args[0]
 
-	jsonform, err := r.service.GetByName(name)
+	jsonform, err := r.resource.GetByName(name)
 	if err != nil {
 		return nil, err
 	}
@@ -297,10 +301,10 @@ func (r *JsonFormRunner) Export(in Request) (*Response, error) {
 func (r JsonFormRunner) importJsonForm(in services.JsonForm, replace bool) (*services.JsonForm, error) {
 	logger.Trace()
 
-	p, err := r.service.Get(in.Name)
+	p, err := r.resource.Get(in.Name)
 	if err == nil {
 		if replace {
-			if err := r.service.Delete([]string{p.Id}); err != nil {
+			if err := r.resource.Delete([]string{p.Id}); err != nil {
 				return nil, err
 			}
 		} else {
@@ -308,5 +312,5 @@ func (r JsonFormRunner) importJsonForm(in services.JsonForm, replace bool) (*ser
 		}
 	}
 
-	return r.service.Import(in)
+	return r.resource.Import(in)
 }

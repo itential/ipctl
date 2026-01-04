@@ -10,18 +10,19 @@ import (
 
 	"github.com/itential/ipctl/pkg/client"
 	"github.com/itential/ipctl/pkg/logger"
+	"github.com/itential/ipctl/pkg/resources"
 	"github.com/itential/ipctl/pkg/services"
 )
 
 type AutomationValidator struct {
-	client  client.Client
-	service *services.AutomationService
+	client   client.Client
+	resource resources.AutomationResourcer
 }
 
 func NewAutomationValidator(c client.Client) AutomationValidator {
 	return AutomationValidator{
-		client:  c,
-		service: services.NewAutomationService(c),
+		client:   c,
+		resource: resources.NewAutomationResource(services.NewAutomationService(c)),
 	}
 }
 
@@ -51,7 +52,7 @@ func (v AutomationValidator) CanImport(in services.Automation) error {
 func (v AutomationValidator) Exists(name string) bool {
 	logger.Trace()
 
-	exists, err := v.service.GetByName(name)
+	exists, err := v.resource.GetByName(name)
 	if err != nil {
 		if err.Error() != "automation not found" {
 			logger.Fatal(err, "")

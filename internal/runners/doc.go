@@ -2,20 +2,41 @@
 // Unauthorized copying of this file, via any medium is strictly prohibited
 // Proprietary and confidential
 
-// Package runners provides command execution layer that implements business
-// logic for CLI operations.
+// Package runners provides the command execution layer for CLI operations.
 //
-// Runners sit between handlers and services, coordinating multiple service
-// calls, handling data transformations, and implementing complex workflows.
+// Runners sit between handlers and resources, orchestrating CLI-specific concerns
+// such as formatting output, handling flags, and coordinating Git operations.
+// Business logic resides in the resources layer, not in runners.
 //
 // # Architecture
 //
-// The runner layer sits between handlers and services:
+// The runner layer sits between handlers and resources:
 //
-//	Handlers → Runners → Services → Client → API
+//	Handler → Runner → Resource → Service → API
 //
-// Runners receive Request objects from handlers, execute business logic using
-// services, and return Response objects for display.
+// Runners receive Request objects from handlers, delegate business logic to
+// resources, and return Response objects formatted for display.
+//
+// # Interface-Based Design
+//
+// Runners depend on resource interfaces, not concrete types. This enables:
+//   - Easy unit testing with mocked resources
+//   - Dependency injection
+//   - Clean separation from business logic
+//
+// Example:
+//
+//	type AccountRunner struct {
+//	    BaseRunner
+//	    resource resources.AccountResourcer  // Interface, not concrete type
+//	}
+//
+//	func NewAccountRunner(client client.Client, cfg *config.Config) *AccountRunner {
+//	    return &AccountRunner{
+//	        BaseRunner: NewBaseRunner(client, cfg),
+//	        resource:   resources.NewAccountResource(services.NewAccountService(client)),
+//	    }
+//	}
 //
 // # Runner Interfaces
 //
@@ -99,34 +120,32 @@
 //
 // # Creating Runners
 //
-// Runners are created with a client and configuration:
+// Runners are created with a client and configuration, and initialize resources:
 //
 //	type ProjectRunner struct {
-//	    config       *config.Config
-//	    service      *services.ProjectService
-//	    accounts     *services.AccountService
-//	    groups       *services.GroupService
-//	    userSettings *services.UserSettingsService
+//	    BaseRunner
+//	    resource resources.ProjectResourcer  // Resource interface
 //	}
 //
 //	func NewProjectRunner(client client.Client, cfg *config.Config) *ProjectRunner {
 //	    return &ProjectRunner{
-//	        config:       cfg,
-//	        service:      services.NewProjectService(client),
-//	        accounts:     services.NewAccountService(client),
-//	        groups:       services.NewGroupService(client),
-//	        userSettings: services.NewUserSettingsService(client),
+//	        BaseRunner: NewBaseRunner(client, cfg),
+//	        resource:   resources.NewProjectResource(services.NewProjectService(client)),
 //	    }
 //	}
 //
-// Runners often need multiple services to implement complex operations.
+// Runners delegate all business logic to resources. They focus on:
+//   - Parsing CLI flags and arguments
+//   - Calling resource methods with appropriate parameters
+//   - Formatting responses for output
+//   - Handling Git operations for import/export
 //
 // # Implementing Reader
 //
 // The Reader interface retrieves and describes resources:
 //
 //	func (r *ProjectRunner) Get(in Request) (*Response, error) {
-//	    projects, err := r.service.GetAll()
+//	    projects, err := r.resource.GetAll()  // Delegate to resource
 //	    if err != nil {
 //	        return nil, err
 //	    }
@@ -137,7 +156,8 @@
 //	}
 //
 //	func (r *ProjectRunner) Describe(in Request) (*Response, error) {
-//	    project, err := r.service.GetByName(in.Args[0])
+//	    // Resource handles business logic (client-side filtering)
+//	    project, err := r.resource.GetByName(in.Args[0])
 //	    if err != nil {
 //	        return nil, err
 //	    }
@@ -155,7 +175,7 @@
 //
 //	func (r *ProjectRunner) Create(in Request) (*Response, error) {
 //	    name := in.Args[0]
-//	    project, err := r.service.Create(name)
+//	    project, err := r.resource.Create(name)  // Delegate to resource
 //	    if err != nil {
 //	        return nil, err
 //	    }
@@ -166,11 +186,13 @@
 //	}
 //
 //	func (r *ProjectRunner) Delete(in Request) (*Response, error) {
-//	    project, err := r.service.GetByName(in.Args[0])
+//	    // Resource handles finding by name
+//	    project, err := r.resource.GetByName(in.Args[0])
 //	    if err != nil {
 //	        return nil, err
 //	    }
-//	    if err := r.service.Delete(project.Id); err != nil {
+//	    // Resource handles deletion
+//	    if err := r.resource.Delete(project.Id); err != nil {
 //	        return nil, err
 //	    }
 //	    return &Response{
@@ -183,15 +205,16 @@
 // Import and export operations support Git repositories and local filesystems:
 //
 //	func (r *ProjectRunner) Export(in Request) (*Response, error) {
-//	    project, err := r.service.GetByName(in.Args[0])
+//	    // Resource handles business logic
+//	    project, err := r.resource.GetByName(in.Args[0])
 //	    if err != nil {
 //	        return nil, err
 //	    }
-//	    exported, err := r.service.Export(project.Id)
+//	    exported, err := r.resource.Export(project.Id)
 //	    if err != nil {
 //	        return nil, err
 //	    }
-//	    // Write to file or Git repository
+//	    // Runner handles CLI concerns (file/Git operations)
 //	    if err := exportAssetFromRequest(in, exported, filename); err != nil {
 //	        return nil, err
 //	    }
@@ -261,29 +284,43 @@
 //
 // # Common Patterns
 //
-// Get resource by name:
+// Get resource by name (business logic in resource layer):
 //
-//	resource, err := r.service.GetByName(in.Args[0])
+//	resource, err := r.resource.GetByName(in.Args[0])
 //	if err != nil {
 //	    return nil, err
 //	}
 //
 // Check for existing resource:
 //
-//	existing, err := r.service.GetByName(name)
+//	existing, err := r.resource.GetByName(name)
 //	if existing != nil {
 //	    return nil, fmt.Errorf("resource already exists")
 //	}
 //
-// Iterate with pagination:
+// Iterate with pagination (handled by resource/service):
 //
-//	resources, err := r.service.GetAll()
+//	resources, err := r.resource.GetAll()
 //	if err != nil {
 //	    return nil, err
 //	}
 //	for _, res := range resources {
-//	    // Process each resource
+//	    // Format for output
 //	}
+//
+// # Separation of Concerns
+//
+// Runners should handle:
+//   - CLI flag parsing and validation
+//   - Formatting responses for display
+//   - Git operations for import/export
+//   - File I/O for local operations
+//
+// Runners should NOT handle:
+//   - Business logic (delegate to resources)
+//   - Client-side filtering (delegate to resources)
+//   - Data transformation (delegate to resources)
+//   - API calls (resources delegate to services)
 //
 // # Type Safety
 //

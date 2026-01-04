@@ -17,12 +17,13 @@ import (
 	"github.com/itential/ipctl/pkg/client"
 	"github.com/itential/ipctl/pkg/config"
 	"github.com/itential/ipctl/pkg/logger"
+	"github.com/itential/ipctl/pkg/resources"
 	"github.com/itential/ipctl/pkg/services"
 )
 
 type ProjectRunner struct {
 	BaseRunner
-	service      *services.ProjectService
+	resource     resources.ProjectResourcer
 	accounts     *services.AccountService
 	groups       *services.GroupService
 	userSettings *services.UserSettingsService
@@ -31,7 +32,7 @@ type ProjectRunner struct {
 func NewProjectRunner(client client.Client, cfg *config.Config) *ProjectRunner {
 	return &ProjectRunner{
 		BaseRunner:   NewBaseRunner(client, cfg),
-		service:      services.NewProjectService(client),
+		resource:     resources.NewProjectResource(services.NewProjectService(client)),
 		accounts:     services.NewAccountService(client),
 		groups:       services.NewGroupService(client),
 		userSettings: services.NewUserSettingsService(client),
@@ -46,7 +47,7 @@ func NewProjectRunner(client client.Client, cfg *config.Config) *ProjectRunner {
 func (r *ProjectRunner) Get(in Request) (*Response, error) {
 	logger.Trace()
 
-	projects, err := r.service.GetAll()
+	projects, err := r.resource.GetAll()
 	if err != nil {
 		return nil, err
 	}
@@ -83,7 +84,7 @@ func (r *ProjectRunner) Describe(in Request) (*Response, error) {
 
 	var res *services.Project
 
-	res, err := r.service.GetByName(in.Args[0])
+	res, err := r.resource.GetByName(in.Args[0])
 	if err != nil {
 		return nil, err
 	}
@@ -114,12 +115,12 @@ func (r *ProjectRunner) Create(in Request) (*Response, error) {
 
 	name := in.Args[0]
 
-	existing, err := r.service.GetByName(name)
+	existing, err := r.resource.GetByName(name)
 	if existing != nil {
 		return nil, errors.New(fmt.Sprintf("project `%s` already exists", name))
 	}
 
-	project, err := r.service.Create(name)
+	project, err := r.resource.Create(name)
 	if err != nil {
 		return nil, err
 	}
@@ -134,12 +135,12 @@ func (r *ProjectRunner) Create(in Request) (*Response, error) {
 func (r *ProjectRunner) Delete(in Request) (*Response, error) {
 	logger.Trace()
 
-	project, err := r.service.GetByName(in.Args[0])
+	project, err := r.resource.GetByName(in.Args[0])
 	if err != nil {
 		return nil, err
 	}
 
-	if err := r.service.Delete(project.Id); err != nil {
+	if err := r.resource.Delete(project.Id); err != nil {
 		return nil, err
 	}
 
@@ -152,13 +153,13 @@ func (r *ProjectRunner) Delete(in Request) (*Response, error) {
 func (r *ProjectRunner) Clear(in Request) (*Response, error) {
 	logger.Trace()
 
-	projects, err := r.service.GetAll()
+	projects, err := r.resource.GetAll()
 	if err != nil {
 		return nil, err
 	}
 
 	for _, ele := range projects {
-		if err := r.service.Delete(ele.Id); err != nil {
+		if err := r.resource.Delete(ele.Id); err != nil {
 			logger.Debug("failed to delete project `%s` (%s)", ele.Name, ele.Id)
 			return nil, err
 		}
@@ -240,7 +241,8 @@ func (r *ProjectRunner) Copy(in Request) (*Response, error) {
 	}
 
 	if len(members) > 0 {
-		if err := projectsvc.AddMembers(res.CopyToData.(services.Project).Id, members); err != nil {
+		projectRes := resources.NewProjectResource(projectsvc)
+		if err := projectRes.AddMembers(res.CopyToData.(services.Project).Id, members); err != nil {
 			return nil, err
 		}
 	}
@@ -295,7 +297,8 @@ func (r *ProjectRunner) CopyTo(profile string, in any, replace bool) (any, error
 		}
 	}
 
-	return svc.Import(in.(services.Project))
+	projectRes := resources.NewProjectResource(svc)
+	return projectRes.Import(in.(services.Project))
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -356,12 +359,12 @@ func (r *ProjectRunner) Export(in Request) (*Response, error) {
 
 	name := in.Args[0]
 
-	p, err := r.service.GetByName(name)
+	p, err := r.resource.GetByName(name)
 	if err != nil {
 		return nil, err
 	}
 
-	project, err := r.service.Export(p.Id)
+	project, err := r.resource.Export(p.Id)
 	if err != nil {
 		return nil, err
 	}
@@ -468,7 +471,7 @@ func (r *ProjectRunner) importProject(project services.Project, path string, rep
 		}
 	}
 
-	projects, err := r.service.GetAll()
+	projects, err := r.resource.GetAll()
 	if err != nil {
 		return nil, err
 	}
@@ -476,7 +479,7 @@ func (r *ProjectRunner) importProject(project services.Project, path string, rep
 	for _, ele := range projects {
 		if ele.Name == project.Name {
 			if replace {
-				if err := r.service.Delete(ele.Id); err != nil {
+				if err := r.resource.Delete(ele.Id); err != nil {
 					return nil, err
 				}
 			} else {
@@ -485,7 +488,7 @@ func (r *ProjectRunner) importProject(project services.Project, path string, rep
 		}
 	}
 
-	return r.service.Import(project)
+	return r.resource.Import(project)
 }
 
 func (r *ProjectRunner) updateMembers(projectId string, projectMembers []string) error {
@@ -540,7 +543,7 @@ func (r *ProjectRunner) updateMembers(projectId string, projectMembers []string)
 	}
 
 	if len(members) > 0 {
-		if err := r.service.AddMembers(projectId, members); err != nil {
+		if err := r.resource.AddMembers(projectId, members); err != nil {
 			return err
 		}
 	}

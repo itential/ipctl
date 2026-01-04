@@ -15,18 +15,19 @@ import (
 	"github.com/itential/ipctl/pkg/config"
 	"github.com/itential/ipctl/pkg/editor"
 	"github.com/itential/ipctl/pkg/logger"
+	"github.com/itential/ipctl/pkg/resources"
 	"github.com/itential/ipctl/pkg/services"
 )
 
 type WorkflowRunner struct {
 	BaseRunner
-	service *services.WorkflowService
+	resource resources.WorkflowResourcer
 }
 
 func NewWorkflowRunner(c client.Client, cfg *config.Config) *WorkflowRunner {
 	return &WorkflowRunner{
 		BaseRunner: NewBaseRunner(c, cfg),
-		service:    services.NewWorkflowService(c),
+		resource:   resources.NewWorkflowResource(services.NewWorkflowService(c)),
 	}
 }
 
@@ -41,7 +42,7 @@ func (r *WorkflowRunner) Get(in Request) (*Response, error) {
 	var options flags.WorkflowGetOptions
 	utils.LoadObject(in.Options, &options)
 
-	res, err := r.service.GetAll()
+	res, err := r.resource.GetAll()
 	if err != nil {
 		return nil, err
 	}
@@ -69,12 +70,12 @@ func (r *WorkflowRunner) Describe(in Request) (*Response, error) {
 
 	name := in.Args[0]
 
-	wf, err := r.service.Get(name)
+	wf, err := r.resource.Get(name)
 	if err != nil {
 		return nil, err
 	}
 
-	res, err := r.service.Export(name)
+	res, err := r.resource.Export(name)
 	if err != nil {
 		return nil, err
 	}
@@ -105,7 +106,7 @@ func (r *WorkflowRunner) Create(in Request) (*Response, error) {
 
 	name := in.Args[0]
 
-	wf, err := r.service.Create(services.NewWorkflow(name))
+	wf, err := r.resource.Create(services.NewWorkflow(name))
 	if err != nil {
 		return nil, err
 	}
@@ -120,7 +121,7 @@ func (r *WorkflowRunner) Create(in Request) (*Response, error) {
 func (r *WorkflowRunner) Delete(in Request) (*Response, error) {
 	logger.Trace()
 
-	if err := r.service.Delete(in.Args[0]); err != nil {
+	if err := r.resource.Delete(in.Args[0]); err != nil {
 		return nil, err
 	}
 
@@ -135,13 +136,13 @@ func (r *WorkflowRunner) Clear(in Request) (*Response, error) {
 
 	cnt := 0
 
-	workflows, err := r.service.GetAll()
+	workflows, err := r.resource.GetAll()
 	if err != nil {
 		return nil, err
 	}
 
 	for _, ele := range workflows {
-		r.service.Delete(ele.Id)
+		r.resource.Delete(ele.Id)
 		cnt++
 	}
 
@@ -155,7 +156,7 @@ func (r *WorkflowRunner) Edit(in Request) (*Response, error) {
 
 	name := in.Args[0]
 
-	current, err := r.service.Get(name)
+	current, err := r.resource.Get(name)
 	if err != nil {
 		return nil, err
 	}
@@ -166,7 +167,7 @@ func (r *WorkflowRunner) Edit(in Request) (*Response, error) {
 		return nil, err
 	}
 
-	if _, err := r.service.Update(updated); err != nil {
+	if _, err := r.resource.Update(updated); err != nil {
 		return nil, err
 	}
 
@@ -202,11 +203,13 @@ func (r *WorkflowRunner) CopyFrom(profile, name string) (any, error) {
 	}
 	defer cancel()
 
-	res, err := services.NewWorkflowService(client).Export(name)
+	svc := services.NewWorkflowService(client)
+
+	workflow, err := svc.Export(name)
 	if err != nil {
 		return nil, err
 	}
-	return *res, nil
+	return *workflow, nil
 }
 
 func (r *WorkflowRunner) CopyTo(profile string, in any, replace bool) (any, error) {
@@ -234,7 +237,7 @@ func (r *WorkflowRunner) CopyTo(profile string, in any, replace bool) (any, erro
 		}
 	}
 
-	res, err := services.NewWorkflowService(client).Import(in.(services.Workflow))
+	res, err := svc.Import(in.(services.Workflow))
 	if err != nil {
 		return nil, err
 	}
@@ -277,7 +280,7 @@ func (r *WorkflowRunner) Export(in Request) (*Response, error) {
 
 	name := in.Args[0]
 
-	workflow, err := r.service.Export(name)
+	workflow, err := r.resource.Export(name)
 	if err != nil {
 		return nil, err
 	}
@@ -302,7 +305,7 @@ func (r *WorkflowRunner) Export(in Request) (*Response, error) {
 func (r *WorkflowRunner) Dump(in Request) (*Response, error) {
 	logger.Trace()
 
-	res, err := r.service.GetAll()
+	res, err := r.resource.GetAll()
 	if err != nil {
 		return nil, err
 	}
@@ -379,11 +382,11 @@ func (r *WorkflowRunner) Load(in Request) (*Response, error) {
 func (r *WorkflowRunner) importWorkflow(in services.Workflow, replace bool) error {
 	logger.Trace()
 
-	res, err := r.service.Get(in.Name)
+	res, err := r.resource.Get(in.Name)
 	if err == nil {
 		if res != nil {
 			if replace {
-				if err := r.service.Delete(res.Name); err != nil {
+				if err := r.resource.Delete(res.Name); err != nil {
 					return err
 				}
 			} else {
@@ -394,7 +397,7 @@ func (r *WorkflowRunner) importWorkflow(in services.Workflow, replace bool) erro
 		}
 	}
 
-	_, err = r.service.Import(in)
+	_, err = r.resource.Import(in)
 	if err != nil {
 		return err
 	}
