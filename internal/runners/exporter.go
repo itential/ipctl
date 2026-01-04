@@ -5,6 +5,7 @@
 package runners
 
 import (
+	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
@@ -14,6 +15,34 @@ import (
 	"github.com/itential/ipctl/pkg/logger"
 	giturls "github.com/whilp/git-urls"
 )
+
+// validateRepositoryURL validates that a repository URL is well-formed and uses a supported scheme.
+func validateRepositoryURL(url string) error {
+	if url == "" {
+		return fmt.Errorf("repository URL cannot be empty")
+	}
+
+	validSchemes := []string{"file", "git", "https", "ssh", "git+ssh"}
+
+	u, err := giturls.Parse(url)
+	if err != nil {
+		return fmt.Errorf("invalid repository URL %q: %w", url, err)
+	}
+
+	schemeValid := false
+	for _, scheme := range validSchemes {
+		if u.Scheme == scheme || strings.HasPrefix(u.Scheme, scheme) {
+			schemeValid = true
+			break
+		}
+	}
+
+	if !schemeValid {
+		return fmt.Errorf("unsupported URL scheme %q (supported: %v)", u.Scheme, validSchemes)
+	}
+
+	return nil
+}
 
 // exportNewRepository will create a new Repository object from an the incoming
 // Request object.
@@ -26,9 +55,13 @@ func exportNewRepositoryFromRequest(in Request) (*Repository, error) {
 	privateKeyFile := common.GetPrivateKeyFile()
 	reference := common.GetReference()
 
-	u, err := giturls.Parse(common.GetRepository())
+	if err := validateRepositoryURL(url); err != nil {
+		return nil, err
+	}
+
+	u, err := giturls.Parse(url)
 	if err != nil {
-		panic(err)
+		return nil, fmt.Errorf("failed to parse repository URL %q: %w", url, err)
 	}
 
 	if u.Scheme == "file" && strings.HasPrefix(u.Path, "@") {

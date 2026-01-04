@@ -94,9 +94,14 @@ func importNewRepositoryFromRequest(in Request) (*Repository, error) {
 	privateKeyFile := common.GetPrivateKeyFile()
 	reference := common.GetReference()
 
-	u, err := giturls.Parse(common.GetRepository())
+	// Validate URL before parsing (validation function is in exporter.go)
+	if url == "" {
+		return nil, fmt.Errorf("repository URL cannot be empty")
+	}
+
+	u, err := giturls.Parse(url)
 	if err != nil {
-		panic(err)
+		return nil, fmt.Errorf("failed to parse repository URL %q: %w", url, err)
 	}
 
 	if u.Scheme == "file" && strings.HasPrefix(u.Path, "@") {
