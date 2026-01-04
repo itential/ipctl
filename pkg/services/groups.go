@@ -171,5 +171,5 @@ func (svc *GroupService) Create(in Group) (*Group, error) {
 // this function will return an error.
 func (svc *GroupService) Delete(id string) error {
 	logger.Trace()
-	return svc.Delete(fmt.Sprintf("/authorization/groups/%s", id))
+	return svc.BaseService.Delete(fmt.Sprintf("/authorization/groups/%s", id))
 }

@@ -93,7 +93,7 @@ func (svc *IntegrationService) Create(in Integration) (*Integration, error) {
 // Returns an error if the operation fails or the integration is not found.
 func (svc *IntegrationService) Delete(name string) error {
 	logger.Trace()
-	return svc.Delete(fmt.Sprintf("/integrations/%s", name))
+	return svc.BaseService.Delete(fmt.Sprintf("/integrations/%s", name))
 }
 
 // Get retrieves a specific integration by its name from the Itential Platform.

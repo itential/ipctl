@@ -245,7 +245,7 @@ func (svc *WorkflowService) Create(in Workflow) (*Workflow, error) {
 // error.
 func (svc *WorkflowService) Delete(name string) error {
 	logger.Trace()
-	return svc.Delete(
+	return svc.BaseService.Delete(
 		fmt.Sprintf("/workflow_builder/workflows/delete/%s", name),
 	)
 }

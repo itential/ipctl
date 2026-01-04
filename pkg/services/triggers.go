@@ -193,7 +193,7 @@ func (svc *TriggerService) Create(in Trigger) (Trigger, error) {
 
 func (svc *TriggerService) DeleteAction(id string) error {
 	logger.Trace()
-	return svc.Delete(
+	return svc.BaseService.Delete(
 		fmt.Sprintf("/operations-manager/triggers/action/%s", id),
 	)
 }

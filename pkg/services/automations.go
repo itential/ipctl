@@ -158,7 +158,7 @@ func (svc *AutomationService) Create(in Automation) (*Automation, error) {
 // Delete implements `DELETE /operations-manager/automations/{id}`
 func (svc *AutomationService) Delete(id string) error {
 	logger.Trace()
-	return svc.Delete(fmt.Sprintf("/operations-manager/automations/%s", id))
+	return svc.BaseService.Delete(fmt.Sprintf("/operations-manager/automations/%s", id))
 }
 
 // GetAll implements `GET /operations-manager/automations`

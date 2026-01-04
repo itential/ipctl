@@ -151,7 +151,7 @@ func (svc *AdapterService) Create(in Adapter) (*Adapter, error) {
 // It returns an error if the adapter doesn't exist or the operation fails.
 func (svc *AdapterService) Delete(name string) error {
 	logger.Trace()
-	return svc.Delete(fmt.Sprintf("/adapters/%s", name))
+	return svc.BaseService.Delete(fmt.Sprintf("/adapters/%s", name))
 }
 
 // Import imports an adapter configuration, creating or updating the adapter instance.

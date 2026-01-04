@@ -230,7 +230,7 @@ func (svc *ProjectService) Create(name string) (*Project, error) {
 // Returns an error if the deletion fails.
 func (svc *ProjectService) Delete(id string) error {
 	logger.Trace()
-	return svc.Delete(
+	return svc.BaseService.Delete(
 		fmt.Sprintf("/automation-studio/projects/%s", id),
 	)
 }
