@@ -190,32 +190,6 @@ func (svc *WorkflowService) Get(name string) (*Workflow, error) {
 	return &res.Items[0], nil
 }
 
-// GetById retrieves a specific workflow by its unique ID.
-// This method fetches all workflows and filters by ID, returning an error
-// if the workflow is not found.
-func (svc *WorkflowService) GetById(id string) (*Workflow, error) {
-	logger.Trace()
-
-	res, err := svc.GetAll()
-	if err != nil {
-		return nil, err
-	}
-
-	var workflow *Workflow
-	for _, ele := range res {
-		if ele.Id == id {
-			workflow = &ele
-			break
-		}
-	}
-
-	if workflow == nil {
-		return nil, errors.New("workflow not found")
-	}
-
-	return workflow, nil
-}
-
 // Create will add a new workflow asset to the Itential Platform server.  The
 // workflow will always be created even if another workflow by the same name
 // already exists.
@@ -323,9 +297,28 @@ func (svc *WorkflowService) ExportById(id string) (*Workflow, error) {
 	return &res, nil
 }
 
+// GetById retrieves a specific workflow by its unique ID.
+// This method fetches all workflows and filters by ID client-side.
+// DEPRECATED: Business logic method - prefer using resources.WorkflowResource.GetById
+func (svc *WorkflowService) GetById(id string) (*Workflow, error) {
+	logger.Trace()
+
+	workflows, err := svc.GetAll()
+	if err != nil {
+		return nil, err
+	}
+
+	for _, wf := range workflows {
+		if wf.Id == id {
+			return &wf, nil
+		}
+	}
+
+	return nil, errors.New("workflow not found")
+}
+
 // Clear removes all workflows from the server by deleting each workflow individually.
-// This operation cannot be undone. If any deletion fails, the operation stops
-// and returns an error.
+// DEPRECATED: Business logic method - prefer using resources.WorkflowResource.Clear
 func (svc *WorkflowService) Clear() error {
 	logger.Trace()
 
@@ -333,13 +326,14 @@ func (svc *WorkflowService) Clear() error {
 	if err != nil {
 		return err
 	}
-	for _, ele := range workflows {
-		if err := svc.Delete(ele.Name); err != nil {
+
+	for _, wf := range workflows {
+		if err := svc.Delete(wf.Name); err != nil {
 			return err
 		}
 	}
-	return nil
 
+	return nil
 }
 
 // Update modifies an existing workflow on the server.

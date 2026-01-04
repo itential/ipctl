@@ -118,34 +118,6 @@ func (svc *AccountService) Get(id string) (*Account, error) {
 	return res, nil
 }
 
-// GetByName retrieves a user account by username from the Itential Platform.
-// This method fetches all accounts and searches for a matching username.
-// Returns a pointer to the matching Account struct or an error if no account
-// with the specified username is found or if the request fails.
-func (svc *AccountService) GetByName(name string) (*Account, error) {
-	logger.Trace()
-
-	accounts, err := svc.GetAll()
-	if err != nil {
-		return nil, err
-	}
-
-	var res *Account
-
-	for _, ele := range accounts {
-		if ele.Username == name {
-			res = &ele
-			break
-		}
-	}
-
-	if res == nil {
-		return nil, errors.New("account not found")
-	}
-
-	return res, nil
-}
-
 // Deactivate sets an account to inactive status by calling PATCH /authorization/accounts/{id}
 // with inactive=true. The account will no longer be able to access the system.
 // Returns an error if the request fails or the account is not found.
@@ -166,4 +138,23 @@ func (svc *AccountService) Activate(id string) error {
 		uri:  fmt.Sprintf("/authorization/accounts/%s", id),
 		body: map[string]interface{}{"inactive": false},
 	}, nil)
+}
+
+// GetByName retrieves an account by username using client-side filtering.
+// DEPRECATED: Business logic method - prefer using resources.AccountResource.GetByName
+func (svc *AccountService) GetByName(name string) (*Account, error) {
+	logger.Trace()
+
+	accounts, err := svc.GetAll()
+	if err != nil {
+		return nil, err
+	}
+
+	for i := range accounts {
+		if accounts[i].Username == name {
+			return &accounts[i], nil
+		}
+	}
+
+	return nil, errors.New("account not found")
 }

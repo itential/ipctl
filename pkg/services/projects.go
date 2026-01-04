@@ -169,32 +169,6 @@ func (svc *ProjectService) Get(id string) (*Project, error) {
 	return res.Data, nil
 }
 
-// GetByName retrieves a project with the specified name. If the
-// project does not exist, this function will return an error.
-func (svc *ProjectService) GetByName(name string) (*Project, error) {
-	logger.Trace()
-
-	projects, err := svc.GetAll()
-	if err != nil {
-		return nil, err
-	}
-
-	var res *Project
-
-	for _, ele := range projects {
-		if ele.Name == name {
-			res = &ele
-			break
-		}
-	}
-
-	if res == nil {
-		return nil, errors.New("project not found")
-	}
-
-	return res, nil
-}
-
 // Create creates a new project with the specified name.
 // Returns the created project or an error if creation fails.
 func (svc *ProjectService) Create(name string) (*Project, error) {
@@ -235,53 +209,11 @@ func (svc *ProjectService) Delete(id string) error {
 	)
 }
 
-// transformImport recursively iterates over folders in a project schema and
-// removes keys to prepare the body for server acceptance during import operations.
-func (svc *ProjectService) transformImport(in map[string]interface{}) {
-	if in["nodeType"].(string) == "folder" {
-		delete(in, "iid")
-	}
-
-	if in["nodeType"].(string) == "component" {
-		delete(in, "name")
-	}
-
-	if in["children"] != nil {
-		for _, ele := range in["children"].([]interface{}) {
-			svc.transformImport(ele.(map[string]interface{}))
-		}
-	} else if in["children"] == nil {
-		delete(in, "children")
-	}
-}
-
-// Import imports a project using the server's import endpoint with conflict mode set to "insert-new".
-// It transforms the project data by removing certain fields from folders before sending to the server.
+// ImportTransformed imports a project using pre-transformed data.
+// The data parameter should already be prepared with proper structure and transformations.
 // Returns the imported project or an error if the import fails.
-func (svc *ProjectService) Import(in Project) (*Project, error) {
+func (svc *ProjectService) ImportTransformed(data map[string]interface{}) (*Project, error) {
 	logger.Trace()
-
-	body := map[string]interface{}{
-		"conflictMode": "insert-new",
-		"project":      in.Import(),
-	}
-
-	b, _ := json.Marshal(body)
-
-	var data map[string]interface{}
-	if err := json.Unmarshal(b, &data); err != nil {
-		return nil, err
-	}
-
-	project := data["project"].(map[string]interface{})
-
-	if foldersRaw, exists := project["folders"]; exists && foldersRaw != nil {
-		if folders, ok := foldersRaw.([]interface{}); ok && folders != nil {
-			for _, ele := range folders {
-				svc.transformImport(ele.(map[string]interface{}))
-			}
-		}
-	}
 
 	type Response struct {
 		Message  string                 `json:"message"`
@@ -327,20 +259,10 @@ func (svc *ProjectService) Export(id string) (*Project, error) {
 	return res.Data, nil
 }
 
-// AddMembers adds new members to an existing project by merging them with current members.
-// It first retrieves the current project, appends new members to existing ones,
-// and updates the project via PATCH request.
-func (svc *ProjectService) AddMembers(projectId string, members []ProjectMember) error {
+// UpdateMembers updates the members of a project via PATCH request.
+// The members parameter should contain the complete list of members for the project.
+func (svc *ProjectService) UpdateMembers(projectId string, members []ProjectMember) error {
 	logger.Trace()
-
-	project, err := svc.Get(projectId)
-	if err != nil {
-		return err
-	}
-
-	for _, ele := range project.Members {
-		members = append(members, ele)
-	}
 
 	body := map[string]interface{}{
 		"members": members,
@@ -349,4 +271,89 @@ func (svc *ProjectService) AddMembers(projectId string, members []ProjectMember)
 	uri := fmt.Sprintf("/automation-studio/projects/%s", projectId)
 
 	return svc.Patch(uri, body, nil)
+}
+
+// GetByName retrieves a project by name using client-side filtering.
+// DEPRECATED: Business logic method - prefer using resources.ProjectResource.GetByName
+func (svc *ProjectService) GetByName(name string) (*Project, error) {
+	logger.Trace()
+
+	projects, err := svc.GetAll()
+	if err != nil {
+		return nil, err
+	}
+
+	for i := range projects {
+		if projects[i].Name == name {
+			return &projects[i], nil
+		}
+	}
+
+	return nil, errors.New("project not found")
+}
+
+// Import imports a project with data transformation for server compatibility.
+// DEPRECATED: Business logic method - prefer using resources.ProjectResource.Import
+func (svc *ProjectService) Import(in Project) (*Project, error) {
+	logger.Trace()
+
+	body := map[string]interface{}{
+		"conflictMode": "insert-new",
+		"project":      in.Import(),
+	}
+
+	b, _ := json.Marshal(body)
+
+	var data map[string]interface{}
+	if err := json.Unmarshal(b, &data); err != nil {
+		return nil, err
+	}
+
+	project := data["project"].(map[string]interface{})
+
+	// Transform folder structures
+	if foldersRaw, exists := project["folders"]; exists && foldersRaw != nil {
+		if folders, ok := foldersRaw.([]interface{}); ok && folders != nil {
+			for _, ele := range folders {
+				svc.transformImport(ele.(map[string]interface{}))
+			}
+		}
+	}
+
+	return svc.ImportTransformed(data)
+}
+
+// transformImport recursively transforms folder structures for import.
+func (svc *ProjectService) transformImport(in map[string]interface{}) {
+	if in["nodeType"].(string) == "folder" {
+		delete(in, "iid")
+	}
+
+	if in["nodeType"].(string) == "component" {
+		delete(in, "name")
+	}
+
+	if in["children"] != nil {
+		for _, ele := range in["children"].([]interface{}) {
+			svc.transformImport(ele.(map[string]interface{}))
+		}
+	} else if in["children"] == nil {
+		delete(in, "children")
+	}
+}
+
+// AddMembers adds new members to an existing project.
+// DEPRECATED: Business logic method - prefer using resources.ProjectResource.AddMembers
+func (svc *ProjectService) AddMembers(projectId string, members []ProjectMember) error {
+	logger.Trace()
+
+	project, err := svc.Get(projectId)
+	if err != nil {
+		return err
+	}
+
+	// Merge existing members with new members
+	allMembers := append(members, project.Members...)
+
+	return svc.UpdateMembers(projectId, allMembers)
 }

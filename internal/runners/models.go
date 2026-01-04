@@ -17,20 +17,26 @@ import (
 	"github.com/itential/ipctl/pkg/client"
 	"github.com/itential/ipctl/pkg/config"
 	"github.com/itential/ipctl/pkg/logger"
+	"github.com/itential/ipctl/pkg/resources"
 	"github.com/itential/ipctl/pkg/services"
 )
 
 type ModelRunner struct {
 	BaseRunner
-	service *services.ModelService
-	client  client.Client
+	resource resources.ModelResourcer
+	client   client.Client
 }
 
 func NewModelRunner(client client.Client, cfg *config.Config) *ModelRunner {
 	return &ModelRunner{
 		BaseRunner: NewBaseRunner(client, cfg),
-		service:    services.NewModelService(client),
-		client:     client,
+		resource: resources.NewModelResource(
+			services.NewModelService(client),
+			services.NewWorkflowService(client),
+			services.NewTransformationService(client),
+			services.NewInstanceService(client),
+		),
+		client: client,
 	}
 }
 
@@ -44,7 +50,7 @@ Reader interface
 func (r *ModelRunner) Get(in Request) (*Response, error) {
 	logger.Trace()
 
-	models, err := r.service.GetAll()
+	models, err := r.resource.GetAll()
 	if err != nil {
 		return nil, err
 	}
@@ -61,7 +67,7 @@ func (r *ModelRunner) Describe(in Request) (*Response, error) {
 
 	name := in.Args[0]
 
-	model, err := r.service.GetByName(name)
+	model, err := r.resource.GetByName(name)
 	if err != nil {
 		return nil, err
 	}
@@ -87,10 +93,10 @@ func (r *ModelRunner) Create(in Request) (*Response, error) {
 	options := in.Options.(*flags.ModelCreateOptions)
 
 	if options.Replace {
-		existing, err := r.service.GetByName(name)
+		existing, err := r.resource.GetByName(name)
 
 		if existing != nil {
-			if err := r.service.Delete(existing.Id, false); err != nil {
+			if err := r.resource.Delete(existing.Id, false); err != nil {
 				return nil, err
 			}
 		} else if err != nil {
@@ -117,7 +123,7 @@ func (r *ModelRunner) Create(in Request) (*Response, error) {
 		model.Schema = schema
 	}
 
-	res, err := r.service.Create(model)
+	res, err := r.resource.Create(model)
 	if err != nil {
 		return nil, err
 	}
@@ -133,90 +139,21 @@ func (r *ModelRunner) Delete(in Request) (*Response, error) {
 	logger.Trace()
 
 	options := in.Options.(*flags.ModelDeleteOptions)
-
 	name := in.Args[0]
 
-	elements, err := r.service.GetAll()
+	// Find the model by name
+	model, err := r.resource.GetByName(name)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("model `%s` not found", name)
 	}
 
-	var model *services.Model
-
-	for _, ele := range elements {
-		if ele.Name == name {
-			model = &ele
-			break
-		}
+	// Delete with options (moved to resource layer)
+	deleteOpts := resources.DeleteOptions{
+		DeleteInstances: options.DeleteInstances,
+		DeleteRelated:   options.All,
 	}
 
-	if model == nil {
-		return nil, errors.New(fmt.Sprintf("model `%s` not found", name))
-	}
-
-	instances, err := r.modelInstances(model.Id)
-	if err != nil {
-		return nil, err
-	}
-
-	if !options.DeleteInstances && len(instances) > 0 {
-		return nil, fmt.Errorf("Model `%s` has attached instances, use `--delete-instances` to delete all instances", name)
-	}
-
-	if options.All {
-		for _, ele := range model.Actions {
-			if ele.Workflow != "" {
-				wfSvc := services.NewWorkflowService(r.client)
-
-				wf, err := wfSvc.GetById(ele.Workflow)
-				if err != nil {
-					if err.Error() != "workflow not found" {
-						return nil, err
-					}
-				}
-
-				if wf != nil {
-					if err := wfSvc.Delete(wf.Name); err != nil {
-						return nil, err
-					}
-				}
-			}
-
-			jstSvc := services.NewTransformationService(r.client)
-
-			if ele.PreWorkflowJst != "" {
-				jst, err := jstSvc.Get(ele.PreWorkflowJst)
-				if err != nil {
-					if err.Error() != "transformation not found" {
-						logger.Warn("%s", err.Error())
-						//return nil, err
-					}
-				}
-				if jst != nil {
-					if err := jstSvc.Delete(jst.Id); err != nil {
-						return nil, err
-					}
-				}
-			}
-
-			if ele.PostWorkflowJst != "" {
-				jst, err := jstSvc.Get(ele.PostWorkflowJst)
-				if err != nil {
-					if err.Error() != "transformation not found" {
-						logger.Warn("%s", err.Error())
-						//return nil, err
-					}
-				}
-				if jst != nil {
-					if err := jstSvc.Delete(jst.Id); err != nil {
-						return nil, err
-					}
-				}
-			}
-		}
-	}
-
-	if err := r.service.Delete(model.Id, options.DeleteInstances); err != nil {
+	if err := r.resource.DeleteWithOptions(model, deleteOpts); err != nil {
 		return nil, err
 	}
 
@@ -229,13 +166,13 @@ func (r *ModelRunner) Delete(in Request) (*Response, error) {
 func (r *ModelRunner) Clear(in Request) (*Response, error) {
 	logger.Trace()
 
-	models, err := r.service.GetAll()
+	models, err := r.resource.GetAll()
 	if err != nil {
 		return nil, err
 	}
 
 	for _, ele := range models {
-		if err := r.service.Delete(ele.Id, false); err != nil {
+		if err := r.resource.Delete(ele.Id, false); err != nil {
 			return nil, err
 		}
 	}
@@ -274,19 +211,24 @@ func (r *ModelRunner) CopyFrom(profile, name string) (any, error) {
 	}
 	defer cancel()
 
-	svc := services.NewModelService(client)
+	res := resources.NewModelResource(
+		services.NewModelService(client),
+		services.NewWorkflowService(client),
+		services.NewTransformationService(client),
+		services.NewInstanceService(client),
+	)
 
-	p, err := svc.GetByName(name)
+	model, err := res.GetByName(name)
 	if err != nil {
 		return nil, err
 	}
 
-	res, err := svc.Export(p.Id)
+	exported, err := res.Export(model.Id)
 	if err != nil {
 		return nil, err
 	}
 
-	return *res, err
+	return *exported, err
 }
 
 func (r *ModelRunner) CopyTo(profile string, in any, replace bool) (any, error) {
@@ -298,22 +240,27 @@ func (r *ModelRunner) CopyTo(profile string, in any, replace bool) (any, error) 
 	}
 	defer cancel()
 
-	svc := services.NewModelService(client)
+	resource := resources.NewModelResource(
+		services.NewModelService(client),
+		services.NewWorkflowService(client),
+		services.NewTransformationService(client),
+		services.NewInstanceService(client),
+	)
 
 	name := in.(services.Model).Name
 
-	if exists, err := svc.GetByName(name); exists != nil {
+	if exists, err := resource.GetByName(name); exists != nil {
 		if !replace {
 			return nil, errors.New(fmt.Sprintf("model `%s` exists on the destination server, use --replace to overwrite", name))
 		} else if err != nil {
 			return nil, err
 		}
-		if err := svc.Delete(name, false); err != nil {
+		if err := resource.Delete(exists.Id, false); err != nil {
 			return nil, err
 		}
 	}
 
-	res, err := svc.Import(in.(services.Model))
+	res, err := resource.Import(in.(services.Model))
 	if err != nil {
 		return nil, err
 	}
@@ -371,7 +318,7 @@ func (r *ModelRunner) Import(in Request) (*Response, error) {
 	}
 
 	if common.Replace {
-		m, err := r.service.GetByName(model.Name)
+		m, err := r.resource.GetByName(model.Name)
 
 		if err != nil {
 			if !strings.HasSuffix(err.Error(), "not found") {
@@ -380,7 +327,7 @@ func (r *ModelRunner) Import(in Request) (*Response, error) {
 		}
 
 		if m != nil {
-			instances, err := r.modelInstances(m.Id)
+			instances, err := r.resource.GetInstances(m.Id)
 			if err != nil {
 				return nil, err
 			}
@@ -389,13 +336,13 @@ func (r *ModelRunner) Import(in Request) (*Response, error) {
 				return nil, fmt.Errorf("cannot replace a model that has instances")
 			}
 
-			if err := r.service.Delete(m.Id, false); err != nil {
+			if err := r.resource.Delete(m.Id, false); err != nil {
 				return nil, err
 			}
 		}
 	}
 
-	res, err := r.service.Import(model)
+	res, err := r.resource.Import(model)
 	if err != nil {
 		return nil, err
 	}
@@ -421,12 +368,12 @@ func (r *ModelRunner) Export(in Request) (*Response, error) {
 
 	name := in.Args[0]
 
-	res, err := r.service.GetByName(name)
+	res, err := r.resource.GetByName(name)
 	if err != nil {
 		return nil, err
 	}
 
-	model, err := r.service.Export(res.Id)
+	model, err := r.resource.Export(res.Id)
 	if err != nil {
 		return nil, err
 	}
@@ -655,10 +602,4 @@ func (r *ModelRunner) importActionMap(action map[string]interface{}, path string
 	}
 
 	return nil
-}
-
-func (r *ModelRunner) modelInstances(modelId string) ([]services.Instance, error) {
-	logger.Trace()
-	return services.NewInstanceService(r.client).GetAll(modelId)
-
 }

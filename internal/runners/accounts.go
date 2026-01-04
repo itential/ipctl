@@ -10,18 +10,19 @@ import (
 	"github.com/itential/ipctl/pkg/client"
 	"github.com/itential/ipctl/pkg/config"
 	"github.com/itential/ipctl/pkg/logger"
+	"github.com/itential/ipctl/pkg/resources"
 	"github.com/itential/ipctl/pkg/services"
 )
 
 type AccountRunner struct {
 	BaseRunner
-	service *services.AccountService
+	resource resources.AccountResourcer
 }
 
 func NewAccountRunner(client client.Client, cfg *config.Config) *AccountRunner {
 	return &AccountRunner{
 		BaseRunner: NewBaseRunner(client, cfg),
-		service:    services.NewAccountService(client),
+		resource:   resources.NewAccountResource(services.NewAccountService(client)),
 	}
 }
 
@@ -35,7 +36,7 @@ Reader interface
 func (r *AccountRunner) Get(in Request) (*Response, error) {
 	logger.Trace()
 
-	accounts, err := r.service.GetAll()
+	accounts, err := r.resource.GetAll()
 	if err != nil {
 		return nil, err
 	}
@@ -50,14 +51,8 @@ func (r *AccountRunner) Get(in Request) (*Response, error) {
 func (r *AccountRunner) Describe(in Request) (*Response, error) {
 	logger.Trace()
 
-	accounts, err := r.service.GetAll()
+	account, err := r.resource.GetByName(in.Args[0])
 	if err != nil {
-		return nil, err
-	}
-
-	account := r.selectAccountByName(in.Args[0], accounts)
-
-	if account == nil {
 		return nil, fmt.Errorf("account `%s` does not exist", in.Args[0])
 	}
 
@@ -70,17 +65,4 @@ func (r *AccountRunner) Describe(in Request) (*Response, error) {
 		Object:   account,
 		Template: string(tmpl),
 	}, nil
-}
-
-// selectAccountByUsername takes a list of service.Accounts and iterates over
-// them looking for the first instance of username.   If found, the Account is
-// returned.  If the username is not found, nil is returend.
-func (r *AccountRunner) selectAccountByName(username string, accounts []services.Account) *services.Account {
-	logger.Trace()
-	for _, ele := range accounts {
-		if ele.Username == username {
-			return &ele
-		}
-	}
-	return nil
 }

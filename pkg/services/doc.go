@@ -2,15 +2,19 @@
 // Unauthorized copying of this file, via any medium is strictly prohibited
 // Proprietary and confidential
 
-// Package services provides business logic layer for interacting with
-// Itential Platform APIs.
+// Package services provides pure API implementations for interacting with
+// Itential Platform REST APIs.
 //
 // This package contains service implementations for all major Itential Platform
 // resources including projects, workflows, automations, adapters, accounts, and more.
-// Each service corresponds to a specific resource type and provides CRUD operations,
-// import/export functionality, and specialized methods.
+// Each service corresponds to a specific API endpoint and provides direct HTTP operations
+// without business logic. Business logic resides in the resources package.
 //
 // # Architecture
+//
+// Services are part of a layered architecture:
+//
+//	Handler → Runner → Resource → Service → API
 //
 // All services embed the BaseService type which provides common HTTP operations:
 //
@@ -18,8 +22,40 @@
 //	    BaseService
 //	}
 //
-// Services use the client.Client interface for HTTP communication and return
-// structured domain objects specific to each resource type.
+// Services implement the Servicer interfaces defined in interfaces.go and use the
+// client.Client interface for HTTP communication, returning structured domain objects
+// specific to each resource type.
+//
+// # Interface-Based Design
+//
+// All services implement corresponding interfaces (e.g., ProjectServicer, AccountServicer).
+// This enables:
+//   - Easy unit testing with mocks
+//   - Dependency injection
+//   - Alternative implementations (caching, logging, etc.)
+//
+// Example:
+//
+//	type AccountServicer interface {
+//	    GetAll() ([]Account, error)
+//	    Get(id string) (*Account, error)
+//	    Activate(id string) error
+//	    Deactivate(id string) error
+//	}
+//
+// # Separation of Concerns
+//
+// Services are pure API implementations and should:
+//   - Make direct HTTP calls to the Itential Platform API
+//   - Marshal/unmarshal JSON payloads
+//   - Handle HTTP-level errors
+//   - Return structured data types
+//
+// Services should NOT:
+//   - Implement business logic (use resources package)
+//   - Perform client-side filtering (use resources package)
+//   - Validate business rules (use resources package)
+//   - Orchestrate multiple API calls (use resources package)
 //
 // # Usage
 //

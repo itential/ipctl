@@ -18,18 +18,19 @@ import (
 	"github.com/itential/ipctl/pkg/config"
 	"github.com/itential/ipctl/pkg/editor"
 	"github.com/itential/ipctl/pkg/logger"
+	"github.com/itential/ipctl/pkg/resources"
 	"github.com/itential/ipctl/pkg/services"
 )
 
 type AdapterRunner struct {
 	BaseRunner
-	client  client.Client
-	service *services.AdapterService
+	client   client.Client
+	resource resources.AdapterResourcer
 }
 
 func NewAdapterRunner(c client.Client, cfg *config.Config) *AdapterRunner {
 	return &AdapterRunner{
-		service:    services.NewAdapterService(c),
+		resource:   resources.NewAdapterResource(services.NewAdapterService(c)),
 		BaseRunner: NewBaseRunner(c, cfg),
 		client:     c,
 	}
@@ -45,7 +46,7 @@ Reader Interface
 func (r *AdapterRunner) Get(in Request) (*Response, error) {
 	logger.Trace()
 
-	adapters, err := r.service.GetAll()
+	adapters, err := r.resource.GetAll()
 	if err != nil {
 		return nil, err
 	}
@@ -60,7 +61,7 @@ func (r *AdapterRunner) Get(in Request) (*Response, error) {
 func (r *AdapterRunner) Describe(in Request) (*Response, error) {
 	logger.Trace()
 
-	res, err := r.service.Get(in.Args[0])
+	res, err := r.resource.Get(in.Args[0])
 	if err != nil {
 		return nil, err
 	}
@@ -140,7 +141,7 @@ func (r *AdapterRunner) Create(in Request) (*Response, error) {
 		adapter.Properties.Properties = props
 	}
 
-	res, err := r.service.Create(adapter)
+	res, err := r.resource.Create(adapter)
 	if err != nil {
 		return nil, err
 	}
@@ -154,7 +155,7 @@ func (r *AdapterRunner) Create(in Request) (*Response, error) {
 func (r *AdapterRunner) Delete(in Request) (*Response, error) {
 	logger.Trace()
 
-	if err := r.service.Delete(in.Args[0]); err != nil {
+	if err := r.resource.Delete(in.Args[0]); err != nil {
 		return nil, err
 	}
 
@@ -179,7 +180,7 @@ func (r *AdapterRunner) Edit(in Request) (*Response, error) {
 
 	name := in.Args[0]
 
-	current, err := r.service.Get(name)
+	current, err := r.resource.Get(name)
 	if err != nil {
 		return nil, err
 	}
@@ -190,7 +191,7 @@ func (r *AdapterRunner) Edit(in Request) (*Response, error) {
 		return nil, err
 	}
 
-	if _, err := r.service.Update(updated); err != nil {
+	if _, err := r.resource.Update(updated); err != nil {
 		return nil, err
 	}
 
@@ -327,7 +328,7 @@ func (r *AdapterRunner) Export(in Request) (*Response, error) {
 
 	name := in.Args[0]
 
-	adapter, err := r.service.Export(name)
+	adapter, err := r.resource.Export(name)
 	if err != nil {
 		return nil, err
 	}
@@ -375,7 +376,7 @@ func (r *AdapterRunner) Start(in Request) (*Response, error) {
 
 	name := in.Args[0]
 
-	if err := r.service.Start(name); err != nil {
+	if err := r.resource.Start(name); err != nil {
 		return nil, err
 	}
 
@@ -389,7 +390,7 @@ func (r *AdapterRunner) Stop(in Request) (*Response, error) {
 
 	name := in.Args[0]
 
-	if err := r.service.Stop(name); err != nil {
+	if err := r.resource.Stop(name); err != nil {
 		return nil, err
 	}
 
@@ -403,7 +404,7 @@ func (r *AdapterRunner) Restart(in Request) (*Response, error) {
 
 	name := in.Args[0]
 
-	if err := r.service.Restart(name); err != nil {
+	if err := r.resource.Restart(name); err != nil {
 		return nil, err
 	}
 
@@ -422,7 +423,7 @@ Dumper interface
 func (r *AdapterRunner) Dump(in Request) (*Response, error) {
 	logger.Trace()
 
-	res, err := r.service.GetAll()
+	res, err := r.resource.GetAll()
 	if err != nil {
 		return nil, err
 	}
@@ -469,7 +470,7 @@ func (r *AdapterRunner) Load(in Request) (*Response, error) {
 			output = append(output, fmt.Sprintf("Failed to load adapter from `%s`, skipping", fn))
 			skipped++
 		} else {
-			if _, err := r.service.Import(adapter); err != nil {
+			if _, err := r.resource.Import(adapter); err != nil {
 				if !strings.HasSuffix(err.Error(), "already exists!\"") {
 					return nil, err
 				}
@@ -500,7 +501,7 @@ Private functions
 func (r *AdapterRunner) importAdapter(in services.Adapter, replace bool) error {
 	logger.Trace()
 
-	adapters, err := r.service.GetAll()
+	adapters, err := r.resource.GetAll()
 	if err != nil {
 		return err
 	}
@@ -508,7 +509,7 @@ func (r *AdapterRunner) importAdapter(in services.Adapter, replace bool) error {
 	for _, ele := range adapters {
 		if ele.Name == in.Name {
 			if replace {
-				if err := r.service.Delete(ele.Name); err != nil {
+				if err := r.resource.Delete(ele.Name); err != nil {
 					return err
 				}
 			} else {
@@ -517,7 +518,7 @@ func (r *AdapterRunner) importAdapter(in services.Adapter, replace bool) error {
 		}
 	}
 
-	if _, err := r.service.Import(in); err != nil {
+	if _, err := r.resource.Import(in); err != nil {
 		return err
 	}
 

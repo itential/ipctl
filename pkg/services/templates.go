@@ -115,38 +115,23 @@ func (svc *TemplateService) Get(id string) (*Template, error) {
 	return res, nil
 }
 
-// GetByName retrieves a template by its name
-// Returns an error if the template is not found
+// GetByName retrieves a template by name using client-side filtering.
+// DEPRECATED: Business logic method - prefer using resources.TemplateResource.GetByName
 func (svc *TemplateService) GetByName(name string) (*Template, error) {
 	logger.Trace()
 
-	var res PaginatedResponse
-
-	if err := svc.GetRequest(&Request{
-		uri: "/automation-studio/templates",
-		query: map[string]string{
-			"contains[name]": name,
-		},
-	}, &res); err != nil {
+	templates, err := svc.GetAll()
+	if err != nil {
 		return nil, err
 	}
 
-	if len(res.Items) == 0 {
-		return nil, errors.New("template not found")
-	}
-
-	var template *Template
-
-	for _, ele := range res.Items {
-		if ele.(map[string]interface{})["name"].(string) == name {
-			if err := Unmarshal(ele, &template); err != nil {
-				return nil, err
-			}
-			break
+	for i := range templates {
+		if templates[i].Name == name {
+			return &templates[i], nil
 		}
 	}
 
-	return template, nil
+	return nil, errors.New("template not found")
 }
 
 // Create creates a new template
