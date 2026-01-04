@@ -20,7 +20,7 @@ type LocalClientRunner struct {
 func NewLocalClientRunner(client client.Client, cfg *config.Config) LocalClientRunner {
 	return LocalClientRunner{
 		BaseRunner: NewBaseRunner(client, cfg),
-		client: client,
+		client:     client,
 	}
 }
 

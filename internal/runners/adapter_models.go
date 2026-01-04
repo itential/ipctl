@@ -18,7 +18,7 @@ type AdapterModelRunner struct {
 
 func NewAdapterModelRunner(c client.Client, cfg *config.Config) *AdapterModelRunner {
 	return &AdapterModelRunner{
-		service: services.NewAdapterModelService(c),
+		service:    services.NewAdapterModelService(c),
 		BaseRunner: NewBaseRunner(c, cfg),
 	}
 }

@@ -28,7 +28,7 @@ type JsonFormRunner struct {
 
 func NewJsonFormRunner(c client.Client, cfg *config.Config) *JsonFormRunner {
 	return &JsonFormRunner{
-		service: services.NewJsonFormService(c),
+		service:    services.NewJsonFormService(c),
 		BaseRunner: NewBaseRunner(c, cfg),
 	}
 }

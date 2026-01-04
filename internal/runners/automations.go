@@ -30,10 +30,10 @@ type AutomationRunner struct {
 func NewAutomationRunner(c client.Client, cfg *config.Config) *AutomationRunner {
 	return &AutomationRunner{
 		BaseRunner: NewBaseRunner(c, cfg),
-		client:    c,
-		service:   services.NewAutomationService(c),
-		workflows: services.NewAutomationService(c),
-		triggers:  services.NewTriggerService(c),
+		client:     c,
+		service:    services.NewAutomationService(c),
+		workflows:  services.NewAutomationService(c),
+		triggers:   services.NewTriggerService(c),
 	}
 }
 

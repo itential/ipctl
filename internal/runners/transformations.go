@@ -23,7 +23,7 @@ type TransformationRunner struct {
 
 func NewTransformationRunner(c client.Client, cfg *config.Config) *TransformationRunner {
 	return &TransformationRunner{
-		service: services.NewTransformationService(c),
+		service:    services.NewTransformationService(c),
 		BaseRunner: NewBaseRunner(c, cfg),
 	}
 }

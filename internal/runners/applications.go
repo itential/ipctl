@@ -22,9 +22,9 @@ type ApplicationRunner struct {
 
 func NewApplicationRunner(c client.Client, cfg *config.Config) *ApplicationRunner {
 	return &ApplicationRunner{
-		service: services.NewApplicationService(c),
+		service:    services.NewApplicationService(c),
 		BaseRunner: NewBaseRunner(c, cfg),
-		client:  c,
+		client:     c,
 	}
 }
 

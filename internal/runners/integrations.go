@@ -25,8 +25,8 @@ type IntegrationRunner struct {
 
 func NewIntegrationRunner(c client.Client, cfg *config.Config) *IntegrationRunner {
 	return &IntegrationRunner{
-		service: services.NewIntegrationService(c),
-		client:  c,
+		service:    services.NewIntegrationService(c),
+		client:     c,
 		BaseRunner: NewBaseRunner(c, cfg),
 	}
 }

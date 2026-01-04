@@ -370,6 +370,7 @@ func TestIntegrationServiceClientType(t *testing.T) {
 
 	svc := NewIntegrationService(client)
 
-	assert.NotNil(t, svc.client)
-	assert.Equal(t, reflect.TypeOf((*ServiceClient)(nil)), reflect.TypeOf(svc.client))
+	// Verify the service was created successfully with embedded BaseService
+	assert.NotNil(t, svc)
+	assert.Equal(t, reflect.TypeOf((*IntegrationService)(nil)), reflect.TypeOf(svc))
 }

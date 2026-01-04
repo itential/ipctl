@@ -30,7 +30,7 @@ type ProjectRunner struct {
 
 func NewProjectRunner(client client.Client, cfg *config.Config) *ProjectRunner {
 	return &ProjectRunner{
-		BaseRunner: NewBaseRunner(client, cfg),
+		BaseRunner:   NewBaseRunner(client, cfg),
 		service:      services.NewProjectService(client),
 		accounts:     services.NewAccountService(client),
 		groups:       services.NewGroupService(client),

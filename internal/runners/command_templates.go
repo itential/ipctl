@@ -24,7 +24,7 @@ type CommandTemplateRunner struct {
 
 func NewCommandTemplateRunner(c client.Client, cfg *config.Config) *CommandTemplateRunner {
 	return &CommandTemplateRunner{
-		service: services.NewCommandTemplateService(c),
+		service:    services.NewCommandTemplateService(c),
 		BaseRunner: NewBaseRunner(c, cfg),
 	}
 }

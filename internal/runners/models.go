@@ -29,8 +29,8 @@ type ModelRunner struct {
 func NewModelRunner(client client.Client, cfg *config.Config) *ModelRunner {
 	return &ModelRunner{
 		BaseRunner: NewBaseRunner(client, cfg),
-		service: services.NewModelService(client),
-		client:  client,
+		service:    services.NewModelService(client),
+		client:     client,
 	}
 }
 
