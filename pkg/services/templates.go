@@ -183,7 +183,7 @@ func (svc *TemplateService) Create(in Template) (*Template, error) {
 // Delete removes a template by its ID
 func (svc *TemplateService) Delete(id string) error {
 	logger.Trace()
-	return svc.Delete(
+	return svc.BaseService.Delete(
 		fmt.Sprintf("/automation-studio/templates/%s", id),
 	)
 }

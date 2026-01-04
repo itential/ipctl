@@ -133,7 +133,7 @@ func (svc *IntegrationModelService) Create(in map[string]interface{}) (*Integrat
 // Returns an error if the operation fails or the model is not found.
 func (svc *IntegrationModelService) Delete(name string) error {
 	logger.Trace()
-	return svc.Delete(fmt.Sprintf("/integration-models/%s", name))
+	return svc.BaseService.Delete(fmt.Sprintf("/integration-models/%s", name))
 }
 
 // Export retrieves the exportable definition of an integration model by its name.

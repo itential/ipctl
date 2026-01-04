@@ -74,7 +74,7 @@ func (svc *GoldenConfigService) Create(in GoldenConfigTree) (*GoldenConfigTree, 
 func (svc *GoldenConfigService) Delete(id string) error {
 	logger.Trace()
 	var uri = fmt.Sprintf("/configuration_manager/configs/%s", id)
-	return svc.Delete(uri)
+	return svc.BaseService.Delete(uri)
 }
 
 // GetAll calls `GET /configuration_manager/configs`

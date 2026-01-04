@@ -305,7 +305,7 @@ func (svc *ProfileService) Create(in Profile) (*Profile, error) {
 //   - error: An error if the request fails or the profile doesn't exist
 func (svc *ProfileService) Delete(name string) error {
 	logger.Trace()
-	return svc.Delete(fmt.Sprintf("/profiles/%s", name))
+	return svc.BaseService.Delete(fmt.Sprintf("/profiles/%s", name))
 }
 
 // Import imports a complete profile configuration to the IAP server.
