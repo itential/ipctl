@@ -41,11 +41,11 @@ type CommandTemplate struct {
 }
 
 type CommandTemplateService struct {
-	client *ServiceClient
+	BaseService
 }
 
 func NewCommandTemplateService(c client.Client) *CommandTemplateService {
-	return &CommandTemplateService{client: NewServiceClient(c)}
+	return &CommandTemplateService{BaseService: NewBaseService(c)}
 }
 
 func NewCommandTemplate(name string) CommandTemplate {
@@ -76,7 +76,7 @@ func (svc *CommandTemplateService) Get(name string) (*CommandTemplate, error) {
 	var res []*CommandTemplate
 	var uri = fmt.Sprintf("/mop/listATemplate/%s", name)
 
-	if err := svc.client.Get(uri, &res); err != nil {
+	if err := svc.BaseService.Get(uri, &res); err != nil {
 		return nil, err
 	}
 
@@ -117,7 +117,7 @@ func (svc *CommandTemplateService) GetAll() ([]CommandTemplate, error) {
 	logger.Trace()
 	var res []CommandTemplate
 	var uri = "/mop/listTemplates"
-	if err := svc.client.Get(uri, &res); err != nil {
+	if err := svc.BaseService.Get(uri, &res); err != nil {
 		return nil, err
 	}
 	return res, nil
@@ -141,7 +141,7 @@ func (svc *CommandTemplateService) Create(in CommandTemplate) (*CommandTemplate,
 
 	var res Response
 
-	if err := svc.client.PostRequest(&Request{
+	if err := svc.PostRequest(&Request{
 		uri:                "/mop/createTemplate",
 		body:               &body,
 		expectedStatusCode: http.StatusOK,
@@ -162,7 +162,7 @@ func (svc *CommandTemplateService) Delete(name string) error {
 
 	var res Response
 
-	if err := svc.client.PostRequest(&Request{
+	if err := svc.PostRequest(&Request{
 		uri:                fmt.Sprintf("/mop/deleteTemplate/%s", name),
 		expectedStatusCode: http.StatusOK,
 	}, &res); err != nil {
@@ -194,7 +194,7 @@ func (svc *CommandTemplateService) Import(in CommandTemplate) error {
 		"template": in,
 	}
 
-	return svc.client.PostRequest(&Request{
+	return svc.PostRequest(&Request{
 		uri:                "/mop/import",
 		body:               &body,
 		expectedStatusCode: http.StatusOK,
@@ -213,7 +213,7 @@ func (svc *CommandTemplateService) Export(name string) (*CommandTemplate, error)
 
 	var res *CommandTemplate
 
-	if err := svc.client.PostRequest(&Request{
+	if err := svc.PostRequest(&Request{
 		uri:                "/mop/export",
 		body:               &body,
 		expectedStatusCode: http.StatusOK,

@@ -30,13 +30,13 @@ type Integration struct {
 // IntegrationService provides methods for managing integrations in the Itential Platform.
 // It handles CRUD operations for integration configurations and settings.
 type IntegrationService struct {
-	client *ServiceClient
+	BaseService
 }
 
 // NewIntegrationService creates a new IntegrationService instance with the provided HTTP client.
 // The client is used to communicate with the Itential Platform integrations API.
 func NewIntegrationService(c client.Client) *IntegrationService {
-	return &IntegrationService{client: NewServiceClient(c)}
+	return &IntegrationService{BaseService: NewBaseService(c)}
 }
 
 // NewIntegration creates a new Integration instance with the specified name and type.
@@ -74,7 +74,7 @@ func (svc *IntegrationService) Create(in Integration) (*Integration, error) {
 
 	var res Response
 
-	if err := svc.client.PostRequest(&Request{
+	if err := svc.PostRequest(&Request{
 		uri:                "/integrations",
 		body:               map[string]interface{}{"properties": in},
 		expectedStatusCode: http.StatusOK,
@@ -93,7 +93,7 @@ func (svc *IntegrationService) Create(in Integration) (*Integration, error) {
 // Returns an error if the operation fails or the integration is not found.
 func (svc *IntegrationService) Delete(name string) error {
 	logger.Trace()
-	return svc.client.Delete(fmt.Sprintf("/integrations/%s", name))
+	return svc.Delete(fmt.Sprintf("/integrations/%s", name))
 }
 
 // Get retrieves a specific integration by its name from the Itential Platform.
@@ -110,7 +110,7 @@ func (svc *IntegrationService) Get(name string) (*Integration, error) {
 	var res Response
 	var uri = fmt.Sprintf("/integrations/%s", name)
 
-	if err := svc.client.Get(uri, &res); err != nil {
+	if err := svc.BaseService.Get(uri, &res); err != nil {
 		return nil, err
 	}
 
@@ -135,7 +135,7 @@ func (svc *IntegrationService) GetAll() ([]Integration, error) {
 
 	var res Response
 
-	if err := svc.client.Get("/integrations", &res); err != nil {
+	if err := svc.BaseService.Get("/integrations", &res); err != nil {
 		return nil, err
 	}
 

@@ -93,13 +93,13 @@ func (p Project) Import() map[string]interface{} {
 }
 
 type ProjectService struct {
-	client *ServiceClient
+	BaseService
 }
 
 // NewProjectService creates a new ProjectService instance with the provided client.
 func NewProjectService(c client.Client) *ProjectService {
 	return &ProjectService{
-		client: NewServiceClient(c),
+		BaseService: NewBaseService(c),
 	}
 }
 
@@ -122,7 +122,7 @@ func (svc *ProjectService) GetAll() ([]Project, error) {
 	var skip = 0
 
 	for {
-		if err := svc.client.GetRequest(&Request{
+		if err := svc.GetRequest(&Request{
 			uri:    "/automation-studio/projects",
 			params: &QueryParams{Limit: limit, Skip: skip},
 		}, &res); err != nil {
@@ -160,7 +160,7 @@ func (svc *ProjectService) Get(id string) (*Project, error) {
 
 	var uri = fmt.Sprintf("/automation-studio/projects/%s", id)
 
-	if err := svc.client.Get(uri, &res); err != nil {
+	if err := svc.BaseService.Get(uri, &res); err != nil {
 		return nil, err
 	}
 
@@ -213,7 +213,7 @@ func (svc *ProjectService) Create(name string) (*Project, error) {
 
 	var res Response
 
-	if err := svc.client.PostRequest(&Request{
+	if err := svc.PostRequest(&Request{
 		uri:                "/automation-studio/projects",
 		body:               body,
 		expectedStatusCode: http.StatusOK,
@@ -230,7 +230,7 @@ func (svc *ProjectService) Create(name string) (*Project, error) {
 // Returns an error if the deletion fails.
 func (svc *ProjectService) Delete(id string) error {
 	logger.Trace()
-	return svc.client.Delete(
+	return svc.Delete(
 		fmt.Sprintf("/automation-studio/projects/%s", id),
 	)
 }
@@ -291,7 +291,7 @@ func (svc *ProjectService) Import(in Project) (*Project, error) {
 
 	var res Response
 
-	if err := svc.client.PostRequest(&Request{
+	if err := svc.PostRequest(&Request{
 		uri:                "/automation-studio/projects/import",
 		body:               data,
 		expectedStatusCode: http.StatusOK,
@@ -318,7 +318,7 @@ func (svc *ProjectService) Export(id string) (*Project, error) {
 	var res Response
 	var uri = fmt.Sprintf("/automation-studio/projects/%s/export", id)
 
-	if err := svc.client.Get(uri, &res); err != nil {
+	if err := svc.BaseService.Get(uri, &res); err != nil {
 		return nil, err
 	}
 
@@ -348,5 +348,5 @@ func (svc *ProjectService) AddMembers(projectId string, members []ProjectMember)
 
 	uri := fmt.Sprintf("/automation-studio/projects/%s", projectId)
 
-	return svc.client.Patch(uri, body, nil)
+	return svc.Patch(uri, body, nil)
 }

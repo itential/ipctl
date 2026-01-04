@@ -15,11 +15,11 @@ type View struct {
 }
 
 type ViewService struct {
-	client *ServiceClient
+	BaseService
 }
 
 func NewViewService(c client.Client) *ViewService {
-	return &ViewService{client: NewServiceClient(c)}
+	return &ViewService{BaseService: NewBaseService(c)}
 }
 
 // GetAll will retrieve all authorization views from the service and return
@@ -40,7 +40,7 @@ func (svc *ViewService) GetAll() ([]View, error) {
 	var skip = 0
 
 	for {
-		if err := svc.client.GetRequest(&Request{
+		if err := svc.GetRequest(&Request{
 			uri:    "/authorization/views",
 			params: &QueryParams{Limit: limit, Skip: skip},
 		}, &res); err != nil {

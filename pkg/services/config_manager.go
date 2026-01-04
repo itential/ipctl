@@ -16,17 +16,17 @@ type ConfigManagerJinja2Template struct {
 }
 
 type ConfigManagerService struct {
-	client *ServiceClient
+	BaseService
 }
 
 func NewConfigManagerService(c client.Client) *ConfigManagerService {
-	return &ConfigManagerService{client: NewServiceClient(c)}
+	return &ConfigManagerService{BaseService: NewBaseService(c)}
 }
 
 func (svc *ConfigManagerService) Render(in ConfigManagerJinja2Template) {
 	logger.Trace()
 
-	if err := svc.client.Post("/configuration_manager/jinja2", in, nil); err != nil {
+	if err := svc.Post("/configuration_manager/jinja2", in, nil); err != nil {
 		panic(err)
 	}
 

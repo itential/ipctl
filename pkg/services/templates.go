@@ -33,12 +33,12 @@ type Template struct {
 
 // TemplateService provides methods for managing templates
 type TemplateService struct {
-	client *ServiceClient
+	BaseService
 }
 
 // NewTemplateService creates a new TemplateService with the given client
 func NewTemplateService(c client.Client) *TemplateService {
-	return &TemplateService{client: NewServiceClient(c)}
+	return &TemplateService{BaseService: NewBaseService(c)}
 }
 
 // NewTemplate creates a new Template instance with the given parameters
@@ -72,7 +72,7 @@ func (svc *TemplateService) GetAll() ([]Template, error) {
 	// this API will simply return all items which is contrary to the API
 	// documentation.  Need to test
 	for {
-		if err := svc.client.GetRequest(&Request{
+		if err := svc.GetRequest(&Request{
 			uri:    "/automation-studio/templates",
 			params: &QueryParams{Limit: limit, Skip: skip},
 		}, &res); err != nil {
@@ -108,7 +108,7 @@ func (svc *TemplateService) Get(id string) (*Template, error) {
 
 	// FIXME (privateip) This can be optimzied by using query params instead of
 	// iterating over all configured templates
-	if err := svc.client.Get(uri, &res); err != nil {
+	if err := svc.BaseService.Get(uri, &res); err != nil {
 		return nil, err
 	}
 
@@ -122,7 +122,7 @@ func (svc *TemplateService) GetByName(name string) (*Template, error) {
 
 	var res PaginatedResponse
 
-	if err := svc.client.GetRequest(&Request{
+	if err := svc.GetRequest(&Request{
 		uri: "/automation-studio/templates",
 		query: map[string]string{
 			"contains[name]": name,
@@ -169,7 +169,7 @@ func (svc *TemplateService) Create(in Template) (*Template, error) {
 
 	var res Response
 
-	if err := svc.client.PostRequest(&Request{
+	if err := svc.PostRequest(&Request{
 		uri:                "/automation-studio/templates",
 		body:               &body,
 		expectedStatusCode: http.StatusOK,
@@ -183,7 +183,7 @@ func (svc *TemplateService) Create(in Template) (*Template, error) {
 // Delete removes a template by its ID
 func (svc *TemplateService) Delete(id string) error {
 	logger.Trace()
-	return svc.client.Delete(
+	return svc.Delete(
 		fmt.Sprintf("/automation-studio/templates/%s", id),
 	)
 }
@@ -204,7 +204,7 @@ func (svc *TemplateService) Import(in Template) (*Template, error) {
 
 	var res Response
 
-	if err := svc.client.PostRequest(&Request{
+	if err := svc.PostRequest(&Request{
 		uri:                "/automation-studio/templates/import",
 		body:               &body,
 		expectedStatusCode: http.StatusOK,
@@ -224,7 +224,7 @@ func (svc *TemplateService) Export(id string) (*Template, error) {
 	var res *Template
 	var uri = fmt.Sprintf("/automation-studio/templates/%s/export", id)
 
-	if err := svc.client.Get(uri, &res); err != nil {
+	if err := svc.BaseService.Get(uri, &res); err != nil {
 		return nil, err
 	}
 

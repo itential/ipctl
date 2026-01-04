@@ -48,13 +48,13 @@ type IntegrationModel struct {
 // IntegrationModelService provides methods for managing integration models in the Itential Platform.
 // It handles CRUD operations and export functionality for integration model definitions.
 type IntegrationModelService struct {
-	client *ServiceClient
+	BaseService
 }
 
 // NewIntegrationModelService creates a new IntegrationModelService instance with the provided HTTP client.
 // The client is used to communicate with the Itential Platform integration models API.
 func NewIntegrationModelService(c client.Client) *IntegrationModelService {
-	return &IntegrationModelService{client: NewServiceClient(c)}
+	return &IntegrationModelService{BaseService: NewBaseService(c)}
 }
 
 // GetAll retrieves all integration models from the Itential Platform.
@@ -70,7 +70,7 @@ func (svc *IntegrationModelService) GetAll() ([]IntegrationModel, error) {
 
 	var res Response
 
-	if err := svc.client.Get("/integration-models", &res); err != nil {
+	if err := svc.BaseService.Get("/integration-models", &res); err != nil {
 		return nil, err
 	}
 
@@ -86,7 +86,7 @@ func (svc *IntegrationModelService) Get(name string) (*IntegrationModel, error) 
 	var res *IntegrationModel
 	var uri = fmt.Sprintf("/integration-models/%s", name)
 
-	if err := svc.client.Get(uri, &res); err != nil {
+	if err := svc.BaseService.Get(uri, &res); err != nil {
 		return nil, err
 	}
 
@@ -110,7 +110,7 @@ func (svc *IntegrationModelService) Create(in map[string]interface{}) (*Integrat
 
 	var res Response
 
-	if err := svc.client.PostRequest(&Request{
+	if err := svc.PostRequest(&Request{
 		uri:                "/integration-models",
 		body:               &body,
 		expectedStatusCode: http.StatusOK,
@@ -133,7 +133,7 @@ func (svc *IntegrationModelService) Create(in map[string]interface{}) (*Integrat
 // Returns an error if the operation fails or the model is not found.
 func (svc *IntegrationModelService) Delete(name string) error {
 	logger.Trace()
-	return svc.client.Delete(fmt.Sprintf("/integration-models/%s", name))
+	return svc.Delete(fmt.Sprintf("/integration-models/%s", name))
 }
 
 // Export retrieves the exportable definition of an integration model by its name.
@@ -145,7 +145,7 @@ func (svc *IntegrationModelService) Export(name string) (map[string]interface{},
 	var res map[string]interface{}
 	var uri = fmt.Sprintf("/integration-models/%s/export", name)
 
-	if err := svc.client.Get(uri, &res); err != nil {
+	if err := svc.BaseService.Get(uri, &res); err != nil {
 		return nil, err
 	}
 

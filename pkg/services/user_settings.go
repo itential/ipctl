@@ -27,12 +27,12 @@ type UserSettings struct {
 }
 
 type UserSettingsService struct {
-	client *ServiceClient
+	BaseService
 }
 
 func NewUserSettingsService(c client.Client) *UserSettingsService {
 	return &UserSettingsService{
-		client: NewServiceClient(c),
+		BaseService: NewBaseService(c),
 	}
 }
 
@@ -41,7 +41,7 @@ func (svc *UserSettingsService) Get() (*UserSettings, error) {
 
 	var res *UserSettings
 
-	if err := svc.client.Get("/user/settings", &res); err != nil {
+	if err := svc.BaseService.Get("/user/settings", &res); err != nil {
 		return nil, err
 	}
 

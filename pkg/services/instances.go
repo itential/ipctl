@@ -41,11 +41,11 @@ type Instance struct {
 }
 
 type InstanceService struct {
-	client *ServiceClient
+	BaseService
 }
 
 func NewInstanceService(c client.Client) *InstanceService {
-	return &InstanceService{client: NewServiceClient(c)}
+	return &InstanceService{BaseService: NewBaseService(c)}
 }
 
 /*
@@ -95,7 +95,7 @@ func (svc *InstanceService) GetAll(modelId string) ([]Instance, error) {
 	var skip = 0
 
 	for {
-		if err := svc.client.GetRequest(&Request{
+		if err := svc.GetRequest(&Request{
 			uri:    uri,
 			params: &QueryParams{Limit: limit, Skip: skip, Raw: map[string]string{"include-deleted": "true"}},
 		}, &res); err != nil {

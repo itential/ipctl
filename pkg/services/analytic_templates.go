@@ -41,11 +41,11 @@ type AnalyticTemplate struct {
 }
 
 type AnalyticTemplateService struct {
-	client *ServiceClient
+	BaseService
 }
 
 func NewAnalyticTemplateService(c client.Client) *AnalyticTemplateService {
-	return &AnalyticTemplateService{client: NewServiceClient(c)}
+	return &AnalyticTemplateService{BaseService: NewBaseService(c)}
 }
 
 func NewAnalyticTemplate(name string) AnalyticTemplate {
@@ -77,7 +77,7 @@ func (svc *AnalyticTemplateService) GetAll() ([]AnalyticTemplate, error) {
 	var templates []AnalyticTemplate
 	var uri = "/mop/listAnalyticTemplates"
 
-	if err := svc.client.Get(uri, &templates); err != nil {
+	if err := svc.BaseService.Get(uri, &templates); err != nil {
 		return nil, err
 	}
 
@@ -92,7 +92,7 @@ func (svc *AnalyticTemplateService) Get(name string) (*AnalyticTemplate, error) 
 	var template []AnalyticTemplate
 	var uri = fmt.Sprintf("/mop/listAnAnalyticTemplate/%s", name)
 
-	if err := svc.client.Get(uri, &template); err != nil {
+	if err := svc.BaseService.Get(uri, &template); err != nil {
 		return nil, err
 	}
 
@@ -119,7 +119,7 @@ func (svc *AnalyticTemplateService) Create(in AnalyticTemplate) (*AnalyticTempla
 
 	var res Response
 
-	if err := svc.client.PostRequest(&Request{
+	if err := svc.PostRequest(&Request{
 		uri:                "/mop/createAnalyticTemplate",
 		body:               &body,
 		expectedStatusCode: http.StatusOK,
@@ -133,7 +133,7 @@ func (svc *AnalyticTemplateService) Create(in AnalyticTemplate) (*AnalyticTempla
 // Delete will remove the specified analytic template from the server.
 func (svc *AnalyticTemplateService) Delete(id string) error {
 	logger.Trace()
-	return svc.client.PostRequest(&Request{
+	return svc.PostRequest(&Request{
 		uri:                fmt.Sprintf("/mop/deleteAnalyticTemplate/%s", id),
 		expectedStatusCode: http.StatusOK,
 	}, nil)
@@ -148,7 +148,7 @@ func (svc *AnalyticTemplateService) Import(in AnalyticTemplate) error {
 		"template": in,
 	}
 
-	return svc.client.Post("/mop/import", &body, nil)
+	return svc.Post("/mop/import", &body, nil)
 }
 
 func (svc *AnalyticTemplateService) Export(name string) (*AnalyticTemplate, error) {
@@ -163,7 +163,7 @@ func (svc *AnalyticTemplateService) Export(name string) (*AnalyticTemplate, erro
 
 	var res *AnalyticTemplate
 
-	if err := svc.client.PostRequest(&Request{
+	if err := svc.PostRequest(&Request{
 		uri:                "/mop/export",
 		body:               &body,
 		expectedStatusCode: http.StatusOK,

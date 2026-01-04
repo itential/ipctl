@@ -36,13 +36,13 @@ type JsonForm struct {
 // in the Itential Platform. It handles CRUD operations and bulk
 // management of forms used for dynamic UI generation.
 type JsonFormService struct {
-	client *ServiceClient
+	BaseService
 }
 
 // NewJsonFormService creates and returns a new JsonFormService instance
 // configured with the provided client for API communication.
 func NewJsonFormService(c client.Client) *JsonFormService {
-	return &JsonFormService{client: NewServiceClient(c)}
+	return &JsonFormService{BaseService: NewBaseService(c)}
 }
 
 // NewJsonForm creates and returns a new JsonForm instance with all fields
@@ -85,7 +85,7 @@ func (svc *JsonFormService) GetAll() ([]JsonForm, error) {
 
 	var res []JsonForm
 
-	if err := svc.client.Get("/json-forms/forms", &res); err != nil {
+	if err := svc.BaseService.Get("/json-forms/forms", &res); err != nil {
 		return nil, err
 	}
 
@@ -101,7 +101,7 @@ func (svc *JsonFormService) Get(id string) (*JsonForm, error) {
 	var res *JsonForm
 	var uri = fmt.Sprintf("/json-forms/forms/%s", id)
 
-	if err := svc.client.Get(uri, &res); err != nil {
+	if err := svc.BaseService.Get(uri, &res); err != nil {
 		return nil, err
 	}
 
@@ -128,7 +128,7 @@ func (svc *JsonFormService) Create(in JsonForm) (*JsonForm, error) {
 
 	var res Response
 
-	if err := svc.client.PostRequest(&Request{
+	if err := svc.PostRequest(&Request{
 		uri:                "/json-forms/forms",
 		body:               &in,
 		expectedStatusCode: http.StatusOK,
@@ -148,7 +148,7 @@ func (svc *JsonFormService) Create(in JsonForm) (*JsonForm, error) {
 // Returns an error if any of the deletions fail.
 func (svc *JsonFormService) Delete(ids []string) error {
 	logger.Trace()
-	return svc.client.DeleteRequest(&Request{
+	return svc.DeleteRequest(&Request{
 		uri:  "/json-forms/forms",
 		body: map[string]interface{}{"ids": ids},
 	}, nil)
@@ -234,7 +234,7 @@ func (svc *JsonFormService) Import(in JsonForm) (*JsonForm, error) {
 
 	var res Response
 
-	if err := svc.client.PostRequest(&Request{
+	if err := svc.PostRequest(&Request{
 		uri:                "/json-forms/import/forms",
 		body:               &body,
 		expectedStatusCode: http.StatusOK,

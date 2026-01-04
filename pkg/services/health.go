@@ -103,11 +103,11 @@ type HealthStatus struct {
 }
 
 type HealthService struct {
-	client *ServiceClient
+	BaseService
 }
 
 func NewHealthService(c client.Client) *HealthService {
-	return &HealthService{client: NewServiceClient(c)}
+	return &HealthService{BaseService: NewBaseService(c)}
 }
 
 func (svc *HealthService) GetStatus() (*HealthStatus, error) {
@@ -115,7 +115,7 @@ func (svc *HealthService) GetStatus() (*HealthStatus, error) {
 
 	var res *HealthStatus
 
-	if err := svc.client.Get("/health/status", &res); err != nil {
+	if err := svc.BaseService.Get("/health/status", &res); err != nil {
 		return nil, err
 	}
 
@@ -127,7 +127,7 @@ func (svc *HealthService) GetSystemHealth() (*SystemHealth, error) {
 
 	var res *SystemHealth
 
-	if err := svc.client.Get("/health/system", &res); err != nil {
+	if err := svc.BaseService.Get("/health/system", &res); err != nil {
 		return nil, err
 	}
 
@@ -139,7 +139,7 @@ func (svc *HealthService) GetServerHealth() (*ServerHealth, error) {
 
 	var res *ServerHealth
 
-	if err := svc.client.Get("/health/server", &res); err != nil {
+	if err := svc.BaseService.Get("/health/server", &res); err != nil {
 		return nil, err
 	}
 
@@ -155,7 +155,7 @@ func (svc *HealthService) GetApplicationHealth() ([]ApplicationHealth, error) {
 
 	var res Response
 
-	if err := svc.client.Get("/health/applications", &res); err != nil {
+	if err := svc.BaseService.Get("/health/applications", &res); err != nil {
 		return nil, err
 	}
 
@@ -171,7 +171,7 @@ func (svc *HealthService) GetAdapterHealth() ([]ApplicationHealth, error) {
 
 	var res Response
 
-	if err := svc.client.Get("/health/adapters", &res); err != nil {
+	if err := svc.BaseService.Get("/health/adapters", &res); err != nil {
 		return nil, err
 	}
 

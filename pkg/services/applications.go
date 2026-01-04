@@ -30,12 +30,12 @@ type Application struct {
 
 // ApplicationService provides methods to manage applications in the Itential platform
 type ApplicationService struct {
-	client *ServiceClient
+	BaseService
 }
 
 // NewApplicationService creates a new ApplicationService instance with the provided client
 func NewApplicationService(c client.Client) *ApplicationService {
-	return &ApplicationService{client: NewServiceClient(c)}
+	return &ApplicationService{BaseService: NewBaseService(c)}
 }
 
 // GetAll retrieves all applications from the Itential platform
@@ -57,7 +57,7 @@ func (svc *ApplicationService) GetAll() ([]Application, error) {
 
 	var res Response
 
-	if err := svc.client.Get("/applications", &res); err != nil {
+	if err := svc.BaseService.Get("/applications", &res); err != nil {
 		return nil, err
 	}
 
@@ -85,7 +85,7 @@ func (svc *ApplicationService) Get(name string) (*Application, error) {
 	var res Response
 	var uri = fmt.Sprintf("/applications/%s", name)
 
-	if err := svc.client.Get(uri, &res); err != nil {
+	if err := svc.BaseService.Get(uri, &res); err != nil {
 		return nil, err
 	}
 
@@ -104,7 +104,7 @@ func (svc *ApplicationService) Create(in Application) (*Application, error) {
 
 	var res Response
 
-	if err := svc.client.PostRequest(&Request{
+	if err := svc.PostRequest(&Request{
 		uri:                "/applications",
 		body:               map[string]interface{}{"properties": in},
 		expectedStatusCode: http.StatusOK,
@@ -129,7 +129,7 @@ func (svc *ApplicationService) Start(name string) error {
 	var res Response
 	var uri = fmt.Sprintf("/applications/%s/start", name)
 
-	if err := svc.client.Put(uri, nil, &res); err != nil {
+	if err := svc.Put(uri, nil, &res); err != nil {
 		return err
 	}
 
@@ -150,7 +150,7 @@ func (svc *ApplicationService) Stop(name string) error {
 	var res Response
 	var uri = fmt.Sprintf("/applications/%s/stop", name)
 
-	if err := svc.client.Put(uri, nil, &res); err != nil {
+	if err := svc.Put(uri, nil, &res); err != nil {
 		return err
 	}
 
@@ -171,7 +171,7 @@ func (svc *ApplicationService) Restart(name string) error {
 	var res Response
 	var uri = fmt.Sprintf("/applications/%s/restart", name)
 
-	if err := svc.client.Put(uri, nil, &res); err != nil {
+	if err := svc.Put(uri, nil, &res); err != nil {
 		return err
 	}
 

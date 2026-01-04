@@ -19,7 +19,7 @@ type Tag struct {
 }
 
 type TagService struct {
-	client *ServiceClient
+	BaseService
 }
 
 func NewTag(name, desc string) Tag {
@@ -29,7 +29,7 @@ func NewTag(name, desc string) Tag {
 }
 
 func NewTagService(c client.Client) *TagService {
-	return &TagService{client: NewServiceClient(c)}
+	return &TagService{BaseService: NewBaseService(c)}
 }
 
 // GetAll implements `GET /tags/all`
@@ -38,7 +38,7 @@ func (svc *TagService) GetAll() ([]Tag, error) {
 
 	var res []Tag
 
-	if err := svc.client.Get("/tags/all", &res); err != nil {
+	if err := svc.BaseService.Get("/tags/all", &res); err != nil {
 		return nil, err
 	}
 
@@ -54,7 +54,7 @@ func (svc *TagService) Get(id string) (*Tag, error) {
 		"id": id,
 	}
 
-	if err := svc.client.PostRequest(&Request{
+	if err := svc.PostRequest(&Request{
 		uri:                "/tags/get",
 		body:               &body,
 		expectedStatusCode: http.StatusOK,
@@ -98,7 +98,7 @@ func (svc *TagService) GetTagsForReference(id string) ([]Tag, error) {
 
 	var res []Tag
 
-	if err := svc.client.PostRequest(&Request{
+	if err := svc.PostRequest(&Request{
 		uri:                "/tags/getTagsByReference",
 		body:               &body,
 		expectedStatusCode: http.StatusOK,
@@ -119,7 +119,7 @@ func (svc *TagService) Create(in Tag) (*Tag, error) {
 
 	var res *Tag
 
-	if err := svc.client.PostRequest(&Request{
+	if err := svc.PostRequest(&Request{
 		uri:                "/tags/create",
 		body:               map[string]interface{}{"data": body},
 		expectedStatusCode: 200,
@@ -132,7 +132,7 @@ func (svc *TagService) Create(in Tag) (*Tag, error) {
 
 func (svc *TagService) Delete(id string) error {
 	logger.Trace()
-	return svc.client.PostRequest(&Request{
+	return svc.PostRequest(&Request{
 		uri:                "/tags/delete",
 		body:               map[string]interface{}{"_id": id},
 		expectedStatusCode: 200,

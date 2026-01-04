@@ -135,11 +135,11 @@ func (t ManualTrigger) MarshalJSON() ([]byte, error) {
 }
 
 type TriggerService struct {
-	client *ServiceClient
+	BaseService
 }
 
 func NewTriggerService(c client.Client) *TriggerService {
-	return &TriggerService{client: NewServiceClient(c)}
+	return &TriggerService{BaseService: NewBaseService(c)}
 }
 
 func NewEndpointTrigger(name, desc, route, action string) Trigger {
@@ -164,7 +164,7 @@ func (svc *TriggerService) Create(in Trigger) (Trigger, error) {
 
 	var res Response
 
-	if err := svc.client.PostRequest(&Request{
+	if err := svc.PostRequest(&Request{
 		uri:                "/operations-manager/triggers",
 		body:               &in,
 		expectedStatusCode: http.StatusOK,
@@ -193,7 +193,7 @@ func (svc *TriggerService) Create(in Trigger) (Trigger, error) {
 
 func (svc *TriggerService) DeleteAction(id string) error {
 	logger.Trace()
-	return svc.client.Delete(
+	return svc.Delete(
 		fmt.Sprintf("/operations-manager/triggers/action/%s", id),
 	)
 }
@@ -218,7 +218,7 @@ func (svc *TriggerService) Import(in Trigger) (*Trigger, error) {
 
 	var res Response
 
-	if err := svc.client.PutRequest(&Request{
+	if err := svc.PutRequest(&Request{
 		uri:                "/operations-manager/triggers",
 		body:               &body,
 		expectedStatusCode: http.StatusOK,

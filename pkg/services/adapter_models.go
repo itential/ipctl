@@ -10,11 +10,11 @@ import (
 )
 
 type AdapterModelService struct {
-	client *ServiceClient
+	BaseService
 }
 
 func NewAdapterModelService(c client.Client) *AdapterModelService {
-	return &AdapterModelService{client: NewServiceClient(c)}
+	return &AdapterModelService{BaseService: NewBaseService(c)}
 }
 
 // GetAll will retrieve all of the adapter models that are avalalbe on the
@@ -29,7 +29,7 @@ func (svc *AdapterModelService) GetAll() ([]string, error) {
 
 	var res Response
 
-	if err := svc.client.Get("/adapter-models/types", &res); err != nil {
+	if err := svc.BaseService.Get("/adapter-models/types", &res); err != nil {
 		return nil, err
 	}
 

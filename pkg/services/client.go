@@ -12,21 +12,24 @@ import (
 	"github.com/itential/ipctl/pkg/logger"
 )
 
-type ServiceClient struct {
+// BaseService provides common HTTP operations for all service types.
+// It embeds the client.Client directly to avoid unnecessary wrapper indirection.
+type BaseService struct {
 	client client.Client
 }
 
-func NewServiceClient(c client.Client) *ServiceClient {
-	return &ServiceClient{client: c}
+// NewBaseService creates a new BaseService with the provided client.
+func NewBaseService(c client.Client) BaseService {
+	return BaseService{client: c}
 }
 
-func (http *ServiceClient) Do(req *Request, ptr any) error {
+// Do executes an HTTP request and unmarshals the response into ptr if provided.
+func (svc *BaseService) Do(req *Request, ptr any) error {
 	logger.Trace()
 
-	req.client = http.client
+	req.client = svc.client
 
 	res, err := Do(req)
-
 	if err != nil {
 		return err
 	}
@@ -40,20 +43,23 @@ func (http *ServiceClient) Do(req *Request, ptr any) error {
 	return nil
 }
 
-func (svc *ServiceClient) Get(uri string, ptr any) error {
+// Get performs a GET request to the specified URI.
+func (svc *BaseService) Get(uri string, ptr any) error {
 	logger.Trace()
 	return svc.GetRequest(&Request{
 		uri: uri,
 	}, ptr)
 }
 
-func (svc *ServiceClient) GetRequest(in *Request, ptr any) error {
+// GetRequest performs a GET request with the provided request configuration.
+func (svc *BaseService) GetRequest(in *Request, ptr any) error {
 	logger.Trace()
 	in.method = http.MethodGet
 	return svc.Do(in, ptr)
 }
 
-func (svc *ServiceClient) Post(uri string, body any, ptr any) error {
+// Post performs a POST request to the specified URI with the given body.
+func (svc *BaseService) Post(uri string, body any, ptr any) error {
 	logger.Trace()
 	return svc.PostRequest(&Request{
 		uri:  uri,
@@ -61,48 +67,66 @@ func (svc *ServiceClient) Post(uri string, body any, ptr any) error {
 	}, ptr)
 }
 
-func (svc *ServiceClient) PostRequest(in *Request, ptr any) error {
+// PostRequest performs a POST request with the provided request configuration.
+func (svc *BaseService) PostRequest(in *Request, ptr any) error {
 	logger.Trace()
 	in.method = http.MethodPost
 	return svc.Do(in, ptr)
 }
 
-func (svc *ServiceClient) Delete(uri string) error {
+// Delete performs a DELETE request to the specified URI.
+func (svc *BaseService) Delete(uri string) error {
 	logger.Trace()
 	return svc.DeleteRequest(&Request{
 		uri: uri,
 	}, nil)
 }
 
-func (svc *ServiceClient) DeleteRequest(in *Request, ptr any) error {
+// DeleteRequest performs a DELETE request with the provided request configuration.
+func (svc *BaseService) DeleteRequest(in *Request, ptr any) error {
 	logger.Trace()
 	in.method = http.MethodDelete
 	return svc.Do(in, ptr)
 }
 
-func (svc *ServiceClient) Patch(uri string, body any, ptr any) error {
+// Patch performs a PATCH request to the specified URI with the given body.
+func (svc *BaseService) Patch(uri string, body any, ptr any) error {
 	return svc.PatchRequest(&Request{
 		uri:  uri,
 		body: body,
 	}, ptr)
 }
 
-func (svc *ServiceClient) PatchRequest(in *Request, ptr any) error {
+// PatchRequest performs a PATCH request with the provided request configuration.
+func (svc *BaseService) PatchRequest(in *Request, ptr any) error {
 	logger.Trace()
 	in.method = http.MethodPatch
 	return svc.Do(in, ptr)
 }
 
-func (svc *ServiceClient) PutRequest(in *Request, ptr any) error {
+// PutRequest performs a PUT request with the provided request configuration.
+func (svc *BaseService) PutRequest(in *Request, ptr any) error {
 	logger.Trace()
 	in.method = http.MethodPut
 	return svc.Do(in, ptr)
 }
 
-func (svc *ServiceClient) Put(uri string, body any, ptr any) error {
+// Put performs a PUT request to the specified URI with the given body.
+func (svc *BaseService) Put(uri string, body any, ptr any) error {
 	logger.Trace()
 	return svc.PutRequest(&Request{
 		uri:  uri,
 		body: body,
 	}, ptr)
+}
+
+// DEPRECATED: ServiceClient is deprecated, use BaseService instead.
+// Kept for backward compatibility during migration.
+type ServiceClient = BaseService
+
+// DEPRECATED: NewServiceClient is deprecated, use NewBaseService instead.
+// Kept for backward compatibility during migration.
+func NewServiceClient(c client.Client) *ServiceClient {
+	bs := NewBaseService(c)
+	return &bs
 }

@@ -115,7 +115,7 @@ type Profile struct {
 // It handles profile creation, retrieval, modification, import/export, and activation operations.
 type ProfileService struct {
 	// client is the underlying HTTP client used for API communication
-	client *ServiceClient
+	BaseService
 }
 
 // NewProfileService creates a new ProfileService instance with the provided client.
@@ -127,7 +127,7 @@ type ProfileService struct {
 // Returns:
 //   - *ProfileService: A new ProfileService instance ready for use
 func NewProfileService(c client.Client) *ProfileService {
-	return &ProfileService{client: NewServiceClient(c)}
+	return &ProfileService{BaseService: NewBaseService(c)}
 }
 
 // NewProfile creates a new Profile instance with the specified name and description.
@@ -171,7 +171,7 @@ func (svc *ProfileService) GetAll() ([]Profile, error) {
 
 	var res Response
 
-	if err := svc.client.Get("/profiles", &res); err != nil {
+	if err := svc.BaseService.Get("/profiles", &res); err != nil {
 		return nil, err
 	}
 
@@ -206,7 +206,7 @@ func (svc *ProfileService) Get(id string) (*Profile, error) {
 	var res Response
 	var uri = fmt.Sprintf("/profiles/%s", id)
 
-	if err := svc.client.Get(uri, &res); err != nil {
+	if err := svc.BaseService.Get(uri, &res); err != nil {
 		return nil, err
 	}
 
@@ -235,7 +235,7 @@ func (svc *ProfileService) GetActiveProfile() (*Profile, error) {
 
 	var res Response
 
-	if err := svc.client.Get("/profiles", &res); err != nil {
+	if err := svc.BaseService.Get("/profiles", &res); err != nil {
 		return nil, err
 	}
 
@@ -282,7 +282,7 @@ func (svc *ProfileService) Create(in Profile) (*Profile, error) {
 
 	var res Response
 
-	if err := svc.client.PostRequest(&Request{
+	if err := svc.PostRequest(&Request{
 		uri:                "/profiles",
 		body:               map[string]interface{}{"properties": properties},
 		expectedStatusCode: http.StatusOK,
@@ -305,7 +305,7 @@ func (svc *ProfileService) Create(in Profile) (*Profile, error) {
 //   - error: An error if the request fails or the profile doesn't exist
 func (svc *ProfileService) Delete(name string) error {
 	logger.Trace()
-	return svc.client.Delete(fmt.Sprintf("/profiles/%s", name))
+	return svc.Delete(fmt.Sprintf("/profiles/%s", name))
 }
 
 // Import imports a complete profile configuration to the IAP server.
@@ -330,7 +330,7 @@ func (svc *ProfileService) Import(in Profile) (*Profile, error) {
 
 	var res Response
 
-	if err := svc.client.PostRequest(&Request{
+	if err := svc.PostRequest(&Request{
 		uri:                "/profiles/import",
 		body:               map[string]interface{}{"properties": in},
 		expectedStatusCode: http.StatusOK,
@@ -369,7 +369,7 @@ func (svc *ProfileService) Export(name string) (*Profile, error) {
 	//var uri = fmt.Sprintf("/profiles/%s/export", name)
 	var uri = fmt.Sprintf("/profiles/%s", name)
 
-	if err := svc.client.Get(uri, &res); err != nil {
+	if err := svc.BaseService.Get(uri, &res); err != nil {
 		return nil, err
 	}
 
@@ -396,7 +396,7 @@ func (svc *ProfileService) Activate(name string) error {
 	var res Response
 	var uri = fmt.Sprintf("/profiles/%s/active", name)
 
-	if err := svc.client.Put(uri, nil, &res); err != nil {
+	if err := svc.Put(uri, nil, &res); err != nil {
 		return err
 	}
 

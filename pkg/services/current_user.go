@@ -29,7 +29,7 @@ type CurrentUser struct {
 func GetCurrentUser(c client.Client) (*CurrentUser, error) {
 	logger.Trace()
 
-	svc := NewServiceClient(c)
+	svc := NewBaseService(c)
 
 	var res *CurrentUser
 

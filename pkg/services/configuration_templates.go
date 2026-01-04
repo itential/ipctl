@@ -28,11 +28,11 @@ type ConfigurationTemplate struct {
 }
 
 type ConfigurationTemplateService struct {
-	client *ServiceClient
+	BaseService
 }
 
 func NewConfigurationTemplateService(c client.Client) *ConfigurationTemplateService {
-	return &ConfigurationTemplateService{client: NewServiceClient(c)}
+	return &ConfigurationTemplateService{BaseService: NewBaseService(c)}
 }
 
 func (svc *ConfigurationTemplateService) GetAll() ([]ConfigurationTemplate, error) {
@@ -50,7 +50,7 @@ func (svc *ConfigurationTemplateService) GetAll() ([]ConfigurationTemplate, erro
 	}
 	var res ConfigurationTemplateCollection
 	var uri = "/configuration_manager/templates/search"
-	if err := svc.client.Post(uri, &body, &res); err != nil {
+	if err := svc.Post(uri, &body, &res); err != nil {
 		return nil, err
 	}
 	return res.List, nil
@@ -64,7 +64,7 @@ func (svc *ConfigurationTemplateService) Get(id string) (*ConfigurationTemplate,
 	}
 	var res ConfigurationTemplateCollection
 	var uri = "/configuration_manager/templates/search"
-	if err := svc.client.Post(uri, &body, &res); err != nil {
+	if err := svc.Post(uri, &body, &res); err != nil {
 		return nil, err
 	}
 	return &res.List[0], nil
