@@ -21,7 +21,7 @@ type ConfigurationParserRunner struct {
 func NewConfigurationParserRunner(client client.Client, cfg *config.Config) *ConfigurationParserRunner {
 	return &ConfigurationParserRunner{
 		BaseRunner: NewBaseRunner(client, cfg),
-		service: services.NewConfigurationParserService(client),
+		service:    services.NewConfigurationParserService(client),
 	}
 }
 

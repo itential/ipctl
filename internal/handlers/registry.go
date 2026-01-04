@@ -5,17 +5,17 @@
 package handlers
 
 var (
-	registry  []any
-	readers   []Reader
-	writers   []Writer
-	copiers   []Copier
-	editors   []Editor
-	importers []Importer
-	exporters []Exporter
+	registry    []any
+	readers     []Reader
+	writers     []Writer
+	copiers     []Copier
+	editors     []Editor
+	importers   []Importer
+	exporters   []Exporter
 	controllers []Controller
-	inspectors []Inspector
-	dumpers   []Dumper
-	loaders   []Loader
+	inspectors  []Inspector
+	dumpers     []Dumper
+	loaders     []Loader
 )
 
 func register(types ...any) {

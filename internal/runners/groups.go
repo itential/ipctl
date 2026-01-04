@@ -23,7 +23,7 @@ type GroupRunner struct {
 
 func NewGroupRunner(c client.Client, cfg *config.Config) *GroupRunner {
 	return &GroupRunner{
-		service: services.NewGroupService(c),
+		service:    services.NewGroupService(c),
 		BaseRunner: NewBaseRunner(c, cfg),
 	}
 }

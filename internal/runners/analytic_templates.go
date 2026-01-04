@@ -24,7 +24,7 @@ type AnalyticTemplateRunner struct {
 
 func NewAnalyticTemplateRunner(c client.Client, cfg *config.Config) *AnalyticTemplateRunner {
 	return &AnalyticTemplateRunner{
-		service: services.NewAnalyticTemplateService(c),
+		service:    services.NewAnalyticTemplateService(c),
 		BaseRunner: NewBaseRunner(c, cfg),
 	}
 }

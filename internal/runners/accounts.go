@@ -21,7 +21,7 @@ type AccountRunner struct {
 func NewAccountRunner(client client.Client, cfg *config.Config) *AccountRunner {
 	return &AccountRunner{
 		BaseRunner: NewBaseRunner(client, cfg),
-		service: services.NewAccountService(client),
+		service:    services.NewAccountService(client),
 	}
 }
 

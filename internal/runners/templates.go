@@ -25,7 +25,7 @@ type TemplateRunner struct {
 
 func NewTemplateRunner(c client.Client, cfg *config.Config) *TemplateRunner {
 	return &TemplateRunner{
-		service: services.NewTemplateService(c),
+		service:    services.NewTemplateService(c),
 		BaseRunner: NewBaseRunner(c, cfg),
 	}
 }

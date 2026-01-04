@@ -20,14 +20,14 @@ import (
 type RoleRunner struct {
 	service *services.RoleService
 	BaseRunner
-	client  client.Client
+	client client.Client
 }
 
 func NewRoleRunner(client client.Client, cfg *config.Config) *RoleRunner {
 	return &RoleRunner{
 		BaseRunner: NewBaseRunner(client, cfg),
-		client:  client,
-		service: services.NewRoleService(client),
+		client:     client,
+		service:    services.NewRoleService(client),
 	}
 }
 

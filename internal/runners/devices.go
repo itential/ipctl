@@ -22,7 +22,7 @@ type DeviceRunner struct {
 func NewDeviceRunner(client client.Client, cfg *config.Config) *DeviceRunner {
 	return &DeviceRunner{
 		BaseRunner: NewBaseRunner(client, cfg),
-		service: services.NewDeviceService(client),
+		service:    services.NewDeviceService(client),
 	}
 }
 

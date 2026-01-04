@@ -24,7 +24,7 @@ type GoldenConfigRunner struct {
 func NewGoldenConfigRunner(client client.Client, cfg *config.Config) *GoldenConfigRunner {
 	return &GoldenConfigRunner{
 		BaseRunner: NewBaseRunner(client, cfg),
-		service: services.NewGoldenConfigService(client),
+		service:    services.NewGoldenConfigService(client),
 	}
 }
 

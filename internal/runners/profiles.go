@@ -27,8 +27,8 @@ type ProfileRunner struct {
 func NewProfileRunner(client client.Client, cfg *config.Config) *ProfileRunner {
 	return &ProfileRunner{
 		BaseRunner: NewBaseRunner(client, cfg),
-		service: services.NewProfileService(client),
-		client:  client,
+		service:    services.NewProfileService(client),
+		client:     client,
 	}
 }
 

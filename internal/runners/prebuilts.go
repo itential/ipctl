@@ -29,8 +29,8 @@ type PrebuiltRunner struct {
 func NewPrebuiltRunner(client client.Client, cfg *config.Config) *PrebuiltRunner {
 	return &PrebuiltRunner{
 		BaseRunner: NewBaseRunner(client, cfg),
-		client:  client,
-		service: services.NewPrebuiltService(client),
+		client:     client,
+		service:    services.NewPrebuiltService(client),
 	}
 }
 

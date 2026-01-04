@@ -26,7 +26,7 @@ type WorkflowRunner struct {
 func NewWorkflowRunner(c client.Client, cfg *config.Config) *WorkflowRunner {
 	return &WorkflowRunner{
 		BaseRunner: NewBaseRunner(c, cfg),
-		service: services.NewWorkflowService(c),
+		service:    services.NewWorkflowService(c),
 	}
 }
 

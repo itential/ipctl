@@ -18,7 +18,7 @@ type ServerRunner struct {
 
 func NewServerRunner(c client.Client, cfg *config.Config) *ServerRunner {
 	return &ServerRunner{
-		service: services.NewHealthService(c),
+		service:    services.NewHealthService(c),
 		BaseRunner: NewBaseRunner(c, cfg),
 	}
 }
