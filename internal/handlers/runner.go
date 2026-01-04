@@ -9,8 +9,8 @@ import (
 	"strings"
 
 	"github.com/itential/ipctl/internal/flags"
+	"github.com/itential/ipctl/internal/output"
 	"github.com/itential/ipctl/internal/runners"
-	"github.com/itential/ipctl/internal/terminal"
 	"github.com/spf13/cobra"
 )
 
@@ -85,11 +85,6 @@ func withOptions(f *AssetHandlerFlags) CommandRunnerOption {
 	}
 }
 
-// unableToDisplayOutputError creates an error for when response cannot be displayed
-func unableToDisplayOutputError() error {
-	return fmt.Errorf("unable to display response")
-}
-
 func NewCommand(c *CommandRunner) *cobra.Command {
 	desc, exists := c.Descriptors[c.Key]
 
@@ -133,41 +128,14 @@ func NewCommand(c *CommandRunner) *cobra.Command {
 				return err
 			}
 
-			switch c.Runtime.GetConfig().TerminalDefaultOutput {
-			case "json":
-				if resp.Object != nil {
-					if err := terminal.DisplayJson(resp.Object); err != nil {
-						return err
-					}
-				} else {
-					return unableToDisplayOutputError()
-				}
-			case "yaml":
-				if resp.Object != nil {
-					if err := terminal.DisplayYaml(resp.Object); err != nil {
-						return err
-					}
-				} else {
-					return unableToDisplayOutputError()
-				}
-			case "human":
-				if len(resp.Keys) > 0 {
-					output := strings.Split(resp.String(), "\n")
-					if c.Runtime.GetConfig().TerminalPager {
-						terminal.DisplayTabWriterStringWithPager(output, 3, 3, true)
-					} else {
-						terminal.DisplayTabWriterString(output, 3, 3, true)
-					}
-				} else {
-					output := resp.String()
-					if output == "" {
-						return unableToDisplayOutputError()
-					}
-					terminal.Display("%s\n", output)
-				}
+			// Create renderer based on configured output format
+			renderer, err := output.NewRenderer(c.Runtime.GetConfig().TerminalDefaultOutput, c.Runtime.GetConfig())
+			if err != nil {
+				return err
 			}
 
-			return nil
+			// Render the response
+			return renderer.Render(resp)
 		},
 	}
 
