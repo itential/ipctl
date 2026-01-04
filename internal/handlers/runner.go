@@ -8,7 +8,6 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/itential/ipctl/internal/cmdutils"
 	"github.com/itential/ipctl/internal/flags"
 	"github.com/itential/ipctl/internal/runners"
 	"github.com/itential/ipctl/internal/terminal"
@@ -86,12 +85,9 @@ func withOptions(f *AssetHandlerFlags) CommandRunnerOption {
 	}
 }
 
-func checkError(err error, runtime *Runtime) {
-	cmdutils.CheckError(err, runtime.GetConfig().TerminalNoColor)
-}
-
-func unableToDisplayOutput(nocolor bool) {
-	terminal.Error(fmt.Errorf("unable to display response"), nocolor)
+// unableToDisplayOutputError creates an error for when response cannot be displayed
+func unableToDisplayOutputError() error {
+	return fmt.Errorf("unable to display response")
 }
 
 func NewCommand(c *CommandRunner) *cobra.Command {
@@ -122,7 +118,7 @@ func NewCommand(c *CommandRunner) *cobra.Command {
 
 		Hidden: desc.Hidden,
 
-		Run: func(cmd *cobra.Command, args []string) {
+		RunE: func(cmd *cobra.Command, args []string) error {
 
 			req := runners.Request{
 				Args:    args,
@@ -133,20 +129,26 @@ func NewCommand(c *CommandRunner) *cobra.Command {
 			}
 
 			resp, err := c.Run(req)
-			checkError(err, c.Runtime)
+			if err != nil {
+				return err
+			}
 
 			switch c.Runtime.GetConfig().TerminalDefaultOutput {
 			case "json":
 				if resp.Object != nil {
-					checkError(terminal.DisplayJson(resp.Object), c.Runtime)
+					if err := terminal.DisplayJson(resp.Object); err != nil {
+						return err
+					}
 				} else {
-					unableToDisplayOutput(c.Runtime.GetConfig().TerminalNoColor)
+					return unableToDisplayOutputError()
 				}
 			case "yaml":
 				if resp.Object != nil {
-					checkError(terminal.DisplayYaml(resp.Object), c.Runtime)
+					if err := terminal.DisplayYaml(resp.Object); err != nil {
+						return err
+					}
 				} else {
-					unableToDisplayOutput(c.Runtime.GetConfig().TerminalNoColor)
+					return unableToDisplayOutputError()
 				}
 			case "human":
 				if len(resp.Keys) > 0 {
@@ -159,11 +161,13 @@ func NewCommand(c *CommandRunner) *cobra.Command {
 				} else {
 					output := resp.String()
 					if output == "" {
-						unableToDisplayOutput(c.Runtime.GetConfig().TerminalNoColor)
+						return unableToDisplayOutputError()
 					}
 					terminal.Display("%s\n", output)
 				}
 			}
+
+			return nil
 		},
 	}
 

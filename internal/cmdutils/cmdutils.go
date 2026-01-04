@@ -68,9 +68,20 @@ func LoadDescriptorFromString(s string) map[string]Descriptor {
 	return LoadDescriptor([]byte(s))
 }
 
-// CheckError functions very similarly to cobra's builtin cobra.checkErr
-// function. Our function adds extra functionality such as colored outputs
-// and logging the error to the loggers
+// CheckError handles errors at the top level of the application by displaying
+// them to the user and exiting the process.
+//
+// IMPORTANT: This function calls os.Exit and should ONLY be called at the top
+// level of the application (e.g., in cmd/root.go Execute() function). DO NOT
+// call this function from command handlers, services, or other internal code
+// as it makes the code untestable and bypasses proper error propagation.
+//
+// For command handlers and internal code, return errors using standard Go error
+// handling patterns. Let Cobra's RunE propagate errors up to the top level where
+// they can be handled appropriately.
+//
+// This function provides additional functionality beyond cobra's built-in error
+// handling including colored output formatting and comprehensive error logging.
 func CheckError(err error, terminalNoColor bool) {
 	if err != nil {
 		terminal.Error(err, terminalNoColor)

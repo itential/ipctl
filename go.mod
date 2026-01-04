@@ -4,7 +4,6 @@ go 1.24.0
 
 require (
 	github.com/go-git/go-git/v5 v5.16.4
-	github.com/google/uuid v1.6.0
 	github.com/manifoldco/promptui v0.9.0
 	github.com/mitchellh/go-homedir v1.1.0
 	github.com/mitchellh/mapstructure v1.5.0

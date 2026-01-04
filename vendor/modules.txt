@@ -136,9 +136,6 @@ github.com/golang/groupcache/lru
 # github.com/golang/snappy v1.0.0
 ## explicit
 github.com/golang/snappy
-# github.com/google/uuid v1.6.0
-## explicit
-github.com/google/uuid
 # github.com/hashicorp/hcl v1.0.0
 ## explicit
 github.com/hashicorp/hcl

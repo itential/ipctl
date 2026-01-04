@@ -50,7 +50,7 @@ func versionCommand() *cobra.Command {
 	var cmd = &cobra.Command{
 		Use:   "version",
 		Short: "Print the version information",
-		Run: func(cmd *cobra.Command, args []string) {
+		RunE: func(cmd *cobra.Command, args []string) error {
 			terminal.Display("version: %s", metadata.Version)
 			terminal.Display("commit: %s", metadata.Build)
 			e, err := os.Executable()
@@ -60,6 +60,7 @@ func versionCommand() *cobra.Command {
 				terminal.Display("executable: %s", path.Dir(e))
 			}
 			terminal.Display("")
+			return nil
 		},
 	}
 	return cmd
@@ -134,6 +135,9 @@ func Execute() int {
 
 	c := client.New(ctx, profile)
 
+	// Execute the CLI command tree. This is the only place in the application
+	// where CheckError should be called. All command handlers use RunE to return
+	// errors which are propagated up through Cobra and handled here.
 	if err := runCli(c, cfg).Execute(); err != nil {
 		cmdutils.CheckError(err, cfg.TerminalNoColor)
 	}
