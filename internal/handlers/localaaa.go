@@ -12,39 +12,38 @@ import (
 )
 
 type LocalAAAHandler struct {
-	Runner     runners.LocalAAARunner
-	Runtime    Runtime
-	Descriptor DescriptorMap
+	runner     runners.LocalAAARunner
+	runtime    *Runtime
+	descriptor DescriptorMap
 }
 
-func NewLocalAAAHandler(r Runtime) LocalAAAHandler {
+func NewLocalAAAHandler(rt *Runtime) LocalAAAHandler {
 	return LocalAAAHandler{
-		Runner:     runners.NewLocalAAARunner(r.Client, r.Config),
-		Runtime:    r,
-		Descriptor: r.Descriptors[localAAADescriptor],
+		runner:     runners.NewLocalAAARunner(rt.GetClient(), rt.GetConfig()),
+		runtime:    rt,
+		descriptor: rt.GetDescriptors()[localAAADescriptor],
 	}
-
 }
 
 func (h LocalAAAHandler) newCommand(key string, runner runners.RunnerFunc, options flags.Flagger, opts ...CommandRunnerOption) *cobra.Command {
-	r := NewCommandRunner(
+	cr := NewCommandRunner(
 		key,
-		h.Descriptor,
+		h.descriptor,
 		runner,
-		&h.Runtime,
+		h.runtime,
 		nil,
 		opts...,
 	)
-	r.Options = options
-	return NewCommand(r)
+	cr.Options = options
+	return NewCommand(cr)
 }
 
 // Commands returns a list of commands that are attached to the root command
-// for this handler
+// for this handler.
 func (h LocalAAAHandler) Commands() []*cobra.Command {
 	logger.Trace()
 
-	p, err := h.Runtime.Config.ActiveProfile()
+	p, err := h.runtime.GetConfig().ActiveProfile()
 	if err != nil {
 		logger.Warn("failed to load active profile, using defaults")
 	}
@@ -66,6 +65,7 @@ Get commands
 *******************************************************************************
 */
 
+// Get returns the get command group for local-aaa resources.
 func (h LocalAAAHandler) Get() *cobra.Command {
 	logger.Trace()
 
@@ -84,12 +84,12 @@ func (h LocalAAAHandler) Get() *cobra.Command {
 
 func (h LocalAAAHandler) getAccounts() *cobra.Command {
 	logger.Trace()
-	return h.newCommand("get-accounts", h.Runner.GetAccounts, nil)
+	return h.newCommand("get-accounts", h.runner.GetAccounts, nil)
 }
 
 func (h LocalAAAHandler) getGroups() *cobra.Command {
 	logger.Trace()
-	return h.newCommand("get-groups", h.Runner.GetGroups, nil)
+	return h.newCommand("get-groups", h.runner.GetGroups, nil)
 }
 
 /*
@@ -98,6 +98,7 @@ Create commands
 *******************************************************************************
 */
 
+// Create returns the create command group for local-aaa resources.
 func (h LocalAAAHandler) Create() *cobra.Command {
 	logger.Trace()
 
@@ -117,7 +118,7 @@ func (h LocalAAAHandler) Create() *cobra.Command {
 func (h LocalAAAHandler) createAccount() *cobra.Command {
 	logger.Trace()
 	options := &flags.LocalAAAOptions{}
-	cmd := h.newCommand("create-account", h.Runner.CreateAccount, options)
+	cmd := h.newCommand("create-account", h.runner.CreateAccount, options)
 	cmd.Args = cobra.ExactArgs(1)
 	options.Flags(cmd)
 	return cmd
@@ -125,7 +126,7 @@ func (h LocalAAAHandler) createAccount() *cobra.Command {
 
 func (h LocalAAAHandler) createGroup() *cobra.Command {
 	logger.Trace()
-	cmd := h.newCommand("create-group", h.Runner.CreateGroup, nil)
+	cmd := h.newCommand("create-group", h.runner.CreateGroup, nil)
 	cmd.Args = cobra.ExactArgs(1)
 	return cmd
 }
@@ -136,6 +137,7 @@ Delete commands
 *******************************************************************************
 */
 
+// Delete returns the delete command group for local-aaa resources.
 func (h LocalAAAHandler) Delete() *cobra.Command {
 	logger.Trace()
 
@@ -154,14 +156,14 @@ func (h LocalAAAHandler) Delete() *cobra.Command {
 
 func (h LocalAAAHandler) deleteAccount() *cobra.Command {
 	logger.Trace()
-	cmd := h.newCommand("delete-account", h.Runner.DeleteAccount, nil)
+	cmd := h.newCommand("delete-account", h.runner.DeleteAccount, nil)
 	cmd.Args = cobra.ExactArgs(1)
 	return cmd
 }
 
 func (h LocalAAAHandler) deleteGroup() *cobra.Command {
 	logger.Trace()
-	cmd := h.newCommand("delete-group", h.Runner.DeleteGroup, nil)
+	cmd := h.newCommand("delete-group", h.runner.DeleteGroup, nil)
 	cmd.Args = cobra.ExactArgs(1)
 	return cmd
 }

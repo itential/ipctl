@@ -9,9 +9,9 @@ import (
 	"github.com/itential/ipctl/internal/runners"
 )
 
-func NewDeviceGroupHandler(r Runtime, desc Descriptors) AssetHandler {
+func NewDeviceGroupHandler(rt *Runtime, desc Descriptors) AssetHandler {
 	return NewAssetHandler(
-		runners.NewDeviceGroupRunner(r.Client, r.Config),
+		runners.NewDeviceGroupRunner(rt.GetClient(), rt.GetConfig()),
 		desc[deviceGroupsDescriptor],
 		&AssetHandlerFlags{
 			Create: &flags.DeviceGroupCreateOptions{},

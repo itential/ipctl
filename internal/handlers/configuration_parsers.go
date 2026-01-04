@@ -8,9 +8,9 @@ import (
 	"github.com/itential/ipctl/internal/runners"
 )
 
-func NewConfigurationParserHandler(r Runtime, desc Descriptors) AssetHandler {
+func NewConfigurationParserHandler(rt *Runtime, desc Descriptors) AssetHandler {
 	return NewAssetHandler(
-		runners.NewConfigurationParserRunner(r.Client, r.Config),
+		runners.NewConfigurationParserRunner(rt.GetClient(), rt.GetConfig()),
 		desc[configurationParsersDescriptor],
 		nil,
 	)

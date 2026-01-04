@@ -8,9 +8,9 @@ import (
 	"github.com/itential/ipctl/internal/runners"
 )
 
-func NewApplicationHandler(r Runtime, desc Descriptors) AssetHandler {
+func NewApplicationHandler(rt *Runtime, desc Descriptors) AssetHandler {
 	return NewAssetHandler(
-		runners.NewApplicationRunner(r.Client, r.Config),
+		runners.NewApplicationRunner(rt.GetClient(), rt.GetConfig()),
 		desc[applicationsDescriptor],
 		nil,
 	)

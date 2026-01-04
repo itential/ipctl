@@ -9,9 +9,9 @@ import (
 	"github.com/itential/ipctl/internal/runners"
 )
 
-func NewWorkflowHandler(r Runtime, desc Descriptors) AssetHandler {
+func NewWorkflowHandler(rt *Runtime, desc Descriptors) AssetHandler {
 	return NewAssetHandler(
-		runners.NewWorkflowRunner(r.Client, r.Config),
+		runners.NewWorkflowRunner(rt.GetClient(), rt.GetConfig()),
 		desc[workflowsDescriptor],
 		&AssetHandlerFlags{
 			Get: &flags.WorkflowGetOptions{},

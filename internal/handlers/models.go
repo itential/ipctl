@@ -9,9 +9,9 @@ import (
 	"github.com/itential/ipctl/internal/runners"
 )
 
-func NewModelHandler(r Runtime, desc Descriptors) AssetHandler {
+func NewModelHandler(rt *Runtime, desc Descriptors) AssetHandler {
 	return NewAssetHandler(
-		runners.NewModelRunner(r.Client, r.Config),
+		runners.NewModelRunner(rt.GetClient(), rt.GetConfig()),
 		desc[modelsDescriptor],
 		&AssetHandlerFlags{
 			Create: &flags.ModelCreateOptions{},

@@ -8,9 +8,9 @@ import (
 	"github.com/itential/ipctl/internal/runners"
 )
 
-func NewTagHandler(r Runtime, desc Descriptors) AssetHandler {
+func NewTagHandler(rt *Runtime, desc Descriptors) AssetHandler {
 	return NewAssetHandler(
-		runners.NewTagRunner(r.Client, r.Config),
+		runners.NewTagRunner(rt.GetClient(), rt.GetConfig()),
 		desc[tagsDescriptor],
 		nil,
 	)

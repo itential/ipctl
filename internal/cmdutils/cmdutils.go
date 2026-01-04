@@ -15,7 +15,7 @@ import (
 
 type Descriptors map[string]map[string]Descriptor
 
-// Descriptors are used to describe a rcommand in the application.
+// Descriptor describes a command in the application.
 type Descriptor struct {
 	// Use defines the command
 	Use string `yaml:"use"`
@@ -23,8 +23,8 @@ type Descriptor struct {
 	// Group name to put the command into
 	Group string `yaml:"group"`
 
-	// The full description of the commnand.  This text is split into a short
-	// description and a long description when the command is created.  The
+	// The full description of the command. This text is split into a short
+	// description and a long description when the command is created. The
 	// short description is the first line of the command ending with `\n`.
 	// The long form of the description is the entire description text.
 	Description string `yaml:"description"`
@@ -33,16 +33,16 @@ type Descriptor struct {
 	Example string `yaml:"example"`
 
 	// IncludeGroups specifies whether or not to include the default groups as
-	// part of the command.  This needs to be refactors out of the descriptor.
+	// part of the command. This needs to be refactored out of the descriptor.
 	IncludeGroups bool `yaml:"include_groups"`
 
 	ExactArgs int `yaml:"exact_args"`
 
-	// Disables specifies whether or not the command is enabled or disable.
+	// Disabled specifies whether or not the command is enabled or disabled.
 	// When the command is disabled, it is not added to the command tree.
 	Disabled bool `yaml:"disabled"`
 
-	// Hidden cpecifies whether or not the command is seen when using the
+	// Hidden specifies whether or not the command is seen when using the
 	// `--help` flag.
 	Hidden bool `yaml:"hidden"`
 }

@@ -9,9 +9,9 @@ import (
 	"github.com/itential/ipctl/internal/runners"
 )
 
-func NewIntegrationHandler(r Runtime, desc Descriptors) AssetHandler {
+func NewIntegrationHandler(rt *Runtime, desc Descriptors) AssetHandler {
 	return NewAssetHandler(
-		runners.NewIntegrationRunner(r.Client, r.Config),
+		runners.NewIntegrationRunner(rt.GetClient(), rt.GetConfig()),
 		desc[integrations],
 		&AssetHandlerFlags{
 			Create: &flags.IntegrationCreateOptions{},

@@ -9,9 +9,9 @@ import (
 	"github.com/itential/ipctl/internal/runners"
 )
 
-func NewTransformationHandler(r Runtime, desc Descriptors) AssetHandler {
+func NewTransformationHandler(rt *Runtime, desc Descriptors) AssetHandler {
 	return NewAssetHandler(
-		runners.NewTransformationRunner(r.Client, r.Config),
+		runners.NewTransformationRunner(rt.GetClient(), rt.GetConfig()),
 		desc[transformationsDescriptor],
 		&AssetHandlerFlags{
 			Get:    &flags.TransformationGetOptions{},

@@ -9,9 +9,9 @@ import (
 	"github.com/itential/ipctl/internal/runners"
 )
 
-func NewProfileHandler(r Runtime, desc Descriptors) AssetHandler {
+func NewProfileHandler(rt *Runtime, desc Descriptors) AssetHandler {
 	return NewAssetHandler(
-		runners.NewProfileRunner(r.Client, r.Config),
+		runners.NewProfileRunner(rt.GetClient(), rt.GetConfig()),
 		desc[profilesDescriptor],
 		&AssetHandlerFlags{
 			Create: &flags.ProfileCreateOptions{},

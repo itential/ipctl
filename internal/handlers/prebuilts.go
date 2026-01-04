@@ -9,9 +9,9 @@ import (
 	"github.com/itential/ipctl/internal/runners"
 )
 
-func NewPrebuiltHandler(r Runtime, desc Descriptors) AssetHandler {
+func NewPrebuiltHandler(rt *Runtime, desc Descriptors) AssetHandler {
 	return NewAssetHandler(
-		runners.NewPrebuiltRunner(r.Client, r.Config),
+		runners.NewPrebuiltRunner(rt.GetClient(), rt.GetConfig()),
 		desc[prebuiltsDescriptor],
 		&AssetHandlerFlags{
 			Delete: &flags.PrebuiltDeleteOptions{},

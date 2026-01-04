@@ -8,9 +8,9 @@ import (
 	"github.com/itential/ipctl/internal/runners"
 )
 
-func NewRoleTypesHandler(r Runtime, desc Descriptors) AssetHandler {
+func NewRoleTypesHandler(rt *Runtime, desc Descriptors) AssetHandler {
 	return NewAssetHandler(
-		runners.NewRoleTypeRunner(r.Client, r.Config),
+		runners.NewRoleTypeRunner(rt.GetClient(), rt.GetConfig()),
 		desc[roleTypesDescriptor],
 		&AssetHandlerFlags{},
 	)

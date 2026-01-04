@@ -9,9 +9,9 @@ import (
 	"github.com/itential/ipctl/internal/runners"
 )
 
-func NewJsonFormHandler(r Runtime, desc Descriptors) AssetHandler {
+func NewJsonFormHandler(rt *Runtime, desc Descriptors) AssetHandler {
 	return NewAssetHandler(
-		runners.NewJsonFormRunner(r.Client, r.Config),
+		runners.NewJsonFormRunner(rt.GetClient(), rt.GetConfig()),
 		desc[jsonformsDescriptor],
 		&AssetHandlerFlags{
 			Get:    &flags.JsonFormGetOptions{},

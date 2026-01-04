@@ -9,9 +9,9 @@ import (
 	"github.com/itential/ipctl/internal/runners"
 )
 
-func NewProjectHandler(r Runtime, desc Descriptors) AssetHandler {
+func NewProjectHandler(rt *Runtime, desc Descriptors) AssetHandler {
 	return NewAssetHandler(
-		runners.NewProjectRunner(r.Client, r.Config),
+		runners.NewProjectRunner(rt.GetClient(), rt.GetConfig()),
 		desc[projectsDescriptor],
 		&AssetHandlerFlags{
 			Import: &flags.ProjectImportOptions{},

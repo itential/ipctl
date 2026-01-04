@@ -9,9 +9,9 @@ import (
 	"github.com/itential/ipctl/internal/runners"
 )
 
-func NewAutomationHandler(r Runtime, desc Descriptors) AssetHandler {
+func NewAutomationHandler(rt *Runtime, desc Descriptors) AssetHandler {
 	return NewAssetHandler(
-		runners.NewAutomationRunner(r.Client, r.Config),
+		runners.NewAutomationRunner(rt.GetClient(), rt.GetConfig()),
 		desc[automationsDescriptor],
 		&AssetHandlerFlags{
 			Create: &flags.AutomationCreateOptions{},

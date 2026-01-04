@@ -87,7 +87,7 @@ func withOptions(f *AssetHandlerFlags) CommandRunnerOption {
 }
 
 func checkError(err error, runtime *Runtime) {
-	cmdutils.CheckError(err, runtime.Config.TerminalNoColor)
+	cmdutils.CheckError(err, runtime.GetConfig().TerminalNoColor)
 }
 
 func unableToDisplayOutput(nocolor bool) {
@@ -129,29 +129,29 @@ func NewCommand(c *CommandRunner) *cobra.Command {
 				Options: c.Options,
 				Common:  c.Common,
 				Runner:  c.Runner,
-				Config:  c.Runtime.Config,
+				Config:  c.Runtime.GetConfig(),
 			}
 
 			resp, err := c.Run(req)
 			checkError(err, c.Runtime)
 
-			switch c.Runtime.Config.TerminalDefaultOutput {
+			switch c.Runtime.GetConfig().TerminalDefaultOutput {
 			case "json":
 				if resp.Object != nil {
 					checkError(terminal.DisplayJson(resp.Object), c.Runtime)
 				} else {
-					unableToDisplayOutput(c.Runtime.Config.TerminalNoColor)
+					unableToDisplayOutput(c.Runtime.GetConfig().TerminalNoColor)
 				}
 			case "yaml":
 				if resp.Object != nil {
 					checkError(terminal.DisplayYaml(resp.Object), c.Runtime)
 				} else {
-					unableToDisplayOutput(c.Runtime.Config.TerminalNoColor)
+					unableToDisplayOutput(c.Runtime.GetConfig().TerminalNoColor)
 				}
 			case "human":
 				if len(resp.Keys) > 0 {
 					output := strings.Split(resp.String(), "\n")
-					if c.Runtime.Config.TerminalPager {
+					if c.Runtime.GetConfig().TerminalPager {
 						terminal.DisplayTabWriterStringWithPager(output, 3, 3, true)
 					} else {
 						terminal.DisplayTabWriterString(output, 3, 3, true)
@@ -159,7 +159,7 @@ func NewCommand(c *CommandRunner) *cobra.Command {
 				} else {
 					output := resp.String()
 					if output == "" {
-						unableToDisplayOutput(c.Runtime.Config.TerminalNoColor)
+						unableToDisplayOutput(c.Runtime.GetConfig().TerminalNoColor)
 					}
 					terminal.Display("%s\n", output)
 				}

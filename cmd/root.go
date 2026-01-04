@@ -32,12 +32,12 @@ const description = `Manage Itential Platform
   Find more information at: https://docs.itential.com
 `
 
-// loadCommands will load the command tree for the application.  All top level
-// comamnds are defined by this function except for the `version` command which
+// loadCommands will load the command tree for the application. All top level
+// commands are defined by this function except for the `version` command which
 // is defined below.
-func loadCommands(cmd *cobra.Command, runtime handlers.Runtime) {
+func loadCommands(cmd *cobra.Command, runtime *handlers.Runtime) {
 	addRootCommand(cmd, runtime, "Asset Commands:", assetCommands)
-	if runtime.Config.FeaturesDatasetsEnabled {
+	if runtime.GetConfig().FeaturesDatasetsEnabled {
 		addRootCommand(cmd, runtime, "Dataset Commands:", datasetCommands)
 	}
 	addRootCommand(cmd, runtime, "Platform Commands:", platformCommands)
@@ -53,8 +53,12 @@ func versionCommand() *cobra.Command {
 		Run: func(cmd *cobra.Command, args []string) {
 			terminal.Display("version: %s", metadata.Version)
 			terminal.Display("commit: %s", metadata.Build)
-			e, _ := os.Executable()
-			terminal.Display("executable: %s", path.Dir(e))
+			e, err := os.Executable()
+			if err != nil {
+				terminal.Display("executable: <unknown> (error: %v)", err)
+			} else {
+				terminal.Display("executable: %s", path.Dir(e))
+			}
 			terminal.Display("")
 		},
 	}
@@ -76,7 +80,7 @@ func runCli(c client.Client, cfg *config.Config) *cobra.Command {
 	runtime := handlers.NewRuntime(c, cfg)
 
 	cmd.PersistentFlags().BoolVar(&runtime.Verbose, "verbose", runtime.Verbose, "Enable verbose output")
-	cmd.PersistentFlags().StringVar(&runtime.Config.TerminalDefaultOutput, "output", runtime.Config.TerminalDefaultOutput, "Output format")
+	cmd.PersistentFlags().StringVar(&cfg.TerminalDefaultOutput, "output", cfg.TerminalDefaultOutput, "Output format")
 
 	// Note: Values are read during /pkg/config's initialization
 	cmd.PersistentFlags().String("config", "", "Path to the configuration file")
