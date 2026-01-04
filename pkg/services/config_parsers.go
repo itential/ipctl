@@ -20,7 +20,7 @@ type ConfigurationParser struct {
 }
 
 type ConfigurationParserService struct {
-	client *ServiceClient
+	BaseService
 }
 
 func NewConfigurationParser(name string) ConfigurationParser {
@@ -29,7 +29,7 @@ func NewConfigurationParser(name string) ConfigurationParser {
 }
 
 func NewConfigurationParserService(c client.Client) *ConfigurationParserService {
-	return &ConfigurationParserService{client: NewServiceClient(c)}
+	return &ConfigurationParserService{BaseService: NewBaseService(c)}
 }
 
 func (svc *ConfigurationParserService) GetAll() ([]ConfigurationParser, error) {
@@ -42,7 +42,7 @@ func (svc *ConfigurationParserService) GetAll() ([]ConfigurationParser, error) {
 
 	var res Response
 
-	if err := svc.client.Get("/configuration_manager/configurations/parser", &res); err != nil {
+	if err := svc.BaseService.Get("/configuration_manager/configurations/parser", &res); err != nil {
 		return nil, err
 	}
 

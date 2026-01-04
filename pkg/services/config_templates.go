@@ -25,11 +25,11 @@ type ConfigTemplate struct {
 }
 
 type ConfigTemplateService struct {
-	client *ServiceClient
+	BaseService
 }
 
 func NewConfigTemplateService(c client.Client) *ConfigTemplateService {
-	return &ConfigTemplateService{client: NewServiceClient(c)}
+	return &ConfigTemplateService{BaseService: NewBaseService(c)}
 }
 
 func NewConfigTemplate(name string) ConfigTemplate {
@@ -51,7 +51,7 @@ func (svc *ConfigTemplateService) Create(in ConfigTemplate) (*ConfigTemplate, er
 
 	var res Response
 
-	if err := svc.client.PostRequest(&Request{
+	if err := svc.PostRequest(&Request{
 		uri:                "/configuration_manager/templates",
 		body:               body,
 		expectedStatusCode: http.StatusOK,

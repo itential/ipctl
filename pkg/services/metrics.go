@@ -17,11 +17,11 @@ type PrometheusMetric struct {
 }
 
 type MetricService struct {
-	client *ServiceClient
+	BaseService
 }
 
 func NewMetricService(c client.Client) *MetricService {
-	return &MetricService{client: NewServiceClient(c)}
+	return &MetricService{BaseService: NewBaseService(c)}
 }
 
 // Get will retrieve the server Prometheus metrics and return them to to
@@ -29,7 +29,7 @@ func NewMetricService(c client.Client) *MetricService {
 func (svc *MetricService) Get() string {
 	logger.Trace()
 
-	if err := svc.client.Get("/prometheus_metrics", nil); err != nil {
+	if err := svc.BaseService.Get("/prometheus_metrics", nil); err != nil {
 		return ""
 	}
 

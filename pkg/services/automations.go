@@ -59,7 +59,7 @@ type Automation struct {
 
 // AutomationService provides methods for managing automations
 type AutomationService struct {
-	client *ServiceClient
+	BaseService
 }
 
 // NewAutomation creates a new Automation instance with the given name and description
@@ -74,7 +74,7 @@ func NewAutomation(name, desc string) Automation {
 
 // NewAutomationService creates a new AutomationService with the given client
 func NewAutomationService(c client.Client) *AutomationService {
-	return &AutomationService{client: NewServiceClient(c)}
+	return &AutomationService{BaseService: NewBaseService(c)}
 }
 
 // Get implements `GET /operations-manager/automations/{id}`
@@ -89,7 +89,7 @@ func (svc *AutomationService) Get(id string) (*Automation, error) {
 	var res Response
 	var uri = fmt.Sprintf("/operations-manager/automations/%s", id)
 
-	if err := svc.client.Get(uri, &res); err != nil {
+	if err := svc.BaseService.Get(uri, &res); err != nil {
 		return nil, err
 	}
 
@@ -142,7 +142,7 @@ func (svc *AutomationService) Create(in Automation) (*Automation, error) {
 
 	var res Response
 
-	if err := svc.client.PostRequest(&Request{
+	if err := svc.PostRequest(&Request{
 		uri:                "/operations-manager/automations",
 		body:               &body,
 		expectedStatusCode: http.StatusOK,
@@ -158,7 +158,7 @@ func (svc *AutomationService) Create(in Automation) (*Automation, error) {
 // Delete implements `DELETE /operations-manager/automations/{id}`
 func (svc *AutomationService) Delete(id string) error {
 	logger.Trace()
-	return svc.client.Delete(fmt.Sprintf("/operations-manager/automations/%s", id))
+	return svc.Delete(fmt.Sprintf("/operations-manager/automations/%s", id))
 }
 
 // GetAll implements `GET /operations-manager/automations`
@@ -179,7 +179,7 @@ func (svc *AutomationService) GetAll() ([]*Automation, error) {
 	var skip = 0
 
 	for {
-		if err := svc.client.GetRequest(&Request{
+		if err := svc.GetRequest(&Request{
 			uri:    "/operations-manager/automations",
 			params: &QueryParams{Limit: limit, Skip: skip},
 		}, &res); err != nil {
@@ -265,7 +265,7 @@ func (svc *AutomationService) Import(in Automation) (*Automation, error) {
 
 	var res Response
 
-	if err := svc.client.PutRequest(&Request{
+	if err := svc.PutRequest(&Request{
 		uri:  "/operations-manager/automations",
 		body: &body,
 	}, &res); err != nil {
@@ -290,7 +290,7 @@ func (svc *AutomationService) Export(id string) (*Automation, error) {
 	var res Response
 	var uri = fmt.Sprintf("/operations-manager/automations/%s/export", id)
 
-	if err := svc.client.Get(uri, &res); err != nil {
+	if err := svc.BaseService.Get(uri, &res); err != nil {
 		return nil, err
 	}
 

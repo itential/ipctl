@@ -44,13 +44,13 @@ type Adapter struct {
 // AdapterService provides methods for managing adapter instances in the Itential platform.
 // It handles CRUD operations, lifecycle management, and import/export functionality.
 type AdapterService struct {
-	client *ServiceClient
+	BaseService
 }
 
 // NewAdapterService creates and returns a new AdapterService instance
 // configured with the provided client for API communication.
 func NewAdapterService(c client.Client) *AdapterService {
-	return &AdapterService{client: NewServiceClient(c)}
+	return &AdapterService{BaseService: NewBaseService(c)}
 }
 
 // GetAll will retrieve all configured adapter instances and return them to the
@@ -77,7 +77,7 @@ func (svc *AdapterService) GetAll() ([]Adapter, error) {
 
 	var res Collection
 
-	if err := svc.client.Get("/adapters", &res); err != nil {
+	if err := svc.BaseService.Get("/adapters", &res); err != nil {
 		return nil, err
 	}
 
@@ -112,7 +112,7 @@ func (svc *AdapterService) Get(name string) (*Adapter, error) {
 	var res Response
 	var uri = fmt.Sprintf("/adapters/%s", name)
 
-	if err := svc.client.Get(uri, &res); err != nil {
+	if err := svc.BaseService.Get(uri, &res); err != nil {
 		return nil, err
 	}
 
@@ -134,7 +134,7 @@ func (svc *AdapterService) Create(in Adapter) (*Adapter, error) {
 
 	var res Response
 
-	if err := svc.client.PostRequest(&Request{
+	if err := svc.PostRequest(&Request{
 		uri:                "/adapters",
 		body:               &body,
 		expectedStatusCode: 200,
@@ -151,7 +151,7 @@ func (svc *AdapterService) Create(in Adapter) (*Adapter, error) {
 // It returns an error if the adapter doesn't exist or the operation fails.
 func (svc *AdapterService) Delete(name string) error {
 	logger.Trace()
-	return svc.client.Delete(fmt.Sprintf("/adapters/%s", name))
+	return svc.Delete(fmt.Sprintf("/adapters/%s", name))
 }
 
 // Import imports an adapter configuration, creating or updating the adapter instance.
@@ -167,7 +167,7 @@ func (svc *AdapterService) Import(in Adapter) (*Adapter, error) {
 
 	var res Response
 
-	if err := svc.client.PostRequest(&Request{
+	if err := svc.PostRequest(&Request{
 		uri:                "/adapters/import",
 		body:               map[string]interface{}{"properties": in},
 		expectedStatusCode: http.StatusOK,
@@ -195,7 +195,7 @@ func (svc *AdapterService) Update(in Adapter) (*Adapter, error) {
 	var body = map[string]interface{}{"properties": in}
 	var uri = fmt.Sprintf("/adapters/%s", in.Name)
 
-	if err := svc.client.Put(uri, body, &res); err != nil {
+	if err := svc.Put(uri, body, &res); err != nil {
 		return nil, err
 	}
 
@@ -215,14 +215,14 @@ func (svc *AdapterService) Export(name string) (*Adapter, error) {
 // It returns an error if the adapter doesn't exist or cannot be started.
 func (svc *AdapterService) Start(name string) error {
 	logger.Trace()
-	return svc.client.Put(fmt.Sprintf("/adapters/%s/start", name), nil, nil)
+	return svc.Put(fmt.Sprintf("/adapters/%s/start", name), nil, nil)
 }
 
 // Stop halts the specified adapter instance, making it inactive.
 // It returns an error if the adapter doesn't exist or cannot be stopped.
 func (svc *AdapterService) Stop(name string) error {
 	logger.Trace()
-	return svc.client.Put(fmt.Sprintf("/adapters/%s/stop", name), nil, nil)
+	return svc.Put(fmt.Sprintf("/adapters/%s/stop", name), nil, nil)
 }
 
 // Restart stops and then starts the specified adapter instance.
@@ -235,5 +235,5 @@ func (svc *AdapterService) Restart(name string) error {
 	}
 
 	return svc.Start(name)
-	//return svc.client.Put(fmt.Sprintf("/adapters/%s/restart", name), nil, nil)
+	//return svc.Put(fmt.Sprintf("/adapters/%s/restart", name), nil, nil)
 }

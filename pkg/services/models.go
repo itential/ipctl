@@ -74,7 +74,7 @@ type Model struct {
 
 // ModelService provides operations for managing lifecycle manager models
 type ModelService struct {
-	client *ServiceClient
+	BaseService
 }
 
 // NewModel creates a new Model instance with the specified name and description
@@ -89,7 +89,7 @@ func NewModel(name, desc string) Model {
 
 // NewModelService creates a new ModelService instance with the provided client
 func NewModelService(c client.Client) *ModelService {
-	return &ModelService{client: NewServiceClient(c)}
+	return &ModelService{BaseService: NewBaseService(c)}
 }
 
 // Get retrieves a model by its ID from the lifecycle manager
@@ -99,7 +99,7 @@ func (svc *ModelService) Get(id string) (*Model, error) {
 	var res *Model
 	var uri = fmt.Sprintf("/lifecycle-manager/resources/%s", id)
 
-	if err := svc.client.Get(uri, &res); err != nil {
+	if err := svc.BaseService.Get(uri, &res); err != nil {
 		return nil, err
 	}
 
@@ -113,7 +113,7 @@ func (svc *ModelService) GetAll() ([]Model, error) {
 	var res ModelOperation
 	var uri = "/lifecycle-manager/resources"
 
-	if err := svc.client.Get(uri, &res); err != nil {
+	if err := svc.BaseService.Get(uri, &res); err != nil {
 		return nil, err
 	}
 
@@ -167,7 +167,7 @@ func (svc *ModelService) Create(in Model) (*Model, error) {
 
 	var res Response
 
-	if err := svc.client.PostRequest(&Request{
+	if err := svc.PostRequest(&Request{
 		uri:                "/lifecycle-manager/resources",
 		body:               &body,
 		expectedStatusCode: http.StatusOK,
@@ -195,7 +195,7 @@ func (svc *ModelService) Delete(id string, deleteInstances bool) error {
 		}
 	}
 
-	return svc.client.DeleteRequest(req, nil)
+	return svc.DeleteRequest(req, nil)
 }
 
 // RunAction executes an action on a model instance
@@ -205,7 +205,7 @@ func (svc *ModelService) RunAction(model string, in RunActionRequest) (*RunActio
 	var res *RunActionResponse
 	var uri = fmt.Sprintf("/lifecycle-manager/resources/%s/run-action", model)
 
-	if err := svc.client.Post(uri, &in, &res); err != nil {
+	if err := svc.Post(uri, &in, &res); err != nil {
 		return nil, err
 	}
 
@@ -227,7 +227,7 @@ func (svc *ModelService) Import(in Model) (*Model, error) {
 
 	var res Response
 
-	if err := svc.client.PostRequest(&Request{
+	if err := svc.PostRequest(&Request{
 		uri:                "/lifecycle-manager/resources/import",
 		body:               &body,
 		expectedStatusCode: http.StatusOK,
@@ -251,7 +251,7 @@ func (svc *ModelService) Export(id string) (*Model, error) {
 
 	var uri = fmt.Sprintf("/lifecycle-manager/resources/%s/export", id)
 
-	if err := svc.client.Get(uri, &res); err != nil {
+	if err := svc.BaseService.Get(uri, &res); err != nil {
 		return nil, err
 	}
 

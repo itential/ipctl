@@ -26,13 +26,13 @@ type Device struct {
 
 // DeviceService provides methods for managing devices
 type DeviceService struct {
-	client *ServiceClient
+	BaseService
 }
 
 // NewDeviceService creates a new DeviceService with the given client
 func NewDeviceService(c client.Client) *DeviceService {
 	return &DeviceService{
-		client: NewServiceClient(c),
+		BaseService: NewBaseService(c),
 	}
 }
 
@@ -104,7 +104,7 @@ func (svc *DeviceService) GetAll() ([]Device, error) {
 			},
 		}
 
-		if err := svc.client.PostRequest(&Request{
+		if err := svc.PostRequest(&Request{
 			uri:                "/configuration_manager/devices",
 			body:               &body,
 			expectedStatusCode: http.StatusOK,
@@ -158,7 +158,7 @@ func (svc *DeviceService) Get(name string) (*Device, error) {
 
 	var res Response
 
-	if err := svc.client.PostRequest(&Request{
+	if err := svc.PostRequest(&Request{
 		uri:                "/configuration_manager/devices",
 		body:               &body,
 		expectedStatusCode: http.StatusOK,

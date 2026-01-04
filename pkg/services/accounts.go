@@ -47,7 +47,7 @@ type Account struct {
 
 // AccountService provides API access for mananging Itential Platform accounts.
 type AccountService struct {
-	client *ServiceClient
+	BaseService
 }
 
 // NewAccountService creates and returns a new instance of AccountService using the
@@ -55,7 +55,7 @@ type AccountService struct {
 // Itential Platform user accounts.
 func NewAccountService(c client.Client) *AccountService {
 	return &AccountService{
-		client: NewServiceClient(c),
+		BaseService: NewBaseService(c),
 	}
 }
 
@@ -78,7 +78,7 @@ func (svc *AccountService) GetAll() ([]Account, error) {
 	for {
 		var res *Response
 
-		if err := svc.client.GetRequest(&Request{
+		if err := svc.GetRequest(&Request{
 			uri:    "/authorization/accounts",
 			params: &QueryParams{Limit: limit, Skip: skip},
 		}, &res); err != nil {
@@ -111,7 +111,7 @@ func (svc *AccountService) Get(id string) (*Account, error) {
 
 	var uri = fmt.Sprintf("/authorization/accounts/%s", id)
 
-	if err := svc.client.Get(uri, &res); err != nil {
+	if err := svc.BaseService.Get(uri, &res); err != nil {
 		return nil, err
 	}
 
@@ -151,7 +151,7 @@ func (svc *AccountService) GetByName(name string) (*Account, error) {
 // Returns an error if the request fails or the account is not found.
 func (svc *AccountService) Deactivate(id string) error {
 	logger.Trace()
-	return svc.client.PatchRequest(&Request{
+	return svc.PatchRequest(&Request{
 		uri:  fmt.Sprintf("/authorization/accounts/%s", id),
 		body: map[string]interface{}{"inactive": true},
 	}, nil)
@@ -162,7 +162,7 @@ func (svc *AccountService) Deactivate(id string) error {
 // Returns an error if the request fails or the account is not found.
 func (svc *AccountService) Activate(id string) error {
 	logger.Trace()
-	return svc.client.PatchRequest(&Request{
+	return svc.PatchRequest(&Request{
 		uri:  fmt.Sprintf("/authorization/accounts/%s", id),
 		body: map[string]interface{}{"inactive": false},
 	}, nil)

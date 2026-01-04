@@ -41,11 +41,11 @@ type Group struct {
 }
 
 type GroupService struct {
-	client *ServiceClient
+	BaseService
 }
 
 func NewGroupService(c client.Client) *GroupService {
-	return &GroupService{client: NewServiceClient(c)}
+	return &GroupService{BaseService: NewBaseService(c)}
 }
 
 func NewGroup(name, desc string) Group {
@@ -75,7 +75,7 @@ func (svc *GroupService) GetAll() ([]Group, error) {
 
 	var res *Response
 
-	if err := svc.client.Get("/authorization/groups", &res); err != nil {
+	if err := svc.BaseService.Get("/authorization/groups", &res); err != nil {
 		return nil, err
 	}
 
@@ -93,7 +93,7 @@ func (svc *GroupService) Get(id string) (*Group, error) {
 	var res *Group
 	var uri = fmt.Sprintf("/authorization/groups/%s", id)
 
-	if err := svc.client.Get(uri, &res); err != nil {
+	if err := svc.BaseService.Get(uri, &res); err != nil {
 		return nil, err
 	}
 
@@ -153,7 +153,7 @@ func (svc *GroupService) Create(in Group) (*Group, error) {
 
 	var res Response
 
-	if err := svc.client.PostRequest(&Request{
+	if err := svc.PostRequest(&Request{
 		uri:                "/authorization/groups",
 		body:               map[string]interface{}{"group": body},
 		expectedStatusCode: http.StatusOK,
@@ -171,5 +171,5 @@ func (svc *GroupService) Create(in Group) (*Group, error) {
 // this function will return an error.
 func (svc *GroupService) Delete(id string) error {
 	logger.Trace()
-	return svc.client.Delete(fmt.Sprintf("/authorization/groups/%s", id))
+	return svc.Delete(fmt.Sprintf("/authorization/groups/%s", id))
 }

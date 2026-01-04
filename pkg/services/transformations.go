@@ -35,7 +35,7 @@ type Transformation struct {
 }
 
 type TransformationService struct {
-	client *ServiceClient
+	BaseService
 }
 
 func NewTransformation(name, description string) Transformation {
@@ -54,7 +54,7 @@ func NewTransformation(name, description string) Transformation {
 }
 
 func NewTransformationService(c client.Client) *TransformationService {
-	return &TransformationService{client: NewServiceClient(c)}
+	return &TransformationService{BaseService: NewBaseService(c)}
 }
 
 // GetAll will retrieve all configured transformations from the server and
@@ -75,7 +75,7 @@ func (svc *TransformationService) GetAll() ([]Transformation, error) {
 	var skip = 0
 
 	for {
-		if err := svc.client.GetRequest(&Request{
+		if err := svc.GetRequest(&Request{
 			uri:    "/transformations",
 			params: &QueryParams{Limit: limit, Skip: skip},
 		}, &res); err != nil {
@@ -107,7 +107,7 @@ func (svc *TransformationService) Get(id string) (*Transformation, error) {
 	var res *Transformation
 	var uri = fmt.Sprintf("/transformations/%s", id)
 
-	if err := svc.client.Get(uri, &res); err != nil {
+	if err := svc.BaseService.Get(uri, &res); err != nil {
 		return nil, err
 	}
 
@@ -132,7 +132,7 @@ func (svc *TransformationService) GetByName(name string) (*Transformation, error
 
 	var res Response
 
-	if err := svc.client.GetRequest(&Request{
+	if err := svc.GetRequest(&Request{
 		uri: "/transformations",
 		query: map[string]string{
 			"contains[name]": name,
@@ -170,7 +170,7 @@ func (svc *TransformationService) Create(in Transformation) (*Transformation, er
 
 	var res *Transformation
 
-	if err := svc.client.PostRequest(&Request{
+	if err := svc.PostRequest(&Request{
 		uri:                "/transformations",
 		body:               &in,
 		expectedStatusCode: http.StatusOK,
@@ -186,7 +186,7 @@ func (svc *TransformationService) Create(in Transformation) (*Transformation, er
 // successfully.
 func (svc *TransformationService) Delete(id string) error {
 	logger.Trace()
-	return svc.client.DeleteRequest(&Request{
+	return svc.DeleteRequest(&Request{
 		uri:                fmt.Sprintf("/transformations/%s", id),
 		expectedStatusCode: http.StatusNoContent,
 	}, nil)
@@ -222,7 +222,7 @@ func (svc *TransformationService) Import(in Transformation) (*Transformation, er
 
 	var res *Transformation
 
-	if err := svc.client.PostRequest(&Request{
+	if err := svc.PostRequest(&Request{
 		uri:                "/transformations/import",
 		body:               &in,
 		expectedStatusCode: http.StatusOK,

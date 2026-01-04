@@ -41,11 +41,11 @@ type GoldenConfigTree struct {
 }
 
 type GoldenConfigService struct {
-	client *ServiceClient
+	BaseService
 }
 
 func NewGoldenConfigService(c client.Client) *GoldenConfigService {
-	return &GoldenConfigService{client: NewServiceClient(c)}
+	return &GoldenConfigService{BaseService: NewBaseService(c)}
 }
 
 // Create calls `POST /configuration_manager/configs`
@@ -59,7 +59,7 @@ func (svc *GoldenConfigService) Create(in GoldenConfigTree) (*GoldenConfigTree, 
 
 	var res *GoldenConfigTree
 
-	if err := svc.client.PostRequest(&Request{
+	if err := svc.PostRequest(&Request{
 		uri:                "/configuration_manager/configs",
 		body:               &body,
 		expectedStatusCode: http.StatusOK,
@@ -74,7 +74,7 @@ func (svc *GoldenConfigService) Create(in GoldenConfigTree) (*GoldenConfigTree, 
 func (svc *GoldenConfigService) Delete(id string) error {
 	logger.Trace()
 	var uri = fmt.Sprintf("/configuration_manager/configs/%s", id)
-	return svc.client.Delete(uri)
+	return svc.Delete(uri)
 }
 
 // GetAll calls `GET /configuration_manager/configs`
@@ -84,7 +84,7 @@ func (svc *GoldenConfigService) GetAll() ([]GoldenConfigTreeSummary, error) {
 	var res []GoldenConfigTreeSummary
 	var uri = "/configuration_manager/configs"
 
-	if err := svc.client.Get(uri, &res); err != nil {
+	if err := svc.BaseService.Get(uri, &res); err != nil {
 		return nil, err
 	}
 
@@ -137,7 +137,7 @@ func (svc *GoldenConfigService) Import(in GoldenConfigTree) error {
 
 	var res Response
 
-	if err := svc.client.PostRequest(&Request{
+	if err := svc.PostRequest(&Request{
 		uri:                "/configuration_manager/import/goldenconfigs",
 		body:               &body,
 		expectedStatusCode: http.StatusOK,
@@ -163,7 +163,7 @@ func (svc *GoldenConfigService) Export(id string) (*GoldenConfigTree, error) {
 
 	var res Response
 
-	if err := svc.client.PostRequest(&Request{
+	if err := svc.PostRequest(&Request{
 		uri:                "/configuration_manager/export/goldenconfigs",
 		body:               &body,
 		expectedStatusCode: http.StatusOK,

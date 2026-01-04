@@ -23,11 +23,11 @@ type Method struct {
 }
 
 type MethodService struct {
-	client *ServiceClient
+	BaseService
 }
 
 func NewMethodService(c client.Client) *MethodService {
-	return &MethodService{client: NewServiceClient(c)}
+	return &MethodService{BaseService: NewBaseService(c)}
 }
 
 // GetAll implements `GET /authorization/methods`
@@ -41,7 +41,7 @@ func (svc *MethodService) GetAll() ([]Method, error) {
 
 	var res *Response
 
-	if err := svc.client.Get("/authorization/methods", &res); err != nil {
+	if err := svc.BaseService.Get("/authorization/methods", &res); err != nil {
 		return nil, err
 	}
 

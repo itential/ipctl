@@ -26,7 +26,7 @@ type DeviceGroup struct {
 }
 
 type DeviceGroupService struct {
-	client *ServiceClient
+	BaseService
 }
 
 func NewDeviceGroup(name, desc string) DeviceGroup {
@@ -38,7 +38,7 @@ func NewDeviceGroup(name, desc string) DeviceGroup {
 }
 
 func NewDeviceGroupService(c client.Client) *DeviceGroupService {
-	return &DeviceGroupService{client: NewServiceClient(c)}
+	return &DeviceGroupService{BaseService: NewBaseService(c)}
 }
 
 func (svc *DeviceGroupService) Get(id string) (*DeviceGroup, error) {
@@ -47,7 +47,7 @@ func (svc *DeviceGroupService) Get(id string) (*DeviceGroup, error) {
 	var res *DeviceGroup
 	var uri = fmt.Sprintf("/configuration_manager/devicegroups/%s", id)
 
-	if err := svc.client.Get(uri, &res); err != nil {
+	if err := svc.BaseService.Get(uri, &res); err != nil {
 		return nil, err
 	}
 
@@ -59,7 +59,7 @@ func (svc *DeviceGroupService) GetAll() ([]DeviceGroup, error) {
 
 	var res []DeviceGroup
 
-	if err := svc.client.Get("/configuration_manager/deviceGroups", &res); err != nil {
+	if err := svc.BaseService.Get("/configuration_manager/deviceGroups", &res); err != nil {
 		return nil, err
 	}
 
@@ -108,7 +108,7 @@ func (svc *DeviceGroupService) Create(in DeviceGroup) (*DeviceGroup, error) {
 
 	var res Response
 
-	if err := svc.client.PostRequest(&Request{
+	if err := svc.PostRequest(&Request{
 		uri:                "/configuration_manager/devicegroup",
 		body:               &body,
 		expectedStatusCode: http.StatusOK,
@@ -135,7 +135,7 @@ func (svc *DeviceGroupService) Delete(id string) error {
 
 	var res Response
 
-	return svc.client.DeleteRequest(&Request{
+	return svc.DeleteRequest(&Request{
 		uri:                "/configuration_manager/devicegroups",
 		body:               &body,
 		expectedStatusCode: http.StatusOK,

@@ -57,12 +57,12 @@ type Workflow struct {
 // WorkflowService provides methods for managing Itential Platform workflows.
 // It handles CRUD operations, import/export, and bulk operations on workflow assets.
 type WorkflowService struct {
-	client *ServiceClient
+	BaseService
 }
 
 // NewWorkflowService creates a new instance of WorkflowService with the provided client.
 func NewWorkflowService(c client.Client) *WorkflowService {
-	return &WorkflowService{client: NewServiceClient(c)}
+	return &WorkflowService{BaseService: NewBaseService(c)}
 }
 
 // NewWorkflow returns a minimum viable workflow struct.
@@ -136,7 +136,7 @@ func (svc *WorkflowService) GetAll() ([]Workflow, error) {
 	var skip = 0
 
 	for {
-		if err := svc.client.GetRequest(&Request{
+		if err := svc.GetRequest(&Request{
 			uri:    "/automation-studio/workflows",
 			params: &QueryParams{Limit: limit, Skip: skip},
 		}, &res); err != nil {
@@ -171,7 +171,7 @@ func (svc *WorkflowService) Get(name string) (*Workflow, error) {
 
 	var res getWorkflowsResponse
 
-	if err := svc.client.GetRequest(&Request{
+	if err := svc.GetRequest(&Request{
 		uri:   "/automation-studio/workflows",
 		query: map[string]string{"equals[name]": name},
 	}, &res); err != nil {
@@ -229,7 +229,7 @@ func (svc *WorkflowService) Create(in Workflow) (*Workflow, error) {
 
 	var res Response
 
-	if err := svc.client.PostRequest(&Request{
+	if err := svc.PostRequest(&Request{
 		uri:                "/automation-studio/automations",
 		body:               map[string]interface{}{"automation": in},
 		expectedStatusCode: http.StatusOK,
@@ -245,7 +245,7 @@ func (svc *WorkflowService) Create(in Workflow) (*Workflow, error) {
 // error.
 func (svc *WorkflowService) Delete(name string) error {
 	logger.Trace()
-	return svc.client.Delete(
+	return svc.Delete(
 		fmt.Sprintf("/workflow_builder/workflows/delete/%s", name),
 	)
 }
@@ -262,7 +262,7 @@ func (svc *WorkflowService) Import(in Workflow) (*Workflow, error) {
 
 	var res *Workflow
 
-	if err := svc.client.PostRequest(&Request{
+	if err := svc.PostRequest(&Request{
 		uri:                "/automation-studio/automations/import",
 		body:               &body,
 		expectedStatusCode: http.StatusOK,
@@ -287,7 +287,7 @@ func (svc *WorkflowService) Export(name string) (*Workflow, error) {
 
 	var res Workflow
 
-	if err := svc.client.PostRequest(&Request{
+	if err := svc.PostRequest(&Request{
 		uri:                "/workflow_builder/export",
 		body:               &body,
 		expectedStatusCode: http.StatusOK,
@@ -312,7 +312,7 @@ func (svc *WorkflowService) ExportById(id string) (*Workflow, error) {
 
 	var res Workflow
 
-	if err := svc.client.PostRequest(&Request{
+	if err := svc.PostRequest(&Request{
 		uri:                "/workflow_builder/export",
 		body:               &body,
 		expectedStatusCode: http.StatusOK,
@@ -350,7 +350,7 @@ func (svc *WorkflowService) Update(in Workflow) (*Workflow, error) {
 
 	var res *Workflow
 
-	if err := svc.client.PutRequest(&Request{
+	if err := svc.PutRequest(&Request{
 		uri:                fmt.Sprintf("/automation-studio/automations/%s", in.Id),
 		body:               map[string]interface{}{"update": in},
 		expectedStatusCode: http.StatusOK,
