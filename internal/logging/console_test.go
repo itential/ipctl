@@ -10,7 +10,6 @@ import (
 	"testing"
 	"time"
 
-	"github.com/itential/ipctl/pkg/config"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 	"github.com/stretchr/testify/assert"
@@ -179,13 +178,12 @@ func TestEnableConsoleLogsJSON(t *testing.T) {
 	// Reset global state
 	iowriters = nil
 
-	cfg := &config.Config{
-		LogConsoleJSON:       true,
-		LogTimestampTimezone: time.UTC,
-		TerminalNoColor:      false,
+	cfg := Config{
+		ConsoleJSON:       true,
+		TimestampTimezone: time.UTC,
 	}
 
-	EnableConsoleLogs(cfg)
+	EnableConsoleLogs(cfg, false)
 
 	assert.Len(t, iowriters, 1)
 	// Check that the writer is of the correct type
@@ -201,13 +199,12 @@ func TestEnableConsoleLogsConsole(t *testing.T) {
 	// Reset global state
 	iowriters = nil
 
-	cfg := &config.Config{
-		LogConsoleJSON:       false,
-		LogTimestampTimezone: time.UTC,
-		TerminalNoColor:      true, // Test no-color setting
+	cfg := Config{
+		ConsoleJSON:       false,
+		TimestampTimezone: time.UTC,
 	}
 
-	EnableConsoleLogs(cfg)
+	EnableConsoleLogs(cfg, true) // Test no-color setting
 
 	assert.Len(t, iowriters, 1)
 	// Check that the writer is of the correct type
@@ -231,13 +228,12 @@ func TestEnableConsoleLogsWithColor(t *testing.T) {
 	// Reset global state
 	iowriters = nil
 
-	cfg := &config.Config{
-		LogConsoleJSON:       false,
-		LogTimestampTimezone: time.UTC,
-		TerminalNoColor:      false, // Test with color enabled
+	cfg := Config{
+		ConsoleJSON:       false,
+		TimestampTimezone: time.UTC, // Test with color enabled
 	}
 
-	EnableConsoleLogs(cfg)
+	EnableConsoleLogs(cfg, false)
 
 	assert.Len(t, iowriters, 1)
 
@@ -255,13 +251,12 @@ func TestEnableConsoleLogsTimestamp(t *testing.T) {
 	est, err := time.LoadLocation("America/New_York")
 	require.NoError(t, err)
 
-	cfg := &config.Config{
-		LogConsoleJSON:       false,
-		LogTimestampTimezone: est,
-		TerminalNoColor:      true,
+	cfg := Config{
+		ConsoleJSON:       false,
+		TimestampTimezone: est,
 	}
 
-	EnableConsoleLogs(cfg)
+	EnableConsoleLogs(cfg, false)
 
 	// Verify timestamp formatters are set
 	assert.NotNil(t, debugOut.FormatTimestamp)
@@ -295,18 +290,17 @@ func TestMultipleEnableConsoleLogsCalls(t *testing.T) {
 	// Reset global state
 	iowriters = nil
 
-	cfg := &config.Config{
-		LogConsoleJSON:       false,
-		LogTimestampTimezone: time.UTC,
-		TerminalNoColor:      true,
+	cfg := Config{
+		ConsoleJSON:       false,
+		TimestampTimezone: time.UTC,
 	}
 
 	// First call
-	EnableConsoleLogs(cfg)
+	EnableConsoleLogs(cfg, false)
 	firstLength := len(iowriters)
 
 	// Second call
-	EnableConsoleLogs(cfg)
+	EnableConsoleLogs(cfg, false)
 	secondLength := len(iowriters)
 
 	// Should append another writer

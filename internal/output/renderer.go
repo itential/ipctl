@@ -10,7 +10,6 @@ import (
 
 	"github.com/itential/ipctl/internal/runners"
 	"github.com/itential/ipctl/internal/terminal"
-	"github.com/itential/ipctl/pkg/config"
 )
 
 // Renderer coordinates formatting and displaying output.
@@ -20,21 +19,15 @@ import (
 // allows command handlers to remain agnostic of output format details.
 type Renderer struct {
 	formatter Formatter
-	config    *config.Config
 }
 
-// NewRenderer creates a new Renderer with the specified output format and configuration.
+// NewRenderer creates a new Renderer with the specified output format and pager settings.
 //
 // The format parameter should be one of "json", "yaml", or "human".
-// The config provides additional display settings like pager usage.
+// The usePager parameter controls whether paging is enabled for long output.
 //
 // Returns an error if the format is not supported.
-func NewRenderer(format string, cfg *config.Config) (*Renderer, error) {
-	if cfg == nil {
-		return nil, fmt.Errorf("config cannot be nil")
-	}
-
-	usePager := cfg.TerminalPager
+func NewRenderer(format string, usePager bool) (*Renderer, error) {
 	formatter, err := NewFormatter(format, usePager)
 	if err != nil {
 		return nil, err
@@ -42,7 +35,6 @@ func NewRenderer(format string, cfg *config.Config) (*Renderer, error) {
 
 	return &Renderer{
 		formatter: formatter,
-		config:    cfg,
 	}, nil
 }
 

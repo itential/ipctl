@@ -12,11 +12,11 @@ import (
 	"strings"
 	"text/template"
 
+	"github.com/itential/ipctl/internal/config"
 	"github.com/itential/ipctl/internal/flags"
 	"github.com/itential/ipctl/internal/logging"
 	"github.com/itential/ipctl/internal/utils"
 	"github.com/itential/ipctl/pkg/client"
-	"github.com/itential/ipctl/pkg/config"
 	"github.com/itential/ipctl/pkg/editor"
 	"github.com/itential/ipctl/pkg/resources"
 	"github.com/itential/ipctl/pkg/services"
@@ -28,7 +28,7 @@ type AdapterRunner struct {
 	resource resources.AdapterResourcer
 }
 
-func NewAdapterRunner(c client.Client, cfg *config.Config) *AdapterRunner {
+func NewAdapterRunner(c client.Client, cfg config.Provider) *AdapterRunner {
 	return &AdapterRunner{
 		resource:   resources.NewAdapterResource(services.NewAdapterService(c)),
 		BaseRunner: NewBaseRunner(c, cfg),

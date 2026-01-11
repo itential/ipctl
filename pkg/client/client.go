@@ -17,7 +17,7 @@ import (
 	"time"
 
 	"github.com/itential/ipctl/internal/logging"
-	"github.com/itential/ipctl/pkg/config"
+	"github.com/itential/ipctl/internal/profile"
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/clientcredentials"
 )
@@ -117,7 +117,7 @@ type HttpClient struct {
 // Example:
 //
 //	ctx := context.Background()
-//	cfg := &config.Profile{
+//	cfg := &profile.Profile{
 //	    Host:     "localhost",
 //	    Port:     3000,
 //	    Username: "admin",
@@ -125,7 +125,7 @@ type HttpClient struct {
 //	    Timeout:  30,
 //	}
 //	client := New(ctx, cfg)
-func New(ctx context.Context, cfg *config.Profile) *HttpClient {
+func New(ctx context.Context, cfg *profile.Profile) *HttpClient {
 	logging.Info("Creating new http client")
 
 	// create the client object and return it to the calling function.

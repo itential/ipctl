@@ -9,11 +9,11 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/itential/ipctl/internal/config"
 	"github.com/itential/ipctl/internal/flags"
 	"github.com/itential/ipctl/internal/logging"
 	"github.com/itential/ipctl/internal/utils"
 	"github.com/itential/ipctl/pkg/client"
-	"github.com/itential/ipctl/pkg/config"
 	"github.com/itential/ipctl/pkg/services"
 	"github.com/itential/ipctl/pkg/validators"
 )
@@ -24,7 +24,7 @@ type ProfileRunner struct {
 	client  client.Client
 }
 
-func NewProfileRunner(client client.Client, cfg *config.Config) *ProfileRunner {
+func NewProfileRunner(client client.Client, cfg config.Provider) *ProfileRunner {
 	return &ProfileRunner{
 		BaseRunner: NewBaseRunner(client, cfg),
 		service:    services.NewProfileService(client),

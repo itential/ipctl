@@ -13,12 +13,12 @@ import (
 	"testing"
 	"time"
 
-	"github.com/itential/ipctl/pkg/config"
+	"github.com/itential/ipctl/internal/profile"
 )
 
 func TestNew(t *testing.T) {
 	ctx := context.Background()
-	cfg := &config.Profile{
+	cfg := &profile.Profile{
 		Host:         "test.example.com",
 		Port:         8080,
 		Username:     "testuser",
@@ -434,7 +434,7 @@ func TestNewWithTimeout(t *testing.T) {
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
 			ctx := context.Background()
-			cfg := &config.Profile{
+			cfg := &profile.Profile{
 				Host:    "test.example.com",
 				Port:    8080,
 				Timeout: tc.timeout,
@@ -596,7 +596,7 @@ func TestHttpClientTLSConfiguration(t *testing.T) {
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
 			ctx := context.Background()
-			cfg := &config.Profile{
+			cfg := &profile.Profile{
 				Host:   "test.example.com",
 				Port:   443,
 				UseTLS: tc.useTls,

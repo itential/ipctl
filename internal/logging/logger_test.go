@@ -13,7 +13,6 @@ import (
 	"testing"
 	"time"
 
-	"github.com/itential/ipctl/pkg/config"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 	"github.com/stretchr/testify/assert"
@@ -150,9 +149,9 @@ func TestInitializeLoggerFirstCall(t *testing.T) {
 	// Reset global state
 	iowriters = nil
 
-	cfg := &config.Config{
-		LogLevel:             "INFO",
-		LogTimestampTimezone: time.UTC,
+	cfg := Config{
+		Level:             "INFO",
+		TimestampTimezone: time.UTC,
 	}
 
 	// Mock os.Args to avoid verbose flag parsing
@@ -160,7 +159,7 @@ func TestInitializeLoggerFirstCall(t *testing.T) {
 	os.Args = []string{"test"}
 	defer func() { os.Args = originalArgs }()
 
-	InitializeLogger(cfg)
+	InitializeLogger(cfg, false)
 
 	assert.Equal(t, zerolog.InfoLevel, zerolog.GlobalLevel())
 	// iowriters should be empty (initialized as empty slice) when no logging is enabled
@@ -173,12 +172,12 @@ func TestInitializeLoggerSubsequentCalls(t *testing.T) {
 	iowriters = []io.Writer{os.Stdout} // Set to something non-nil
 	originalLevel := zerolog.GlobalLevel()
 
-	cfg := &config.Config{
-		LogLevel:             "DEBUG",
-		LogTimestampTimezone: time.UTC,
+	cfg := Config{
+		Level:             "DEBUG",
+		TimestampTimezone: time.UTC,
 	}
 
-	InitializeLogger(cfg)
+	InitializeLogger(cfg, false)
 
 	// Should not change because iowriters was already initialized
 	assert.Equal(t, originalLevel, zerolog.GlobalLevel())
@@ -189,10 +188,9 @@ func TestInitializeLoggerWithVerboseFlag(t *testing.T) {
 	// Reset global state
 	iowriters = nil
 
-	cfg := &config.Config{
-		LogLevel:             "INFO",
-		LogTimestampTimezone: time.UTC,
-		TerminalNoColor:      true,
+	cfg := Config{
+		Level:             "INFO",
+		TimestampTimezone: time.UTC,
 	}
 
 	// Mock os.Args with verbose flag
@@ -200,7 +198,7 @@ func TestInitializeLoggerWithVerboseFlag(t *testing.T) {
 	os.Args = []string{"test", "--verbose"}
 	defer func() { os.Args = originalArgs }()
 
-	InitializeLogger(cfg)
+	InitializeLogger(cfg, false)
 
 	// Should have enabled console logs
 	assert.NotEmpty(t, iowriters)

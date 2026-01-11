@@ -31,7 +31,7 @@
 //	    resource resources.AccountResourcer  // Interface, not concrete type
 //	}
 //
-//	func NewAccountRunner(client client.Client, cfg *config.Config) *AccountRunner {
+//	func NewAccountRunner(client client.Client, cfg config.Provider) *AccountRunner {
 //	    return &AccountRunner{
 //	        BaseRunner: NewBaseRunner(client, cfg),
 //	        resource:   resources.NewAccountResource(services.NewAccountService(client)),
@@ -127,7 +127,7 @@
 //	    resource resources.ProjectResourcer  // Resource interface
 //	}
 //
-//	func NewProjectRunner(client client.Client, cfg *config.Config) *ProjectRunner {
+//	func NewProjectRunner(client client.Client, cfg config.Provider) *ProjectRunner {
 //	    return &ProjectRunner{
 //	        BaseRunner: NewBaseRunner(client, cfg),
 //	        resource:   resources.NewProjectResource(services.NewProjectService(client)),

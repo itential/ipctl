@@ -8,11 +8,11 @@ import (
 	"errors"
 	"fmt"
 
+	"github.com/itential/ipctl/internal/config"
 	"github.com/itential/ipctl/internal/flags"
 	"github.com/itential/ipctl/internal/logging"
 	"github.com/itential/ipctl/internal/utils"
 	"github.com/itential/ipctl/pkg/client"
-	"github.com/itential/ipctl/pkg/config"
 	"github.com/itential/ipctl/pkg/resources"
 	"github.com/itential/ipctl/pkg/services"
 )
@@ -22,7 +22,7 @@ type GroupRunner struct {
 	BaseRunner
 }
 
-func NewGroupRunner(c client.Client, cfg *config.Config) *GroupRunner {
+func NewGroupRunner(c client.Client, cfg config.Provider) *GroupRunner {
 	return &GroupRunner{
 		resource:   resources.NewGroupResource(services.NewGroupService(c)),
 		BaseRunner: NewBaseRunner(c, cfg),

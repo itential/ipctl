@@ -4,12 +4,17 @@
 
 package runners
 
-import "github.com/itential/ipctl/pkg/config"
+import "github.com/itential/ipctl/internal/config"
 
+// Request encapsulates the input parameters for a runner operation.
+// It provides access to command arguments, flags, and configuration.
 type Request struct {
 	Args    []string
 	Common  any
 	Options any
 	Runner  Runner
-	Config  *config.Config
+	// Config provides access to application configuration via the Provider interface.
+	// This allows runners to access profiles, features, and other configuration
+	// without depending on the concrete Config type.
+	Config config.Provider
 }

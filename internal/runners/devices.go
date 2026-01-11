@@ -8,9 +8,9 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/itential/ipctl/internal/config"
 	"github.com/itential/ipctl/internal/logging"
 	"github.com/itential/ipctl/pkg/client"
-	"github.com/itential/ipctl/pkg/config"
 	"github.com/itential/ipctl/pkg/services"
 )
 
@@ -19,7 +19,7 @@ type DeviceRunner struct {
 	service *services.DeviceService
 }
 
-func NewDeviceRunner(client client.Client, cfg *config.Config) *DeviceRunner {
+func NewDeviceRunner(client client.Client, cfg config.Provider) *DeviceRunner {
 	return &DeviceRunner{
 		BaseRunner: NewBaseRunner(client, cfg),
 		service:    services.NewDeviceService(client),

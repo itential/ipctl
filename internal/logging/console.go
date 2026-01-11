@@ -7,7 +7,6 @@ package logging
 import (
 	"os"
 
-	"github.com/itential/ipctl/pkg/config"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 )
@@ -31,8 +30,10 @@ type customConsoleJsonWriter struct{}
 // EnableConsoleLogs configures console-based logging output to stdout and stderr.
 // It supports both human-readable console format and JSON format based on configuration.
 // Log messages are routed to stdout (debug, info, warn) or stderr (error, fatal) based on level.
-func EnableConsoleLogs(cfg *config.Config) {
-	if cfg.LogConsoleJSON {
+//
+// The noColor parameter controls whether console output should disable color codes.
+func EnableConsoleLogs(cfg Config, noColor bool) {
+	if cfg.ConsoleJSON {
 		iowriters = append(iowriters, customConsoleJsonWriter{})
 	} else {
 		debugOut = zerolog.NewConsoleWriter()
@@ -40,11 +41,11 @@ func EnableConsoleLogs(cfg *config.Config) {
 
 		// format/timezone is set globally for zerolog in InitializeLogger, but we need to explicit set it here
 		// as NewConsoleWriter overrides that assigment
-		debugOut.FormatTimestamp = timestampFormatter(cfg.LogTimestampTimezone)
-		errorOut.FormatTimestamp = timestampFormatter(cfg.LogTimestampTimezone)
+		debugOut.FormatTimestamp = timestampFormatter(cfg.TimestampTimezone)
+		errorOut.FormatTimestamp = timestampFormatter(cfg.TimestampTimezone)
 
-		debugOut.NoColor = cfg.TerminalNoColor
-		errorOut.NoColor = cfg.TerminalNoColor
+		debugOut.NoColor = noColor
+		errorOut.NoColor = noColor
 
 		debugOut.Out = os.Stdout
 		errorOut.Out = os.Stderr

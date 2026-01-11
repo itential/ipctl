@@ -10,11 +10,11 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/itential/ipctl/internal/config"
 	"github.com/itential/ipctl/internal/flags"
 	"github.com/itential/ipctl/internal/logging"
 	"github.com/itential/ipctl/internal/utils"
 	"github.com/itential/ipctl/pkg/client"
-	"github.com/itential/ipctl/pkg/config"
 	"github.com/itential/ipctl/pkg/resources"
 	"github.com/itential/ipctl/pkg/services"
 	"github.com/itential/ipctl/pkg/validators"
@@ -28,7 +28,7 @@ type AutomationRunner struct {
 	triggers  *services.TriggerService
 }
 
-func NewAutomationRunner(c client.Client, cfg *config.Config) *AutomationRunner {
+func NewAutomationRunner(c client.Client, cfg config.Provider) *AutomationRunner {
 	return &AutomationRunner{
 		BaseRunner: NewBaseRunner(c, cfg),
 		client:     c,

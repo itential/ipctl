@@ -7,8 +7,8 @@ package runners
 import (
 	"embed"
 
+	"github.com/itential/ipctl/internal/config"
 	"github.com/itential/ipctl/pkg/client"
-	"github.com/itential/ipctl/pkg/config"
 )
 
 //go:embed templates/*
@@ -18,6 +18,10 @@ var templates embed.FS
 // All specific runners should embed BaseRunner to inherit shared configuration
 // and client access.
 //
+// By using config.Provider interface instead of *config.Config, runners are
+// decoupled from the concrete configuration type, making them easier to test
+// and more flexible.
+//
 // Example usage:
 //
 //	type ProjectRunner struct {
@@ -26,7 +30,7 @@ var templates embed.FS
 //	    accounts     *services.AccountService
 //	}
 //
-//	func NewProjectRunner(client client.Client, cfg *config.Config) *ProjectRunner {
+//	func NewProjectRunner(client client.Client, cfg config.Provider) *ProjectRunner {
 //	    return &ProjectRunner{
 //	        BaseRunner: NewBaseRunner(client, cfg),
 //	        service:    services.NewProjectService(client),
@@ -34,9 +38,10 @@ var templates embed.FS
 //	    }
 //	}
 type BaseRunner struct {
-	// config contains the global configuration including profiles, logging,
-	// and terminal settings.
-	config *config.Config
+	// config provides access to application configuration via interfaces.
+	// Use specific interfaces (ProfileProvider, GitProvider, etc.) when possible
+	// for better encapsulation.
+	config config.Provider
 
 	// client provides HTTP access to the Itential Platform APIs.
 	// Use this to create service instances as needed.
@@ -45,15 +50,21 @@ type BaseRunner struct {
 
 // NewBaseRunner creates a new BaseRunner with the provided client and configuration.
 // This should be called from specific runner constructors.
-func NewBaseRunner(client client.Client, cfg *config.Config) BaseRunner {
+//
+// The configuration is accepted as a Provider interface rather than *config.Config,
+// which enables dependency injection and makes testing easier.
+func NewBaseRunner(client client.Client, cfg config.Provider) BaseRunner {
 	return BaseRunner{
 		config: cfg,
 		client: client,
 	}
 }
 
-// Config returns the global configuration.
-func (r *BaseRunner) Config() *config.Config {
+// Config returns the configuration provider.
+// This returns the Provider interface, allowing access to all configuration aspects.
+// For better encapsulation, consider accessing specific methods directly rather than
+// storing the entire config.
+func (r *BaseRunner) Config() config.Provider {
 	return r.config
 }
 

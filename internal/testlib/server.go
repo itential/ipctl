@@ -15,8 +15,8 @@ import (
 	"os"
 	"strconv"
 
+	"github.com/itential/ipctl/internal/profile"
 	"github.com/itential/ipctl/pkg/client"
-	"github.com/itential/ipctl/pkg/config"
 )
 
 var (
@@ -52,13 +52,13 @@ func Setup() client.Client {
 		panic(err)
 	}
 
-	profile := &config.Profile{
+	prof := &profile.Profile{
 		Host:   host,
 		Port:   port,
 		UseTLS: u.Scheme == "https",
 	}
 
-	iapclient = client.New(context.TODO(), profile)
+	iapclient = client.New(context.TODO(), prof)
 
 	return iapclient
 }
