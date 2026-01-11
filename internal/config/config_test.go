@@ -60,7 +60,7 @@ func TestNewConfig(t *testing.T) {
 			}
 
 			if tc.expectedFields {
-				assert.NotEmpty(t, config.WorkingDir)
+				assert.NotEmpty(t, config.Settings.WorkingDir)
 			}
 		})
 	}
@@ -74,9 +74,11 @@ func TestConfig_DumpConfig(t *testing.T) {
 
 	// Verify it's valid JSON
 	assert.True(t, len(dump) > 10)
-	assert.Contains(t, dump, "working_dir")
-	assert.Contains(t, dump, "features")
-	assert.Contains(t, dump, "git")
+	// With the refactored structure, Settings is now nested
+	assert.Contains(t, dump, "Settings")
+	assert.Contains(t, dump, "WorkingDir")
+	assert.Contains(t, dump, "Features")
+	assert.Contains(t, dump, "Git")
 }
 
 // Note: Test for populateFields() has been removed as this function is now

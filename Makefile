@@ -51,8 +51,8 @@ build: install
 	@go build \
 		-v \
 		-o $(BIN_DIR)/$(BINARY) \
-		-ldflags="-X 'github.com/itential/ipctl/internal/metadata.Build=$(GIT_COMMIT)' \
-		          -X 'github.com/itential/ipctl/internal/metadata.Version=$(GIT_VERSION)'" \
+		-ldflags="-X 'github.com/itential/ipctl/internal/app.Build=$(GIT_COMMIT)' \
+		          -X 'github.com/itential/ipctl/internal/app.Version=$(GIT_VERSION)'" \
 		./cmd/ipctl
 
 ## clean: Remove build artifacts and generated files

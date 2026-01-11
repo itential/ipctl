@@ -7,6 +7,7 @@ package config_test
 import (
 	"testing"
 
+	"github.com/itential/ipctl/internal/app"
 	"github.com/itential/ipctl/internal/config"
 	"github.com/itential/ipctl/internal/profile"
 	"github.com/itential/ipctl/internal/repository"
@@ -23,9 +24,9 @@ func TestConfigImplementsProvider(t *testing.T) {
 	var _ config.Provider = cfg
 	var _ config.ProfileProvider = cfg
 	var _ config.RepositoryProvider = cfg
-	var _ config.ApplicationProvider = cfg
-	var _ config.FeaturesProvider = cfg
-	var _ config.GitProvider = cfg
+	var _ app.ApplicationProvider = cfg
+	var _ app.FeaturesProvider = cfg
+	var _ app.GitProvider = cfg
 
 	// If we get here, the compile-time checks passed
 	t.Log("Config successfully implements all Provider interfaces")
@@ -40,9 +41,9 @@ func TestMockProviderImplementsProvider(t *testing.T) {
 	var _ config.Provider = mock
 	var _ config.ProfileProvider = mock
 	var _ config.RepositoryProvider = mock
-	var _ config.ApplicationProvider = mock
-	var _ config.FeaturesProvider = mock
-	var _ config.GitProvider = mock
+	var _ app.ApplicationProvider = mock
+	var _ app.FeaturesProvider = mock
+	var _ app.GitProvider = mock
 
 	t.Log("mockProvider successfully implements all Provider interfaces")
 }
@@ -140,15 +141,15 @@ func TestProviderInterfaceSegregation(t *testing.T) {
 		return err
 	}
 
-	needsGit := func(g config.GitProvider) string {
+	needsGit := func(g app.GitProvider) string {
 		return g.GetGitName()
 	}
 
-	needsApp := func(a config.ApplicationProvider) string {
+	needsApp := func(a app.ApplicationProvider) string {
 		return a.GetWorkingDir()
 	}
 
-	needsFeatures := func(f config.FeaturesProvider) bool {
+	needsFeatures := func(f app.FeaturesProvider) bool {
 		return f.IsDatasetsEnabled()
 	}
 

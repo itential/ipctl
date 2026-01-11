@@ -9,6 +9,7 @@ import (
 	"os"
 	"strings"
 
+	"github.com/itential/ipctl/internal/app"
 	"github.com/itential/ipctl/internal/profile"
 	"github.com/itential/ipctl/internal/repository"
 	"github.com/mitchellh/go-homedir"
@@ -71,7 +72,7 @@ type Loader struct {
 // calling Load().
 func NewLoader() *Loader {
 	return &Loader{
-		workingDir:    defaultAppWorkingDir,
+		workingDir:    "~/.platform.d",
 		sysConfigPath: "/etc/ipctl",
 		fileName:      defaultFileName,
 		defaults:      defaultValues,
@@ -266,24 +267,26 @@ func (l *Loader) loadConfigFile(v *viper.Viper) error {
 
 // buildConfig constructs a Config instance from the loaded configuration.
 func (l *Loader) buildConfig(v *viper.Viper) (*Config, error) {
-	cfg := &Config{}
+	cfg := &Config{
+		Settings: &app.Settings{},
+	}
 
 	// Populate application settings
 	workingDir, err := homedir.Expand(v.GetString("application.working_dir"))
 	if err != nil {
 		return nil, fmt.Errorf("expanding working directory: %w", err)
 	}
-	cfg.WorkingDir = workingDir
-	cfg.DefaultProfile = v.GetString("application.default_profile")
-	cfg.DefaultRepository = v.GetString("application.default_repository")
+	cfg.Settings.WorkingDir = workingDir
+	cfg.Settings.DefaultProfile = v.GetString("application.default_profile")
+	cfg.Settings.DefaultRepository = v.GetString("application.default_repository")
 
 	// Populate features
-	cfg.Features.DatasetsEnabled = v.GetBool("features.datasets_enabled")
+	cfg.Settings.Features.DatasetsEnabled = v.GetBool("features.datasets_enabled")
 
 	// Populate git config
-	cfg.Git.Name = v.GetString("git.name")
-	cfg.Git.Email = v.GetString("git.email")
-	cfg.Git.User = v.GetString("git.user")
+	cfg.Settings.Git.Name = v.GetString("git.name")
+	cfg.Settings.Git.Email = v.GetString("git.email")
+	cfg.Settings.Git.User = v.GetString("git.user")
 
 	// Initialize managers
 	cfg.profileManager = profile.NewManager()
@@ -302,7 +305,7 @@ func (l *Loader) buildConfig(v *viper.Viper) (*Config, error) {
 	// Set the active profile
 	activeProfile := l.profileFlag
 	if activeProfile == "" {
-		activeProfile = cfg.DefaultProfile
+		activeProfile = cfg.Settings.DefaultProfile
 	}
 	if activeProfile != "" {
 		cfg.profileManager.SetActive(activeProfile)

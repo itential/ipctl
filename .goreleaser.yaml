@@ -13,5 +13,5 @@ builds:
   - id: default
     ldflags:
       - -s -w
-      - -X github.com/itential/ipctl/internal/metadata.Build={{ .Env.BUILD }}
-      - -X github.com/itential/ipctl/internal/metadata.Version={{ .Tag }}
+      - -X github.com/itential/ipctl/internal/app.Build={{ .Env.BUILD }}
+      - -X github.com/itential/ipctl/internal/app.Version={{ .Tag }}
