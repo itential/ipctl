@@ -308,3 +308,4 @@ config.local.*
 *.local.yml
 *.local.json
 *.local.toml
+.claude
