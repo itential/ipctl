@@ -5,9 +5,9 @@
 package runners
 
 import (
+	"github.com/itential/ipctl/internal/config"
 	"github.com/itential/ipctl/internal/logging"
 	"github.com/itential/ipctl/pkg/client"
-	"github.com/itential/ipctl/pkg/config"
 	"github.com/itential/ipctl/pkg/services"
 )
 
@@ -16,7 +16,7 @@ type ViewRunner struct {
 	BaseRunner
 }
 
-func NewViewRunner(client client.Client, cfg *config.Config) *ViewRunner {
+func NewViewRunner(client client.Client, cfg config.Provider) *ViewRunner {
 	return &ViewRunner{
 		service: services.NewViewService(client),
 	}

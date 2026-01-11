@@ -8,9 +8,9 @@ import (
 	"encoding/json"
 	"fmt"
 
+	"github.com/itential/ipctl/internal/config"
 	"github.com/itential/ipctl/internal/logging"
 	"github.com/itential/ipctl/pkg/client"
-	"github.com/itential/ipctl/pkg/config"
 	"github.com/itential/ipctl/pkg/services"
 )
 
@@ -20,7 +20,7 @@ type ApplicationRunner struct {
 	service *services.ApplicationService
 }
 
-func NewApplicationRunner(c client.Client, cfg *config.Config) *ApplicationRunner {
+func NewApplicationRunner(c client.Client, cfg config.Provider) *ApplicationRunner {
 	return &ApplicationRunner{
 		service:    services.NewApplicationService(c),
 		BaseRunner: NewBaseRunner(c, cfg),

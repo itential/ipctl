@@ -9,11 +9,11 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/itential/ipctl/internal/config"
 	"github.com/itential/ipctl/internal/flags"
 	"github.com/itential/ipctl/internal/logging"
 	"github.com/itential/ipctl/internal/utils"
 	"github.com/itential/ipctl/pkg/client"
-	"github.com/itential/ipctl/pkg/config"
 	"github.com/itential/ipctl/pkg/editor"
 	"github.com/itential/ipctl/pkg/resources"
 	"github.com/itential/ipctl/pkg/services"
@@ -24,7 +24,7 @@ type WorkflowRunner struct {
 	resource resources.WorkflowResourcer
 }
 
-func NewWorkflowRunner(c client.Client, cfg *config.Config) *WorkflowRunner {
+func NewWorkflowRunner(c client.Client, cfg config.Provider) *WorkflowRunner {
 	return &WorkflowRunner{
 		BaseRunner: NewBaseRunner(c, cfg),
 		resource:   resources.NewWorkflowResource(services.NewWorkflowService(c)),

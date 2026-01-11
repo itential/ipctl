@@ -5,9 +5,9 @@
 package runners
 
 import (
+	"github.com/itential/ipctl/internal/config"
 	"github.com/itential/ipctl/internal/logging"
 	"github.com/itential/ipctl/pkg/client"
-	"github.com/itential/ipctl/pkg/config"
 	"github.com/itential/ipctl/pkg/services"
 )
 
@@ -16,7 +16,7 @@ type ServerRunner struct {
 	service *services.HealthService
 }
 
-func NewServerRunner(c client.Client, cfg *config.Config) *ServerRunner {
+func NewServerRunner(c client.Client, cfg config.Provider) *ServerRunner {
 	return &ServerRunner{
 		service:    services.NewHealthService(c),
 		BaseRunner: NewBaseRunner(c, cfg),

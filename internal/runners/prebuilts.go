@@ -12,11 +12,11 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/itential/ipctl/internal/config"
 	"github.com/itential/ipctl/internal/flags"
 	"github.com/itential/ipctl/internal/logging"
 	"github.com/itential/ipctl/internal/utils"
 	"github.com/itential/ipctl/pkg/client"
-	"github.com/itential/ipctl/pkg/config"
 	"github.com/itential/ipctl/pkg/services"
 )
 
@@ -26,7 +26,7 @@ type PrebuiltRunner struct {
 	client  client.Client
 }
 
-func NewPrebuiltRunner(client client.Client, cfg *config.Config) *PrebuiltRunner {
+func NewPrebuiltRunner(client client.Client, cfg config.Provider) *PrebuiltRunner {
 	return &PrebuiltRunner{
 		BaseRunner: NewBaseRunner(client, cfg),
 		client:     client,

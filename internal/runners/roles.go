@@ -9,11 +9,11 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/itential/ipctl/internal/config"
 	"github.com/itential/ipctl/internal/flags"
 	"github.com/itential/ipctl/internal/logging"
 	"github.com/itential/ipctl/internal/utils"
 	"github.com/itential/ipctl/pkg/client"
-	"github.com/itential/ipctl/pkg/config"
 	"github.com/itential/ipctl/pkg/services"
 )
 
@@ -23,7 +23,7 @@ type RoleRunner struct {
 	client client.Client
 }
 
-func NewRoleRunner(client client.Client, cfg *config.Config) *RoleRunner {
+func NewRoleRunner(client client.Client, cfg config.Provider) *RoleRunner {
 	return &RoleRunner{
 		BaseRunner: NewBaseRunner(client, cfg),
 		client:     client,

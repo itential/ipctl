@@ -12,11 +12,11 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/itential/ipctl/internal/config"
 	"github.com/itential/ipctl/internal/flags"
 	"github.com/itential/ipctl/internal/logging"
 	"github.com/itential/ipctl/internal/utils"
 	"github.com/itential/ipctl/pkg/client"
-	"github.com/itential/ipctl/pkg/config"
 	"github.com/itential/ipctl/pkg/resources"
 	"github.com/itential/ipctl/pkg/services"
 )
@@ -29,7 +29,7 @@ type ProjectRunner struct {
 	userSettings *services.UserSettingsService
 }
 
-func NewProjectRunner(client client.Client, cfg *config.Config) *ProjectRunner {
+func NewProjectRunner(client client.Client, cfg config.Provider) *ProjectRunner {
 	return &ProjectRunner{
 		BaseRunner:   NewBaseRunner(client, cfg),
 		resource:     resources.NewProjectResource(services.NewProjectService(client)),

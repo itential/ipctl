@@ -5,9 +5,9 @@
 package runners
 
 import (
+	"github.com/itential/ipctl/internal/config"
 	"github.com/itential/ipctl/internal/logging"
 	"github.com/itential/ipctl/pkg/client"
-	"github.com/itential/ipctl/pkg/config"
 	"github.com/itential/ipctl/pkg/services"
 )
 
@@ -16,7 +16,7 @@ type AdapterModelRunner struct {
 	service *services.AdapterModelService
 }
 
-func NewAdapterModelRunner(c client.Client, cfg *config.Config) *AdapterModelRunner {
+func NewAdapterModelRunner(c client.Client, cfg config.Provider) *AdapterModelRunner {
 	return &AdapterModelRunner{
 		service:    services.NewAdapterModelService(c),
 		BaseRunner: NewBaseRunner(c, cfg),

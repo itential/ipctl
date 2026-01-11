@@ -9,10 +9,10 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/itential/ipctl/internal/config"
 	"github.com/itential/ipctl/internal/flags"
 	"github.com/itential/ipctl/internal/logging"
 	"github.com/itential/ipctl/pkg/client"
-	"github.com/itential/ipctl/pkg/config"
 	"github.com/itential/ipctl/pkg/services"
 )
 
@@ -21,7 +21,7 @@ type GoldenConfigRunner struct {
 	service *services.GoldenConfigService
 }
 
-func NewGoldenConfigRunner(client client.Client, cfg *config.Config) *GoldenConfigRunner {
+func NewGoldenConfigRunner(client client.Client, cfg config.Provider) *GoldenConfigRunner {
 	return &GoldenConfigRunner{
 		BaseRunner: NewBaseRunner(client, cfg),
 		service:    services.NewGoldenConfigService(client),

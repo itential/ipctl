@@ -5,8 +5,8 @@
 package testlib
 
 import (
+	"github.com/itential/ipctl/internal/config"
 	"github.com/itential/ipctl/internal/logging"
-	"github.com/itential/ipctl/pkg/config"
 	"github.com/mitchellh/go-homedir"
 	"github.com/spf13/viper"
 )

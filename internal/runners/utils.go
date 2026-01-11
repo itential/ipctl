@@ -10,10 +10,11 @@ import (
 	"strings"
 	"time"
 
+	"github.com/itential/ipctl/internal/config"
 	"github.com/itential/ipctl/internal/logging"
+	"github.com/itential/ipctl/internal/profile"
 	"github.com/itential/ipctl/internal/utils"
 	"github.com/itential/ipctl/pkg/client"
-	"github.com/itential/ipctl/pkg/config"
 )
 
 // normalizeFilename will take a string argument for a filename and normalize
@@ -48,7 +49,10 @@ func toArrayOfMaps(in any) ([]map[string]interface{}, error) {
 	return m, nil
 }
 
-func GetProfile(name string, cfg *config.Config) (*config.Profile, error) {
+// GetProfile retrieves a profile by name and ensures it's different from the active profile.
+// This is useful for copy operations where source and destination must be different.
+// Uses ProfileProvider interface for better testability.
+func GetProfile(name string, cfg config.ProfileProvider) (*profile.Profile, error) {
 	logging.Trace()
 
 	active, err := cfg.ActiveProfile()
@@ -65,7 +69,9 @@ func GetProfile(name string, cfg *config.Config) (*config.Profile, error) {
 	return profile, nil
 }
 
-func NewClient(name string, cfg *config.Config) (client.Client, context.CancelFunc, error) {
+// NewClient creates a new HTTP client for the specified profile.
+// Uses ProfileProvider interface to decouple from concrete config type.
+func NewClient(name string, cfg config.ProfileProvider) (client.Client, context.CancelFunc, error) {
 	logging.Trace()
 
 	profile, err := cfg.GetProfile(name)

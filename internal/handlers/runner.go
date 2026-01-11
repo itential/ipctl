@@ -129,7 +129,8 @@ func NewCommand(c *CommandRunner) *cobra.Command {
 			}
 
 			// Create renderer based on configured output format
-			renderer, err := output.NewRenderer(c.Runtime.GetConfig().TerminalDefaultOutput, c.Runtime.GetConfig())
+			termCfg := c.Runtime.GetTerminalConfig()
+			renderer, err := output.NewRenderer(termCfg.DefaultOutput, termCfg.Pager)
 			if err != nil {
 				return err
 			}

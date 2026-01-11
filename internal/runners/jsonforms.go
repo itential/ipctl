@@ -9,11 +9,11 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/itential/ipctl/internal/config"
 	"github.com/itential/ipctl/internal/flags"
 	"github.com/itential/ipctl/internal/logging"
 	"github.com/itential/ipctl/internal/utils"
 	"github.com/itential/ipctl/pkg/client"
-	"github.com/itential/ipctl/pkg/config"
 	"github.com/itential/ipctl/pkg/resources"
 	"github.com/itential/ipctl/pkg/services"
 )
@@ -27,7 +27,7 @@ type JsonFormRunner struct {
 	resource resources.JsonFormResourcer
 }
 
-func NewJsonFormRunner(c client.Client, cfg *config.Config) *JsonFormRunner {
+func NewJsonFormRunner(c client.Client, cfg config.Provider) *JsonFormRunner {
 	return &JsonFormRunner{
 		resource:   resources.NewJsonFormResource(services.NewJsonFormService(c)),
 		BaseRunner: NewBaseRunner(c, cfg),

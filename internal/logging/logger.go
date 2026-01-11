@@ -13,7 +13,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/itential/ipctl/pkg/config"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/pflag"
@@ -26,7 +25,9 @@ var iowriters []io.Writer
 // InitializeLogger sets up the global logger configuration based on the provided config.
 // It configures console and/or file logging, sets the log level, and handles timezone formatting.
 // The logger is initialized only once - subsequent calls are ignored.
-func InitializeLogger(cfg *config.Config) {
+//
+// The noColor parameter controls whether console output should disable color codes.
+func InitializeLogger(cfg Config, noColor bool) {
 	if iowriters != nil {
 		return
 	}
@@ -45,15 +46,15 @@ func InitializeLogger(cfg *config.Config) {
 	}
 
 	if verbose {
-		EnableConsoleLogs(cfg)
+		EnableConsoleLogs(cfg, noColor)
 	}
 
 	// Only sets timezone on JSON loggers as they reference default zerolog settings
 	zerolog.TimestampFunc = func() time.Time {
-		return time.Now().In(cfg.LogTimestampTimezone)
+		return time.Now().In(cfg.TimestampTimezone)
 	}
 
-	zerolog.SetGlobalLevel(getLogLevel(cfg.LogLevel))
+	zerolog.SetGlobalLevel(getLogLevel(cfg.Level))
 }
 
 // Trace creates an extremely verbose log message for debugging purposes.

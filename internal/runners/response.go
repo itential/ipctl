@@ -12,9 +12,9 @@ import (
 	"strings"
 	"text/template"
 
+	"github.com/itential/ipctl/internal/config"
 	"github.com/itential/ipctl/internal/logging"
 	"github.com/itential/ipctl/internal/terminal"
-	"github.com/itential/ipctl/pkg/config"
 )
 
 type ResponseOption func(r *Response)
@@ -66,7 +66,7 @@ func notImplemented(in Request) (*Response, error) {
 	return nil, errors.New("command not implemented!!")
 }
 
-func makeUrl(cfg *config.Config, path string, args ...any) string {
+func makeUrl(cfg config.Provider, path string, args ...any) string {
 	profile, _ := cfg.ActiveProfile()
 
 	var u string

@@ -7,25 +7,32 @@ package handlers
 import (
 	"strings"
 
+	"github.com/itential/ipctl/internal/config"
+	"github.com/itential/ipctl/internal/terminal"
 	"github.com/itential/ipctl/pkg/client"
-	"github.com/itential/ipctl/pkg/config"
 	"github.com/spf13/cobra"
 )
 
 // RuntimeContext defines the interface for what handlers need from runtime.
 // This enables dependency injection and makes handlers testable.
+// By using config.Provider instead of *config.Config, handlers can work with
+// any configuration implementation, making testing easier.
 type RuntimeContext interface {
 	GetClient() client.Client
-	GetConfig() *config.Config
+	GetConfig() config.Provider
 	GetDescriptors() Descriptors
+	GetTerminalConfig() *terminal.Config
 	IsVerbose() bool
 }
 
 // Runtime provides the execution context for handlers and commands.
+// It implements RuntimeContext interface and holds configuration via the Provider interface,
+// allowing for flexible configuration implementations.
 type Runtime struct {
-	client      client.Client
-	config      *config.Config
-	descriptors Descriptors
+	client         client.Client
+	config         config.Provider
+	terminalConfig *terminal.Config
+	descriptors    Descriptors
 	// Verbose is exported to allow flag binding
 	Verbose bool
 }
@@ -35,9 +42,16 @@ func (rt Runtime) GetClient() client.Client {
 	return rt.client
 }
 
-// GetConfig returns the application configuration.
-func (rt Runtime) GetConfig() *config.Config {
+// GetConfig returns the application configuration provider.
+// This returns the Provider interface, allowing handlers to access configuration
+// without depending on the concrete Config type.
+func (rt Runtime) GetConfig() config.Provider {
 	return rt.config
+}
+
+// GetTerminalConfig returns the terminal configuration.
+func (rt Runtime) GetTerminalConfig() *terminal.Config {
+	return rt.terminalConfig
 }
 
 // GetDescriptors returns the command descriptors.
@@ -57,15 +71,19 @@ type Handler struct {
 	descriptors Descriptors
 }
 
-// NewRuntime creates a new Runtime with the given client and configuration.
+// NewRuntime creates a new Runtime with the given client, configuration, and terminal config.
 // Returns a pointer to enable sharing the runtime across handlers and allowing
 // flag updates to be visible to all commands.
-func NewRuntime(c client.Client, cfg *config.Config) *Runtime {
+//
+// The configuration is accepted as a Provider interface rather than *config.Config,
+// which enables dependency injection and makes testing easier.
+func NewRuntime(c client.Client, cfg config.Provider, termCfg *terminal.Config) *Runtime {
 	descriptors := loadDescriptors()
 	return &Runtime{
-		client:      c,
-		config:      cfg,
-		descriptors: descriptors,
+		client:         c,
+		config:         cfg,
+		terminalConfig: termCfg,
+		descriptors:    descriptors,
 	}
 }
 

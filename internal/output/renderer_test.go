@@ -8,30 +8,21 @@ import (
 	"testing"
 
 	"github.com/itential/ipctl/internal/runners"
-	"github.com/itential/ipctl/pkg/config"
 )
-
-// mockConfig creates a test configuration with specified settings.
-func mockConfig(outputFormat string, pagerEnabled bool) *config.Config {
-	return &config.Config{
-		TerminalDefaultOutput: outputFormat,
-		TerminalPager:         pagerEnabled,
-	}
-}
 
 // TestNewRenderer tests the creation of renderers with various configurations.
 func TestNewRenderer(t *testing.T) {
 	tests := []struct {
 		name      string
 		format    string
-		config    *config.Config
+		usePager  bool
 		wantError bool
 		validate  func(t *testing.T, r *Renderer)
 	}{
 		{
 			name:      "create json renderer",
 			format:    "json",
-			config:    mockConfig("json", false),
+			usePager:  false,
 			wantError: false,
 			validate: func(t *testing.T, r *Renderer) {
 				if _, ok := r.formatter.(*JSONFormatter); !ok {
@@ -42,7 +33,7 @@ func TestNewRenderer(t *testing.T) {
 		{
 			name:      "create yaml renderer",
 			format:    "yaml",
-			config:    mockConfig("yaml", false),
+			usePager:  false,
 			wantError: false,
 			validate: func(t *testing.T, r *Renderer) {
 				if _, ok := r.formatter.(*YAMLFormatter); !ok {
@@ -53,7 +44,7 @@ func TestNewRenderer(t *testing.T) {
 		{
 			name:      "create human renderer with pager",
 			format:    "human",
-			config:    mockConfig("human", true),
+			usePager:  true,
 			wantError: false,
 			validate: func(t *testing.T, r *Renderer) {
 				hf, ok := r.formatter.(*HumanFormatter)
@@ -69,7 +60,7 @@ func TestNewRenderer(t *testing.T) {
 		{
 			name:      "create human renderer without pager",
 			format:    "human",
-			config:    mockConfig("human", false),
+			usePager:  false,
 			wantError: false,
 			validate: func(t *testing.T, r *Renderer) {
 				hf, ok := r.formatter.(*HumanFormatter)
@@ -85,20 +76,14 @@ func TestNewRenderer(t *testing.T) {
 		{
 			name:      "unsupported format",
 			format:    "xml",
-			config:    mockConfig("xml", false),
-			wantError: true,
-		},
-		{
-			name:      "nil config",
-			format:    "json",
-			config:    nil,
+			usePager:  false,
 			wantError: true,
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			renderer, err := NewRenderer(tt.format, tt.config)
+			renderer, err := NewRenderer(tt.format, tt.usePager)
 
 			if tt.wantError {
 				if err == nil {
@@ -170,7 +155,7 @@ func TestRenderer_Render_JSON(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			renderer, err := NewRenderer("json", mockConfig("json", false))
+			renderer, err := NewRenderer("json", false)
 			if err != nil {
 				t.Fatalf("failed to create renderer: %v", err)
 			}
@@ -237,7 +222,7 @@ func TestRenderer_Render_YAML(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			renderer, err := NewRenderer("yaml", mockConfig("yaml", false))
+			renderer, err := NewRenderer("yaml", false)
 			if err != nil {
 				t.Fatalf("failed to create renderer: %v", err)
 			}
@@ -310,7 +295,7 @@ func TestRenderer_Render_Human(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			renderer, err := NewRenderer("human", mockConfig("human", false))
+			renderer, err := NewRenderer("human", false)
 			if err != nil {
 				t.Fatalf("failed to create renderer: %v", err)
 			}
@@ -360,7 +345,7 @@ func TestRenderer_Render_HumanWithPager(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			renderer, err := NewRenderer("human", mockConfig("human", true))
+			renderer, err := NewRenderer("human", true)
 			if err != nil {
 				t.Fatalf("failed to create renderer: %v", err)
 			}

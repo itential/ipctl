@@ -5,9 +5,9 @@
 package runners
 
 import (
+	"github.com/itential/ipctl/internal/config"
 	"github.com/itential/ipctl/internal/logging"
 	"github.com/itential/ipctl/pkg/client"
-	"github.com/itential/ipctl/pkg/config"
 	"github.com/itential/ipctl/pkg/services"
 )
 
@@ -17,7 +17,7 @@ type RoleTypeRunner struct {
 	client client.Client
 }
 
-func NewRoleTypeRunner(client client.Client, cfg *config.Config) *RoleTypeRunner {
+func NewRoleTypeRunner(client client.Client, cfg config.Provider) *RoleTypeRunner {
 	return &RoleTypeRunner{
 		BaseRunner: NewBaseRunner(client, cfg),
 		client:     client,

@@ -13,12 +13,12 @@ import (
 	"time"
 
 	"github.com/itential/ipctl/internal/cmdutils"
+	"github.com/itential/ipctl/internal/config"
 	"github.com/itential/ipctl/internal/handlers"
 	"github.com/itential/ipctl/internal/logging"
 	"github.com/itential/ipctl/internal/metadata"
 	"github.com/itential/ipctl/internal/terminal"
 	"github.com/itential/ipctl/pkg/client"
-	"github.com/itential/ipctl/pkg/config"
 	"github.com/spf13/cobra"
 )
 
@@ -37,7 +37,7 @@ const description = `Manage Itential Platform
 // is defined below.
 func loadCommands(cmd *cobra.Command, runtime *handlers.Runtime) {
 	addRootCommand(cmd, runtime, "Asset Commands:", assetCommands)
-	if runtime.GetConfig().FeaturesDatasetsEnabled {
+	if runtime.GetConfig().IsDatasetsEnabled() {
 		addRootCommand(cmd, runtime, "Dataset Commands:", datasetCommands)
 	}
 	addRootCommand(cmd, runtime, "Platform Commands:", platformCommands)
@@ -66,9 +66,9 @@ func versionCommand() *cobra.Command {
 	return cmd
 }
 
-// runCli builds and runs the CLI command.   It will create the command tree
+// runCli builds and runs the CLI command. It will create the command tree
 // using cobra and execute the command.
-func runCli(c client.Client, cfg *config.Config) *cobra.Command {
+func runCli(c client.Client, cfg config.Provider, termCfg *terminal.Config) *cobra.Command {
 	var cmd = &cobra.Command{
 		Use:   "ipctl",
 		Short: strings.Split(description, "\n")[0],
@@ -78,10 +78,10 @@ func runCli(c client.Client, cfg *config.Config) *cobra.Command {
 	cmd.CompletionOptions.HiddenDefaultCmd = true
 	cmd.SetHelpCommand(&cobra.Command{Hidden: true})
 
-	runtime := handlers.NewRuntime(c, cfg)
+	runtime := handlers.NewRuntime(c, cfg, termCfg)
 
 	cmd.PersistentFlags().BoolVar(&runtime.Verbose, "verbose", runtime.Verbose, "Enable verbose output")
-	cmd.PersistentFlags().StringVar(&cfg.TerminalDefaultOutput, "output", cfg.TerminalDefaultOutput, "Output format")
+	cmd.PersistentFlags().StringVar(&termCfg.DefaultOutput, "output", termCfg.DefaultOutput, "Output format")
 
 	// Note: Values are read during /pkg/config's initialization
 	cmd.PersistentFlags().String("config", "", "Path to the configuration file")
@@ -100,7 +100,11 @@ func runCli(c client.Client, cfg *config.Config) *cobra.Command {
 // code.
 func Execute() int {
 	cfg := config.NewConfig(nil, nil, "", "", "")
-	logging.InitializeLogger(cfg)
+
+	// Initialize logging with domain-specific config from environment
+	logCfg := logging.LoadFromEnv()
+	termCfg := terminal.LoadFromEnv()
+	logging.InitializeLogger(logCfg, termCfg.NoColor)
 
 	if metadata.Version != "" && metadata.Build != "" {
 		logging.Info("ipctl %s (%s)", metadata.Version, metadata.Build)
@@ -138,8 +142,8 @@ func Execute() int {
 	// Execute the CLI command tree. This is the only place in the application
 	// where CheckError should be called. All command handlers use RunE to return
 	// errors which are propagated up through Cobra and handled here.
-	if err := runCli(c, cfg).Execute(); err != nil {
-		cmdutils.CheckError(err, cfg.TerminalNoColor)
+	if err := runCli(c, cfg, &termCfg).Execute(); err != nil {
+		cmdutils.CheckError(err, termCfg.NoColor)
 	}
 
 	return 0

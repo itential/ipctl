@@ -5,12 +5,12 @@
 package runners
 
 import (
+	"github.com/itential/ipctl/internal/config"
 	"github.com/itential/ipctl/internal/flags"
 	"github.com/itential/ipctl/internal/logging"
 	"github.com/itential/ipctl/internal/terminal"
 	"github.com/itential/ipctl/internal/utils"
 	"github.com/itential/ipctl/pkg/client"
-	"github.com/itential/ipctl/pkg/config"
 	"github.com/itential/ipctl/pkg/localaaa"
 )
 
@@ -19,7 +19,7 @@ type LocalAAARunner struct {
 	service localaaa.LocalAAAService
 }
 
-func NewLocalAAARunner(client client.Client, cfg *config.Config) LocalAAARunner {
+func NewLocalAAARunner(client client.Client, cfg config.Provider) LocalAAARunner {
 	activeProfile, err := cfg.ActiveProfile()
 	if err != nil {
 		logging.Warn("failed to load active profile, using defaults")

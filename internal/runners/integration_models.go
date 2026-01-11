@@ -7,9 +7,9 @@ package runners
 import (
 	"fmt"
 
+	"github.com/itential/ipctl/internal/config"
 	"github.com/itential/ipctl/internal/logging"
 	"github.com/itential/ipctl/pkg/client"
-	"github.com/itential/ipctl/pkg/config"
 	"github.com/itential/ipctl/pkg/services"
 )
 
@@ -18,7 +18,7 @@ type IntegrationModelRunner struct {
 	service *services.IntegrationModelService
 }
 
-func NewIntegrationModelRunner(c client.Client, cfg *config.Config) *IntegrationModelRunner {
+func NewIntegrationModelRunner(c client.Client, cfg config.Provider) *IntegrationModelRunner {
 	return &IntegrationModelRunner{
 		service:    services.NewIntegrationModelService(c),
 		BaseRunner: NewBaseRunner(c, cfg),

@@ -7,9 +7,9 @@ package runners
 import (
 	"fmt"
 
+	"github.com/itential/ipctl/internal/config"
 	"github.com/itential/ipctl/internal/logging"
 	"github.com/itential/ipctl/pkg/client"
-	"github.com/itential/ipctl/pkg/config"
 	"github.com/itential/ipctl/pkg/resources"
 	"github.com/itential/ipctl/pkg/services"
 )
@@ -19,7 +19,7 @@ type AccountRunner struct {
 	resource resources.AccountResourcer
 }
 
-func NewAccountRunner(client client.Client, cfg *config.Config) *AccountRunner {
+func NewAccountRunner(client client.Client, cfg config.Provider) *AccountRunner {
 	return &AccountRunner{
 		BaseRunner: NewBaseRunner(client, cfg),
 		resource:   resources.NewAccountResource(services.NewAccountService(client)),

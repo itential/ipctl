@@ -7,9 +7,9 @@ package runners
 import (
 	"strings"
 
+	"github.com/itential/ipctl/internal/config"
 	"github.com/itential/ipctl/internal/logging"
 	"github.com/itential/ipctl/pkg/client"
-	"github.com/itential/ipctl/pkg/config"
 	"github.com/itential/ipctl/pkg/services"
 )
 
@@ -18,7 +18,7 @@ type ConfigurationParserRunner struct {
 	service *services.ConfigurationParserService
 }
 
-func NewConfigurationParserRunner(client client.Client, cfg *config.Config) *ConfigurationParserRunner {
+func NewConfigurationParserRunner(client client.Client, cfg config.Provider) *ConfigurationParserRunner {
 	return &ConfigurationParserRunner{
 		BaseRunner: NewBaseRunner(client, cfg),
 		service:    services.NewConfigurationParserService(client),

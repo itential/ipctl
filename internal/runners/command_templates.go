@@ -9,11 +9,11 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/itential/ipctl/internal/config"
 	"github.com/itential/ipctl/internal/flags"
 	"github.com/itential/ipctl/internal/logging"
 	"github.com/itential/ipctl/internal/utils"
 	"github.com/itential/ipctl/pkg/client"
-	"github.com/itential/ipctl/pkg/config"
 	"github.com/itential/ipctl/pkg/services"
 )
 
@@ -22,7 +22,7 @@ type CommandTemplateRunner struct {
 	BaseRunner
 }
 
-func NewCommandTemplateRunner(c client.Client, cfg *config.Config) *CommandTemplateRunner {
+func NewCommandTemplateRunner(c client.Client, cfg config.Provider) *CommandTemplateRunner {
 	return &CommandTemplateRunner{
 		service:    services.NewCommandTemplateService(c),
 		BaseRunner: NewBaseRunner(c, cfg),

@@ -9,11 +9,11 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/itential/ipctl/internal/config"
 	"github.com/itential/ipctl/internal/flags"
 	"github.com/itential/ipctl/internal/logging"
 	"github.com/itential/ipctl/internal/utils"
 	"github.com/itential/ipctl/pkg/client"
-	"github.com/itential/ipctl/pkg/config"
 	"github.com/itential/ipctl/pkg/services"
 )
 
@@ -22,7 +22,7 @@ type AnalyticTemplateRunner struct {
 	BaseRunner
 }
 
-func NewAnalyticTemplateRunner(c client.Client, cfg *config.Config) *AnalyticTemplateRunner {
+func NewAnalyticTemplateRunner(c client.Client, cfg config.Provider) *AnalyticTemplateRunner {
 	return &AnalyticTemplateRunner{
 		service:    services.NewAnalyticTemplateService(c),
 		BaseRunner: NewBaseRunner(c, cfg),

@@ -125,7 +125,7 @@ func importNewRepositoryFromRequest(in Request) (*Repository, error) {
 		url,
 		WithReference(reference),
 		WithPrivateKeyFile(privateKeyFile),
-		WithName(in.Config.GitName),
-		WithEmail(in.Config.GitEmail),
+		WithName(in.Config.GetGitName()),
+		WithEmail(in.Config.GetGitEmail()),
 	), nil
 }

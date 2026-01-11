@@ -7,9 +7,9 @@ package runners
 import (
 	"encoding/json"
 
+	"github.com/itential/ipctl/internal/config"
 	"github.com/itential/ipctl/internal/logging"
 	"github.com/itential/ipctl/pkg/client"
-	"github.com/itential/ipctl/pkg/config"
 )
 
 type LocalClientRunner struct {
@@ -17,7 +17,7 @@ type LocalClientRunner struct {
 	client client.Client
 }
 
-func NewLocalClientRunner(client client.Client, cfg *config.Config) LocalClientRunner {
+func NewLocalClientRunner(client client.Client, cfg config.Provider) LocalClientRunner {
 	return LocalClientRunner{
 		BaseRunner: NewBaseRunner(client, cfg),
 		client:     client,
