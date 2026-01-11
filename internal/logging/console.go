@@ -17,6 +17,7 @@ import (
 var (
 	debugOut zerolog.ConsoleWriter
 	errorOut zerolog.ConsoleWriter
+	redactor *Redactor
 )
 
 // customConsoleWriter implements zerolog.LevelWriter to route log messages
@@ -30,9 +31,13 @@ type customConsoleJsonWriter struct{}
 // EnableConsoleLogs configures console-based logging output to stdout and stderr.
 // It supports both human-readable console format and JSON format based on configuration.
 // Log messages are routed to stdout (debug, info, warn) or stderr (error, fatal) based on level.
+// Sensitive data redaction is applied if enabled in the configuration.
 //
 // The noColor parameter controls whether console output should disable color codes.
 func EnableConsoleLogs(cfg Config, noColor bool) {
+	// Initialize the redactor with configuration
+	redactor = NewRedactor(cfg.RedactSensitiveData)
+
 	if cfg.ConsoleJSON {
 		iowriters = append(iowriters, customConsoleJsonWriter{})
 	} else {
@@ -60,21 +65,33 @@ func EnableConsoleLogs(cfg Config, noColor bool) {
 // Write implements io.Writer interface for customConsoleWriter.
 // This method routes all output to stdout and should not be called directly.
 // Use WriteLevel instead for proper level-based routing.
+// Sensitive data is redacted before output if redaction is enabled.
 func (l customConsoleWriter) Write(p []byte) (n int, err error) {
+	if redactor != nil {
+		p = redactor.RedactBytes(p)
+	}
 	return os.Stdout.Write(p)
 }
 
 // Write implements io.Writer interface for customConsoleJsonWriter.
 // This method routes all output to stdout and should not be called directly.
 // Use WriteLevel instead for proper level-based routing.
+// Sensitive data is redacted before output if redaction is enabled.
 func (l customConsoleJsonWriter) Write(p []byte) (n int, err error) {
+	if redactor != nil {
+		p = redactor.RedactBytes(p)
+	}
 	return os.Stdout.Write(p)
 }
 
 // WriteLevel implements zerolog.LevelWriter interface for customConsoleWriter.
 // It routes log messages to stdout (for levels <= warn) or stderr (for error and fatal).
 // The output is formatted using the configured console writers with proper timestamps and colors.
+// Sensitive data is redacted before output if redaction is enabled.
 func (l customConsoleWriter) WriteLevel(level zerolog.Level, p []byte) (n int, err error) {
+	if redactor != nil {
+		p = redactor.RedactBytes(p)
+	}
 	if level <= zerolog.WarnLevel {
 		return debugOut.Write(p)
 	} else {
@@ -85,7 +102,11 @@ func (l customConsoleWriter) WriteLevel(level zerolog.Level, p []byte) (n int, e
 // WriteLevel implements zerolog.LevelWriter interface for customConsoleJsonWriter.
 // It routes JSON-formatted log messages to stdout (for levels <= warn) or stderr (for error and fatal).
 // This provides structured logging output while maintaining proper stream separation.
+// Sensitive data is redacted before output if redaction is enabled.
 func (l customConsoleJsonWriter) WriteLevel(level zerolog.Level, p []byte) (n int, err error) {
+	if redactor != nil {
+		p = redactor.RedactBytes(p)
+	}
 	if level <= zerolog.WarnLevel {
 		return os.Stdout.Write(p)
 	} else {

@@ -83,21 +83,43 @@ defined under the `[log]` section.   Any values configured in this section can
 be overridden using environment variables in the form of `IPCTL_LOG_<name>`
 where `<name>` is the key name.
 
+For comprehensive logging documentation including examples, best practices, and
+sensitive data redaction details, see the [Logging Reference](logging-reference.md).
+
 #### level
 
 Configures the level of detail sent to the logging facility.  This
-configuration value accepts one of the following values: `info`, `debug`,
-`trace`.
+configuration value accepts one of the following values: `trace`, `debug`,
+`info`, `warn`, `error`, `fatal`, `disabled`.
 
 The default value for `level` is `info`.
 
-#### file_json
-
 #### console_json
 
-#### file_enabled
+Enables JSON format for console output. When set to `true`, logs are output in
+structured JSON format suitable for log aggregation systems. When `false` (default),
+logs use human-readable console format with timestamps and colors.
 
-#### timestamp_timzezone
+The default value for `console_json` is `false`.
+
+#### timestamp_timezone
+
+Configures the timezone used for timestamps in log output. Accepts `UTC`, `Local`,
+or any valid IANA timezone name (e.g., `America/New_York`, `Europe/London`).
+
+The default value for `timestamp_timezone` is `UTC`.
+
+#### redact_sensitive_data
+
+Enables automatic redaction of sensitive information in log output. When enabled
+(default), the logging system scans all output for credentials, tokens, passwords,
+and other sensitive data, replacing them with `<REDACTED>` before output. This
+protects against accidental exposure of secrets in logs.
+
+See [Logging Reference](logging-reference.md#sensitive-data-redaction) for details
+on what data types are protected.
+
+The default value for `redact_sensitive_data` is `true`.
 
 ### Terminal Settings
 
