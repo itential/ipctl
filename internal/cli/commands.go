@@ -14,11 +14,17 @@ import (
 	"github.com/spf13/cobra"
 )
 
+// RootCommand defines the configuration for a top-level CLI command group.
+// Each RootCommand generates a set of Cobra commands organized under a
+// common parent command (e.g., "get", "create", "delete").
+//
+// The Run function is invoked to generate the actual Cobra commands, which
+// are then organized using the descriptor from the YAML configuration files.
 type RootCommand struct {
-	Name       string
-	Group      string
-	Run        func() []*cobra.Command
-	Descriptor string
+	Name       string                    // Name of the command (e.g., "get", "create")
+	Group      string                    // Group ID for organizing in help output
+	Run        func() []*cobra.Command   // Function to generate child commands
+	Descriptor string                    // Key for YAML descriptor lookup
 }
 
 // addRootCommand adds a new top level command to the application. Root
@@ -40,23 +46,25 @@ func addRootCommand(cmd *cobra.Command, rt *handlers.Runtime, title string, f fu
 // commands are top level commands that implement additional subcommands and
 // therefore do not directly perform any actions. The function accepts a
 // single argument `rootCommands` which is an array of RootCommand instances.
-func makeRootCommand(rootCommands []RootCommand) []*cobra.Command {
-	descriptors := cmdutils.LoadDescriptorsFromContent("descriptors", &content)
+// Returns an error if any required descriptor is missing.
+func makeRootCommand(rootCommands []RootCommand) ([]*cobra.Command, error) {
+	descriptors := cmdutils.LoadDescriptorsFromContent("descriptors", &descriptorFiles)
 
-	var commands []*cobra.Command
+	commands := make([]*cobra.Command, 0, len(rootCommands))
 
 	for _, ele := range rootCommands {
-		if desc, exists := descriptors[ele.Descriptor]; exists {
-			c := makeChildCommand(ele, desc)
-			if c != nil {
-				commands = append(commands, c)
-			}
-		} else {
-			logging.Fatal(fmt.Errorf("missing root command descriptor: %s", ele.Descriptor), "")
+		desc, exists := descriptors[ele.Descriptor]
+		if !exists {
+			return nil, fmt.Errorf("failed to build %s command: missing descriptor '%s'", ele.Name, ele.Descriptor)
+		}
+
+		c := makeChildCommand(ele, desc)
+		if c != nil {
+			commands = append(commands, c)
 		}
 	}
 
-	return commands
+	return commands, nil
 }
 
 // makeChildCommand creates a single command attached to a root command.  Child
@@ -99,22 +107,22 @@ func makeChildCommand(root RootCommand, desc map[string]cmdutils.Descriptor) *co
 // assetCommands define the aggregate set of commands for working with assets.
 func assetCommands(rt *handlers.Runtime, id string) []*cobra.Command {
 	h := handlers.NewHandler(rt)
-	return makeRootCommand([]RootCommand{
-		RootCommand{"get", id, h.GetCommands, "asset"},
-		RootCommand{"describe", id, h.DescribeCommands, "asset"},
-
-		RootCommand{"create", id, h.CreateCommands, "asset"},
-		RootCommand{"delete", id, h.DeleteCommands, "asset"},
-
-		RootCommand{"copy", id, h.CopyCommands, "asset"},
-
-		RootCommand{"clear", id, h.ClearCommands, "asset"},
-
-		RootCommand{"edit", id, h.EditCommands, "asset"},
-
-		RootCommand{"import", id, h.ImportCommands, "asset"},
-		RootCommand{"export", id, h.ExportCommands, "asset"},
+	commands, err := makeRootCommand([]RootCommand{
+		{Name: "get", Group: id, Run: h.GetCommands, Descriptor: "asset"},
+		{Name: "describe", Group: id, Run: h.DescribeCommands, Descriptor: "asset"},
+		{Name: "create", Group: id, Run: h.CreateCommands, Descriptor: "asset"},
+		{Name: "delete", Group: id, Run: h.DeleteCommands, Descriptor: "asset"},
+		{Name: "copy", Group: id, Run: h.CopyCommands, Descriptor: "asset"},
+		{Name: "clear", Group: id, Run: h.ClearCommands, Descriptor: "asset"},
+		{Name: "edit", Group: id, Run: h.EditCommands, Descriptor: "asset"},
+		{Name: "import", Group: id, Run: h.ImportCommands, Descriptor: "asset"},
+		{Name: "export", Group: id, Run: h.ExportCommands, Descriptor: "asset"},
 	})
+	if err != nil {
+		logging.Error(err, "failed to create asset commands")
+		return nil
+	}
+	return commands
 }
 
 // platformCommands define the set of commands that can be performed on a
@@ -123,23 +131,33 @@ func platformCommands(rt *handlers.Runtime, id string) []*cobra.Command {
 	apiHandler := handlers.NewApiHandler(rt)
 	h := handlers.NewHandler(rt)
 
-	return makeRootCommand([]RootCommand{
-		RootCommand{"api", id, apiHandler.Commands, "platform"},
-		RootCommand{"inspect", id, h.InspectCommands, "platform"},
-		RootCommand{"start", id, h.StartCommands, "platform"},
-		RootCommand{"stop", id, h.StopCommands, "platform"},
-		RootCommand{"restart", id, h.RestartCommands, "platform"},
+	commands, err := makeRootCommand([]RootCommand{
+		{Name: "api", Group: id, Run: apiHandler.Commands, Descriptor: "platform"},
+		{Name: "inspect", Group: id, Run: h.InspectCommands, Descriptor: "platform"},
+		{Name: "start", Group: id, Run: h.StartCommands, Descriptor: "platform"},
+		{Name: "stop", Group: id, Run: h.StopCommands, Descriptor: "platform"},
+		{Name: "restart", Group: id, Run: h.RestartCommands, Descriptor: "platform"},
 	})
+	if err != nil {
+		logging.Error(err, "failed to create platform commands")
+		return nil
+	}
+	return commands
 }
 
 // datasetCommands provide a set of commands for performing batch operations on
 // specific asset types.
 func datasetCommands(rt *handlers.Runtime, id string) []*cobra.Command {
 	h := handlers.NewHandler(rt)
-	return makeRootCommand([]RootCommand{
-		RootCommand{"load", id, h.LoadCommands, "dataset"},
-		RootCommand{"dump", id, h.DumpCommands, "dataset"},
+	commands, err := makeRootCommand([]RootCommand{
+		{Name: "load", Group: id, Run: h.LoadCommands, Descriptor: "dataset"},
+		{Name: "dump", Group: id, Run: h.DumpCommands, Descriptor: "dataset"},
 	})
+	if err != nil {
+		logging.Error(err, "failed to create dataset commands")
+		return nil
+	}
+	return commands
 }
 
 // pluginCommands are commands that extend the functionality of the
@@ -148,8 +166,13 @@ func pluginCommands(rt *handlers.Runtime, id string) []*cobra.Command {
 	localAAAHandler := handlers.NewLocalAAAHandler(rt)
 	localClientHandler := handlers.NewLocalClientHandler(rt)
 
-	return makeRootCommand([]RootCommand{
-		RootCommand{"local-aaa", id, localAAAHandler.Commands, "localaaa"},
-		RootCommand{"client", id, localClientHandler.Commands, "localclient"},
+	commands, err := makeRootCommand([]RootCommand{
+		{Name: "local-aaa", Group: id, Run: localAAAHandler.Commands, Descriptor: "localaaa"},
+		{Name: "client", Group: id, Run: localClientHandler.Commands, Descriptor: "localclient"},
 	})
+	if err != nil {
+		logging.Error(err, "failed to create plugin commands")
+		return nil
+	}
+	return commands
 }

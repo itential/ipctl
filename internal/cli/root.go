@@ -22,8 +22,11 @@ import (
 	"github.com/spf13/cobra"
 )
 
+// descriptorFiles embeds all YAML descriptor files at compile time.
+// These descriptors define command structure, help text, and examples.
+//
 //go:embed descriptors/*.yaml
-var content embed.FS
+var descriptorFiles embed.FS
 
 // Provides the general description of the application.  This should be moved
 // into descriptors.
@@ -95,9 +98,9 @@ func runCli(c client.Client, cfg config.Provider, termCfg *terminal.Config) *cob
 	return cmd
 }
 
-// Execute is the entrypoint to the CLI called from main.  This fucntion will
+// Execute is the entrypoint to the CLI called from main. This function will
 // load the configuration file, initialize the logger, create the client and
-// run the application.  It will return an int that is to be used as the return
+// run the application. It will return an int that is to be used as the return
 // code.
 func Execute() int {
 	cfg := config.NewConfig(nil, nil, "", "", "")
@@ -121,7 +124,8 @@ func Execute() int {
 
 	profile, err := cfg.ActiveProfile()
 	if err != nil {
-		terminal.Warning("%s\n", err.Error())
+		terminal.Error(err, termCfg.NoColor)
+		return 1
 	}
 
 	logging.Info("connection timeout is %v second(s)", profile.Timeout)
