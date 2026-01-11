@@ -11,6 +11,7 @@ import (
 	"net/url"
 	"strconv"
 	"testing"
+	"time"
 
 	"github.com/itential/ipctl/pkg/config"
 )
@@ -403,5 +404,407 @@ func TestAuthenticateUsingOAuthMissingCredentials(t *testing.T) {
 				t.Error("Expected error for missing credentials")
 			}
 		})
+	}
+}
+
+// TestNewWithTimeout verifies that timeout configuration is properly applied
+func TestNewWithTimeout(t *testing.T) {
+	testCases := []struct {
+		name            string
+		timeout         int
+		expectedTimeout int
+	}{
+		{
+			name:            "Timeout set to 30 seconds",
+			timeout:         30,
+			expectedTimeout: 30,
+		},
+		{
+			name:            "Timeout set to 60 seconds",
+			timeout:         60,
+			expectedTimeout: 60,
+		},
+		{
+			name:            "Timeout set to 0 (no timeout)",
+			timeout:         0,
+			expectedTimeout: 0,
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			ctx := context.Background()
+			cfg := &config.Profile{
+				Host:    "test.example.com",
+				Port:    8080,
+				Timeout: tc.timeout,
+			}
+
+			client := New(ctx, cfg)
+
+			if client.Timeout != tc.expectedTimeout {
+				t.Errorf("Expected Timeout %d, got %d", tc.expectedTimeout, client.Timeout)
+			}
+		})
+	}
+}
+
+// TestHttpClientTimeout verifies that HTTP client respects timeout configuration
+func TestHttpClientTimeout(t *testing.T) {
+	// Create a server that delays response beyond timeout
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		time.Sleep(2 * time.Second)
+		w.WriteHeader(http.StatusOK)
+		w.Write([]byte(`{"status": "ok"}`))
+	}))
+	defer server.Close()
+
+	serverURL, _ := url.Parse(server.URL)
+	port := serverURL.Port()
+	portInt := 80
+	if port != "" {
+		if p, err := strconv.ParseInt(port, 10, 32); err == nil {
+			portInt = int(p)
+		}
+	}
+
+	client := &HttpClient{
+		Host:          serverURL.Hostname(),
+		Port:          portInt,
+		UseTls:        false,
+		Verify:        true,
+		Timeout:       1, // 1 second timeout
+		context:       context.Background(),
+		jar:           NewJar(),
+		authenticated: true,
+	}
+
+	req := NewRequest("/test")
+	_, err := client.Get(req)
+
+	if err == nil {
+		t.Error("Expected timeout error, but got none")
+	}
+}
+
+// TestHttpClientNoTimeout verifies that requests work when timeout is 0
+func TestHttpClientNoTimeout(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+		w.Write([]byte(`{"status": "ok"}`))
+	}))
+	defer server.Close()
+
+	serverURL, _ := url.Parse(server.URL)
+	port := serverURL.Port()
+	portInt := 80
+	if port != "" {
+		if p, err := strconv.ParseInt(port, 10, 32); err == nil {
+			portInt = int(p)
+		}
+	}
+
+	client := &HttpClient{
+		Host:          serverURL.Hostname(),
+		Port:          portInt,
+		UseTls:        false,
+		Verify:        true,
+		Timeout:       0, // No timeout
+		context:       context.Background(),
+		jar:           NewJar(),
+		authenticated: true,
+	}
+
+	req := NewRequest("/test")
+	resp, err := client.Get(req)
+
+	if err != nil {
+		t.Errorf("Unexpected error: %v", err)
+	}
+
+	if resp.StatusCode != http.StatusOK {
+		t.Errorf("Expected status %d, got %d", http.StatusOK, resp.StatusCode)
+	}
+}
+
+// TestHttpClientWithContextCancellation verifies context cancellation behavior
+func TestHttpClientWithContextCancellation(t *testing.T) {
+	// Create a server that delays response
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		time.Sleep(2 * time.Second)
+		w.WriteHeader(http.StatusOK)
+	}))
+	defer server.Close()
+
+	serverURL, _ := url.Parse(server.URL)
+	port := serverURL.Port()
+	portInt := 80
+	if port != "" {
+		if p, err := strconv.ParseInt(port, 10, 32); err == nil {
+			portInt = int(p)
+		}
+	}
+
+	// Create context that will be cancelled
+	ctx, cancel := context.WithCancel(context.Background())
+
+	client := &HttpClient{
+		Host:          serverURL.Hostname(),
+		Port:          portInt,
+		UseTls:        false,
+		Verify:        true,
+		context:       ctx,
+		jar:           NewJar(),
+		authenticated: true,
+	}
+
+	// Cancel context immediately
+	cancel()
+
+	req := NewRequest("/test")
+	_, err := client.Get(req)
+
+	if err == nil {
+		t.Error("Expected error due to context cancellation, but got none")
+	}
+}
+
+// TestHttpClientTLSConfiguration verifies TLS configuration behavior
+func TestHttpClientTLSConfiguration(t *testing.T) {
+	testCases := []struct {
+		name   string
+		useTls bool
+		verify bool
+	}{
+		{
+			name:   "TLS enabled with verification",
+			useTls: true,
+			verify: true,
+		},
+		{
+			name:   "TLS enabled without verification",
+			useTls: true,
+			verify: false,
+		},
+		{
+			name:   "TLS disabled",
+			useTls: false,
+			verify: true,
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			ctx := context.Background()
+			cfg := &config.Profile{
+				Host:   "test.example.com",
+				Port:   443,
+				UseTLS: tc.useTls,
+				Verify: tc.verify,
+			}
+
+			client := New(ctx, cfg)
+
+			if client.UseTls != tc.useTls {
+				t.Errorf("Expected UseTls %t, got %t", tc.useTls, client.UseTls)
+			}
+
+			if client.Verify != tc.verify {
+				t.Errorf("Expected Verify %t, got %t", tc.verify, client.Verify)
+			}
+		})
+	}
+}
+
+// TestHttpClientErrorScenarios tests various error conditions
+func TestHttpClientErrorScenarios(t *testing.T) {
+	testCases := []struct {
+		name        string
+		setupServer func() *httptest.Server
+		expectError bool
+	}{
+		{
+			name: "Server returns 404",
+			setupServer: func() *httptest.Server {
+				return httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+					w.WriteHeader(http.StatusNotFound)
+					w.Write([]byte(`{"error": "not found"}`))
+				}))
+			},
+			expectError: false, // 404 is valid HTTP response, not client error
+		},
+		{
+			name: "Server returns 500",
+			setupServer: func() *httptest.Server {
+				return httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+					w.WriteHeader(http.StatusInternalServerError)
+					w.Write([]byte(`{"error": "internal error"}`))
+				}))
+			},
+			expectError: false, // 500 is valid HTTP response, not client error
+		},
+		{
+			name: "Server returns empty body",
+			setupServer: func() *httptest.Server {
+				return httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+					w.WriteHeader(http.StatusNoContent)
+				}))
+			},
+			expectError: false,
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			server := tc.setupServer()
+			defer server.Close()
+
+			serverURL, _ := url.Parse(server.URL)
+			port := serverURL.Port()
+			portInt := 80
+			if port != "" {
+				if p, err := strconv.ParseInt(port, 10, 32); err == nil {
+					portInt = int(p)
+				}
+			}
+
+			client := &HttpClient{
+				Host:          serverURL.Hostname(),
+				Port:          portInt,
+				UseTls:        false,
+				Verify:        true,
+				context:       context.Background(),
+				jar:           NewJar(),
+				authenticated: true,
+			}
+
+			req := NewRequest("/test")
+			resp, err := client.Get(req)
+
+			if tc.expectError && err == nil {
+				t.Error("Expected error, but got none")
+			}
+
+			if !tc.expectError && err != nil {
+				t.Errorf("Unexpected error: %v", err)
+			}
+
+			// Verify we get a response even for error status codes
+			if !tc.expectError && resp == nil {
+				t.Error("Expected response, but got nil")
+			}
+		})
+	}
+}
+
+// TestHttpClientConnectionRefused tests behavior when server is unreachable
+func TestHttpClientConnectionRefused(t *testing.T) {
+	client := &HttpClient{
+		Host:          "localhost",
+		Port:          9999, // Port that nothing is listening on
+		UseTls:        false,
+		Verify:        true,
+		context:       context.Background(),
+		jar:           NewJar(),
+		authenticated: true,
+	}
+
+	req := NewRequest("/test")
+	_, err := client.Get(req)
+
+	if err == nil {
+		t.Error("Expected connection error, but got none")
+	}
+}
+
+// TestRequestWithQueryParameters verifies query parameter handling
+func TestRequestWithQueryParameters(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		// Verify query parameters are present
+		if r.URL.Query().Get("page") != "1" {
+			t.Error("Expected page parameter to be 1")
+		}
+		if r.URL.Query().Get("limit") != "10" {
+			t.Error("Expected limit parameter to be 10")
+		}
+		w.WriteHeader(http.StatusOK)
+	}))
+	defer server.Close()
+
+	serverURL, _ := url.Parse(server.URL)
+	port := serverURL.Port()
+	portInt := 80
+	if port != "" {
+		if p, err := strconv.ParseInt(port, 10, 32); err == nil {
+			portInt = int(p)
+		}
+	}
+
+	client := &HttpClient{
+		Host:          serverURL.Hostname(),
+		Port:          portInt,
+		UseTls:        false,
+		Verify:        true,
+		context:       context.Background(),
+		jar:           NewJar(),
+		authenticated: true,
+	}
+
+	req := NewRequest("/test", WithParams(map[string]string{
+		"page":  "1",
+		"limit": "10",
+	}))
+
+	_, err := client.Get(req)
+	if err != nil {
+		t.Errorf("Unexpected error: %v", err)
+	}
+}
+
+// TestRequestWithBody verifies request body handling
+func TestRequestWithBody(t *testing.T) {
+	expectedBody := `{"name":"test","value":123}`
+
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		body := make([]byte, len(expectedBody))
+		r.Body.Read(body)
+
+		if string(body) != expectedBody {
+			t.Errorf("Expected body %s, got %s", expectedBody, string(body))
+		}
+
+		w.WriteHeader(http.StatusCreated)
+		w.Write([]byte(`{"id": 1}`))
+	}))
+	defer server.Close()
+
+	serverURL, _ := url.Parse(server.URL)
+	port := serverURL.Port()
+	portInt := 80
+	if port != "" {
+		if p, err := strconv.ParseInt(port, 10, 32); err == nil {
+			portInt = int(p)
+		}
+	}
+
+	client := &HttpClient{
+		Host:          serverURL.Hostname(),
+		Port:          portInt,
+		UseTls:        false,
+		Verify:        true,
+		context:       context.Background(),
+		jar:           NewJar(),
+		authenticated: true,
+	}
+
+	req := NewRequest("/test", WithBody([]byte(expectedBody)))
+
+	resp, err := client.Post(req)
+	if err != nil {
+		t.Errorf("Unexpected error: %v", err)
+	}
+
+	if resp.StatusCode != http.StatusCreated {
+		t.Errorf("Expected status %d, got %d", http.StatusCreated, resp.StatusCode)
 	}
 }

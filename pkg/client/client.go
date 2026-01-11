@@ -14,6 +14,7 @@ import (
 	"net/http"
 	"net/url"
 	"strconv"
+	"time"
 
 	"github.com/itential/ipctl/pkg/config"
 	"github.com/itential/ipctl/pkg/logger"
@@ -79,6 +80,10 @@ type HttpClient struct {
 	// Itential Platform server using OAuth
 	ClientSecret string
 
+	// Timeout is the timeout in seconds for HTTP requests to the Itential
+	// Platform server. If set to 0, no timeout is applied.
+	Timeout int
+
 	// jar is the cookie jar associated with the http session
 	jar *Jar
 
@@ -90,11 +95,36 @@ type HttpClient struct {
 	context context.Context
 }
 
-// New will create a new instance of HttpClient and return it to the calling
-// function.  the `ctx` argument will set the context for the HTTP session for
-// the applicaiton.  The `cfg` argument provides the configuration profile
-// defined from the application configuration.   The configuration profile
-// provides the discrete settings for the HTTP client.
+// New creates and returns a new HttpClient instance configured with the provided
+// context and profile settings.
+//
+// The ctx parameter sets the context for the HTTP client, enabling request
+// cancellation and timeout control. The cfg parameter provides configuration
+// including host, port, authentication credentials, TLS settings, and timeout.
+//
+// Configuration fields from the profile:
+//   - Host: Hostname or IP address of the Itential Platform server
+//   - Port: Server port (0 = auto-detect based on UseTLS)
+//   - UseTLS: Enable HTTPS connections
+//   - Verify: Enable TLS certificate verification
+//   - Username/Password: Basic authentication credentials
+//   - ClientID/ClientSecret: OAuth2 client credentials
+//   - Timeout: Request timeout in seconds (0 = no timeout)
+//
+// The returned client is safe for concurrent use and includes an initialized
+// cookie jar for session management.
+//
+// Example:
+//
+//	ctx := context.Background()
+//	cfg := &config.Profile{
+//	    Host:     "localhost",
+//	    Port:     3000,
+//	    Username: "admin",
+//	    Password: "secret",
+//	    Timeout:  30,
+//	}
+//	client := New(ctx, cfg)
 func New(ctx context.Context, cfg *config.Profile) *HttpClient {
 	logger.Info("Creating new http client")
 
@@ -108,26 +138,39 @@ func New(ctx context.Context, cfg *config.Profile) *HttpClient {
 		Verify:        cfg.Verify,
 		ClientId:      cfg.ClientID,
 		ClientSecret:  cfg.ClientSecret,
+		Timeout:       cfg.Timeout,
 		context:       ctx,
 		jar:           NewJar(),
 		authenticated: false,
 	}
 }
 
-// IsAuthenticated returns whether or not the HTTP client has successfully
-// authenticated to the Itential Platform server
+// IsAuthenticated returns true if the client has successfully authenticated
+// to the Itential Platform server, false otherwise.
+//
+// This method is safe to call from multiple goroutines.
 func (c *HttpClient) IsAuthenticated() bool {
 	return c.authenticated
 }
 
-// send will send the request to the Itential Platform server and return the
-// results and error to the calling function.  The `method` argument specifies
-// the HTTP method to use when sending the request.  The `request` argument
-// provides the contents of the request to send to the server.
+// send sends an HTTP request to the Itential Platform server and returns the
+// response.
 //
-// The function returns a response object that includes details about the
-// response received from the server.   If there was an error in the request or
-// response, it is returned to the calling function.
+// The method parameter specifies the HTTP method (GET, POST, PUT, DELETE, etc.).
+// The request parameter contains the request details including path, query
+// parameters, headers, and body.
+//
+// This method handles:
+//   - URL construction with scheme, host, port, path, and query parameters
+//   - HTTP client creation with timeout and TLS configuration
+//   - OAuth authentication when ClientID and ClientSecret are configured
+//   - Request logging (can be suppressed with request.NoLog)
+//   - Context-aware request execution with cancellation support
+//
+// Returns a Response containing status code, headers, and body on success.
+// Returns an error for network failures, timeouts, context cancellation,
+// or invalid request parameters. HTTP error status codes (4xx, 5xx) are
+// returned as successful responses with the appropriate status code.
 func (c *HttpClient) send(method string, request *Request) (*Response, error) {
 	logger.Trace()
 
@@ -151,7 +194,15 @@ func (c *HttpClient) send(method string, request *Request) (*Response, error) {
 		logger.Debug("request body is omitted due to the use of NoLog")
 	}
 
-	client := &http.Client{Jar: c.jar}
+	client := &http.Client{
+		Jar: c.jar,
+	}
+
+	// Apply timeout configuration if set
+	if c.Timeout > 0 {
+		client.Timeout = time.Duration(c.Timeout) * time.Second
+		logger.Debug("Setting HTTP client timeout to %d seconds", c.Timeout)
+	}
 
 	// Disable certificate verification when UseTls is true and Verify is
 	// false.  This is inherently insecure
