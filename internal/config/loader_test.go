@@ -9,6 +9,8 @@ import (
 	"os"
 	"path/filepath"
 	"testing"
+
+	"github.com/itential/ipctl/internal/app"
 )
 
 // TestNewLoader verifies that NewLoader creates a loader with proper defaults.
@@ -19,8 +21,8 @@ func TestNewLoader(t *testing.T) {
 		t.Fatal("NewLoader() returned nil")
 	}
 
-	if loader.workingDir != defaultAppWorkingDir {
-		t.Errorf("workingDir = %q, want %q", loader.workingDir, defaultAppWorkingDir)
+	if loader.workingDir != "~/.platform.d" {
+		t.Errorf("workingDir = %q, want %q", loader.workingDir, "~/.platform.d")
 	}
 
 	if loader.sysConfigPath != "/etc/ipctl" {
@@ -145,12 +147,16 @@ func TestLoaderLoadWithDefaultsOnly(t *testing.T) {
 	}
 
 	// Verify defaults were applied
-	if cfg.Git.User != defaultGitUser {
-		t.Errorf("cfg.Git.User = %q, want %q", cfg.Git.User, defaultGitUser)
+	defaults := app.DefaultValues()
+	expectedGitUser := defaults["git.user"].(string)
+	expectedDatasetsEnabled := defaults["features.datasets_enabled"].(bool)
+
+	if cfg.Settings.Git.User != expectedGitUser {
+		t.Errorf("cfg.Settings.Git.User = %q, want %q", cfg.Settings.Git.User, expectedGitUser)
 	}
 
-	if cfg.Features.DatasetsEnabled != defaultFeaturesDatasetsEnabled {
-		t.Errorf("cfg.Features.DatasetsEnabled = %v, want %v", cfg.Features.DatasetsEnabled, defaultFeaturesDatasetsEnabled)
+	if cfg.Settings.Features.DatasetsEnabled != expectedDatasetsEnabled {
+		t.Errorf("cfg.Settings.Features.DatasetsEnabled = %v, want %v", cfg.Settings.Features.DatasetsEnabled, expectedDatasetsEnabled)
 	}
 }
 
@@ -210,34 +216,34 @@ reference = main
 	}
 
 	// Verify application settings
-	if cfg.WorkingDir != "/test/working" {
-		t.Errorf("cfg.WorkingDir = %q, want %q", cfg.WorkingDir, "/test/working")
+	if cfg.Settings.WorkingDir != "/test/working" {
+		t.Errorf("cfg.Settings.WorkingDir = %q, want %q", cfg.Settings.WorkingDir, "/test/working")
 	}
 
-	if cfg.DefaultProfile != "testprofile" {
-		t.Errorf("cfg.DefaultProfile = %q, want %q", cfg.DefaultProfile, "testprofile")
+	if cfg.Settings.DefaultProfile != "testprofile" {
+		t.Errorf("cfg.Settings.DefaultProfile = %q, want %q", cfg.Settings.DefaultProfile, "testprofile")
 	}
 
-	if cfg.DefaultRepository != "testrepo" {
-		t.Errorf("cfg.DefaultRepository = %q, want %q", cfg.DefaultRepository, "testrepo")
+	if cfg.Settings.DefaultRepository != "testrepo" {
+		t.Errorf("cfg.Settings.DefaultRepository = %q, want %q", cfg.Settings.DefaultRepository, "testrepo")
 	}
 
 	// Verify features
-	if !cfg.Features.DatasetsEnabled {
-		t.Error("cfg.Features.DatasetsEnabled = false, want true")
+	if !cfg.Settings.Features.DatasetsEnabled {
+		t.Error("cfg.Settings.Features.DatasetsEnabled = false, want true")
 	}
 
 	// Verify git config
-	if cfg.Git.Name != "Test User" {
-		t.Errorf("cfg.Git.Name = %q, want %q", cfg.Git.Name, "Test User")
+	if cfg.Settings.Git.Name != "Test User" {
+		t.Errorf("cfg.Settings.Git.Name = %q, want %q", cfg.Settings.Git.Name, "Test User")
 	}
 
-	if cfg.Git.Email != "test@example.com" {
-		t.Errorf("cfg.Git.Email = %q, want %q", cfg.Git.Email, "test@example.com")
+	if cfg.Settings.Git.Email != "test@example.com" {
+		t.Errorf("cfg.Settings.Git.Email = %q, want %q", cfg.Settings.Git.Email, "test@example.com")
 	}
 
-	if cfg.Git.User != "testgit" {
-		t.Errorf("cfg.Git.User = %q, want %q", cfg.Git.User, "testgit")
+	if cfg.Settings.Git.User != "testgit" {
+		t.Errorf("cfg.Settings.Git.User = %q, want %q", cfg.Settings.Git.User, "testgit")
 	}
 
 	// Verify profiles
@@ -367,12 +373,12 @@ name = Original Name
 	}
 
 	// Verify environment variables override config file
-	if cfg.WorkingDir != "/override/path" {
-		t.Errorf("cfg.WorkingDir = %q, want %q", cfg.WorkingDir, "/override/path")
+	if cfg.Settings.WorkingDir != "/override/path" {
+		t.Errorf("cfg.Settings.WorkingDir = %q, want %q", cfg.Settings.WorkingDir, "/override/path")
 	}
 
-	if cfg.Git.Name != "Override Name" {
-		t.Errorf("cfg.Git.Name = %q, want %q", cfg.Git.Name, "Override Name")
+	if cfg.Settings.Git.Name != "Override Name" {
+		t.Errorf("cfg.Settings.Git.Name = %q, want %q", cfg.Settings.Git.Name, "Override Name")
 	}
 }
 
@@ -531,18 +537,18 @@ reference = main
 
 			// Verify the loaded config is correct
 			// Note: WorkingDir gets expanded from the path in the config file
-			if cfg.WorkingDir == "" {
-				errCh <- fmt.Errorf("goroutine %d: WorkingDir is empty", id)
+			if cfg.Settings.WorkingDir == "" {
+				errCh <- fmt.Errorf("goroutine %d: Settings.WorkingDir is empty", id)
 				return
 			}
 
-			if !cfg.Features.DatasetsEnabled {
-				errCh <- fmt.Errorf("goroutine %d: DatasetsEnabled = false, want true", id)
+			if !cfg.Settings.Features.DatasetsEnabled {
+				errCh <- fmt.Errorf("goroutine %d: Settings.Features.DatasetsEnabled = false, want true", id)
 				return
 			}
 
-			if cfg.Git.Name != "Test User" {
-				errCh <- fmt.Errorf("goroutine %d: Git.Name = %q, want Test User", id, cfg.Git.Name)
+			if cfg.Settings.Git.Name != "Test User" {
+				errCh <- fmt.Errorf("goroutine %d: Settings.Git.Name = %q, want Test User", id, cfg.Settings.Git.Name)
 				return
 			}
 
@@ -655,16 +661,16 @@ port = 8002
 	}
 
 	// Verify first config is unchanged
-	if cfg1.WorkingDir != "/path/one" {
-		t.Errorf("cfg1.WorkingDir = %q, want /path/one", cfg1.WorkingDir)
+	if cfg1.Settings.WorkingDir != "/path/one" {
+		t.Errorf("cfg1.Settings.WorkingDir = %q, want /path/one", cfg1.Settings.WorkingDir)
 	}
 
-	if cfg1.DefaultProfile != "profile1" {
-		t.Errorf("cfg1.DefaultProfile = %q, want profile1", cfg1.DefaultProfile)
+	if cfg1.Settings.DefaultProfile != "profile1" {
+		t.Errorf("cfg1.Settings.DefaultProfile = %q, want profile1", cfg1.Settings.DefaultProfile)
 	}
 
-	if cfg1.Git.Name != "User One" {
-		t.Errorf("cfg1.Git.Name = %q, want User One", cfg1.Git.Name)
+	if cfg1.Settings.Git.Name != "User One" {
+		t.Errorf("cfg1.Settings.Git.Name = %q, want User One", cfg1.Settings.Git.Name)
 	}
 
 	profile1, err := cfg1.GetProfile("profile1")
@@ -681,16 +687,16 @@ port = 8002
 	}
 
 	// Verify second config has its own values
-	if cfg2.WorkingDir != "/path/two" {
-		t.Errorf("cfg2.WorkingDir = %q, want /path/two", cfg2.WorkingDir)
+	if cfg2.Settings.WorkingDir != "/path/two" {
+		t.Errorf("cfg2.Settings.WorkingDir = %q, want /path/two", cfg2.Settings.WorkingDir)
 	}
 
-	if cfg2.DefaultProfile != "profile2" {
-		t.Errorf("cfg2.DefaultProfile = %q, want profile2", cfg2.DefaultProfile)
+	if cfg2.Settings.DefaultProfile != "profile2" {
+		t.Errorf("cfg2.Settings.DefaultProfile = %q, want profile2", cfg2.Settings.DefaultProfile)
 	}
 
-	if cfg2.Git.Name != "User Two" {
-		t.Errorf("cfg2.Git.Name = %q, want User Two", cfg2.Git.Name)
+	if cfg2.Settings.Git.Name != "User Two" {
+		t.Errorf("cfg2.Settings.Git.Name = %q, want User Two", cfg2.Settings.Git.Name)
 	}
 
 	profile2, err := cfg2.GetProfile("profile2")
@@ -707,11 +713,11 @@ port = 8002
 	}
 
 	// Verify cfg1 and cfg2 are completely independent
-	if cfg1.WorkingDir == cfg2.WorkingDir {
+	if cfg1.Settings.WorkingDir == cfg2.Settings.WorkingDir {
 		t.Error("cfg1 and cfg2 should have different working directories")
 	}
 
-	if cfg1.DefaultProfile == cfg2.DefaultProfile {
+	if cfg1.Settings.DefaultProfile == cfg2.Settings.DefaultProfile {
 		t.Error("cfg1 and cfg2 should have different default profiles")
 	}
 }

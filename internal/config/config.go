@@ -9,50 +9,27 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/itential/ipctl/internal/app"
 	"github.com/itential/ipctl/internal/profile"
 	"github.com/itential/ipctl/internal/repository"
 )
 
 const (
 	defaultFileName = "config"
-
-	defaultAppWorkingDir        = "~/.platform.d"
-	defaultAppDefaultProfile    = ""
-	defaultAppDefaultRepository = ""
-
-	defaultFeaturesDatasetsEnabled = false
-
-	defaultGitName  = ""
-	defaultGitEmail = ""
-	defaultGitUser  = "git"
 )
 
-// Features holds feature flag configuration.
-type Features struct {
-	DatasetsEnabled bool `json:"datasets_enabled"`
-}
-
-// GitConfig holds Git-related configuration.
-type GitConfig struct {
-	Name  string `json:"name"`
-	Email string `json:"email"`
-	User  string `json:"user"`
-}
-
-// Config holds application-level configuration.
-// It focuses on core application settings, feature flags, and profile/repository management.
-// Domain-specific configuration (logging, terminal) should be managed by their respective packages.
+// Config holds configuration for the ipctl CLI application.
+// It combines application-level settings (from app.Settings) with
+// profile and repository management capabilities.
+//
+// Config serves as the central configuration provider for the application,
+// delegating application-level concerns to app.Settings while managing
+// connection profiles and repositories locally.
 type Config struct {
-	// Application settings
-	WorkingDir        string `json:"working_dir"`
-	DefaultProfile    string `json:"default_profile"`
-	DefaultRepository string `json:"default_repository"`
-
-	// Feature flags
-	Features Features `json:"features"`
-
-	// Git settings
-	Git GitConfig `json:"git"`
+	// Settings holds application-level configuration.
+	// This includes working directory, default profile/repository, feature flags,
+	// and git configuration.
+	Settings *app.Settings
 
 	// Managers for profiles and repositories
 	profileManager    *profile.Manager
@@ -130,45 +107,52 @@ func (c *Config) GetRepository(name string) (*repository.Repository, error) {
 }
 
 // GetWorkingDir returns the application working directory.
-// Implements ApplicationProvider interface.
+// Implements app.ApplicationProvider interface.
+// Delegates to the embedded Settings.
 func (c *Config) GetWorkingDir() string {
-	return c.WorkingDir
+	return c.Settings.GetWorkingDir()
 }
 
 // GetDefaultProfile returns the name of the default profile.
-// Implements ApplicationProvider interface.
+// Implements app.ApplicationProvider interface.
+// Delegates to the embedded Settings.
 func (c *Config) GetDefaultProfile() string {
-	return c.DefaultProfile
+	return c.Settings.GetDefaultProfile()
 }
 
 // GetDefaultRepository returns the name of the default repository.
-// Implements ApplicationProvider interface.
+// Implements app.ApplicationProvider interface.
+// Delegates to the embedded Settings.
 func (c *Config) GetDefaultRepository() string {
-	return c.DefaultRepository
+	return c.Settings.GetDefaultRepository()
 }
 
 // IsDatasetsEnabled returns whether the datasets feature is enabled.
-// Implements FeaturesProvider interface.
+// Implements app.FeaturesProvider interface.
+// Delegates to the embedded Settings.
 func (c *Config) IsDatasetsEnabled() bool {
-	return c.Features.DatasetsEnabled
+	return c.Settings.IsDatasetsEnabled()
 }
 
 // GetGitName returns the git user name for commits.
-// Implements GitProvider interface.
+// Implements app.GitProvider interface.
+// Delegates to the embedded Settings.
 func (c *Config) GetGitName() string {
-	return c.Git.Name
+	return c.Settings.GetGitName()
 }
 
 // GetGitEmail returns the git user email for commits.
-// Implements GitProvider interface.
+// Implements app.GitProvider interface.
+// Delegates to the embedded Settings.
 func (c *Config) GetGitEmail() string {
-	return c.Git.Email
+	return c.Settings.GetGitEmail()
 }
 
 // GetGitUser returns the git username for authentication.
-// Implements GitProvider interface.
+// Implements app.GitProvider interface.
+// Delegates to the embedded Settings.
 func (c *Config) GetGitUser() string {
-	return c.Git.User
+	return c.Settings.GetGitUser()
 }
 
 // DumpConfig returns a JSON representation of the configuration.
@@ -178,26 +162,10 @@ func (ac *Config) DumpConfig() string {
 	return string(bs)
 }
 
-var defaultValues = map[string]interface{}{
-	"application.working_dir":        defaultAppWorkingDir,
-	"application.default_profile":    defaultAppDefaultProfile,
-	"application.default_repository": defaultAppDefaultRepository,
+// defaultValues returns the default configuration values.
+// This delegates to app.DefaultValues() for application-level settings.
+var defaultValues = app.DefaultValues()
 
-	"features.datasets_enabled": defaultFeaturesDatasetsEnabled,
-
-	"git.name":  defaultGitName,
-	"git.email": defaultGitEmail,
-	"git.user":  defaultGitUser,
-}
-
-var defaultEnvVarBindings = map[string]string{
-	"application.working_dir":        "IPCTL_APPLICATION_WORKING_DIR",
-	"application.default_profile":    "IPCTL_APPLICATION_DEFAULT_PROFILE",
-	"application.default_repository": "IPCTL_APPLICATION_DEFAULT_REPOSITORY",
-
-	"features.datasets_enabled": "IPCTL_FEATURES_DATASETS_ENABLED",
-
-	"git.name":  "IPCTL_GIT_NAME",
-	"git.email": "IPCTL_GIT_EMAIL",
-	"git.user":  "IPCTL_GIT_USER",
-}
+// defaultEnvVarBindings returns the environment variable bindings.
+// This delegates to app.DefaultEnvBindings() for application-level settings.
+var defaultEnvVarBindings = app.DefaultEnvBindings()

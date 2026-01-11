@@ -12,11 +12,11 @@ import (
 	"strings"
 	"time"
 
+	"github.com/itential/ipctl/internal/app"
 	"github.com/itential/ipctl/internal/cmdutils"
 	"github.com/itential/ipctl/internal/config"
 	"github.com/itential/ipctl/internal/handlers"
 	"github.com/itential/ipctl/internal/logging"
-	"github.com/itential/ipctl/internal/metadata"
 	"github.com/itential/ipctl/internal/terminal"
 	"github.com/itential/ipctl/pkg/client"
 	"github.com/spf13/cobra"
@@ -51,8 +51,9 @@ func versionCommand() *cobra.Command {
 		Use:   "version",
 		Short: "Print the version information",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			terminal.Display("version: %s", metadata.Version)
-			terminal.Display("commit: %s", metadata.Build)
+			info := app.GetInfo()
+			terminal.Display("version: %s", info.Version)
+			terminal.Display("commit: %s", info.Build)
 			e, err := os.Executable()
 			if err != nil {
 				terminal.Display("executable: <unknown> (error: %v)", err)
@@ -106,10 +107,11 @@ func Execute() int {
 	termCfg := terminal.LoadFromEnv()
 	logging.InitializeLogger(logCfg, termCfg.NoColor)
 
-	if metadata.Version != "" && metadata.Build != "" {
-		logging.Info("ipctl %s (%s)", metadata.Version, metadata.Build)
+	info := app.GetInfo()
+	if info.IsRelease() {
+		logging.Info("ipctl %s (%s)", info.Version, info.Build)
 	} else {
-		sha, err := metadata.GetCurrentSha()
+		sha, err := app.GetCurrentSha()
 		if err == nil {
 			logging.Info("ipctl running from commit %s", sha)
 		} else {

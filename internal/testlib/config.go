@@ -5,6 +5,7 @@
 package testlib
 
 import (
+	"github.com/itential/ipctl/internal/app"
 	"github.com/itential/ipctl/internal/config"
 	"github.com/itential/ipctl/internal/logging"
 	"github.com/mitchellh/go-homedir"
@@ -41,6 +42,7 @@ var defaultValues = map[string]interface{}{
 // set a sane default that then can be overridden within the specific test.
 func DefaultConfig() *config.Config {
 	var ac config.Config
+	ac.Settings = app.NewSettings()
 
 	for k, v := range defaultValues {
 		viper.SetDefault(k, v)
@@ -48,7 +50,7 @@ func DefaultConfig() *config.Config {
 
 	var err error
 
-	ac.WorkingDir, err = homedir.Expand(ac.WorkingDir)
+	ac.Settings.WorkingDir, err = homedir.Expand(ac.Settings.WorkingDir)
 	if err != nil {
 		logging.Fatal(err, "error attemping to expand home directory")
 	}
