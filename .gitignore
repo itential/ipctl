@@ -1,25 +1,310 @@
-# ---> Go
+# ===================================
+# Go Build Artifacts
+# ===================================
+
 # Binaries for programs and plugins
 *.exe
 *.exe~
 *.dll
 *.so
 *.dylib
-.idea
-.idea/
 
 # Test binary, built with `go test -c`
 *.test
+
+# Output of the go coverage tool
+*.out
+cover.*
+cover/
+coverage.txt
+coverage.html
+*.coverprofile
+
+# Go workspace file
+go.work
+go.work.sum
+
+# Build and distribution directories
+bin/
+dist/
+build/
+out/
+release/
+
+# Vendor directory (uncomment if using vendoring)
+# vendor/
+
+# ===================================
+# Project-Specific
+# ===================================
+
+# Local development and backlog files
+.local/
+
+# Application working directories (from config)
+.platform.d/
+.iap.d/
+
+# Log files
+*.log
+logs/
+
+# Temporary build artifacts
+tmp/
+temp/
+.tmp/
+
+# ===================================
+# IDEs and Editors
+# ===================================
+
+# IntelliJ IDEA
+.idea/
+*.iml
+*.ipr
+*.iws
+.idea_modules/
+
+# Visual Studio Code
+.vscode/
+*.code-workspace
+.history/
+
+# GoLand
+.goland/
+
+# Vim
+*.swp
+*.swo
+*~
+.vim/
+.netrwhist
+
+# Emacs
+*~
+\#*\#
+/.emacs.desktop
+/.emacs.desktop.lock
+*.elc
+auto-save-list
+tramp
+.\#*
+
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+.sublime/
+
+# Atom
+.atom/
+
+# Eclipse
+.classpath
+.project
+.settings/
+
+# ===================================
+# Operating Systems
+# ===================================
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+.AppleDB
+.AppleDesktop
+Network Trash Folder
+Temporary Items
+.apdisk
+
+# Windows
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+*.stackdump
+[Dd]esktop.ini
+$RECYCLE.BIN/
+*.lnk
+*.cab
+*.msi
+*.msix
+*.msm
+*.msp
+
+# Linux
+.directory
+.Trash-*
+.nfs*
+
+# ===================================
+# Security and Credentials
+# ===================================
+
+# Certificates and keys
 *.pem
 *.crt
 *.key
+*.cer
+*.der
+*.p12
+*.pfx
 
-# Output of the go coverage tool, specifically when used with LiteIDE
-cover.*
-cover/
+# Environment and configuration files
+.env
+.env.*
+!.env.example
+*.secret
+secrets.*
+credentials.*
+*.credentials
 
-# Dependency directories (remove the comment below to include it)
-# vendor/
-bin/
+# SSH keys
+id_rsa
+id_dsa
+id_ecdsa
+id_ed25519
+*.pub
 
-dist/
+# ===================================
+# Development Tools
+# ===================================
+
+# Air (live reload)
+.air.toml
+tmp/
+
+# golangci-lint
+.golangci.yml.bak
+
+# Delve debugger
+__debug_bin
+
+# GoReleaser
+.goreleaser.yml.bak
+
+# Task runner
+.task/
+
+# Make
+*.d
+
+# ===================================
+# Testing and Benchmarking
+# ===================================
+
+# Test cache
+testdata/
+*_testdata/
+
+# Benchmark results
+*.bench
+bench/
+benchmarks/
+
+# Fuzz testing
+testdata/fuzz/
+*_fuzz.go
+
+# ===================================
+# Documentation
+# ===================================
+
+# Generated documentation
+docs/_build/
+docs/.doctrees/
+site/
+
+# Godoc
+godoc/
+
+# ===================================
+# Dependencies and Packages
+# ===================================
+
+# Go sum backup
+go.sum.bak
+
+# Downloaded Go modules (uncomment if needed)
+# go.mod.bak
+
+# ===================================
+# CI/CD
+# ===================================
+
+# CircleCI local
+.circleci/local/
+
+# Jenkins
+.jenkins/
+
+# GitHub Actions artifacts
+.github/workflows/*.log
+
+# ===================================
+# Miscellaneous
+# ===================================
+
+# Backup files
+*.bak
+*.backup
+*.old
+*.orig
+*~.nib
+
+# Archives
+*.zip
+*.tar
+*.tar.gz
+*.tgz
+*.rar
+*.7z
+*.gz
+*.bz2
+
+# Compressed files
+*.dmg
+*.iso
+*.jar
+*.war
+*.ear
+
+# Logs and databases
+*.sqlite
+*.sqlite3
+*.db
+
+# Node modules (if using any frontend tools)
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Python (if using any Python tools)
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+ENV/
+env/
+
+# Cache directories
+.cache/
+*.cache
+
+# Local configuration overrides
+config.local.*
+*.local.yaml
+*.local.yml
+*.local.json
+*.local.toml
