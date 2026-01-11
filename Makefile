@@ -60,8 +60,8 @@ coverage:
 # `go-licenses` tool installed and available in your path.  See
 # `https://github.com/google/go-licenses` for more detaials
 licenses:
-	@go-licenses report . --template ./tools/license-attributions/template.tpl --ignore github.com/itential > license-attributions.md
-	@go run ./tools/copyrighter/main.go
+	@go-licenses report . --template ./scripts/license-attributions/template.tpl --ignore github.com/itential > license-attributions.md
+	@go run ./scripts/copyrighter/main.go
 
 # The snapshot target will create a snapshot build of the application and place
 # it into the dist/ folder.  The folder will be created if it doesn't already
@@ -88,5 +88,5 @@ build: install
 # based on mock data for the various services it connects to.  The target
 # should run without error before making any pull requests to this project.
 test:
-	@go run ./tools/copyrighter/main.go -check
+	@go run ./scripts/copyrighter/main.go -check
 	@scripts/test.sh unittest
