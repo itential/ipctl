@@ -29,9 +29,11 @@
 //
 //   - Basic Authentication
 //   - OAuth2 Client Credentials flow
-//   - Custom TLS configuration
-//   - Cookie jar for session management
-//   - Request/response logging
+//   - Custom TLS configuration with certificate verification control
+//   - Thread-safe cookie jar for session management
+//   - Configurable request timeouts
+//   - Context-aware request cancellation
+//   - Request/response logging with optional suppression
 //   - Automatic retry logic (future enhancement)
 //
 // # Creating a Client
@@ -127,14 +129,22 @@
 // HTTP error status codes (4xx, 5xx) do not cause errors at the client level.
 // The caller must check Response.StatusCode to handle HTTP-level errors.
 //
-// # Timeouts
+// # Timeouts and Context
 //
 // Configure request timeouts via the profile:
 //
-//	profile.Timeout = 30  // 30 seconds
+//	profile.Timeout = 30  // 30 seconds (0 = no timeout)
 //
 // Timeouts apply to the entire request/response cycle including connection
 // establishment, TLS handshake, request transmission, and response reading.
+// Setting Timeout to 0 disables the timeout, allowing requests to run indefinitely.
+//
+// The client also supports context-based cancellation. Pass a context with
+// cancellation or deadline to enable external control over request lifecycle:
+//
+//	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+//	defer cancel()
+//	client := New(ctx, profile)
 //
 // # Cookie Management
 //
@@ -156,10 +166,27 @@
 //
 // HttpClient is safe for concurrent use from multiple goroutines. The underlying
 // http.Client handles connection pooling and request serialization automatically.
+// The cookie jar implementation uses sync.RWMutex to ensure thread-safe access
+// to cookies across concurrent requests.
+//
+// Multiple goroutines can safely make requests using the same HttpClient instance:
+//
+//	var wg sync.WaitGroup
+//	for i := 0; i < 10; i++ {
+//	    wg.Add(1)
+//	    go func() {
+//	        defer wg.Done()
+//	        req := NewRequest("/api/endpoint")
+//	        resp, err := client.Get(req)
+//	        // handle response
+//	    }()
+//	}
+//	wg.Wait()
 //
 // # Connection Pooling
 //
 // The client uses the default http.Transport which maintains a pool of
 // persistent connections. Connections are reused when possible to reduce
-// latency and resource consumption.
+// latency and resource consumption. The transport automatically manages
+// connection lifecycle, keepalives, and idle connection cleanup.
 package client

@@ -4,30 +4,68 @@
 
 package client
 
-// RequestOption is an optional parameter that can be set on a request object
-// when it is created.
+// RequestOption is a functional option for configuring a Request.
+//
+// RequestOption functions modify a Request instance during construction,
+// allowing for flexible and composable request configuration using the
+// functional options pattern.
 type RequestOption func(r *Request)
 
-// A Request instance is used to send a HTTP request to a remote host.
+// Request represents an HTTP request to be sent to the Itential Platform.
+//
+// Request instances are created using NewRequest and configured with
+// functional options. The Path field is required; all other fields are optional.
+//
+// Example:
+//
+//	req := NewRequest("/api/v1/users",
+//	    WithParams(map[string]string{"page": "1"}),
+//	    WithBody([]byte(`{"name": "John"}`)),
+//	)
 type Request struct {
-	// The request path to be used.  This value is appened to the BaseUrl set
-	// in the HTTP client to form the full URL of the request.
+	// Path is the request path appended to the base URL.
+	// This should start with a forward slash (e.g., "/api/v1/users").
 	Path string
 
-	// The query parameters used to construct the query string for the request.
+	// Params are query parameters appended to the URL as a query string.
+	// Example: {"page": "1", "limit": "10"} becomes "?page=1&limit=10"
 	Params map[string]string
 
-	// The HTTP headers to be sent to the remote host
+	// Headers are custom HTTP headers to send with the request.
+	// Note: Default headers (Content-Type, Accept) are set automatically.
 	Headers map[string]string
 
-	// The HTTP body to be send to the remote host
+	// Body is the request body sent to the server.
+	// Typically contains JSON-encoded data for POST, PUT, and PATCH requests.
 	Body []byte
 
-	// Enable or disable logging this request
+	// NoLog suppresses request body logging when true.
+	// Use this for requests containing sensitive data like passwords or tokens.
 	NoLog bool
 }
 
-// Defines a new HTTP request object.
+// NewRequest creates a new HTTP request with the specified path and options.
+//
+// The path parameter is required and specifies the API endpoint path.
+// Optional parameters can be configured using functional options like
+// WithParams, WithBody, WithHeaders, and WithNoLog.
+//
+// Example:
+//
+//	// Simple GET request
+//	req := NewRequest("/api/v1/users")
+//
+//	// POST request with body and query parameters
+//	req := NewRequest("/api/v1/users",
+//	    WithParams(map[string]string{"notify": "true"}),
+//	    WithBody([]byte(`{"name": "Alice", "email": "alice@example.com"}`)),
+//	)
+//
+//	// Request with sensitive data (no logging)
+//	req := NewRequest("/login",
+//	    WithBody([]byte(`{"username": "admin", "password": "secret"}`)),
+//	    WithNoLog(true),
+//	)
 func NewRequest(path string, opts ...RequestOption) *Request {
 	req := &Request{Path: path}
 	for _, opt := range opts {
@@ -36,34 +74,77 @@ func NewRequest(path string, opts ...RequestOption) *Request {
 	return req
 }
 
-// Sets the HTTP headers to be sent to the remote host for the specified
-// request.
+// WithHeaders returns a RequestOption that sets custom HTTP headers.
+//
+// The provided headers will be added to the request. Note that some headers
+// like Content-Type and Accept are set automatically by the HTTP client.
+//
+// Example:
+//
+//	req := NewRequest("/api/v1/data",
+//	    WithHeaders(map[string]string{
+//	        "X-Custom-Header": "value",
+//	        "Authorization": "Bearer token",
+//	    }),
+//	)
 func WithHeaders(v map[string]string) RequestOption {
 	return func(r *Request) {
 		r.Headers = v
 	}
 }
 
-// Sets the query string appended to the end of the URL to be sent to the
-// remote host for the specified request
+// WithParams returns a RequestOption that sets query string parameters.
+//
+// The parameters are appended to the URL as a query string. Parameter keys
+// and values are automatically URL-encoded.
+//
+// Example:
+//
+//	req := NewRequest("/api/v1/users",
+//	    WithParams(map[string]string{
+//	        "page": "1",
+//	        "limit": "50",
+//	        "status": "active",
+//	    }),
+//	)
+//	// Results in: /api/v1/users?page=1&limit=50&status=active
 func WithParams(v map[string]string) RequestOption {
 	return func(r *Request) {
 		r.Params = v
 	}
 }
 
-// Sets the body of the request message to be sent to the remote host for the
-// specified request.
+// WithBody returns a RequestOption that sets the request body.
+//
+// The body should typically contain JSON-encoded data for POST, PUT, and
+// PATCH requests. For GET and DELETE requests, the body is usually empty.
+//
+// Example:
+//
+//	data := map[string]interface{}{
+//	    "name": "New Project",
+//	    "description": "A project description",
+//	}
+//	body, _ := json.Marshal(data)
+//	req := NewRequest("/api/v1/projects", WithBody(body))
 func WithBody(v []byte) RequestOption {
 	return func(r *Request) {
 		r.Body = v
 	}
 }
 
-// NoLog allows a calling function to disable logging to stdout or file for
-// this request.  This is useful when making API calls where the calling
-// function does not want reveal sensitive information such as calling
-// `/login` for example.
+// WithNoLog returns a RequestOption that disables request body logging.
+//
+// When set to true, the request body will not be logged even when debug
+// logging is enabled. This is important for requests containing sensitive
+// information like passwords, API keys, or tokens.
+//
+// Example:
+//
+//	req := NewRequest("/login",
+//	    WithBody([]byte(`{"username": "admin", "password": "secret123"}`)),
+//	    WithNoLog(true), // Password won't appear in logs
+//	)
 func WithNoLog(v bool) RequestOption {
 	return func(r *Request) {
 		r.NoLog = v
