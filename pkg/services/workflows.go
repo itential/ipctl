@@ -9,8 +9,8 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/itential/ipctl/internal/logging"
 	"github.com/itential/ipctl/pkg/client"
-	"github.com/itential/ipctl/pkg/logger"
 )
 
 const (
@@ -127,7 +127,7 @@ func NewWorkflow(name string) Workflow {
 // server.  If there are no configured workflows, this function will return an
 // empty array.
 func (svc *WorkflowService) GetAll() ([]Workflow, error) {
-	logger.Trace()
+	logging.Trace()
 
 	var res getWorkflowsResponse
 	var workflows []Workflow
@@ -154,7 +154,7 @@ func (svc *WorkflowService) GetAll() ([]Workflow, error) {
 		skip += limit
 	}
 
-	logger.Info("Found %v workflow(s)", len(workflows))
+	logging.Info("Found %v workflow(s)", len(workflows))
 
 	return workflows, nil
 
@@ -167,7 +167,7 @@ func (svc *WorkflowService) GetAll() ([]Workflow, error) {
 // could be returned from the server.  In this case, this function will return
 // an error with message 'unable to find workflow'
 func (svc *WorkflowService) Get(name string) (*Workflow, error) {
-	logger.Trace()
+	logging.Trace()
 
 	var res getWorkflowsResponse
 
@@ -183,7 +183,7 @@ func (svc *WorkflowService) Get(name string) (*Workflow, error) {
 	}
 
 	if res.Total > 1 {
-		logger.Debug("Get() workflows returned more than one workflow.  This is due to more than one workflow with the same name")
+		logging.Debug("Get() workflows returned more than one workflow.  This is due to more than one workflow with the same name")
 		return nil, errors.New("unable to find workflow")
 	}
 
@@ -194,7 +194,7 @@ func (svc *WorkflowService) Get(name string) (*Workflow, error) {
 // workflow will always be created even if another workflow by the same name
 // already exists.
 func (svc *WorkflowService) Create(in Workflow) (*Workflow, error) {
-	logger.Trace()
+	logging.Trace()
 
 	type Response struct {
 		Created *Workflow `json:"created"`
@@ -218,7 +218,7 @@ func (svc *WorkflowService) Create(in Workflow) (*Workflow, error) {
 // the server.  If the workflow does not exist, this function will return an
 // error.
 func (svc *WorkflowService) Delete(name string) error {
-	logger.Trace()
+	logging.Trace()
 	return svc.BaseService.Delete(
 		fmt.Sprintf("/workflow_builder/workflows/delete/%s", name),
 	)
@@ -228,7 +228,7 @@ func (svc *WorkflowService) Delete(name string) error {
 // the same name already exists on the server, this function will return an
 // error.
 func (svc *WorkflowService) Import(in Workflow) (*Workflow, error) {
-	logger.Trace()
+	logging.Trace()
 
 	body := map[string]interface{}{
 		"automations": []interface{}{in},
@@ -251,7 +251,7 @@ func (svc *WorkflowService) Import(in Workflow) (*Workflow, error) {
 // differents from a Get in that the CreateBy and UpdatedBy fields are
 // expanded.
 func (svc *WorkflowService) Export(name string) (*Workflow, error) {
-	logger.Trace()
+	logging.Trace()
 
 	body := map[string]interface{}{
 		"options": map[string]interface{}{
@@ -276,7 +276,7 @@ func (svc *WorkflowService) Export(name string) (*Workflow, error) {
 // An exported workflow differs from Get in that the CreatedBy and UpdatedBy
 // fields are expanded.
 func (svc *WorkflowService) ExportById(id string) (*Workflow, error) {
-	logger.Trace()
+	logging.Trace()
 
 	body := map[string]interface{}{
 		"options": map[string]interface{}{
@@ -301,7 +301,7 @@ func (svc *WorkflowService) ExportById(id string) (*Workflow, error) {
 // This method fetches all workflows and filters by ID client-side.
 // DEPRECATED: Business logic method - prefer using resources.WorkflowResource.GetById
 func (svc *WorkflowService) GetById(id string) (*Workflow, error) {
-	logger.Trace()
+	logging.Trace()
 
 	workflows, err := svc.GetAll()
 	if err != nil {
@@ -320,7 +320,7 @@ func (svc *WorkflowService) GetById(id string) (*Workflow, error) {
 // Clear removes all workflows from the server by deleting each workflow individually.
 // DEPRECATED: Business logic method - prefer using resources.WorkflowResource.Clear
 func (svc *WorkflowService) Clear() error {
-	logger.Trace()
+	logging.Trace()
 
 	workflows, err := svc.GetAll()
 	if err != nil {
@@ -340,7 +340,7 @@ func (svc *WorkflowService) Clear() error {
 // The workflow must have a valid ID field. Returns the updated workflow
 // or an error if the update fails.
 func (svc *WorkflowService) Update(in Workflow) (*Workflow, error) {
-	logger.Trace()
+	logging.Trace()
 
 	var res *Workflow
 

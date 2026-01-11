@@ -9,7 +9,7 @@ import (
 	"strings"
 
 	"github.com/itential/ipctl/internal/cmdutils"
-	"github.com/itential/ipctl/pkg/logger"
+	"github.com/itential/ipctl/internal/logging"
 )
 
 const descriptorsDir = "descriptors"
@@ -66,7 +66,7 @@ func loadDescriptors() Descriptors {
 
 	entries, err := content.ReadDir(descriptorsDir)
 	if err != nil {
-		logger.Fatal(err, "failed to read descriptors directory")
+		logging.Fatal(err, "failed to read descriptors directory")
 	}
 
 	for _, ele := range entries {
@@ -75,7 +75,7 @@ func loadDescriptors() Descriptors {
 
 		data, err := content.ReadFile(fn)
 		if err != nil {
-			logger.Fatal(err, "failed to read descriptor")
+			logging.Fatal(err, "failed to read descriptor")
 		}
 
 		descriptors[name] = cmdutils.LoadDescriptor(data)

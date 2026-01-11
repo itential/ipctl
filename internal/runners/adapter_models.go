@@ -5,9 +5,9 @@
 package runners
 
 import (
+	"github.com/itential/ipctl/internal/logging"
 	"github.com/itential/ipctl/pkg/client"
 	"github.com/itential/ipctl/pkg/config"
-	"github.com/itential/ipctl/pkg/logger"
 	"github.com/itential/ipctl/pkg/services"
 )
 
@@ -25,7 +25,7 @@ func NewAdapterModelRunner(c client.Client, cfg *config.Config) *AdapterModelRun
 
 // Get implements the `get adapter-models` command
 func (r *AdapterModelRunner) Get(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	res, err := r.service.GetAll()
 	if err != nil {
@@ -39,6 +39,6 @@ func (r *AdapterModelRunner) Get(in Request) (*Response, error) {
 }
 
 func (r *AdapterModelRunner) Describe(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 	return notImplemented(in)
 }

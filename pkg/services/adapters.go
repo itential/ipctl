@@ -8,8 +8,8 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/itential/ipctl/internal/logging"
 	"github.com/itential/ipctl/pkg/client"
-	"github.com/itential/ipctl/pkg/logger"
 )
 
 // AdapterOperationResponse represents the standard response structure
@@ -57,7 +57,7 @@ func NewAdapterService(c client.Client) *AdapterService {
 // calling function as an array of type Adapter.  If there are no configured
 // adapters, this function will return an empty array.
 func (svc *AdapterService) GetAll() ([]Adapter, error) {
-	logger.Trace()
+	logging.Trace()
 
 	type Metadata struct {
 		ActiveSync bool `json:"activeSync"`
@@ -87,7 +87,7 @@ func (svc *AdapterService) GetAll() ([]Adapter, error) {
 		adapters = append(adapters, ele.Data)
 	}
 
-	logger.Info("Found %v adapter(s)", res.Total)
+	logging.Info("Found %v adapter(s)", res.Total)
 
 	return adapters, nil
 }
@@ -96,7 +96,7 @@ func (svc *AdapterService) GetAll() ([]Adapter, error) {
 // the adapter exists, it is returned to the calling function.  If the
 // specified adapter does not exist, an error is returned.
 func (svc *AdapterService) Get(name string) (*Adapter, error) {
-	logger.Trace()
+	logging.Trace()
 
 	type Metadata struct {
 		ActiveSync bool `json:"activeSync"`
@@ -122,7 +122,7 @@ func (svc *AdapterService) Get(name string) (*Adapter, error) {
 // Create creates a new adapter instance with the provided configuration.
 // It returns the created adapter on success or an error if the operation fails.
 func (svc *AdapterService) Create(in Adapter) (*Adapter, error) {
-	logger.Trace()
+	logging.Trace()
 
 	body := map[string]interface{}{"properties": in}
 
@@ -142,7 +142,7 @@ func (svc *AdapterService) Create(in Adapter) (*Adapter, error) {
 		return nil, err
 	}
 
-	logger.Info("%s", res.Message)
+	logging.Info("%s", res.Message)
 
 	return res.Data, nil
 }
@@ -150,14 +150,14 @@ func (svc *AdapterService) Create(in Adapter) (*Adapter, error) {
 // Delete removes the adapter instance with the specified name.
 // It returns an error if the adapter doesn't exist or the operation fails.
 func (svc *AdapterService) Delete(name string) error {
-	logger.Trace()
+	logging.Trace()
 	return svc.BaseService.Delete(fmt.Sprintf("/adapters/%s", name))
 }
 
 // Import imports an adapter configuration, creating or updating the adapter instance.
 // It returns the imported adapter on success or an error if the operation fails.
 func (svc *AdapterService) Import(in Adapter) (*Adapter, error) {
-	logger.Trace()
+	logging.Trace()
 
 	type Response struct {
 		Status  string   `json:"status"`
@@ -175,7 +175,7 @@ func (svc *AdapterService) Import(in Adapter) (*Adapter, error) {
 		return nil, err
 	}
 
-	logger.Info("%s", res.Message)
+	logging.Info("%s", res.Message)
 
 	return res.Data, nil
 }
@@ -183,7 +183,7 @@ func (svc *AdapterService) Import(in Adapter) (*Adapter, error) {
 // Update modifies an existing adapter instance with the provided configuration.
 // It returns the updated adapter on success or an error if the operation fails.
 func (svc *AdapterService) Update(in Adapter) (*Adapter, error) {
-	logger.Trace()
+	logging.Trace()
 
 	type Response struct {
 		Status  string   `json:"status"`
@@ -199,7 +199,7 @@ func (svc *AdapterService) Update(in Adapter) (*Adapter, error) {
 		return nil, err
 	}
 
-	logger.Info("%s", res.Message)
+	logging.Info("%s", res.Message)
 
 	return res.Data, nil
 }
@@ -207,28 +207,28 @@ func (svc *AdapterService) Update(in Adapter) (*Adapter, error) {
 // Export retrieves the adapter configuration for the specified adapter name,
 // returning it in a format suitable for backup or import operations.
 func (svc *AdapterService) Export(name string) (*Adapter, error) {
-	logger.Trace()
+	logging.Trace()
 	return svc.Get(name)
 }
 
 // Start initiates the specified adapter instance, making it active and ready to process requests.
 // It returns an error if the adapter doesn't exist or cannot be started.
 func (svc *AdapterService) Start(name string) error {
-	logger.Trace()
+	logging.Trace()
 	return svc.Put(fmt.Sprintf("/adapters/%s/start", name), nil, nil)
 }
 
 // Stop halts the specified adapter instance, making it inactive.
 // It returns an error if the adapter doesn't exist or cannot be stopped.
 func (svc *AdapterService) Stop(name string) error {
-	logger.Trace()
+	logging.Trace()
 	return svc.Put(fmt.Sprintf("/adapters/%s/stop", name), nil, nil)
 }
 
 // Restart orchestrates stopping and then starting an adapter.
 // DEPRECATED: Business logic method - prefer using resources.AdapterResource.Restart
 func (svc *AdapterService) Restart(name string) error {
-	logger.Trace()
+	logging.Trace()
 
 	if err := svc.Stop(name); err != nil {
 		return err

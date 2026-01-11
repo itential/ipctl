@@ -10,10 +10,10 @@ import (
 	"strings"
 
 	"github.com/itential/ipctl/internal/flags"
+	"github.com/itential/ipctl/internal/logging"
 	"github.com/itential/ipctl/internal/utils"
 	"github.com/itential/ipctl/pkg/client"
 	"github.com/itential/ipctl/pkg/config"
-	"github.com/itential/ipctl/pkg/logger"
 	"github.com/itential/ipctl/pkg/services"
 )
 
@@ -37,7 +37,7 @@ Reader interface
 
 // Get implements the `get command-templates` command
 func (r *AnalyticTemplateRunner) Get(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	options := in.Options.(*flags.AnalyticTemplateGetOptions)
 
@@ -64,7 +64,7 @@ func (r *AnalyticTemplateRunner) Get(in Request) (*Response, error) {
 
 // Describe implements the `describe command-template <name>` command
 func (r *AnalyticTemplateRunner) Describe(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	name := in.Args[0]
 
@@ -86,7 +86,7 @@ Writer Interface
 */
 
 func (r *AnalyticTemplateRunner) Create(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	name := in.Args[0]
 
@@ -119,7 +119,7 @@ func (r *AnalyticTemplateRunner) Create(in Request) (*Response, error) {
 }
 
 func (r *AnalyticTemplateRunner) Delete(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	name := in.Args[0]
 
@@ -138,7 +138,7 @@ func (r *AnalyticTemplateRunner) Delete(in Request) (*Response, error) {
 }
 
 func (r *AnalyticTemplateRunner) Clear(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	elements, err := r.service.GetAll()
 	if err != nil {
@@ -163,7 +163,7 @@ Importer Interface
 */
 
 func (r *AnalyticTemplateRunner) Import(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	common := in.Common.(*flags.AssetImportCommon)
 
@@ -189,7 +189,7 @@ Exporter Interface
 */
 
 func (r *AnalyticTemplateRunner) Export(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	name := in.Args[0]
 
@@ -216,7 +216,7 @@ Copier Interface
 */
 
 func (r *AnalyticTemplateRunner) Copy(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	res, err := Copy(CopyRequest{Request: in, Type: "analytic-template"}, r)
 	if err != nil {
@@ -229,7 +229,7 @@ func (r *AnalyticTemplateRunner) Copy(in Request) (*Response, error) {
 }
 
 func (r *AnalyticTemplateRunner) CopyFrom(profile, name string) (any, error) {
-	logger.Trace()
+	logging.Trace()
 
 	client, cancel, err := NewClient(profile, r.config)
 	if err != nil {
@@ -245,7 +245,7 @@ func (r *AnalyticTemplateRunner) CopyFrom(profile, name string) (any, error) {
 }
 
 func (r *AnalyticTemplateRunner) CopyTo(profile string, in any, replace bool) (any, error) {
-	logger.Trace()
+	logging.Trace()
 
 	client, cancel, err := NewClient(profile, r.config)
 	if err != nil {
@@ -263,7 +263,7 @@ func (r *AnalyticTemplateRunner) CopyTo(profile string, in any, replace bool) (a
 		} else if err != nil {
 			return nil, err
 		}
-		logger.Info("Deleting existing command template `%s` from `%s`", name, profile)
+		logging.Info("Deleting existing command template `%s` from `%s`", name, profile)
 		if err := svc.Delete(name); err != nil {
 			return nil, err
 		}
@@ -283,7 +283,7 @@ Private functions
 */
 
 func (r *AnalyticTemplateRunner) importAnalyticTemplate(in services.AnalyticTemplate, replace bool) error {
-	logger.Trace()
+	logging.Trace()
 
 	res, err := r.service.GetAll()
 	if err != nil {

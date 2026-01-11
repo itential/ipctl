@@ -12,8 +12,8 @@ import (
 	"strings"
 
 	"github.com/itential/ipctl/internal/flags"
+	"github.com/itential/ipctl/internal/logging"
 	"github.com/itential/ipctl/internal/utils"
-	"github.com/itential/ipctl/pkg/logger"
 	"github.com/mitchellh/go-homedir"
 	giturls "github.com/whilp/git-urls"
 )
@@ -22,7 +22,7 @@ import (
 // will extract the path, repository information (if provided) and load the
 // data from disk into the ptr argument
 func importUnmarshalFromRequest(in Request, ptr any) error {
-	logger.Trace()
+	logging.Trace()
 
 	common := in.Common.(*flags.AssetImportCommon)
 
@@ -42,7 +42,7 @@ func importUnmarshalFromRequest(in Request, ptr any) error {
 // the data form disk.  This function will read the data from the file provided
 // by path and unmarshal the data into the struct pointer.
 func importLoadFromDisk(path string, ptr any) error {
-	logger.Trace()
+	logging.Trace()
 
 	if !utils.PathExists(path) {
 		return errors.New(fmt.Sprintf("import path `%s` does not exist", path))
@@ -64,7 +64,7 @@ func importLoadFromDisk(path string, ptr any) error {
 // argument is specified, this function will clone the Git repository and
 // return the full path.
 func importGetPathFromRequest(in Request) (string, error) {
-	logger.Trace()
+	logging.Trace()
 
 	path := in.Args[0]
 
@@ -86,7 +86,7 @@ func importGetPathFromRequest(in Request) (string, error) {
 }
 
 func importNewRepositoryFromRequest(in Request) (*Repository, error) {
-	logger.Trace()
+	logging.Trace()
 
 	common := in.Common.(flags.Gitter)
 

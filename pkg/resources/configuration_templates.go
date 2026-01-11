@@ -7,7 +7,7 @@ package resources
 import (
 	"fmt"
 
-	"github.com/itential/ipctl/pkg/logger"
+	"github.com/itential/ipctl/internal/logging"
 	"github.com/itential/ipctl/pkg/services"
 )
 
@@ -28,7 +28,7 @@ func NewConfigurationTemplateResource(svc services.ConfigurationTemplateServicer
 // GetByName retrieves a configuration template by name using client-side filtering.
 // It fetches all templates and searches for a matching name.
 func (r *ConfigurationTemplateResource) GetByName(name string) (*services.ConfigurationTemplate, error) {
-	logger.Trace()
+	logging.Trace()
 
 	templates, err := r.service.GetAll()
 	if err != nil {
@@ -42,6 +42,6 @@ func (r *ConfigurationTemplateResource) GetByName(name string) (*services.Config
 		}
 	}
 
-	logger.Error(nil, "configuration template not found")
+	logging.Error(nil, "configuration template not found")
 	return nil, fmt.Errorf("configuration template not found")
 }

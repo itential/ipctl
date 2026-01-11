@@ -8,8 +8,8 @@ import (
 	"net/http"
 	"net/url"
 
+	"github.com/itential/ipctl/internal/logging"
 	"github.com/itential/ipctl/pkg/client"
-	"github.com/itential/ipctl/pkg/logger"
 )
 
 type ApiService struct {
@@ -21,7 +21,7 @@ func NewApiService(c client.Client) *ApiService {
 }
 
 func (svc *ApiService) request(m string, uri string, body map[string]interface{}, expectedStatusCode int) (string, error) {
-	logger.Trace()
+	logging.Trace()
 
 	u, err := url.Parse(uri)
 	if err != nil {
@@ -57,26 +57,26 @@ func (svc *ApiService) request(m string, uri string, body map[string]interface{}
 }
 
 func (svc *ApiService) Get(url string, expectedStatusCode int) (string, error) {
-	logger.Trace()
+	logging.Trace()
 	return svc.request(http.MethodGet, url, nil, expectedStatusCode)
 }
 
 func (svc *ApiService) Post(url string, body map[string]interface{}, expectedStatusCode int) (string, error) {
-	logger.Trace()
+	logging.Trace()
 	return svc.request(http.MethodPost, url, body, expectedStatusCode)
 }
 
 func (svc *ApiService) Put(url string, body map[string]interface{}, expectedStatusCode int) (string, error) {
-	logger.Trace()
+	logging.Trace()
 	return svc.request(http.MethodPut, url, body, expectedStatusCode)
 }
 
 func (svc *ApiService) Delete(url string, expectedStatusCode int) (string, error) {
-	logger.Trace()
+	logging.Trace()
 	return svc.request(http.MethodDelete, url, nil, expectedStatusCode)
 }
 
 func (svc *ApiService) Patch(url string, body map[string]interface{}, expectedStatusCode int) (string, error) {
-	logger.Trace()
+	logging.Trace()
 	return svc.request(http.MethodPatch, url, nil, expectedStatusCode)
 }

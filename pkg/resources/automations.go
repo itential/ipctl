@@ -8,7 +8,7 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/itential/ipctl/pkg/logger"
+	"github.com/itential/ipctl/internal/logging"
 	"github.com/itential/ipctl/pkg/services"
 )
 
@@ -59,7 +59,7 @@ func (r *AutomationResource) ImportTransformed(automations []any) (*services.Aut
 // GetByName retrieves an automation by name using client-side filtering.
 // It fetches all automations and searches for a matching name.
 func (r *AutomationResource) GetByName(name string) (*services.Automation, error) {
-	logger.Trace()
+	logging.Trace()
 
 	automations, err := r.service.GetAll()
 	if err != nil {
@@ -78,7 +78,7 @@ func (r *AutomationResource) GetByName(name string) (*services.Automation, error
 // Clear deletes all automations from the server.
 // This is a bulk operation that orchestrates multiple delete calls.
 func (r *AutomationResource) Clear() error {
-	logger.Trace()
+	logging.Trace()
 
 	automations, err := r.service.GetAll()
 	if err != nil {
@@ -93,7 +93,7 @@ func (r *AutomationResource) Clear() error {
 // Import imports an automation with business rule validation and data transformation.
 // Validates GBAC rules and ensures triggers are properly formatted before import.
 func (r *AutomationResource) Import(in services.Automation) (*services.Automation, error) {
-	logger.Trace()
+	logging.Trace()
 
 	// Business rule validation: write group must be configured when read group is present
 	if err := ValidateGbacRules(in.Gbac.Read, in.Gbac.Write); err != nil {
@@ -126,7 +126,7 @@ func (r *AutomationResource) Import(in services.Automation) (*services.Automatio
 // Export exports an automation with trigger type transformation.
 // Handles polymorphic trigger types and converts them to proper typed structures.
 func (r *AutomationResource) Export(id string) (*services.Automation, error) {
-	logger.Trace()
+	logging.Trace()
 
 	automation, err := r.service.Export(id)
 	if err != nil {
@@ -152,7 +152,7 @@ func (r *AutomationResource) Export(id string) (*services.Automation, error) {
 func (r *AutomationResource) transformTrigger(ele interface{}) (services.Trigger, error) {
 	b, err := json.Marshal(ele.(map[string]interface{}))
 	if err != nil {
-		logger.Fatal(err, "error trying to marshal trigger data")
+		logging.Fatal(err, "error trying to marshal trigger data")
 		return nil, err
 	}
 
@@ -162,33 +162,33 @@ func (r *AutomationResource) transformTrigger(ele interface{}) (services.Trigger
 	case "endpoint":
 		var t services.EndpointTrigger
 		if err := json.Unmarshal(b, &t); err != nil {
-			logger.Fatal(err, "error trying to decode endpoint trigger")
+			logging.Fatal(err, "error trying to decode endpoint trigger")
 			return nil, err
 		}
 		return t, nil
 	case "eventSystem":
 		var t services.EventTrigger
 		if err := json.Unmarshal(b, &t); err != nil {
-			logger.Fatal(err, "error trying to decode event trigger")
+			logging.Fatal(err, "error trying to decode event trigger")
 			return nil, err
 		}
 		return t, nil
 	case "manual":
 		var t services.ManualTrigger
 		if err := json.Unmarshal(b, &t); err != nil {
-			logger.Fatal(err, "error trying to decode manual trigger")
+			logging.Fatal(err, "error trying to decode manual trigger")
 			return nil, err
 		}
 		return t, nil
 	case "schedule":
 		var t services.ScheduleTrigger
 		if err := json.Unmarshal(b, &t); err != nil {
-			logger.Fatal(err, "error trying to decode schedule trigger")
+			logging.Fatal(err, "error trying to decode schedule trigger")
 			return nil, err
 		}
 		return t, nil
 	default:
-		logger.Error(nil, "unknown trigger type: %s", triggerType)
+		logging.Error(nil, "unknown trigger type: %s", triggerType)
 		return nil, fmt.Errorf("unknown trigger type: %s", triggerType)
 	}
 }

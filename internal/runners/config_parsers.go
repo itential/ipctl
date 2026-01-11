@@ -7,9 +7,9 @@ package runners
 import (
 	"strings"
 
+	"github.com/itential/ipctl/internal/logging"
 	"github.com/itential/ipctl/pkg/client"
 	"github.com/itential/ipctl/pkg/config"
-	"github.com/itential/ipctl/pkg/logger"
 	"github.com/itential/ipctl/pkg/services"
 )
 
@@ -27,7 +27,7 @@ func NewConfigurationParserRunner(client client.Client, cfg *config.Config) *Con
 
 // Get is the implementation of the command `get devices`
 func (r *ConfigurationParserRunner) Get(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	devices, err := r.service.GetAll()
 	if err != nil {
@@ -48,7 +48,7 @@ func (r *ConfigurationParserRunner) Get(in Request) (*Response, error) {
 }
 
 func (r *ConfigurationParserRunner) Describe(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 	return notImplemented(in)
 	/*
 

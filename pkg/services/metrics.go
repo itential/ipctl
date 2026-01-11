@@ -5,8 +5,8 @@
 package services
 
 import (
+	"github.com/itential/ipctl/internal/logging"
 	"github.com/itential/ipctl/pkg/client"
-	"github.com/itential/ipctl/pkg/logger"
 )
 
 type PrometheusMetric struct {
@@ -27,7 +27,7 @@ func NewMetricService(c client.Client) *MetricService {
 // Get will retrieve the server Prometheus metrics and return them to to
 // calling function.  The format for the return is a string in text format.
 func (svc *MetricService) Get() string {
-	logger.Trace()
+	logging.Trace()
 
 	if err := svc.BaseService.Get("/prometheus_metrics", nil); err != nil {
 		return ""

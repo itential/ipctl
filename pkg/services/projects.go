@@ -10,8 +10,8 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/itential/ipctl/internal/logging"
 	"github.com/itential/ipctl/pkg/client"
-	"github.com/itential/ipctl/pkg/logger"
 )
 
 type ProjectComponent struct {
@@ -75,7 +75,7 @@ type Project struct {
 // Import returns a map representation of the Project suitable for importing,
 // excluding non-importable fields like componentIidIndex, members, and accessControl.
 func (p Project) Import() map[string]interface{} {
-	logger.Trace()
+	logging.Trace()
 	return map[string]interface{}{
 		"_id":             p.Id,
 		"name":            p.Name,
@@ -107,7 +107,7 @@ func NewProjectService(c client.Client) *ProjectService {
 // return them as an array of Projects.  If there are no configured projects on
 // the server, this function will return an empty array.
 func (svc *ProjectService) GetAll() ([]Project, error) {
-	logger.Trace()
+	logging.Trace()
 
 	type Response struct {
 		Message  string    `json:"message"`
@@ -140,7 +140,7 @@ func (svc *ProjectService) GetAll() ([]Project, error) {
 		skip += limit
 	}
 
-	logger.Info("Found %v project(s)", len(projects))
+	logging.Info("Found %v project(s)", len(projects))
 
 	return projects, nil
 }
@@ -148,7 +148,7 @@ func (svc *ProjectService) GetAll() ([]Project, error) {
 // Get retrieves a project by its identifier. If the project
 // does not exist, this function will return an error.
 func (svc *ProjectService) Get(id string) (*Project, error) {
-	logger.Trace()
+	logging.Trace()
 
 	type Response struct {
 		Message  string   `json:"message"`
@@ -164,7 +164,7 @@ func (svc *ProjectService) Get(id string) (*Project, error) {
 		return nil, err
 	}
 
-	logger.Info("%s", res.Message)
+	logging.Info("%s", res.Message)
 
 	return res.Data, nil
 }
@@ -172,7 +172,7 @@ func (svc *ProjectService) Get(id string) (*Project, error) {
 // Create creates a new project with the specified name.
 // Returns the created project or an error if creation fails.
 func (svc *ProjectService) Create(name string) (*Project, error) {
-	logger.Trace()
+	logging.Trace()
 
 	body := map[string]interface{}{
 		"name":       name,
@@ -195,7 +195,7 @@ func (svc *ProjectService) Create(name string) (*Project, error) {
 		return nil, err
 	}
 
-	logger.Info("%s", res.Message)
+	logging.Info("%s", res.Message)
 
 	return res.Data, nil
 }
@@ -203,7 +203,7 @@ func (svc *ProjectService) Create(name string) (*Project, error) {
 // Delete removes a project by its identifier.
 // Returns an error if the deletion fails.
 func (svc *ProjectService) Delete(id string) error {
-	logger.Trace()
+	logging.Trace()
 	return svc.BaseService.Delete(
 		fmt.Sprintf("/automation-studio/projects/%s", id),
 	)
@@ -213,7 +213,7 @@ func (svc *ProjectService) Delete(id string) error {
 // The data parameter should already be prepared with proper structure and transformations.
 // Returns the imported project or an error if the import fails.
 func (svc *ProjectService) ImportTransformed(data map[string]interface{}) (*Project, error) {
-	logger.Trace()
+	logging.Trace()
 
 	type Response struct {
 		Message  string                 `json:"message"`
@@ -231,7 +231,7 @@ func (svc *ProjectService) ImportTransformed(data map[string]interface{}) (*Proj
 		return nil, err
 	}
 
-	logger.Info("%s", res.Message)
+	logging.Info("%s", res.Message)
 
 	return res.Data, nil
 }
@@ -239,7 +239,7 @@ func (svc *ProjectService) ImportTransformed(data map[string]interface{}) (*Proj
 // Export retrieves a project in export format by its identifier.
 // Returns the project data suitable for export or an error if the export fails.
 func (svc *ProjectService) Export(id string) (*Project, error) {
-	logger.Trace()
+	logging.Trace()
 
 	type Response struct {
 		Message  string   `json:"message"`
@@ -254,7 +254,7 @@ func (svc *ProjectService) Export(id string) (*Project, error) {
 		return nil, err
 	}
 
-	logger.Info("%s", res.Message)
+	logging.Info("%s", res.Message)
 
 	return res.Data, nil
 }
@@ -262,7 +262,7 @@ func (svc *ProjectService) Export(id string) (*Project, error) {
 // UpdateMembers updates the members of a project via PATCH request.
 // The members parameter should contain the complete list of members for the project.
 func (svc *ProjectService) UpdateMembers(projectId string, members []ProjectMember) error {
-	logger.Trace()
+	logging.Trace()
 
 	body := map[string]interface{}{
 		"members": members,
@@ -276,7 +276,7 @@ func (svc *ProjectService) UpdateMembers(projectId string, members []ProjectMemb
 // GetByName retrieves a project by name using client-side filtering.
 // DEPRECATED: Business logic method - prefer using resources.ProjectResource.GetByName
 func (svc *ProjectService) GetByName(name string) (*Project, error) {
-	logger.Trace()
+	logging.Trace()
 
 	projects, err := svc.GetAll()
 	if err != nil {
@@ -295,7 +295,7 @@ func (svc *ProjectService) GetByName(name string) (*Project, error) {
 // Import imports a project with data transformation for server compatibility.
 // DEPRECATED: Business logic method - prefer using resources.ProjectResource.Import
 func (svc *ProjectService) Import(in Project) (*Project, error) {
-	logger.Trace()
+	logging.Trace()
 
 	body := map[string]interface{}{
 		"conflictMode": "insert-new",
@@ -345,7 +345,7 @@ func (svc *ProjectService) transformImport(in map[string]interface{}) {
 // AddMembers adds new members to an existing project.
 // DEPRECATED: Business logic method - prefer using resources.ProjectResource.AddMembers
 func (svc *ProjectService) AddMembers(projectId string, members []ProjectMember) error {
-	logger.Trace()
+	logging.Trace()
 
 	project, err := svc.Get(projectId)
 	if err != nil {

@@ -8,7 +8,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/itential/ipctl/pkg/logger"
+	"github.com/itential/ipctl/internal/logging"
 	"github.com/itential/ipctl/pkg/services"
 )
 
@@ -61,7 +61,7 @@ func (r *TransformationResource) Import(in services.Transformation) (*services.T
 // This method fetches all transformations and filters for the matching name
 // while excluding system-managed transformations.
 func (r *TransformationResource) GetByName(name string) (*services.Transformation, error) {
-	logger.Trace()
+	logging.Trace()
 
 	transformations, err := r.service.GetAll()
 	if err != nil {
@@ -75,14 +75,14 @@ func (r *TransformationResource) GetByName(name string) (*services.Transformatio
 		}
 	}
 
-	logger.Error(nil, "transformation not found")
+	logging.Error(nil, "transformation not found")
 	return nil, fmt.Errorf("transformation not found")
 }
 
 // Clear deletes all transformations from the server.
 // This is a bulk operation that orchestrates multiple delete calls.
 func (r *TransformationResource) Clear() error {
-	logger.Trace()
+	logging.Trace()
 
 	transformations, err := r.service.GetAll()
 	if err != nil {

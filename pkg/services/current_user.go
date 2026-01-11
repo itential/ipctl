@@ -5,8 +5,8 @@
 package services
 
 import (
+	"github.com/itential/ipctl/internal/logging"
 	"github.com/itential/ipctl/pkg/client"
-	"github.com/itential/ipctl/pkg/logger"
 )
 
 type UserGroup struct {
@@ -27,7 +27,7 @@ type CurrentUser struct {
 }
 
 func GetCurrentUser(c client.Client) (*CurrentUser, error) {
-	logger.Trace()
+	logging.Trace()
 
 	svc := NewBaseService(c)
 

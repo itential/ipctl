@@ -5,9 +5,9 @@
 package runners
 
 import (
+	"github.com/itential/ipctl/internal/logging"
 	"github.com/itential/ipctl/pkg/client"
 	"github.com/itential/ipctl/pkg/config"
-	"github.com/itential/ipctl/pkg/logger"
 	"github.com/itential/ipctl/pkg/services"
 )
 
@@ -24,7 +24,7 @@ func NewMethodRunner(client client.Client, cfg *config.Config) *MethodRunner {
 
 // Get implements the `get methods` command
 func (r *MethodRunner) Get(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	methods, err := r.service.GetAll()
 	if err != nil {

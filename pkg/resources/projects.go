@@ -7,7 +7,7 @@ package resources
 import (
 	"encoding/json"
 
-	"github.com/itential/ipctl/pkg/logger"
+	"github.com/itential/ipctl/internal/logging"
 	"github.com/itential/ipctl/pkg/services"
 )
 
@@ -70,7 +70,7 @@ func (r *ProjectResource) UpdateMembers(projectId string, members []services.Pro
 // GetByName retrieves a project by name using client-side filtering.
 // It fetches all projects and searches for a matching name.
 func (r *ProjectResource) GetByName(name string) (*services.Project, error) {
-	logger.Trace()
+	logging.Trace()
 
 	projects, err := r.service.GetAll()
 	if err != nil {
@@ -106,7 +106,7 @@ func (r *ProjectResource) transformImport(in map[string]interface{}) {
 // This method handles the business logic of transforming folder structures
 // before sending to the API.
 func (r *ProjectResource) Import(in services.Project) (*services.Project, error) {
-	logger.Trace()
+	logging.Trace()
 
 	body := map[string]interface{}{
 		"conflictMode": "insert-new",
@@ -137,7 +137,7 @@ func (r *ProjectResource) Import(in services.Project) (*services.Project, error)
 // This method implements the business logic of fetching current members,
 // merging with new members, and updating the project.
 func (r *ProjectResource) AddMembers(projectId string, members []services.ProjectMember) error {
-	logger.Trace()
+	logging.Trace()
 
 	project, err := r.service.Get(projectId)
 	if err != nil {

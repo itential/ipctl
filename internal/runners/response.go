@@ -12,9 +12,9 @@ import (
 	"strings"
 	"text/template"
 
+	"github.com/itential/ipctl/internal/logging"
 	"github.com/itential/ipctl/internal/terminal"
 	"github.com/itential/ipctl/pkg/config"
-	"github.com/itential/ipctl/pkg/logger"
 )
 
 type ResponseOption func(r *Response)
@@ -34,25 +34,25 @@ func (r *Response) String() string {
 	if len(r.Keys) > 0 {
 		table, err := renderTable(r.Object, r.Keys)
 		if err != nil {
-			logger.Fatal(err, "")
+			logging.Fatal(err, "")
 		}
 		return strings.Join(table, "\n")
 	} else if r.Template != "" {
 		tmpl, err := template.New("output").Parse(r.Template)
 		if err != nil {
-			logger.Fatal(err, "")
+			logging.Fatal(err, "")
 		}
 
 		var b bytes.Buffer
 		if err := tmpl.Execute(&b, r.Object); err != nil {
-			logger.Fatal(err, "")
+			logging.Fatal(err, "")
 		}
 
 		return b.String()
 	} else if r.Text == "" && r.Object != nil {
 		b, err := json.MarshalIndent(r.Object, "", "    ")
 		if err != nil {
-			logger.Fatal(err, "")
+			logging.Fatal(err, "")
 		}
 		return string(b)
 	} else if r.Text != "" {

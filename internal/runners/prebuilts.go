@@ -13,10 +13,10 @@ import (
 	"strings"
 
 	"github.com/itential/ipctl/internal/flags"
+	"github.com/itential/ipctl/internal/logging"
 	"github.com/itential/ipctl/internal/utils"
 	"github.com/itential/ipctl/pkg/client"
 	"github.com/itential/ipctl/pkg/config"
-	"github.com/itential/ipctl/pkg/logger"
 	"github.com/itential/ipctl/pkg/services"
 )
 
@@ -42,7 +42,7 @@ Reader interface
 
 // Get implements the "get prebuilts ..." command
 func (r *PrebuiltRunner) Get(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	prebuilts, err := r.service.GetAll()
 	if err != nil {
@@ -58,7 +58,7 @@ func (r *PrebuiltRunner) Get(in Request) (*Response, error) {
 
 // Describe implements the `describe prebuilt ...` command
 func (r *PrebuiltRunner) Describe(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	name := in.Args[0]
 
@@ -81,13 +81,13 @@ Writer interface
 
 // Create implements the `create prebuilt ...` command
 func (r *PrebuiltRunner) Create(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 	return notImplemented(in)
 }
 
 // Delete implementes the `delete prebuilt ...` command
 func (r *PrebuiltRunner) Delete(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	name := in.Args[0]
 
@@ -102,7 +102,7 @@ func (r *PrebuiltRunner) Delete(in Request) (*Response, error) {
 		for _, ele := range prebuilt.Components {
 			switch ele.Type {
 			case "workflow":
-				logger.Info("Checking for workflow: %s\n", ele.Name)
+				logging.Info("Checking for workflow: %s\n", ele.Name)
 
 				svc := services.NewWorkflowService(r.client)
 				exists, err := svc.Get(ele.Name)
@@ -111,7 +111,7 @@ func (r *PrebuiltRunner) Delete(in Request) (*Response, error) {
 					if !strings.HasPrefix(err.Error(), "workflow not found") {
 						return nil, err
 					}
-					logger.Info("Workflow %s not found, skipping", ele.Name)
+					logging.Info("Workflow %s not found, skipping", ele.Name)
 				}
 				if exists != nil {
 					if err := svc.Delete(ele.Name); err != nil {
@@ -119,7 +119,7 @@ func (r *PrebuiltRunner) Delete(in Request) (*Response, error) {
 					}
 				}
 			case "transformation":
-				logger.Info("Checking transformation: %s", ele.Name)
+				logging.Info("Checking transformation: %s", ele.Name)
 				svc := services.NewTransformationService(r.client)
 				exists, err := svc.Get(ele.Id)
 				if err != nil {
@@ -131,7 +131,7 @@ func (r *PrebuiltRunner) Delete(in Request) (*Response, error) {
 					if httpMessage["code"].(float64) != 404 {
 						return nil, err
 					}
-					logger.Info("Transformation `%s` does not exist, skipping", ele.Name)
+					logging.Info("Transformation `%s` does not exist, skipping", ele.Name)
 				}
 				if exists != nil {
 					if err := svc.Delete(ele.Id); err != nil {
@@ -139,7 +139,7 @@ func (r *PrebuiltRunner) Delete(in Request) (*Response, error) {
 					}
 				}
 			case "json-forms":
-				logger.Info("JSON Form: %s\n", ele.Name)
+				logging.Info("JSON Form: %s\n", ele.Name)
 				svc := services.NewJsonFormService(r.client)
 				exists, err := svc.Get(ele.Id)
 				if err != nil {
@@ -153,7 +153,7 @@ func (r *PrebuiltRunner) Delete(in Request) (*Response, error) {
 					}
 				}
 			case "automation":
-				logger.Info("Automation: %s\n", ele.Name)
+				logging.Info("Automation: %s\n", ele.Name)
 				svc := services.NewAutomationService(r.client)
 				exists, err := svc.Get(ele.Id)
 				if err != nil {
@@ -164,7 +164,7 @@ func (r *PrebuiltRunner) Delete(in Request) (*Response, error) {
 					if !strings.HasPrefix(message["message"].(string), "Cannot find Automation") {
 						return nil, err
 					}
-					logger.Info("Automation `%s` not found, skipping delete", ele.Name)
+					logging.Info("Automation `%s` not found, skipping delete", ele.Name)
 				}
 				if exists != nil {
 					if err := svc.Delete(ele.Id); err != nil {
@@ -173,7 +173,7 @@ func (r *PrebuiltRunner) Delete(in Request) (*Response, error) {
 				}
 
 			case "mop-template":
-				logger.Info("MOP Template: %s\n", ele.Name)
+				logging.Info("MOP Template: %s\n", ele.Name)
 				svc := services.NewCommandTemplateService(r.client)
 				exists, err := svc.Get(ele.Id)
 				if err != nil {
@@ -187,7 +187,7 @@ func (r *PrebuiltRunner) Delete(in Request) (*Response, error) {
 					}
 				}
 			case "template":
-				logger.Info("Template: %s", ele.Name)
+				logging.Info("Template: %s", ele.Name)
 				svc := services.NewTemplateService(r.client)
 				exists, err := svc.GetByName(ele.Name)
 				if err != nil {
@@ -216,7 +216,7 @@ func (r *PrebuiltRunner) Delete(in Request) (*Response, error) {
 
 // Clear implements the `clear prebuilts ...` command
 func (r *PrebuiltRunner) Clear(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	cnt := 0
 
@@ -243,7 +243,7 @@ Importer interface
 
 // Import implements the `import prebuilt ...` command
 func (r *PrebuiltRunner) Import(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	common := in.Common.(*flags.AssetImportCommon)
 
@@ -321,7 +321,7 @@ Exporter interface
 
 // Export implements the `export prebuilt ...` command
 func (r *PrebuiltRunner) Export(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	name := in.Args[0]
 
@@ -391,10 +391,10 @@ Private functions
 */
 
 func (r *PrebuiltRunner) validatePackage(in services.PrebuiltPackage) error {
-	logger.Trace()
+	logging.Trace()
 
 	for _, ele := range in.Bundles {
-		logger.Debug("validating prebuilt asset of type %s", ele.Type)
+		logging.Debug("validating prebuilt asset of type %s", ele.Type)
 		switch ele.Type {
 		case "automation":
 			if err := r.validateAutomation(ele.Data); err != nil {
@@ -413,7 +413,7 @@ func (r *PrebuiltRunner) validatePackage(in services.PrebuiltPackage) error {
 // validateWorkflow will check if the workflow already exists on the
 // destination IAP and return an error if it does.
 func (r *PrebuiltRunner) validateWorkflow(in map[string]interface{}) error {
-	logger.Trace()
+	logging.Trace()
 
 	b, err := json.Marshal(in)
 	if err != nil {
@@ -436,7 +436,7 @@ func (r *PrebuiltRunner) validateWorkflow(in map[string]interface{}) error {
 }
 
 func (r *PrebuiltRunner) validateAutomation(in map[string]interface{}) error {
-	logger.Trace()
+	logging.Trace()
 
 	b, err := json.Marshal(in)
 	if err != nil {
@@ -475,7 +475,7 @@ func (r *PrebuiltRunner) validateAutomation(in map[string]interface{}) error {
 }
 
 func (r *PrebuiltRunner) GetAutomationIdFromName(name string) (string, error) {
-	logger.Trace()
+	logging.Trace()
 
 	svc := services.NewAutomationService(r.client)
 
@@ -501,7 +501,7 @@ func (r *PrebuiltRunner) GetAutomationIdFromName(name string) (string, error) {
 }
 
 func (r *PrebuiltRunner) expandPrebuilt(pkg *services.PrebuiltPackage, path string) error {
-	logger.Trace()
+	logging.Trace()
 
 	var bundles []map[string]interface{}
 

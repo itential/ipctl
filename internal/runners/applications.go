@@ -8,9 +8,9 @@ import (
 	"encoding/json"
 	"fmt"
 
+	"github.com/itential/ipctl/internal/logging"
 	"github.com/itential/ipctl/pkg/client"
 	"github.com/itential/ipctl/pkg/config"
-	"github.com/itential/ipctl/pkg/logger"
 	"github.com/itential/ipctl/pkg/services"
 )
 
@@ -34,7 +34,7 @@ func NewApplicationRunner(c client.Client, cfg *config.Config) *ApplicationRunne
 
 // Describe implements the `get applications` command
 func (r *ApplicationRunner) Get(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	res, err := r.service.GetAll()
 	if err != nil {
@@ -50,7 +50,7 @@ func (r *ApplicationRunner) Get(in Request) (*Response, error) {
 
 // Describe implements the `describe applications ...` command
 func (r *ApplicationRunner) Describe(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	res, err := r.service.Get(in.Args[0])
 	if err != nil {
@@ -59,7 +59,7 @@ func (r *ApplicationRunner) Describe(in Request) (*Response, error) {
 
 	b, err := json.MarshalIndent(res, "", "    ")
 	if err != nil {
-		logger.Fatal(err, "failed to marshal data")
+		logging.Fatal(err, "failed to marshal data")
 	}
 
 	return &Response{
@@ -69,7 +69,7 @@ func (r *ApplicationRunner) Describe(in Request) (*Response, error) {
 }
 
 func (r *ApplicationRunner) Start(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	name := in.Args[0]
 
@@ -83,7 +83,7 @@ func (r *ApplicationRunner) Start(in Request) (*Response, error) {
 }
 
 func (r *ApplicationRunner) Stop(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	name := in.Args[0]
 
@@ -97,7 +97,7 @@ func (r *ApplicationRunner) Stop(in Request) (*Response, error) {
 }
 
 func (r *ApplicationRunner) Restart(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	name := in.Args[0]
 
@@ -117,7 +117,7 @@ Inspector interfaceo
 */
 
 func (r *ApplicationRunner) Inspect(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	res, err := services.NewHealthService(r.client).GetApplicationHealth()
 	if err != nil {

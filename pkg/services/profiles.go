@@ -15,8 +15,8 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/itential/ipctl/internal/logging"
 	"github.com/itential/ipctl/pkg/client"
-	"github.com/itential/ipctl/pkg/logger"
 )
 
 // ApplicationProperties defines the application-level configuration properties for an IAP profile.
@@ -141,7 +141,7 @@ func NewProfileService(c client.Client) *ProfileService {
 // Returns:
 //   - Profile: A new Profile instance with Id and Description set
 func NewProfile(name, desc string) Profile {
-	logger.Trace()
+	logging.Trace()
 
 	return Profile{
 		Id:          name,
@@ -157,7 +157,7 @@ func NewProfile(name, desc string) Profile {
 //   - []Profile: A slice containing all profiles found on the server
 //   - error: An error if the request fails or the response cannot be parsed
 func (svc *ProfileService) GetAll() ([]Profile, error) {
-	logger.Trace()
+	logging.Trace()
 
 	type Results struct {
 		Metadata ProfileMetadata `json:"metadata"`
@@ -193,7 +193,7 @@ func (svc *ProfileService) GetAll() ([]Profile, error) {
 //   - *Profile: A pointer to the requested profile, or nil if not found
 //   - error: An error if the request fails, the profile doesn't exist, or the response cannot be parsed
 func (svc *ProfileService) Get(id string) (*Profile, error) {
-	logger.Trace()
+	logging.Trace()
 
 	type Response struct {
 		Metadata struct {
@@ -221,7 +221,7 @@ func (svc *ProfileService) Get(id string) (*Profile, error) {
 //   - *Profile: A pointer to the active profile
 //   - error: An error if the request fails, no active profile is found, or the response cannot be parsed
 func (svc *ProfileService) GetActiveProfile() (*Profile, error) {
-	logger.Trace()
+	logging.Trace()
 
 	type Results struct {
 		Metadata ProfileMetadata `json:"metadata"`
@@ -267,7 +267,7 @@ func (svc *ProfileService) GetActiveProfile() (*Profile, error) {
 //   - *Profile: A pointer to the created profile with server-assigned properties
 //   - error: An error if the request fails, the profile already exists, or the response cannot be parsed
 func (svc *ProfileService) Create(in Profile) (*Profile, error) {
-	logger.Trace()
+	logging.Trace()
 
 	properties := map[string]interface{}{
 		"id":          in.Id,
@@ -290,7 +290,7 @@ func (svc *ProfileService) Create(in Profile) (*Profile, error) {
 		return nil, err
 	}
 
-	logger.Info("%s", res.Message)
+	logging.Info("%s", res.Message)
 
 	return res.Data, nil
 }
@@ -304,7 +304,7 @@ func (svc *ProfileService) Create(in Profile) (*Profile, error) {
 // Returns:
 //   - error: An error if the request fails or the profile doesn't exist
 func (svc *ProfileService) Delete(name string) error {
-	logger.Trace()
+	logging.Trace()
 	return svc.BaseService.Delete(fmt.Sprintf("/profiles/%s", name))
 }
 
@@ -320,7 +320,7 @@ func (svc *ProfileService) Delete(name string) error {
 //   - *Profile: A pointer to the imported profile as stored on the server
 //   - error: An error if the request fails, the profile already exists, or the response cannot be parsed
 func (svc *ProfileService) Import(in Profile) (*Profile, error) {
-	logger.Trace()
+	logging.Trace()
 
 	type Response struct {
 		Status  string   `json:"status"`
@@ -355,7 +355,7 @@ func (svc *ProfileService) Import(in Profile) (*Profile, error) {
 //   - *Profile: A pointer to the complete profile configuration
 //   - error: An error if the request fails, the profile doesn't exist, or the response cannot be parsed
 func (svc *ProfileService) Export(name string) (*Profile, error) {
-	logger.Trace()
+	logging.Trace()
 
 	type Response struct {
 		Metadata Metadata `json:"metadata"`
@@ -386,7 +386,7 @@ func (svc *ProfileService) Export(name string) (*Profile, error) {
 // Returns:
 //   - error: An error if the request fails, the profile doesn't exist, or the activation fails
 func (svc *ProfileService) Activate(name string) error {
-	logger.Trace()
+	logging.Trace()
 
 	type Response struct {
 		Status  string `json:"status"`

@@ -9,10 +9,10 @@ import (
 	"fmt"
 
 	"github.com/itential/ipctl/internal/flags"
+	"github.com/itential/ipctl/internal/logging"
 	"github.com/itential/ipctl/internal/utils"
 	"github.com/itential/ipctl/pkg/client"
 	"github.com/itential/ipctl/pkg/config"
-	"github.com/itential/ipctl/pkg/logger"
 	"github.com/itential/ipctl/pkg/resources"
 	"github.com/itential/ipctl/pkg/services"
 )
@@ -34,7 +34,7 @@ func NewGroupRunner(c client.Client, cfg *config.Config) *GroupRunner {
 //
 
 func (r *GroupRunner) Get(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	groups, err := r.resource.GetAll()
 	if err != nil {
@@ -49,7 +49,7 @@ func (r *GroupRunner) Get(in Request) (*Response, error) {
 }
 
 func (r *GroupRunner) Describe(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	name := in.Args[0]
 
@@ -83,7 +83,7 @@ func (r *GroupRunner) Describe(in Request) (*Response, error) {
 //
 
 func (r *GroupRunner) Create(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	var options flags.GroupCreateOptions
 	utils.LoadObject(in.Options, &options)
@@ -102,7 +102,7 @@ func (r *GroupRunner) Create(in Request) (*Response, error) {
 }
 
 func (r *GroupRunner) Delete(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	group, err := r.resource.GetByName(in.Args[0])
 	if err != nil {
@@ -123,7 +123,7 @@ func (r *GroupRunner) Delete(in Request) (*Response, error) {
 }
 
 func (r *GroupRunner) Clear(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	groups, err := r.resource.GetAll()
 	if err != nil {
@@ -151,7 +151,7 @@ func (r *GroupRunner) Clear(in Request) (*Response, error) {
 //
 
 func (r *GroupRunner) Copy(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	res, err := Copy(CopyRequest{Request: in, Type: "group"}, r)
 	if err != nil {
@@ -164,7 +164,7 @@ func (r *GroupRunner) Copy(in Request) (*Response, error) {
 }
 
 func (r *GroupRunner) CopyFrom(profile, name string) (any, error) {
-	logger.Trace()
+	logging.Trace()
 
 	client, cancel, err := NewClient(profile, r.config)
 	if err != nil {
@@ -184,7 +184,7 @@ func (r *GroupRunner) CopyFrom(profile, name string) (any, error) {
 }
 
 func (r *GroupRunner) CopyTo(profile string, in any, replace bool) (any, error) {
-	logger.Trace()
+	logging.Trace()
 
 	client, cancel, err := NewClient(profile, r.config)
 	if err != nil {
@@ -221,7 +221,7 @@ func (r *GroupRunner) CopyTo(profile string, in any, replace bool) (any, error) 
 //
 
 func (r *GroupRunner) Import(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	common := in.Common.(*flags.AssetImportCommon)
 
@@ -245,7 +245,7 @@ func (r *GroupRunner) Import(in Request) (*Response, error) {
 //
 
 func (r *GroupRunner) Export(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	name := in.Args[0]
 
@@ -270,7 +270,7 @@ func (r *GroupRunner) Export(in Request) (*Response, error) {
 //
 
 func (r *GroupRunner) importGroup(in services.Group, replace bool) error {
-	logger.Trace()
+	logging.Trace()
 
 	existing, err := r.resource.GetByName(in.Name)
 

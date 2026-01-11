@@ -13,10 +13,10 @@ import (
 	"strings"
 
 	"github.com/itential/ipctl/internal/flags"
+	"github.com/itential/ipctl/internal/logging"
 	"github.com/itential/ipctl/internal/utils"
 	"github.com/itential/ipctl/pkg/client"
 	"github.com/itential/ipctl/pkg/config"
-	"github.com/itential/ipctl/pkg/logger"
 	"github.com/itential/ipctl/pkg/resources"
 	"github.com/itential/ipctl/pkg/services"
 )
@@ -45,7 +45,7 @@ func NewProjectRunner(client client.Client, cfg *config.Config) *ProjectRunner {
 
 // Get implements the `get projects ...` command
 func (r *ProjectRunner) Get(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	projects, err := r.resource.GetAll()
 	if err != nil {
@@ -80,7 +80,7 @@ func extractUsername(userObj any, fallback string) string {
 
 // Describe implements the `describe project ...` command
 func (r *ProjectRunner) Describe(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	var res *services.Project
 
@@ -111,7 +111,7 @@ func (r *ProjectRunner) Describe(in Request) (*Response, error) {
 
 // Create is the implementation of the command `ccreate project <name>`
 func (r *ProjectRunner) Create(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	name := in.Args[0]
 
@@ -133,7 +133,7 @@ func (r *ProjectRunner) Create(in Request) (*Response, error) {
 
 // Delete is the implementation of the command `delete project <name>`
 func (r *ProjectRunner) Delete(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	project, err := r.resource.GetByName(in.Args[0])
 	if err != nil {
@@ -151,7 +151,7 @@ func (r *ProjectRunner) Delete(in Request) (*Response, error) {
 
 // Clear is the implementation of the command `clear projects`
 func (r *ProjectRunner) Clear(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	projects, err := r.resource.GetAll()
 	if err != nil {
@@ -160,7 +160,7 @@ func (r *ProjectRunner) Clear(in Request) (*Response, error) {
 
 	for _, ele := range projects {
 		if err := r.resource.Delete(ele.Id); err != nil {
-			logger.Debug("failed to delete project `%s` (%s)", ele.Name, ele.Id)
+			logging.Debug("failed to delete project `%s` (%s)", ele.Name, ele.Id)
 			return nil, err
 		}
 	}
@@ -176,7 +176,7 @@ func (r *ProjectRunner) Clear(in Request) (*Response, error) {
 
 // Copy implements the `copy project <name> <dst>` command
 func (r *ProjectRunner) Copy(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	res, err := Copy(CopyRequest{Request: in, Type: "project"}, r)
 	if err != nil {
@@ -236,7 +236,7 @@ func (r *ProjectRunner) Copy(in Request) (*Response, error) {
 				})
 			}
 		} else {
-			logger.Info("skipping %s", member.Name)
+			logging.Info("skipping %s", member.Name)
 		}
 	}
 
@@ -253,7 +253,7 @@ func (r *ProjectRunner) Copy(in Request) (*Response, error) {
 }
 
 func (r *ProjectRunner) CopyFrom(profile, name string) (any, error) {
-	logger.Trace()
+	logging.Trace()
 
 	client, cancel, err := NewClient(profile, r.config)
 	if err != nil {
@@ -277,7 +277,7 @@ func (r *ProjectRunner) CopyFrom(profile, name string) (any, error) {
 }
 
 func (r *ProjectRunner) CopyTo(profile string, in any, replace bool) (any, error) {
-	logger.Trace()
+	logging.Trace()
 
 	client, cancel, err := NewClient(profile, r.config)
 	if err != nil {
@@ -307,7 +307,7 @@ func (r *ProjectRunner) CopyTo(profile string, in any, replace bool) (any, error
 
 // Import implements the command `import project <path>`
 func (r *ProjectRunner) Import(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	common := in.Common.(*flags.AssetImportCommon)
 	options := in.Options.(*flags.ProjectImportOptions)
@@ -352,7 +352,7 @@ Exporter interface
 
 // Export implements the `export project ...` command
 func (r *ProjectRunner) Export(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	common := in.Common.(*flags.AssetExportCommon)
 	options := in.Options.(*flags.ProjectExportOptions)
@@ -397,7 +397,7 @@ func (r *ProjectRunner) Export(in Request) (*Response, error) {
 		}
 
 		if common.Repository != "" {
-			logger.Info("commting %s", repoPath)
+			logging.Info("commting %s", repoPath)
 			if err := repo.CommitAndPush(repoPath, common.Message); err != nil {
 				return nil, err
 			}
@@ -445,7 +445,7 @@ type Member struct {
 // responsible for reconstructing the project file if the project was exported
 // using the `--expand` command line option.
 func (r *ProjectRunner) importProject(project services.Project, path string, replace bool) (*services.Project, error) {
-	logger.Trace()
+	logging.Trace()
 
 	var projectMap map[string]interface{}
 	if err := importLoadFromDisk(path, &projectMap); err != nil {
@@ -492,7 +492,7 @@ func (r *ProjectRunner) importProject(project services.Project, path string, rep
 }
 
 func (r *ProjectRunner) updateMembers(projectId string, projectMembers []string) error {
-	logger.Trace()
+	logging.Trace()
 
 	var members []services.ProjectMember
 
@@ -507,7 +507,7 @@ func (r *ProjectRunner) updateMembers(projectId string, projectMembers []string)
 			return err
 		}
 
-		logger.Info("checking member %v", member)
+		logging.Info("checking member %v", member)
 
 		if !(member.Type == "account" && member.Name == activeUser.Username) {
 			if member.Type == "account" {
@@ -538,7 +538,7 @@ func (r *ProjectRunner) updateMembers(projectId string, projectMembers []string)
 				})
 			}
 		} else {
-			logger.Info("skipping %s", member.Name)
+			logging.Info("skipping %s", member.Name)
 		}
 	}
 
@@ -600,7 +600,7 @@ func parseMember(member string) (*Member, error) {
 // is the project to exand.  The path argument specifies the directory to
 // expand the project into.
 func expandProject(in Request, project *services.Project, path string) error {
-	logger.Trace()
+	logging.Trace()
 
 	for _, ele := range project.Folders {
 		if ele.NodeType == "folder" {

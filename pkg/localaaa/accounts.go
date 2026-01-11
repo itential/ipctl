@@ -8,7 +8,7 @@ import (
 	"context"
 	"errors"
 
-	"github.com/itential/ipctl/pkg/logger"
+	"github.com/itential/ipctl/internal/logging"
 	"go.mongodb.org/mongo-driver/bson"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -26,7 +26,7 @@ type Account struct {
 func NewAccount(username, password string) Account {
 	b, err := bcrypt.GenerateFromPassword([]byte(password), 10)
 	if err != nil {
-		logger.Fatal(err, "failed to encrypt value")
+		logging.Fatal(err, "failed to encrypt value")
 	}
 
 	return Account{
@@ -39,7 +39,7 @@ func NewAccount(username, password string) Account {
 }
 
 func (svc LocalAAAService) GetAccounts() ([]Account, error) {
-	logger.Trace()
+	logging.Trace()
 
 	cur, err := svc.accounts.Find(context.TODO(), bson.D{})
 	if err != nil {
@@ -71,7 +71,7 @@ func (svc LocalAAAService) GetAccounts() ([]Account, error) {
 }
 
 func (svc LocalAAAService) Find(username string) (*Account, error) {
-	logger.Trace()
+	logging.Trace()
 
 	sr := svc.accounts.FindOne(context.TODO(), bson.D{
 		{Key: "username", Value: username},
@@ -89,7 +89,7 @@ func (svc LocalAAAService) Find(username string) (*Account, error) {
 }
 
 func (svc LocalAAAService) CreateAccount(in Account) error {
-	logger.Trace()
+	logging.Trace()
 
 	res, err := svc.Find(in.Username)
 	if err != nil {
@@ -109,7 +109,7 @@ func (svc LocalAAAService) CreateAccount(in Account) error {
 }
 
 func (svc LocalAAAService) DeleteAccount(username string) error {
-	logger.Trace()
+	logging.Trace()
 
 	_, err := svc.accounts.DeleteOne(
 		context.TODO(),

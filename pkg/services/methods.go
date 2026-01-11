@@ -5,8 +5,8 @@
 package services
 
 import (
+	"github.com/itential/ipctl/internal/logging"
 	"github.com/itential/ipctl/pkg/client"
-	"github.com/itential/ipctl/pkg/logger"
 )
 
 type MethodRoute struct {
@@ -32,7 +32,7 @@ func NewMethodService(c client.Client) *MethodService {
 
 // GetAll implements `GET /authorization/methods`
 func (svc *MethodService) GetAll() ([]Method, error) {
-	logger.Trace()
+	logging.Trace()
 
 	type Response struct {
 		Results []Method `json:"results"`

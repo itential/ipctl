@@ -10,16 +10,16 @@ import (
 	"strings"
 	"time"
 
+	"github.com/itential/ipctl/internal/logging"
 	"github.com/itential/ipctl/internal/utils"
 	"github.com/itential/ipctl/pkg/client"
 	"github.com/itential/ipctl/pkg/config"
-	"github.com/itential/ipctl/pkg/logger"
 )
 
 // normalizeFilename will take a string argument for a filename and normalize
 // it by replacing characters that will otherwise cause problems.
 func normalizeFilename(s string) string {
-	logger.Trace()
+	logging.Trace()
 	return strings.Replace(s, "/", "_", -1)
 }
 
@@ -27,7 +27,7 @@ func normalizeFilename(s string) string {
 // json.Marshal and json>Unmarshal.  This function will return the map or an
 // error if one occurring during marshaling
 func toMap(in any) (map[string]interface{}, error) {
-	logger.Trace()
+	logging.Trace()
 
 	var m map[string]interface{}
 	if err := utils.ToMap(in, &m); err != nil {
@@ -38,7 +38,7 @@ func toMap(in any) (map[string]interface{}, error) {
 }
 
 func toArrayOfMaps(in any) ([]map[string]interface{}, error) {
-	logger.Trace()
+	logging.Trace()
 
 	var m []map[string]interface{}
 	if err := utils.ToMap(in, &m); err != nil {
@@ -49,7 +49,7 @@ func toArrayOfMaps(in any) ([]map[string]interface{}, error) {
 }
 
 func GetProfile(name string, cfg *config.Config) (*config.Profile, error) {
-	logger.Trace()
+	logging.Trace()
 
 	active, err := cfg.ActiveProfile()
 
@@ -66,7 +66,7 @@ func GetProfile(name string, cfg *config.Config) (*config.Profile, error) {
 }
 
 func NewClient(name string, cfg *config.Config) (client.Client, context.CancelFunc, error) {
-	logger.Trace()
+	logging.Trace()
 
 	profile, err := cfg.GetProfile(name)
 	if err != nil {
@@ -82,7 +82,7 @@ func NewClient(name string, cfg *config.Config) (client.Client, context.CancelFu
 }
 
 func NormalizePath(in Request) (string, error) {
-	logger.Trace()
+	logging.Trace()
 
 	path := in.Args[0]
 

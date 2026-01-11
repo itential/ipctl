@@ -6,8 +6,8 @@ package handlers
 
 import (
 	"github.com/itential/ipctl/internal/flags"
+	"github.com/itential/ipctl/internal/logging"
 	"github.com/itential/ipctl/internal/runners"
-	"github.com/itential/ipctl/pkg/logger"
 	"github.com/spf13/cobra"
 )
 
@@ -117,7 +117,7 @@ func (h AssetHandler) newCommand(key string, runtime *Runtime, runner runners.Ru
 
 // Get returns the 'get' command if the runner supports the Reader interface.
 func (h AssetHandler) Get(runtime *Runtime) *cobra.Command {
-	logger.Trace()
+	logging.Trace()
 	if h.reader == nil {
 		return nil
 	}

@@ -6,8 +6,8 @@ package handlers
 
 import (
 	"github.com/itential/ipctl/internal/flags"
+	"github.com/itential/ipctl/internal/logging"
 	"github.com/itential/ipctl/internal/runners"
-	"github.com/itential/ipctl/pkg/logger"
 	"github.com/spf13/cobra"
 )
 
@@ -40,7 +40,7 @@ func (h LocalClientHandler) newCommand(key string, runner runners.RunnerFunc, op
 
 // Commands returns a list of commands for the local client handler.
 func (h LocalClientHandler) Commands() []*cobra.Command {
-	logger.Trace()
+	logging.Trace()
 	return []*cobra.Command{
 		h.Show(),
 	}
@@ -48,6 +48,6 @@ func (h LocalClientHandler) Commands() []*cobra.Command {
 
 // Show returns the show-config command.
 func (h LocalClientHandler) Show() *cobra.Command {
-	logger.Trace()
+	logging.Trace()
 	return h.newCommand("show-config", h.runner.ShowConfig, nil)
 }

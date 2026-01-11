@@ -7,9 +7,9 @@ package runners
 import (
 	"fmt"
 
+	"github.com/itential/ipctl/internal/logging"
 	"github.com/itential/ipctl/pkg/client"
 	"github.com/itential/ipctl/pkg/config"
-	"github.com/itential/ipctl/pkg/logger"
 	"github.com/itential/ipctl/pkg/services"
 )
 
@@ -31,7 +31,7 @@ func NewIntegrationModelRunner(c client.Client, cfg *config.Config) *Integration
 
 // Get implements the `get integration-models` command
 func (r *IntegrationModelRunner) Get(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	res, err := r.service.GetAll()
 	if err != nil {
@@ -52,7 +52,7 @@ func (r *IntegrationModelRunner) Get(in Request) (*Response, error) {
 
 // Describe implements the `describe integration-model <name>` command
 func (r *IntegrationModelRunner) Describe(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	name := in.Args[0]
 
@@ -72,7 +72,7 @@ func (r *IntegrationModelRunner) Describe(in Request) (*Response, error) {
 //
 
 func (r *IntegrationModelRunner) Create(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	var schema map[string]interface{}
 
@@ -93,7 +93,7 @@ func (r *IntegrationModelRunner) Create(in Request) (*Response, error) {
 }
 
 func (r *IntegrationModelRunner) Delete(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	name := in.Args[0]
 
@@ -107,7 +107,7 @@ func (r *IntegrationModelRunner) Delete(in Request) (*Response, error) {
 }
 
 func (r *IntegrationModelRunner) Clear(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	res, err := r.service.GetAll()
 	if err != nil {
@@ -131,7 +131,7 @@ func (r *IntegrationModelRunner) Clear(in Request) (*Response, error) {
 
 // Import implements the `import integration-model ...` command
 func (r *IntegrationModelRunner) Import(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	var schema map[string]interface{}
 
@@ -156,7 +156,7 @@ func (r *IntegrationModelRunner) Import(in Request) (*Response, error) {
 
 // Export implements the  `export integration-model ...` command
 func (r *IntegrationModelRunner) Export(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	//common := in.Common.(*flags.AssetExportCommon)
 

@@ -14,11 +14,11 @@ import (
 
 	"github.com/itential/ipctl/internal/cmdutils"
 	"github.com/itential/ipctl/internal/handlers"
+	"github.com/itential/ipctl/internal/logging"
 	"github.com/itential/ipctl/internal/metadata"
 	"github.com/itential/ipctl/internal/terminal"
 	"github.com/itential/ipctl/pkg/client"
 	"github.com/itential/ipctl/pkg/config"
-	"github.com/itential/ipctl/pkg/logger"
 	"github.com/spf13/cobra"
 )
 
@@ -100,16 +100,16 @@ func runCli(c client.Client, cfg *config.Config) *cobra.Command {
 // code.
 func Execute() int {
 	cfg := config.NewConfig(nil, nil, "", "", "")
-	logger.InitializeLogger(cfg)
+	logging.InitializeLogger(cfg)
 
 	if metadata.Version != "" && metadata.Build != "" {
-		logger.Info("ipctl %s (%s)", metadata.Version, metadata.Build)
+		logging.Info("ipctl %s (%s)", metadata.Version, metadata.Build)
 	} else {
 		sha, err := metadata.GetCurrentSha()
 		if err == nil {
-			logger.Info("ipctl running from commit %s", sha)
+			logging.Info("ipctl running from commit %s", sha)
 		} else {
-			logger.Info("ipctl unable to determine source")
+			logging.Info("ipctl unable to determine source")
 		}
 	}
 
@@ -118,7 +118,7 @@ func Execute() int {
 		terminal.Warning("%s\n", err.Error())
 	}
 
-	logger.Info("connection timeout is %v second(s)", profile.Timeout)
+	logging.Info("connection timeout is %v second(s)", profile.Timeout)
 
 	var ctx context.Context
 	var cancel context.CancelFunc

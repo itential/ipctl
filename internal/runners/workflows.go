@@ -10,11 +10,11 @@ import (
 	"strings"
 
 	"github.com/itential/ipctl/internal/flags"
+	"github.com/itential/ipctl/internal/logging"
 	"github.com/itential/ipctl/internal/utils"
 	"github.com/itential/ipctl/pkg/client"
 	"github.com/itential/ipctl/pkg/config"
 	"github.com/itential/ipctl/pkg/editor"
-	"github.com/itential/ipctl/pkg/logger"
 	"github.com/itential/ipctl/pkg/resources"
 	"github.com/itential/ipctl/pkg/services"
 )
@@ -37,7 +37,7 @@ func NewWorkflowRunner(c client.Client, cfg *config.Config) *WorkflowRunner {
 
 // Get implements the `get workflows` command
 func (r *WorkflowRunner) Get(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	var options flags.WorkflowGetOptions
 	utils.LoadObject(in.Options, &options)
@@ -66,7 +66,7 @@ func (r *WorkflowRunner) Get(in Request) (*Response, error) {
 
 // Describe implements the `describe workflow ...` command
 func (r *WorkflowRunner) Describe(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	name := in.Args[0]
 
@@ -102,7 +102,7 @@ func (r *WorkflowRunner) Describe(in Request) (*Response, error) {
 
 // Create is the implementation of the `create workflow ...` command
 func (r *WorkflowRunner) Create(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	name := in.Args[0]
 
@@ -119,7 +119,7 @@ func (r *WorkflowRunner) Create(in Request) (*Response, error) {
 
 // Delete is the implementation of the `delete workflow ...` command
 func (r *WorkflowRunner) Delete(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	if err := r.resource.Delete(in.Args[0]); err != nil {
 		return nil, err
@@ -132,7 +132,7 @@ func (r *WorkflowRunner) Delete(in Request) (*Response, error) {
 
 // Clear is the implementation of the `clear workflows` command
 func (r *WorkflowRunner) Clear(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	cnt := 0
 
@@ -152,7 +152,7 @@ func (r *WorkflowRunner) Clear(in Request) (*Response, error) {
 }
 
 func (r *WorkflowRunner) Edit(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	name := in.Args[0]
 
@@ -182,7 +182,7 @@ func (r *WorkflowRunner) Edit(in Request) (*Response, error) {
 
 // Copy implements the `copy workflow ...` command
 func (r *WorkflowRunner) Copy(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	res, err := Copy(CopyRequest{Request: in, Type: "workflow"}, r)
 	if err != nil {
@@ -195,7 +195,7 @@ func (r *WorkflowRunner) Copy(in Request) (*Response, error) {
 }
 
 func (r *WorkflowRunner) CopyFrom(profile, name string) (any, error) {
-	logger.Trace()
+	logging.Trace()
 
 	client, cancel, err := NewClient(profile, r.config)
 	if err != nil {
@@ -213,7 +213,7 @@ func (r *WorkflowRunner) CopyFrom(profile, name string) (any, error) {
 }
 
 func (r *WorkflowRunner) CopyTo(profile string, in any, replace bool) (any, error) {
-	logger.Trace()
+	logging.Trace()
 
 	client, cancel, err := NewClient(profile, r.config)
 	if err != nil {
@@ -231,7 +231,7 @@ func (r *WorkflowRunner) CopyTo(profile string, in any, replace bool) (any, erro
 		} else if err != nil {
 			return nil, err
 		}
-		logger.Info("Deleting existing workflow `%s` from `%s`", name, profile)
+		logging.Info("Deleting existing workflow `%s` from `%s`", name, profile)
 		if err := svc.Delete(name); err != nil {
 			return nil, err
 		}
@@ -251,7 +251,7 @@ func (r *WorkflowRunner) CopyTo(profile string, in any, replace bool) (any, erro
 
 // Import implements the command `import workflow <path>`
 func (r *WorkflowRunner) Import(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	common := in.Common.(*flags.AssetImportCommon)
 
@@ -276,7 +276,7 @@ func (r *WorkflowRunner) Import(in Request) (*Response, error) {
 
 // Export is the implementation of the `export workflow ...` command
 func (r *WorkflowRunner) Export(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	name := in.Args[0]
 
@@ -303,7 +303,7 @@ func (r *WorkflowRunner) Export(in Request) (*Response, error) {
 
 // Dump implements the `dump workflows...` command
 func (r *WorkflowRunner) Dump(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	res, err := r.resource.GetAll()
 	if err != nil {
@@ -334,7 +334,7 @@ func (r *WorkflowRunner) Dump(in Request) (*Response, error) {
 
 // Load implements the `load workflows ...` command
 func (r *WorkflowRunner) Load(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	elements, err := loadAssets(in)
 	if err != nil {
@@ -380,7 +380,7 @@ func (r *WorkflowRunner) Load(in Request) (*Response, error) {
 //
 
 func (r *WorkflowRunner) importWorkflow(in services.Workflow, replace bool) error {
-	logger.Trace()
+	logging.Trace()
 
 	res, err := r.resource.Get(in.Name)
 	if err == nil {

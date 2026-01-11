@@ -8,9 +8,9 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/itential/ipctl/internal/logging"
 	"github.com/itential/ipctl/pkg/client"
 	"github.com/itential/ipctl/pkg/config"
-	"github.com/itential/ipctl/pkg/logger"
 	"github.com/itential/ipctl/pkg/services"
 )
 
@@ -28,7 +28,7 @@ func NewDeviceRunner(client client.Client, cfg *config.Config) *DeviceRunner {
 
 // Get is the implementation of the command `get devices`
 func (r *DeviceRunner) Get(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	devices, err := r.service.GetAll()
 	if err != nil {
@@ -49,7 +49,7 @@ func (r *DeviceRunner) Get(in Request) (*Response, error) {
 }
 
 func (r *DeviceRunner) Describe(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	name := in.Args[0]
 

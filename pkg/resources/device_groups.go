@@ -5,7 +5,7 @@
 package resources
 
 import (
-	"github.com/itential/ipctl/pkg/logger"
+	"github.com/itential/ipctl/internal/logging"
 	"github.com/itential/ipctl/pkg/services"
 )
 
@@ -26,7 +26,7 @@ func NewDeviceGroupResource(svc services.DeviceGroupServicer) DeviceGroupResourc
 // GetByName retrieves a device group by name using client-side filtering.
 // It fetches all device groups and searches for a matching name.
 func (r *DeviceGroupResource) GetByName(name string) (*services.DeviceGroup, error) {
-	logger.Trace()
+	logging.Trace()
 
 	groups, err := r.service.GetAll()
 	if err != nil {

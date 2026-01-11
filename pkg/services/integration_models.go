@@ -8,8 +8,8 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/itential/ipctl/internal/logging"
 	"github.com/itential/ipctl/pkg/client"
-	"github.com/itential/ipctl/pkg/logger"
 )
 
 // IntegrationModelTls represents TLS configuration settings for integration models.
@@ -61,7 +61,7 @@ func NewIntegrationModelService(c client.Client) *IntegrationModelService {
 // It sends a GET request to /integration-models and returns the complete list of available models.
 // Returns a slice of all integration models or an error if the operation fails.
 func (svc *IntegrationModelService) GetAll() ([]IntegrationModel, error) {
-	logger.Trace()
+	logging.Trace()
 
 	type Response struct {
 		IntegrationModels []IntegrationModel `json:"integrationModels"`
@@ -81,7 +81,7 @@ func (svc *IntegrationModelService) GetAll() ([]IntegrationModel, error) {
 // It sends a GET request to /integration-models/{name}.
 // Returns the integration model definition or an error if the operation fails or model is not found.
 func (svc *IntegrationModelService) Get(name string) (*IntegrationModel, error) {
-	logger.Trace()
+	logging.Trace()
 
 	var res *IntegrationModel
 	var uri = fmt.Sprintf("/integration-models/%s", name)
@@ -98,7 +98,7 @@ func (svc *IntegrationModelService) Get(name string) (*IntegrationModel, error) 
 // After creation, it retrieves and returns the created model using the returned versionId.
 // Returns the created integration model or an error if the operation fails.
 func (svc *IntegrationModelService) Create(in map[string]interface{}) (*IntegrationModel, error) {
-	logger.Trace()
+	logging.Trace()
 
 	body := map[string]interface{}{"model": in}
 
@@ -118,7 +118,7 @@ func (svc *IntegrationModelService) Create(in map[string]interface{}) (*Integrat
 		return nil, err
 	}
 
-	logger.Info("%s", res.Message)
+	logging.Info("%s", res.Message)
 
 	model, err := svc.Get(res.Data["versionId"].(string))
 	if err != nil {
@@ -132,7 +132,7 @@ func (svc *IntegrationModelService) Create(in map[string]interface{}) (*Integrat
 // It sends a DELETE request to /integration-models/{name}.
 // Returns an error if the operation fails or the model is not found.
 func (svc *IntegrationModelService) Delete(name string) error {
-	logger.Trace()
+	logging.Trace()
 	return svc.BaseService.Delete(fmt.Sprintf("/integration-models/%s", name))
 }
 
@@ -140,7 +140,7 @@ func (svc *IntegrationModelService) Delete(name string) error {
 // It sends a GET request to /integration-models/{name}/export.
 // Returns a map containing the model's exportable configuration or an error if the operation fails.
 func (svc *IntegrationModelService) Export(name string) (map[string]interface{}, error) {
-	logger.Trace()
+	logging.Trace()
 
 	var res map[string]interface{}
 	var uri = fmt.Sprintf("/integration-models/%s/export", name)

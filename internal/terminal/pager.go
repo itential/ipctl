@@ -12,11 +12,11 @@ import (
 	"strings"
 	"text/tabwriter"
 
-	"github.com/itential/ipctl/pkg/logger"
+	"github.com/itential/ipctl/internal/logging"
 )
 
 func truncateOutput(tabbedMsg string) string {
-	logger.Trace()
+	logging.Trace()
 
 	const maxColLen int = 50
 
@@ -41,7 +41,7 @@ func truncateOutput(tabbedMsg string) string {
 // DisplayTabWriterWithPager taks in a string for a table that already has tabs
 // and newlines set and printes a propertly spaced table with pagination
 func DisplayTabWriterWithPager(tabbedMsg string, maxlen, padding int, limitColLen bool) {
-	logger.Trace()
+	logging.Trace()
 
 	cmd := exec.Command("less")
 	r, stdin := io.Pipe()

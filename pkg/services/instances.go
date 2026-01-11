@@ -7,8 +7,8 @@ package services
 import (
 	"fmt"
 
+	"github.com/itential/ipctl/internal/logging"
 	"github.com/itential/ipctl/pkg/client"
-	"github.com/itential/ipctl/pkg/logger"
 )
 
 type InstanceOperation struct {
@@ -50,7 +50,7 @@ func NewInstanceService(c client.Client) *InstanceService {
 
 /*
 func (svc *InstanceService) Get(modelId, instanceId string) (*Instance, error) {
-	logger.Trace()
+	logging.Trace()
 
 	var response map[string]interface{}
 	resp, err := Do(&Request{
@@ -78,7 +78,7 @@ func (svc *InstanceService) Get(modelId, instanceId string) (*Instance, error) {
 */
 
 func (svc *InstanceService) GetAll(modelId string) ([]Instance, error) {
-	logger.Trace()
+	logging.Trace()
 
 	type Response struct {
 		Message  string     `json:"message"`
@@ -113,7 +113,7 @@ func (svc *InstanceService) GetAll(modelId string) ([]Instance, error) {
 		skip += limit
 	}
 
-	logger.Info("%s", res.Message)
+	logging.Info("%s", res.Message)
 
 	return results, nil
 }

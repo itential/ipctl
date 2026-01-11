@@ -7,7 +7,7 @@ package resources
 import (
 	"fmt"
 
-	"github.com/itential/ipctl/pkg/logger"
+	"github.com/itential/ipctl/internal/logging"
 	"github.com/itential/ipctl/pkg/services"
 )
 
@@ -45,7 +45,7 @@ type DeleteOptions struct {
 // GetByName retrieves a model by name using client-side filtering.
 // It fetches all models and searches for a matching name.
 func (r *ModelResource) GetByName(name string) (*services.Model, error) {
-	logger.Trace()
+	logging.Trace()
 
 	models, err := r.service.GetAll()
 	if err != nil {
@@ -78,7 +78,7 @@ func (r *ModelResource) Delete(id string, deleteInstances bool) error {
 // DeleteWithOptions removes a model with advanced options including checking for instances
 // and deleting related workflows and transformations.
 func (r *ModelResource) DeleteWithOptions(model *services.Model, opts DeleteOptions) error {
-	logger.Trace()
+	logging.Trace()
 
 	// Check for attached instances if not forcing deletion
 	if !opts.DeleteInstances {
@@ -116,14 +116,14 @@ func (r *ModelResource) deleteRelatedResources(model *services.Model) error {
 		// Delete pre-workflow transformation
 		if action.PreWorkflowJst != "" {
 			if err := r.deleteTransformationIfExists(action.PreWorkflowJst); err != nil {
-				logger.Warn("error deleting pre-workflow transformation %s: %v", action.PreWorkflowJst, err)
+				logging.Warn("error deleting pre-workflow transformation %s: %v", action.PreWorkflowJst, err)
 			}
 		}
 
 		// Delete post-workflow transformation
 		if action.PostWorkflowJst != "" {
 			if err := r.deleteTransformationIfExists(action.PostWorkflowJst); err != nil {
-				logger.Warn("error deleting post-workflow transformation %s: %v", action.PostWorkflowJst, err)
+				logging.Warn("error deleting post-workflow transformation %s: %v", action.PostWorkflowJst, err)
 			}
 		}
 	}

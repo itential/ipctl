@@ -5,9 +5,9 @@
 package runners
 
 import (
+	"github.com/itential/ipctl/internal/logging"
 	"github.com/itential/ipctl/pkg/client"
 	"github.com/itential/ipctl/pkg/config"
-	"github.com/itential/ipctl/pkg/logger"
 	"github.com/itential/ipctl/pkg/services"
 )
 
@@ -24,7 +24,7 @@ func NewServerRunner(c client.Client, cfg *config.Config) *ServerRunner {
 }
 
 func (r *ServerRunner) Inspect(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	status, err := r.service.GetStatus()
 	if err != nil {

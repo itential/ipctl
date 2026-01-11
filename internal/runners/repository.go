@@ -10,8 +10,8 @@ import (
 	"time"
 
 	"github.com/go-git/go-git/v5/plumbing/object"
+	"github.com/itential/ipctl/internal/logging"
 	"github.com/itential/ipctl/internal/utils"
-	"github.com/itential/ipctl/pkg/logger"
 	"github.com/itential/ipctl/pkg/repositories"
 )
 
@@ -60,11 +60,11 @@ type userProvider func() (*user.User, error)
 
 // newRepository is the internal constructor that accepts a user provider (used for testing)
 func newRepository(url string, getUser userProvider, opts ...RepositoryOption) *Repository {
-	logger.Trace()
+	logging.Trace()
 
 	currentUser, err := getUser()
 	if err != nil {
-		logger.Fatal(err, "failed to get current user")
+		logging.Fatal(err, "failed to get current user")
 	}
 
 	r := &Repository{
@@ -94,7 +94,7 @@ func newRepository(url string, getUser userProvider, opts ...RepositoryOption) *
 // See the optional function for details about each implemenation.  If an
 // option is not passed, a default value is set for repository object.
 func NewRepository(url string, opts ...RepositoryOption) *Repository {
-	logger.Trace()
+	logging.Trace()
 	return newRepository(url, user.Current, opts...)
 }
 
@@ -131,7 +131,7 @@ func WithEmail(v string) RepositoryOption {
 }
 
 func (r *Repository) Clone(reader FileReader, cloner Cloner) (string, error) {
-	logger.Trace()
+	logging.Trace()
 
 	payload := RepositoryPayload{
 		Url:  r.Url,
@@ -169,7 +169,7 @@ Private functions
 // argument is the commit message.  The `provider` argument specifies the
 // provider to use.
 func (r *Repository) commitAndPush(path, msg string, provider GitProvider) error {
-	logger.Trace()
+	logging.Trace()
 
 	repo, err := provider.Open(path)
 	if err != nil {
@@ -202,7 +202,7 @@ func (r *Repository) commitAndPush(path, msg string, provider GitProvider) error
 			return err
 		}
 
-		logger.Info("%v", commit)
+		logging.Info("%v", commit)
 
 		if err := repo.Push(&PushOptions{}); err != nil {
 			return err

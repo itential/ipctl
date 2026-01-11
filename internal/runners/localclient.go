@@ -7,9 +7,9 @@ package runners
 import (
 	"encoding/json"
 
+	"github.com/itential/ipctl/internal/logging"
 	"github.com/itential/ipctl/pkg/client"
 	"github.com/itential/ipctl/pkg/config"
-	"github.com/itential/ipctl/pkg/logger"
 )
 
 type LocalClientRunner struct {
@@ -25,11 +25,11 @@ func NewLocalClientRunner(client client.Client, cfg *config.Config) LocalClientR
 }
 
 func (r *LocalClientRunner) ShowConfig(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	profile, err := r.config.ActiveProfile()
 	if err != nil {
-		logger.Warn("failed to load active profile, using defaults")
+		logging.Warn("failed to load active profile, using defaults")
 	}
 
 	var port int

@@ -9,8 +9,8 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/itential/ipctl/internal/logging"
 	"github.com/itential/ipctl/pkg/client"
-	"github.com/itential/ipctl/pkg/logger"
 )
 
 type GroupInheritedGroup struct {
@@ -49,7 +49,7 @@ func NewGroupService(c client.Client) *GroupService {
 }
 
 func NewGroup(name, desc string) Group {
-	logger.Trace()
+	logging.Trace()
 
 	return Group{
 		Name:          name,
@@ -66,7 +66,7 @@ func NewGroup(name, desc string) Group {
 // no configured groups on the server, this function will return an empty
 // array.
 func (svc *GroupService) GetAll() ([]Group, error) {
-	logger.Trace()
+	logging.Trace()
 
 	type Response struct {
 		Results []Group `json:"results"`
@@ -79,7 +79,7 @@ func (svc *GroupService) GetAll() ([]Group, error) {
 		return nil, err
 	}
 
-	logger.Info("Found %v group(s)", res.Total)
+	logging.Info("Found %v group(s)", res.Total)
 
 	return res.Results, nil
 }
@@ -88,7 +88,7 @@ func (svc *GroupService) GetAll() ([]Group, error) {
 // id argument is the 12 digest hex unique identifier for the authorization
 // group.  If the group does not exist, this function will return an error.
 func (svc *GroupService) Get(id string) (*Group, error) {
-	logger.Trace()
+	logging.Trace()
 
 	var res *Group
 	var uri = fmt.Sprintf("/authorization/groups/%s", id)
@@ -104,7 +104,7 @@ func (svc *GroupService) Get(id string) (*Group, error) {
 // GetByName retrieves a group by name using client-side filtering.
 // DEPRECATED: Business logic method - prefer using resources.GroupResource.GetByName
 func (svc *GroupService) GetByName(name string) (*Group, error) {
-	logger.Trace()
+	logging.Trace()
 
 	groups, err := svc.GetAll()
 	if err != nil {
@@ -124,7 +124,7 @@ func (svc *GroupService) GetByName(name string) (*Group, error) {
 // if the group already exists.  If it does, this function will return an
 // error.
 func (svc *GroupService) Create(in Group) (*Group, error) {
-	logger.Trace()
+	logging.Trace()
 
 	body := map[string]interface{}{
 		"name":          in.Name,
@@ -151,7 +151,7 @@ func (svc *GroupService) Create(in Group) (*Group, error) {
 		return nil, err
 	}
 
-	logger.Info("%s", res.Message)
+	logging.Info("%s", res.Message)
 
 	return &res.Data, nil
 }
@@ -160,6 +160,6 @@ func (svc *GroupService) Create(in Group) (*Group, error) {
 // system.  If the specified group identifier does not exist on the system,
 // this function will return an error.
 func (svc *GroupService) Delete(id string) error {
-	logger.Trace()
+	logging.Trace()
 	return svc.BaseService.Delete(fmt.Sprintf("/authorization/groups/%s", id))
 }

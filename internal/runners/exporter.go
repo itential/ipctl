@@ -11,8 +11,8 @@ import (
 	"strings"
 
 	"github.com/itential/ipctl/internal/flags"
+	"github.com/itential/ipctl/internal/logging"
 	"github.com/itential/ipctl/internal/utils"
-	"github.com/itential/ipctl/pkg/logger"
 	giturls "github.com/whilp/git-urls"
 )
 
@@ -47,7 +47,7 @@ func validateRepositoryURL(url string) error {
 // exportNewRepository will create a new Repository object from an the incoming
 // Request object.
 func exportNewRepositoryFromRequest(in Request) (*Repository, error) {
-	logger.Trace()
+	logging.Trace()
 
 	common := in.Common.(flags.Gitter)
 
@@ -104,7 +104,7 @@ func exportAssetFromRequest(in Request, o any, fn string) error {
 // must be a map where the key is the filename and the value is the asset to
 // write to disk.
 func exportAssets(in Request, assets map[string]interface{}) error {
-	logger.Trace()
+	logging.Trace()
 
 	path := in.Common.(flags.Committer).GetPath()
 

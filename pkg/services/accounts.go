@@ -8,8 +8,8 @@ import (
 	"errors"
 	"fmt"
 
+	"github.com/itential/ipctl/internal/logging"
 	"github.com/itential/ipctl/pkg/client"
-	"github.com/itential/ipctl/pkg/logger"
 )
 
 // Account represents a configured account configured on Itential Platform that
@@ -64,7 +64,7 @@ func NewAccountService(c client.Client) *AccountService {
 // fetching all accounts across multiple pages if necessary. Returns a slice
 // of Account structs or an error if the request fails.
 func (svc *AccountService) GetAll() ([]Account, error) {
-	logger.Trace()
+	logging.Trace()
 
 	type Response struct {
 		Results []Account `json:"results"`
@@ -96,7 +96,7 @@ func (svc *AccountService) GetAll() ([]Account, error) {
 		skip += limit
 	}
 
-	logger.Info("Found %v account(s)", len(accounts))
+	logging.Info("Found %v account(s)", len(accounts))
 
 	return accounts, nil
 }
@@ -105,7 +105,7 @@ func (svc *AccountService) GetAll() ([]Account, error) {
 // calling GET /authorization/accounts/{id}. Returns a pointer to the Account
 // struct or an error if the account is not found or the request fails.
 func (svc *AccountService) Get(id string) (*Account, error) {
-	logger.Trace()
+	logging.Trace()
 
 	var res *Account
 
@@ -122,7 +122,7 @@ func (svc *AccountService) Get(id string) (*Account, error) {
 // with inactive=true. The account will no longer be able to access the system.
 // Returns an error if the request fails or the account is not found.
 func (svc *AccountService) Deactivate(id string) error {
-	logger.Trace()
+	logging.Trace()
 	return svc.PatchRequest(&Request{
 		uri:  fmt.Sprintf("/authorization/accounts/%s", id),
 		body: map[string]interface{}{"inactive": true},
@@ -133,7 +133,7 @@ func (svc *AccountService) Deactivate(id string) error {
 // with inactive=false. The account will be able to access the system again.
 // Returns an error if the request fails or the account is not found.
 func (svc *AccountService) Activate(id string) error {
-	logger.Trace()
+	logging.Trace()
 	return svc.PatchRequest(&Request{
 		uri:  fmt.Sprintf("/authorization/accounts/%s", id),
 		body: map[string]interface{}{"inactive": false},
@@ -143,7 +143,7 @@ func (svc *AccountService) Activate(id string) error {
 // GetByName retrieves an account by username using client-side filtering.
 // DEPRECATED: Business logic method - prefer using resources.AccountResource.GetByName
 func (svc *AccountService) GetByName(name string) (*Account, error) {
-	logger.Trace()
+	logging.Trace()
 
 	accounts, err := svc.GetAll()
 	if err != nil {

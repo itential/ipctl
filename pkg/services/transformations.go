@@ -10,8 +10,8 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/itential/ipctl/internal/logging"
 	"github.com/itential/ipctl/pkg/client"
-	"github.com/itential/ipctl/pkg/logger"
 )
 
 type TransformationView struct {
@@ -39,7 +39,7 @@ type TransformationService struct {
 }
 
 func NewTransformation(name, description string) Transformation {
-	logger.Trace()
+	logging.Trace()
 
 	return Transformation{
 		Name:        name,
@@ -61,7 +61,7 @@ func NewTransformationService(c client.Client) *TransformationService {
 // return them as an array.  If there are no configured transformations, this
 // function will return an empty array.
 func (svc *TransformationService) GetAll() ([]Transformation, error) {
-	logger.Trace()
+	logging.Trace()
 
 	type Response struct {
 		Results []Transformation `json:"results"`
@@ -93,7 +93,7 @@ func (svc *TransformationService) GetAll() ([]Transformation, error) {
 		skip += limit
 	}
 
-	logger.Info("Found%v transformations", len(transformations))
+	logging.Info("Found%v transformations", len(transformations))
 
 	return transformations, nil
 }
@@ -102,7 +102,7 @@ func (svc *TransformationService) GetAll() ([]Transformation, error) {
 // identifier.  If the transformation does not exist, this function will return
 // a "transformation not found" error.
 func (svc *TransformationService) Get(id string) (*Transformation, error) {
-	logger.Trace()
+	logging.Trace()
 
 	var res *Transformation
 	var uri = fmt.Sprintf("/transformations/%s", id)
@@ -121,7 +121,7 @@ func (svc *TransformationService) Get(id string) (*Transformation, error) {
 // GetByName retrieves a transformation by name, excluding system resources (names starting with "@").
 // DEPRECATED: Business logic method - prefer using resources.TransformationResource.GetByName
 func (svc *TransformationService) GetByName(name string) (*Transformation, error) {
-	logger.Trace()
+	logging.Trace()
 
 	transformations, err := svc.GetAll()
 	if err != nil {
@@ -140,7 +140,7 @@ func (svc *TransformationService) GetByName(name string) (*Transformation, error
 // Clear removes all transformations from the server.
 // DEPRECATED: Business logic method - prefer using resources.TransformationResource.Clear
 func (svc *TransformationService) Clear() error {
-	logger.Trace()
+	logging.Trace()
 
 	transformations, err := svc.GetAll()
 	if err != nil {
@@ -161,7 +161,7 @@ func (svc *TransformationService) Clear() error {
 // If transformation of the same name already exists on the server, this
 // function will return an error.
 func (svc *TransformationService) Create(in Transformation) (*Transformation, error) {
-	logger.Trace()
+	logging.Trace()
 
 	var res *Transformation
 
@@ -180,7 +180,7 @@ func (svc *TransformationService) Create(in Transformation) (*Transformation, er
 // server.  If the specified ID does not exist, this function will still return
 // successfully.
 func (svc *TransformationService) Delete(id string) error {
-	logger.Trace()
+	logging.Trace()
 	return svc.DeleteRequest(&Request{
 		uri:                fmt.Sprintf("/transformations/%s", id),
 		expectedStatusCode: http.StatusNoContent,
@@ -196,7 +196,7 @@ func (svc *TransformationService) Delete(id string) error {
 // and the name is not unique, the server API will change the transformation
 // name to "test (1)"
 func (svc *TransformationService) Import(in Transformation) (*Transformation, error) {
-	logger.Trace()
+	logging.Trace()
 
 	var res *Transformation
 

@@ -13,10 +13,10 @@ import (
 	"strings"
 
 	"github.com/itential/ipctl/internal/flags"
+	"github.com/itential/ipctl/internal/logging"
 	"github.com/itential/ipctl/internal/utils"
 	"github.com/itential/ipctl/pkg/client"
 	"github.com/itential/ipctl/pkg/config"
-	"github.com/itential/ipctl/pkg/logger"
 	"github.com/itential/ipctl/pkg/resources"
 	"github.com/itential/ipctl/pkg/services"
 )
@@ -48,7 +48,7 @@ Reader interface
 
 // Get implements the `get model ...` command
 func (r *ModelRunner) Get(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	models, err := r.resource.GetAll()
 	if err != nil {
@@ -63,7 +63,7 @@ func (r *ModelRunner) Get(in Request) (*Response, error) {
 
 // Describe implements the `describe model ....` command
 func (r *ModelRunner) Describe(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	name := in.Args[0]
 
@@ -86,7 +86,7 @@ Writer interface
 
 // Create implements the `create model ...` command
 func (r *ModelRunner) Create(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	name := in.Args[0]
 
@@ -136,7 +136,7 @@ func (r *ModelRunner) Create(in Request) (*Response, error) {
 
 // Delete implements the `delete model ...` command
 func (r *ModelRunner) Delete(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	options := in.Options.(*flags.ModelDeleteOptions)
 	name := in.Args[0]
@@ -164,7 +164,7 @@ func (r *ModelRunner) Delete(in Request) (*Response, error) {
 
 // Clear implements the `clear models` command
 func (r *ModelRunner) Clear(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	models, err := r.resource.GetAll()
 	if err != nil {
@@ -190,7 +190,7 @@ Copier interface
 
 // Copy implements the `copy model ...` command
 func (r *ModelRunner) Copy(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	res, err := Copy(CopyRequest{Request: in, Type: "model"}, r)
 	if err != nil {
@@ -203,7 +203,7 @@ func (r *ModelRunner) Copy(in Request) (*Response, error) {
 }
 
 func (r *ModelRunner) CopyFrom(profile, name string) (any, error) {
-	logger.Trace()
+	logging.Trace()
 
 	client, cancel, err := NewClient(profile, r.config)
 	if err != nil {
@@ -232,7 +232,7 @@ func (r *ModelRunner) CopyFrom(profile, name string) (any, error) {
 }
 
 func (r *ModelRunner) CopyTo(profile string, in any, replace bool) (any, error) {
-	logger.Trace()
+	logging.Trace()
 
 	client, cancel, err := NewClient(profile, r.config)
 	if err != nil {
@@ -276,7 +276,7 @@ Importer interface
 
 // Import implements the `import model ...` command
 func (r *ModelRunner) Import(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	common := in.Common.(*flags.AssetImportCommon)
 	options := in.Options.(*flags.ModelImportOptions)
@@ -361,7 +361,7 @@ Exporter interface
 
 // Export implements the `export model ...` command
 func (r *ModelRunner) Export(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	common := in.Common.(*flags.AssetExportCommon)
 	options := in.Options.(*flags.ModelExportOptions)
@@ -409,7 +409,7 @@ func (r *ModelRunner) Export(in Request) (*Response, error) {
 		}
 
 		if common.Repository != "" {
-			logger.Info("commiting %s to %s", repoPath, common.Repository)
+			logging.Info("commiting %s to %s", repoPath, common.Repository)
 			if err := repo.CommitAndPush(repoPath, common.Message); err != nil {
 				return nil, err
 			}
@@ -437,7 +437,7 @@ Private functions
 // expandModel will take a model and export the assets associated with the
 // actions in the model.
 func (r *ModelRunner) expandModel(in Request, model *services.Model, path string) error {
-	logger.Trace()
+	logging.Trace()
 
 	mModel, err := toMap(model)
 	if err != nil {
@@ -515,7 +515,7 @@ func (r *ModelRunner) expandModel(in Request, model *services.Model, path string
 }
 
 func (r *ModelRunner) importActionMap(action map[string]interface{}, path string, skipChecks bool) error {
-	logger.Trace()
+	logging.Trace()
 
 	if value, exists := action["workflow"]; exists {
 		if !skipChecks {

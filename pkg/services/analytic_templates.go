@@ -9,8 +9,8 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/itential/ipctl/internal/logging"
 	"github.com/itential/ipctl/pkg/client"
-	"github.com/itential/ipctl/pkg/logger"
 )
 
 type AnalyticTemplateCommandRule struct {
@@ -49,7 +49,7 @@ func NewAnalyticTemplateService(c client.Client) *AnalyticTemplateService {
 }
 
 func NewAnalyticTemplate(name string) AnalyticTemplate {
-	logger.Trace()
+	logging.Trace()
 	return AnalyticTemplate{
 		Id:   name,
 		Name: name,
@@ -72,7 +72,7 @@ func NewAnalyticTemplate(name string) AnalyticTemplate {
 // there are no analytic templates configured, this function will return an
 // empty array
 func (svc *AnalyticTemplateService) GetAll() ([]AnalyticTemplate, error) {
-	logger.Trace()
+	logging.Trace()
 
 	var templates []AnalyticTemplate
 	var uri = "/mop/listAnalyticTemplates"
@@ -87,7 +87,7 @@ func (svc *AnalyticTemplateService) GetAll() ([]AnalyticTemplate, error) {
 // Get returns the specified analytic template.  If the template specified by
 // name does not exist, this function will return an error
 func (svc *AnalyticTemplateService) Get(name string) (*AnalyticTemplate, error) {
-	logger.Trace()
+	logging.Trace()
 
 	var template []AnalyticTemplate
 	var uri = fmt.Sprintf("/mop/listAnAnalyticTemplate/%s", name)
@@ -106,7 +106,7 @@ func (svc *AnalyticTemplateService) Get(name string) (*AnalyticTemplate, error) 
 }
 
 func (svc *AnalyticTemplateService) Create(in AnalyticTemplate) (*AnalyticTemplate, error) {
-	logger.Trace()
+	logging.Trace()
 
 	body := map[string]AnalyticTemplate{"template": in}
 
@@ -132,7 +132,7 @@ func (svc *AnalyticTemplateService) Create(in AnalyticTemplate) (*AnalyticTempla
 
 // Delete will remove the specified analytic template from the server.
 func (svc *AnalyticTemplateService) Delete(id string) error {
-	logger.Trace()
+	logging.Trace()
 	return svc.PostRequest(&Request{
 		uri:                fmt.Sprintf("/mop/deleteAnalyticTemplate/%s", id),
 		expectedStatusCode: http.StatusOK,
@@ -141,7 +141,7 @@ func (svc *AnalyticTemplateService) Delete(id string) error {
 
 // Import will import an analytic template
 func (svc *AnalyticTemplateService) Import(in AnalyticTemplate) error {
-	logger.Trace()
+	logging.Trace()
 
 	body := map[string]interface{}{
 		"type":     "analytic",
@@ -152,7 +152,7 @@ func (svc *AnalyticTemplateService) Import(in AnalyticTemplate) error {
 }
 
 func (svc *AnalyticTemplateService) Export(name string) (*AnalyticTemplate, error) {
-	logger.Trace()
+	logging.Trace()
 
 	body := map[string]interface{}{
 		"options": map[string]interface{}{

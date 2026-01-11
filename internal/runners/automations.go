@@ -11,10 +11,10 @@ import (
 	"strings"
 
 	"github.com/itential/ipctl/internal/flags"
+	"github.com/itential/ipctl/internal/logging"
 	"github.com/itential/ipctl/internal/utils"
 	"github.com/itential/ipctl/pkg/client"
 	"github.com/itential/ipctl/pkg/config"
-	"github.com/itential/ipctl/pkg/logger"
 	"github.com/itential/ipctl/pkg/resources"
 	"github.com/itential/ipctl/pkg/services"
 	"github.com/itential/ipctl/pkg/validators"
@@ -44,7 +44,7 @@ func NewAutomationRunner(c client.Client, cfg *config.Config) *AutomationRunner 
 
 // Get is the implementation of the command `get automations`
 func (r *AutomationRunner) Get(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	automations, err := r.resource.GetAll()
 	if err != nil {
@@ -64,7 +64,7 @@ func (r *AutomationRunner) Get(in Request) (*Response, error) {
 }
 
 func (r *AutomationRunner) Describe(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	name := in.Args[0]
 
@@ -121,7 +121,7 @@ func (r *AutomationRunner) Describe(in Request) (*Response, error) {
 //
 
 func (r *AutomationRunner) Create(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	name := in.Args[0]
 
@@ -154,7 +154,7 @@ func (r *AutomationRunner) Create(in Request) (*Response, error) {
 }
 
 func (r *AutomationRunner) Delete(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	name := in.Args[0]
 
@@ -185,7 +185,7 @@ func (r *AutomationRunner) Delete(in Request) (*Response, error) {
 
 // Clear implements the `clear automations` command
 func (r *AutomationRunner) Clear(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	automations, err := r.resource.GetAll()
 	if err != nil {
@@ -208,7 +208,7 @@ func (r *AutomationRunner) Clear(in Request) (*Response, error) {
 //
 
 func (r *AutomationRunner) Copy(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	res, err := Copy(CopyRequest{Request: in, Type: "automation"}, r)
 	if err != nil {
@@ -221,7 +221,7 @@ func (r *AutomationRunner) Copy(in Request) (*Response, error) {
 }
 
 func (r *AutomationRunner) CopyFrom(profile, name string) (any, error) {
-	logger.Trace()
+	logging.Trace()
 
 	client, cancel, err := NewClient(profile, r.config)
 	if err != nil {
@@ -246,7 +246,7 @@ func (r *AutomationRunner) CopyFrom(profile, name string) (any, error) {
 }
 
 func (r *AutomationRunner) CopyTo(profile string, in any, replace bool) (any, error) {
-	logger.Trace()
+	logging.Trace()
 
 	client, cancel, err := NewClient(profile, r.config)
 	if err != nil {
@@ -280,7 +280,7 @@ func (r *AutomationRunner) CopyTo(profile string, in any, replace bool) (any, er
 
 // Import implements the `import automation <name>` command
 func (r *AutomationRunner) Import(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	var automation services.Automation
 
@@ -307,7 +307,7 @@ func (r *AutomationRunner) Import(in Request) (*Response, error) {
 
 // Export implements the `export automation <name>` command
 func (r *AutomationRunner) Export(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	name := in.Args[0]
 
@@ -339,7 +339,7 @@ func (r *AutomationRunner) Export(in Request) (*Response, error) {
 
 // Dump implements the `dump automations...` command
 func (r *AutomationRunner) Dump(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	res, err := r.resource.GetAll()
 	if err != nil {
@@ -373,7 +373,7 @@ func (r *AutomationRunner) Dump(in Request) (*Response, error) {
 
 // Load implements the `load automations ...` command
 func (r *AutomationRunner) Load(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	elements, err := loadAssets(in)
 	if err != nil {
@@ -420,7 +420,7 @@ func (r *AutomationRunner) Load(in Request) (*Response, error) {
 //
 
 func (r *AutomationRunner) importAutomation(in services.Automation, replace bool) (*services.Automation, error) {
-	logger.Trace()
+	logging.Trace()
 
 	if err := validators.NewAutomationValidator(r.client).CanImport(in); err != nil {
 		if err := r.checkImportValidationError(err, in.Name, replace); err != nil {
@@ -438,7 +438,7 @@ func (r *AutomationRunner) importAutomation(in services.Automation, replace bool
 }
 
 func (r *AutomationRunner) formatImportErrorMessage(e error) string {
-	logger.Trace()
+	logging.Trace()
 
 	type ResponseError struct {
 		Message  string `json:"message"`
@@ -455,7 +455,7 @@ func (r *AutomationRunner) formatImportErrorMessage(e error) string {
 	var res ResponseError
 
 	if err := json.Unmarshal([]byte(e.Error()), &res); err != nil {
-		logger.Fatal(err, "failed to unmarshal error message")
+		logging.Fatal(err, "failed to unmarshal error message")
 	}
 
 	var output = []string{
@@ -471,7 +471,7 @@ func (r *AutomationRunner) formatImportErrorMessage(e error) string {
 }
 
 func (r *AutomationRunner) updateTriggers(in services.Automation) ([]services.Trigger, error) {
-	logger.Trace()
+	logging.Trace()
 
 	data, err := toMap(in)
 	if err != nil {

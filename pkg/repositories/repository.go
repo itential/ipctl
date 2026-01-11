@@ -12,7 +12,7 @@ import (
 	"github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/plumbing"
 	gitssh "github.com/go-git/go-git/v5/plumbing/transport/ssh"
-	"github.com/itential/ipctl/pkg/logger"
+	"github.com/itential/ipctl/internal/logging"
 	giturls "github.com/whilp/git-urls"
 	"golang.org/x/crypto/ssh"
 )
@@ -25,24 +25,24 @@ type Repository struct {
 }
 
 func (r Repository) Clone() (string, error) {
-	logger.Trace()
+	logging.Trace()
 
 	target, err := os.MkdirTemp("", "tmp")
 	if err != nil {
-		logger.Fatal(err, "failed to create temp dir")
+		logging.Fatal(err, "failed to create temp dir")
 	}
-	logger.Info("temporary folder is %s", target)
+	logging.Info("temporary folder is %s", target)
 	defer os.Remove(target)
 
-	logger.Debug("source repository url is %s", r.Url)
-	logger.Debug("source reference is %s", r.Reference)
+	logging.Debug("source repository url is %s", r.Url)
+	logging.Debug("source reference is %s", r.Reference)
 
 	cloneOptions := &git.CloneOptions{
 		URL: r.Url,
 	}
 
 	if r.PrivateKey != nil {
-		logger.Debug("setting up auth using private key")
+		logging.Debug("setting up auth using private key")
 
 		signer, err := ssh.ParsePrivateKey(r.PrivateKey)
 		if err != nil {
@@ -70,7 +70,7 @@ func (r Repository) Clone() (string, error) {
 	if u == nil {
 		return "", fmt.Errorf("invalid repository url: %s", r.Url)
 	}
-	logger.Debug("uri schema is %s", u.Scheme)
+	logging.Debug("uri schema is %s", u.Scheme)
 
 	res, err := git.PlainClone(target, false, cloneOptions)
 	if err != nil {
@@ -87,8 +87,8 @@ func (r Repository) Clone() (string, error) {
 		return "", err
 	}
 
-	logger.Debug("clone repository completed successfully to %v", target)
-	logger.Debug("target is %s", target)
+	logging.Debug("clone repository completed successfully to %v", target)
+	logging.Debug("target is %s", target)
 
 	return target, nil
 }

@@ -5,8 +5,8 @@
 package services
 
 import (
+	"github.com/itential/ipctl/internal/logging"
 	"github.com/itential/ipctl/pkg/client"
-	"github.com/itential/ipctl/pkg/logger"
 )
 
 type UserRole struct {
@@ -37,7 +37,7 @@ func NewUserSettingsService(c client.Client) *UserSettingsService {
 }
 
 func (svc *UserSettingsService) Get() (*UserSettings, error) {
-	logger.Trace()
+	logging.Trace()
 
 	var res *UserSettings
 

@@ -5,8 +5,8 @@
 package validators
 
 import (
+	"github.com/itential/ipctl/internal/logging"
 	"github.com/itential/ipctl/pkg/client"
-	"github.com/itential/ipctl/pkg/logger"
 	"github.com/itential/ipctl/pkg/services"
 )
 
@@ -23,14 +23,14 @@ func NewWorkflowValidator(c client.Client) WorkflowValidator {
 }
 
 func (v WorkflowValidator) Exists(name string) bool {
-	logger.Trace()
+	logging.Trace()
 
 	res, err := v.service.Get(name)
 	if err != nil {
 		if err.Error() == "workflow not found" {
 			return false
 		} else {
-			logger.Fatal(err, "")
+			logging.Fatal(err, "")
 		}
 	}
 

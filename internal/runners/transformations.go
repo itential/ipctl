@@ -10,9 +10,9 @@ import (
 	"strings"
 
 	"github.com/itential/ipctl/internal/flags"
+	"github.com/itential/ipctl/internal/logging"
 	"github.com/itential/ipctl/pkg/client"
 	"github.com/itential/ipctl/pkg/config"
-	"github.com/itential/ipctl/pkg/logger"
 	"github.com/itential/ipctl/pkg/resources"
 	"github.com/itential/ipctl/pkg/services"
 )
@@ -35,7 +35,7 @@ func NewTransformationRunner(c client.Client, cfg *config.Config) *Transformatio
 
 // Get implements the `get transformations` command
 func (r *TransformationRunner) Get(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	options := in.Options.(*flags.TransformationGetOptions)
 
@@ -63,7 +63,7 @@ func (r *TransformationRunner) Get(in Request) (*Response, error) {
 
 // Describe implements the `describe transformation ...` command
 func (r *TransformationRunner) Describe(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	name := in.Args[0]
 
@@ -91,7 +91,7 @@ func (r *TransformationRunner) Describe(in Request) (*Response, error) {
 
 // Create implements the `create transformation <name>` command
 func (r *TransformationRunner) Create(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	options := in.Options.(*flags.TransformationCreateOptions)
 
@@ -112,7 +112,7 @@ func (r *TransformationRunner) Create(in Request) (*Response, error) {
 
 // Delete is the implementation of the command `delete transformation <name>`
 func (r *TransformationRunner) Delete(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	name := in.Args[0]
 
@@ -132,7 +132,7 @@ func (r *TransformationRunner) Delete(in Request) (*Response, error) {
 
 // Clear is the implementation of the command `clear transformations`
 func (r *TransformationRunner) Clear(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	transformations, err := r.resource.GetAll()
 	if err != nil {
@@ -141,7 +141,7 @@ func (r *TransformationRunner) Clear(in Request) (*Response, error) {
 
 	for _, ele := range transformations {
 		if err := r.resource.Delete(ele.Id); err != nil {
-			logger.Debug("failed to delete transformation `%s` (%s)", ele.Name, ele.Id)
+			logging.Debug("failed to delete transformation `%s` (%s)", ele.Name, ele.Id)
 			return nil, err
 		}
 	}
@@ -156,7 +156,7 @@ func (r *TransformationRunner) Clear(in Request) (*Response, error) {
 //
 
 func (r *TransformationRunner) Copy(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	res, err := Copy(CopyRequest{Request: in, Type: "transformation"}, r)
 	if err != nil {
@@ -170,7 +170,7 @@ func (r *TransformationRunner) Copy(in Request) (*Response, error) {
 }
 
 func (r *TransformationRunner) CopyFrom(profile, name string) (any, error) {
-	logger.Trace()
+	logging.Trace()
 
 	client, cancel, err := NewClient(profile, r.config)
 	if err != nil {
@@ -190,7 +190,7 @@ func (r *TransformationRunner) CopyFrom(profile, name string) (any, error) {
 }
 
 func (r *TransformationRunner) CopyTo(profile string, in any, replace bool) (any, error) {
-	logger.Trace()
+	logging.Trace()
 
 	client, cancel, err := NewClient(profile, r.config)
 	if err != nil {
@@ -226,7 +226,7 @@ func (r *TransformationRunner) CopyTo(profile string, in any, replace bool) (any
 //
 
 func (r *TransformationRunner) Import(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	common := in.Common.(*flags.AssetImportCommon)
 
@@ -250,7 +250,7 @@ func (r *TransformationRunner) Import(in Request) (*Response, error) {
 //
 
 func (r *TransformationRunner) Export(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	name := in.Args[0]
 
@@ -275,7 +275,7 @@ func (r *TransformationRunner) Export(in Request) (*Response, error) {
 //
 
 func (r *TransformationRunner) importTransformation(in services.Transformation, replace bool) error {
-	logger.Trace()
+	logging.Trace()
 
 	p, err := r.resource.GetByName(in.Name)
 	if err == nil {

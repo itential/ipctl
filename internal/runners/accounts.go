@@ -7,9 +7,9 @@ package runners
 import (
 	"fmt"
 
+	"github.com/itential/ipctl/internal/logging"
 	"github.com/itential/ipctl/pkg/client"
 	"github.com/itential/ipctl/pkg/config"
-	"github.com/itential/ipctl/pkg/logger"
 	"github.com/itential/ipctl/pkg/resources"
 	"github.com/itential/ipctl/pkg/services"
 )
@@ -34,7 +34,7 @@ Reader interface
 
 // Get implements the `get accounts` command
 func (r *AccountRunner) Get(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	accounts, err := r.resource.GetAll()
 	if err != nil {
@@ -49,7 +49,7 @@ func (r *AccountRunner) Get(in Request) (*Response, error) {
 
 // Describe implements the `describe account <name>` command
 func (r *AccountRunner) Describe(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	account, err := r.resource.GetByName(in.Args[0])
 	if err != nil {
@@ -58,7 +58,7 @@ func (r *AccountRunner) Describe(in Request) (*Response, error) {
 
 	tmpl, err := templates.ReadFile("templates/accounts/describe.tmpl")
 	if err != nil {
-		logger.Fatal(err, "failed to load template")
+		logging.Fatal(err, "failed to load template")
 	}
 
 	return &Response{

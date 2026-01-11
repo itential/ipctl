@@ -9,8 +9,8 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/itential/ipctl/internal/logging"
 	"github.com/itential/ipctl/pkg/client"
-	"github.com/itential/ipctl/pkg/logger"
 )
 
 type DeviceGroup struct {
@@ -30,7 +30,7 @@ type DeviceGroupService struct {
 }
 
 func NewDeviceGroup(name, desc string) DeviceGroup {
-	logger.Trace()
+	logging.Trace()
 	return DeviceGroup{
 		Name:        name,
 		Description: desc,
@@ -42,7 +42,7 @@ func NewDeviceGroupService(c client.Client) *DeviceGroupService {
 }
 
 func (svc *DeviceGroupService) Get(id string) (*DeviceGroup, error) {
-	logger.Trace()
+	logging.Trace()
 
 	var res *DeviceGroup
 	var uri = fmt.Sprintf("/configuration_manager/devicegroups/%s", id)
@@ -55,7 +55,7 @@ func (svc *DeviceGroupService) Get(id string) (*DeviceGroup, error) {
 }
 
 func (svc *DeviceGroupService) GetAll() ([]DeviceGroup, error) {
-	logger.Trace()
+	logging.Trace()
 
 	var res []DeviceGroup
 
@@ -69,7 +69,7 @@ func (svc *DeviceGroupService) GetAll() ([]DeviceGroup, error) {
 // GetByName retrieves a device group by name using client-side filtering.
 // DEPRECATED: Business logic method - prefer using resources.DeviceGroupResource.GetByName
 func (svc *DeviceGroupService) GetByName(name string) (*DeviceGroup, error) {
-	logger.Trace()
+	logging.Trace()
 
 	groups, err := svc.GetAll()
 	if err != nil {
@@ -86,7 +86,7 @@ func (svc *DeviceGroupService) GetByName(name string) (*DeviceGroup, error) {
 }
 
 func (svc *DeviceGroupService) Create(in DeviceGroup) (*DeviceGroup, error) {
-	logger.Trace()
+	logging.Trace()
 
 	body := map[string]interface{}{
 		"groupName":        in.Name,
@@ -111,13 +111,13 @@ func (svc *DeviceGroupService) Create(in DeviceGroup) (*DeviceGroup, error) {
 		return nil, err
 	}
 
-	logger.Info("%s", res.Message)
+	logging.Info("%s", res.Message)
 
 	return svc.Get(res.Id)
 }
 
 func (svc *DeviceGroupService) Delete(id string) error {
-	logger.Trace()
+	logging.Trace()
 
 	body := map[string]interface{}{
 		"groupIds": []string{id},
