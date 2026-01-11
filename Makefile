@@ -52,7 +52,8 @@ build: install
 		-v \
 		-o $(BIN_DIR)/$(BINARY) \
 		-ldflags="-X 'github.com/itential/ipctl/internal/metadata.Build=$(GIT_COMMIT)' \
-		          -X 'github.com/itential/ipctl/internal/metadata.Version=$(GIT_VERSION)'"
+		          -X 'github.com/itential/ipctl/internal/metadata.Version=$(GIT_VERSION)'" \
+		./cmd/ipctl
 
 ## clean: Remove build artifacts and generated files
 clean:

@@ -7,11 +7,11 @@ package main
 import (
 	"os"
 
-	"github.com/itential/ipctl/cmd"
+	"github.com/itential/ipctl/internal/cli"
 )
 
 func main() {
 	os.Exit(
-		cmd.Execute(),
+		cli.Execute(),
 	)
 }

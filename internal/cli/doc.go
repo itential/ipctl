@@ -2,7 +2,7 @@
 // Unauthorized copying of this file, via any medium is strictly prohibited
 // Proprietary and confidential
 
-// Package cmd provides the command-line interface for ipctl.
+// Package cli provides the command-line interface for ipctl.
 //
 // This package defines the root command structure and coordinates between
 // Cobra commands, handlers, and the underlying business logic.
@@ -37,7 +37,7 @@
 //
 // # Command Descriptors
 //
-// Commands are defined using YAML descriptors in cmd/descriptors/ that specify:
+// Commands are defined using YAML descriptors in internal/cli/descriptors/ that specify:
 //   - Command usage, description, and examples
 //   - Argument requirements and validation rules
 //   - Group assignments for organizing commands in help output
@@ -46,7 +46,7 @@
 // # Adding New Commands
 //
 // To add a new command:
-//  1. Define a descriptor YAML file in cmd/descriptors/ or internal/handlers/descriptors/
+//  1. Define a descriptor YAML file in internal/cli/descriptors/ or internal/handlers/descriptors/
 //  2. Create a runner in internal/runners/ implementing the necessary interfaces (Reader, Writer, etc.)
 //  3. Create a handler in internal/handlers/ that wraps the runner with an AssetHandler
 //  4. Register the handler in handlers.NewHandler()
@@ -55,6 +55,6 @@
 // # Example
 //
 //	// Create and execute the CLI
-//	exitCode := cmd.Execute()
+//	exitCode := cli.Execute()
 //	os.Exit(exitCode)
-package cmd
+package cli
