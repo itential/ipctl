@@ -22,15 +22,19 @@ type Config struct {
 	ConsoleJSON bool
 	// TimestampTimezone is the location for formatting log timestamps
 	TimestampTimezone *time.Location
+	// RedactSensitiveData enables automatic redaction of sensitive information in logs
+	RedactSensitiveData bool
 }
 
 // DefaultConfig returns a Config with sensible defaults.
-// Default level is INFO, console output is human-readable, and timestamps use UTC.
+// Default level is INFO, console output is human-readable, timestamps use UTC,
+// and sensitive data redaction is enabled for security.
 func DefaultConfig() Config {
 	return Config{
-		Level:             "INFO",
-		ConsoleJSON:       false,
-		TimestampTimezone: time.UTC,
+		Level:               "INFO",
+		ConsoleJSON:         false,
+		TimestampTimezone:   time.UTC,
+		RedactSensitiveData: true,
 	}
 }
 
@@ -39,6 +43,7 @@ func DefaultConfig() Config {
 //   - IPCTL_LOG_LEVEL: Log level (DEBUG, INFO, WARN, ERROR, FATAL, DISABLED, TRACE)
 //   - IPCTL_LOG_CONSOLE_JSON: Enable JSON console output (true/false)
 //   - IPCTL_LOG_TIMESTAMP_TIMEZONE: Timezone for timestamps (UTC, Local, or IANA timezone)
+//   - IPCTL_LOG_REDACT_SENSITIVE_DATA: Enable sensitive data redaction (true/false, default: true)
 //
 // Returns a Config with defaults for any unset environment variables.
 func LoadFromEnv() Config {
@@ -56,6 +61,10 @@ func LoadFromEnv() Config {
 		if loc := parseTimezone(tz); loc != nil {
 			cfg.TimestampTimezone = loc
 		}
+	}
+
+	if redact := os.Getenv("IPCTL_LOG_REDACT_SENSITIVE_DATA"); redact == "false" {
+		cfg.RedactSensitiveData = false
 	}
 
 	return cfg
