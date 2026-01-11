@@ -10,9 +10,9 @@ import (
 	"strings"
 
 	"github.com/itential/ipctl/internal/flags"
+	"github.com/itential/ipctl/internal/logging"
 	"github.com/itential/ipctl/pkg/client"
 	"github.com/itential/ipctl/pkg/config"
-	"github.com/itential/ipctl/pkg/logger"
 	"github.com/itential/ipctl/pkg/services"
 )
 
@@ -36,7 +36,7 @@ Reader interface
 
 // Get implements the `get golden-config <name>` command
 func (r *GoldenConfigRunner) Get(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	trees, err := r.service.GetAll()
 	if err != nil {
@@ -66,7 +66,7 @@ Writer interface
 
 // Create implements the `create golden-config <name> <type>` command
 func (r *GoldenConfigRunner) Create(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	name := in.Args[0]
 	deviceType := in.Args[1]
@@ -87,7 +87,7 @@ func (r *GoldenConfigRunner) Create(in Request) (*Response, error) {
 
 // Delete implemetns the `delete golden-config <name>` command
 func (r *GoldenConfigRunner) Delete(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	name := in.Args[0]
 
@@ -117,7 +117,7 @@ Importer interface
 
 // Import implements the `import gctree ...` command
 func (r *GoldenConfigRunner) Import(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	common := in.Common.(*flags.AssetImportCommon)
 
@@ -145,7 +145,7 @@ Exporter interface
 
 // Export implements the `export gctree ...` command
 func (r *GoldenConfigRunner) Export(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	name := in.Args[0]
 
@@ -178,7 +178,7 @@ Private functions
 */
 
 func (r *GoldenConfigRunner) importTree(in services.GoldenConfigTree, replace bool) error {
-	logger.Trace()
+	logging.Trace()
 
 	res, err := r.service.GetByName(in.Name)
 	if err == nil {

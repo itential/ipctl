@@ -10,10 +10,10 @@ import (
 	"strings"
 
 	"github.com/itential/ipctl/internal/flags"
+	"github.com/itential/ipctl/internal/logging"
 	"github.com/itential/ipctl/internal/utils"
 	"github.com/itential/ipctl/pkg/client"
 	"github.com/itential/ipctl/pkg/config"
-	"github.com/itential/ipctl/pkg/logger"
 	"github.com/itential/ipctl/pkg/services"
 )
 
@@ -33,7 +33,7 @@ func NewRoleRunner(client client.Client, cfg *config.Config) *RoleRunner {
 
 // GetRoles implements the `get roles` command
 func (r *RoleRunner) Get(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	var options flags.RoleGetOptions
 	utils.LoadObject(in.Options, &options)
@@ -62,7 +62,7 @@ func (r *RoleRunner) Get(in Request) (*Response, error) {
 
 // Describe implements the `describe role ...` command
 func (r *RoleRunner) Describe(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	var options *flags.RoleDescribeOptions
 	utils.LoadObject(in.Options, &options)
@@ -105,7 +105,7 @@ func (r *RoleRunner) Describe(in Request) (*Response, error) {
 
 // Delete implements the `delete role <name>` command
 func (r *RoleRunner) Delete(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	role, err := GetByName(r.service, in.Args[0])
 	if err != nil {
@@ -123,7 +123,7 @@ func (r *RoleRunner) Delete(in Request) (*Response, error) {
 
 // Clear implements the `clear roles` command
 func (r *RoleRunner) Clear(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	roles, err := r.service.GetAll()
 	if err != nil {
@@ -147,7 +147,7 @@ func (r *RoleRunner) Clear(in Request) (*Response, error) {
 }
 
 func (r *RoleRunner) Create(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	name := in.Args[0]
 
@@ -202,7 +202,7 @@ func (r *RoleRunner) Create(in Request) (*Response, error) {
 }
 
 func (r *RoleRunner) Copy(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	name := in.Args[0]
 
@@ -254,7 +254,7 @@ func (r *RoleRunner) Copy(in Request) (*Response, error) {
 
 // Import implements the `import role <path>` command
 func (r *RoleRunner) Import(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	var common *flags.AssetImportCommon
 	utils.LoadObject(in.Common, &common)
@@ -300,7 +300,7 @@ func (r *RoleRunner) Import(in Request) (*Response, error) {
 
 // Export implements the `export role <name>` command
 func (r *RoleRunner) Export(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	name := in.Args[0]
 	roleType := "Custom"
@@ -356,7 +356,7 @@ func (r *RoleRunner) Export(in Request) (*Response, error) {
 }
 
 func GetByName(svc *services.RoleService, name string) (*services.Role, error) {
-	logger.Trace()
+	logging.Trace()
 
 	roles, err := svc.GetAll()
 	if err != nil {
@@ -373,7 +373,7 @@ func GetByName(svc *services.RoleService, name string) (*services.Role, error) {
 }
 
 func Exists(svc *services.RoleService, name string) bool {
-	logger.Trace()
+	logging.Trace()
 
 	_, err := GetByName(svc, name)
 	if err != nil {

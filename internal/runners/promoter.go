@@ -5,12 +5,12 @@
 package runners
 
 import (
+	"github.com/itential/ipctl/internal/logging"
 	"github.com/itential/ipctl/internal/utils"
-	"github.com/itential/ipctl/pkg/logger"
 )
 
 func ReadImportFromFile(in Request, ptr any) error {
-	logger.Trace()
+	logging.Trace()
 
 	path, err := NormalizePath(in)
 	if err != nil {

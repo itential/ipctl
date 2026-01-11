@@ -5,9 +5,9 @@
 package runners
 
 import (
+	"github.com/itential/ipctl/internal/logging"
 	"github.com/itential/ipctl/pkg/client"
 	"github.com/itential/ipctl/pkg/config"
-	"github.com/itential/ipctl/pkg/logger"
 	"github.com/itential/ipctl/pkg/services"
 )
 
@@ -27,7 +27,7 @@ func NewRoleTypeRunner(client client.Client, cfg *config.Config) *RoleTypeRunner
 
 // Get implements the `get role-types` command
 func (r *RoleTypeRunner) Get(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	roles, err := r.service.GetAll()
 	if err != nil {

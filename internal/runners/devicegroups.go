@@ -9,9 +9,9 @@ import (
 	"strings"
 
 	"github.com/itential/ipctl/internal/flags"
+	"github.com/itential/ipctl/internal/logging"
 	"github.com/itential/ipctl/pkg/client"
 	"github.com/itential/ipctl/pkg/config"
-	"github.com/itential/ipctl/pkg/logger"
 	"github.com/itential/ipctl/pkg/services"
 )
 
@@ -35,7 +35,7 @@ Reader interface
 
 // Get implements the `get devices ...` command
 func (r *DeviceGroupRunner) Get(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	devices, err := r.service.GetAll()
 	if err != nil {
@@ -57,7 +57,7 @@ func (r *DeviceGroupRunner) Get(in Request) (*Response, error) {
 
 // Describe implements the `describe device-group ...` command
 func (r *DeviceGroupRunner) Describe(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	name := in.Args[0]
 
@@ -80,7 +80,7 @@ Writer interface
 
 // Create implements the `create device-group ...` command
 func (r *DeviceGroupRunner) Create(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	options := in.Options.(*flags.DeviceGroupCreateOptions)
 
@@ -99,7 +99,7 @@ func (r *DeviceGroupRunner) Create(in Request) (*Response, error) {
 
 // Delete implements the `delete device-group ...` command
 func (r *DeviceGroupRunner) Delete(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	name := in.Args[0]
 
@@ -120,7 +120,7 @@ func (r *DeviceGroupRunner) Delete(in Request) (*Response, error) {
 
 // Clear implements the `clear device-group ...` command
 func (r *DeviceGroupRunner) Clear(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	groups, err := r.service.GetAll()
 	if err != nil {

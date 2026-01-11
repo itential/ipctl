@@ -6,8 +6,8 @@ package handlers
 
 import (
 	"github.com/itential/ipctl/internal/flags"
+	"github.com/itential/ipctl/internal/logging"
 	"github.com/itential/ipctl/internal/runners"
-	"github.com/itential/ipctl/pkg/logger"
 	"github.com/spf13/cobra"
 )
 
@@ -38,7 +38,7 @@ func (h ApiHandler) newCommand(key string, runner runners.RunnerFunc, options fl
 }
 
 func (h ApiHandler) Commands() []*cobra.Command {
-	logger.Trace()
+	logging.Trace()
 	return []*cobra.Command{
 		h.Get(),
 		h.Delete(),

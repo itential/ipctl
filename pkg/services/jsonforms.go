@@ -9,8 +9,8 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/itential/ipctl/internal/logging"
 	"github.com/itential/ipctl/pkg/client"
-	"github.com/itential/ipctl/pkg/logger"
 )
 
 // JsonForm represents a JSON form asset in the Itential Platform.
@@ -51,7 +51,7 @@ func NewJsonFormService(c client.Client) *JsonFormService {
 // The name and description parameters are required and will be used in
 // both the form metadata and the generated JSON schema.
 func NewJsonForm(name, description string) JsonForm {
-	logger.Trace()
+	logging.Trace()
 
 	jf := JsonForm{Name: name, Description: description}
 
@@ -81,7 +81,7 @@ func NewJsonForm(name, description string) JsonForm {
 // Returns an empty slice if no forms are configured. This method
 // does not perform any filtering or sorting of the results.
 func (svc *JsonFormService) GetAll() ([]JsonForm, error) {
-	logger.Trace()
+	logging.Trace()
 
 	var res []JsonForm
 
@@ -96,7 +96,7 @@ func (svc *JsonFormService) GetAll() ([]JsonForm, error) {
 // If the asset exists on the server, it is returned to the calling function.
 // If the asset does not exist, an error is returned.
 func (svc *JsonFormService) Get(id string) (*JsonForm, error) {
-	logger.Trace()
+	logging.Trace()
 
 	var res *JsonForm
 	var uri = fmt.Sprintf("/json-forms/forms/%s", id)
@@ -118,7 +118,7 @@ func (svc *JsonFormService) Get(id string) (*JsonForm, error) {
 // Returns the created form with server-generated fields populated,
 // or an error if the creation fails.
 func (svc *JsonFormService) Create(in JsonForm) (*JsonForm, error) {
-	logger.Trace()
+	logging.Trace()
 
 	type Response struct {
 		Status  string    `json:"status"`
@@ -147,7 +147,7 @@ func (svc *JsonFormService) Create(in JsonForm) (*JsonForm, error) {
 // This is a bulk operation that can delete multiple forms in a single request.
 // Returns an error if any of the deletions fail.
 func (svc *JsonFormService) Delete(ids []string) error {
-	logger.Trace()
+	logging.Trace()
 	return svc.DeleteRequest(&Request{
 		uri:  "/json-forms/forms",
 		body: map[string]interface{}{"ids": ids},
@@ -157,7 +157,7 @@ func (svc *JsonFormService) Delete(ids []string) error {
 // GetByName retrieves a JSON form by name using client-side filtering.
 // DEPRECATED: Business logic method - prefer using resources.JsonFormResource.GetByName
 func (svc *JsonFormService) GetByName(name string) (*JsonForm, error) {
-	logger.Trace()
+	logging.Trace()
 
 	forms, err := svc.GetAll()
 	if err != nil {
@@ -176,7 +176,7 @@ func (svc *JsonFormService) GetByName(name string) (*JsonForm, error) {
 // Clear removes all JSON forms from the server.
 // DEPRECATED: Business logic method - prefer using resources.JsonFormResource.Clear
 func (svc *JsonFormService) Clear() error {
-	logger.Trace()
+	logging.Trace()
 
 	forms, err := svc.GetAll()
 	if err != nil {
@@ -200,7 +200,7 @@ func (svc *JsonFormService) Clear() error {
 // from other platform instances. Returns the imported form with
 // server-generated fields populated.
 func (svc *JsonFormService) Import(in JsonForm) (*JsonForm, error) {
-	logger.Trace()
+	logging.Trace()
 
 	body := map[string]interface{}{
 		"forms": []JsonForm{in},
@@ -229,7 +229,7 @@ func (svc *JsonFormService) Import(in JsonForm) (*JsonForm, error) {
 		return nil, err
 	}
 
-	logger.Info("%s", res.Imported[0].Message)
+	logging.Info("%s", res.Imported[0].Message)
 
 	jf, err := svc.Get(res.Imported[0].Created["_id"].(string))
 	if err != nil {

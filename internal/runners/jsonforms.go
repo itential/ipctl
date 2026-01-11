@@ -10,10 +10,10 @@ import (
 	"strings"
 
 	"github.com/itential/ipctl/internal/flags"
+	"github.com/itential/ipctl/internal/logging"
 	"github.com/itential/ipctl/internal/utils"
 	"github.com/itential/ipctl/pkg/client"
 	"github.com/itential/ipctl/pkg/config"
-	"github.com/itential/ipctl/pkg/logger"
 	"github.com/itential/ipctl/pkg/resources"
 	"github.com/itential/ipctl/pkg/services"
 )
@@ -40,7 +40,7 @@ func NewJsonFormRunner(c client.Client, cfg *config.Config) *JsonFormRunner {
 
 // Get implements the `get json_forms` command
 func (r *JsonFormRunner) Get(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	var options flags.WorkflowGetOptions
 	utils.LoadObject(in.Options, &options)
@@ -69,7 +69,7 @@ func (r *JsonFormRunner) Get(in Request) (*Response, error) {
 
 // Describe implements the `describe json_form <name>` command
 func (r *JsonFormRunner) Describe(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	res, err := r.resource.Get(in.Args[0])
 	if err != nil {
@@ -88,7 +88,7 @@ func (r *JsonFormRunner) Describe(in Request) (*Response, error) {
 
 // Create implements the `create jsonform <name>` command
 func (r *JsonFormRunner) Create(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	name := in.Args[0]
 
@@ -121,7 +121,7 @@ func (r *JsonFormRunner) Create(in Request) (*Response, error) {
 
 // Delete implements the `delete jsonform <name>` command
 func (r *JsonFormRunner) Delete(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	name := in.Args[0]
 
@@ -154,7 +154,7 @@ func (r *JsonFormRunner) Delete(in Request) (*Response, error) {
 
 // Clear implements the `clear jsonforms` command
 func (r *JsonFormRunner) Clear(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	jsonforms, err := r.resource.GetAll()
 	if err != nil {
@@ -182,7 +182,7 @@ func (r *JsonFormRunner) Clear(in Request) (*Response, error) {
 
 // Copy implements the `copy jsonform <name>` command
 func (r *JsonFormRunner) Copy(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	res, err := Copy(CopyRequest{Request: in, Type: "jsonform"}, r)
 	if err != nil {
@@ -195,7 +195,7 @@ func (r *JsonFormRunner) Copy(in Request) (*Response, error) {
 }
 
 func (r *JsonFormRunner) CopyFrom(profile, name string) (any, error) {
-	logger.Trace()
+	logging.Trace()
 
 	client, cancel, err := NewClient(profile, r.config)
 	if err != nil {
@@ -215,7 +215,7 @@ func (r *JsonFormRunner) CopyFrom(profile, name string) (any, error) {
 }
 
 func (r *JsonFormRunner) CopyTo(profile string, in any, replace bool) (any, error) {
-	logger.Trace()
+	logging.Trace()
 
 	client, cancel, err := NewClient(profile, r.config)
 	if err != nil {
@@ -244,7 +244,7 @@ func (r *JsonFormRunner) CopyTo(profile string, in any, replace bool) (any, erro
 
 // Import implements the command `import jsonform <path>`
 func (r *JsonFormRunner) Import(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	common := in.Common.(*flags.AssetImportCommon)
 
@@ -271,7 +271,7 @@ func (r *JsonFormRunner) Import(in Request) (*Response, error) {
 
 // Export is the implementation of the command `export jsonform <name>`
 func (r *JsonFormRunner) Export(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	var options *flags.AssetExportCommon
 	utils.LoadObject(in.Common, &options)
@@ -299,7 +299,7 @@ func (r *JsonFormRunner) Export(in Request) (*Response, error) {
 //
 
 func (r JsonFormRunner) importJsonForm(in services.JsonForm, replace bool) (*services.JsonForm, error) {
-	logger.Trace()
+	logging.Trace()
 
 	p, err := r.resource.Get(in.Name)
 	if err == nil {

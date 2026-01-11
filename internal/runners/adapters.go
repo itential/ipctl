@@ -13,11 +13,11 @@ import (
 	"text/template"
 
 	"github.com/itential/ipctl/internal/flags"
+	"github.com/itential/ipctl/internal/logging"
 	"github.com/itential/ipctl/internal/utils"
 	"github.com/itential/ipctl/pkg/client"
 	"github.com/itential/ipctl/pkg/config"
 	"github.com/itential/ipctl/pkg/editor"
-	"github.com/itential/ipctl/pkg/logger"
 	"github.com/itential/ipctl/pkg/resources"
 	"github.com/itential/ipctl/pkg/services"
 )
@@ -44,7 +44,7 @@ Reader Interface
 
 // Get is the implementation of the command `get adapters`
 func (r *AdapterRunner) Get(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	adapters, err := r.resource.GetAll()
 	if err != nil {
@@ -59,7 +59,7 @@ func (r *AdapterRunner) Get(in Request) (*Response, error) {
 
 // Describe is the implementation of the `describe adapters` command
 func (r *AdapterRunner) Describe(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	res, err := r.resource.Get(in.Args[0])
 	if err != nil {
@@ -68,7 +68,7 @@ func (r *AdapterRunner) Describe(in Request) (*Response, error) {
 
 	b, err := json.MarshalIndent(res, "", "    ")
 	if err != nil {
-		logger.Fatal(err, "failed to marshal data")
+		logging.Fatal(err, "failed to marshal data")
 	}
 
 	return &Response{
@@ -84,7 +84,7 @@ Writer Interface
 */
 
 func (r *AdapterRunner) Create(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	name := in.Args[0]
 
@@ -153,7 +153,7 @@ func (r *AdapterRunner) Create(in Request) (*Response, error) {
 
 // Delete is the implementation of `delete adatper <name>`
 func (r *AdapterRunner) Delete(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	if err := r.resource.Delete(in.Args[0]); err != nil {
 		return nil, err
@@ -176,7 +176,7 @@ Editor Interface
 
 // Edit implements the `edti adapter ...` command
 func (r *AdapterRunner) Edit(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	name := in.Args[0]
 
@@ -207,7 +207,7 @@ Copier Interface
 */
 
 func (r *AdapterRunner) Copy(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	res, err := Copy(CopyRequest{Request: in, Type: "adapter"}, r)
 	if err != nil {
@@ -220,7 +220,7 @@ func (r *AdapterRunner) Copy(in Request) (*Response, error) {
 }
 
 func (r *AdapterRunner) CopyFrom(profile, name string) (any, error) {
-	logger.Trace()
+	logging.Trace()
 
 	client, cancel, err := NewClient(profile, r.config)
 	if err != nil {
@@ -237,7 +237,7 @@ func (r *AdapterRunner) CopyFrom(profile, name string) (any, error) {
 }
 
 func (r *AdapterRunner) CopyTo(profile string, in any, replace bool) (any, error) {
-	logger.Trace()
+	logging.Trace()
 
 	client, cancel, err := NewClient(profile, r.config)
 	if err != nil {
@@ -297,7 +297,7 @@ Importer Interface
 
 // Import provides the implementation for `import adapter <filepath>`
 func (r *AdapterRunner) Import(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	common := in.Common.(*flags.AssetImportCommon)
 
@@ -324,7 +324,7 @@ Exporter Interface
 
 // Export) provides the implementation for `export adapter <name>`
 func (r *AdapterRunner) Export(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	name := in.Args[0]
 
@@ -351,7 +351,7 @@ Inspector interface
 */
 
 func (r *AdapterRunner) Inspect(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	svc := services.NewHealthService(r.client)
 	adapters, err := svc.GetAdapterHealth()
@@ -372,7 +372,7 @@ Controller interface
 */
 
 func (r *AdapterRunner) Start(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	name := in.Args[0]
 
@@ -386,7 +386,7 @@ func (r *AdapterRunner) Start(in Request) (*Response, error) {
 }
 
 func (r *AdapterRunner) Stop(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	name := in.Args[0]
 
@@ -400,7 +400,7 @@ func (r *AdapterRunner) Stop(in Request) (*Response, error) {
 }
 
 func (r *AdapterRunner) Restart(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	name := in.Args[0]
 
@@ -421,7 +421,7 @@ Dumper interface
 
 // Dump implements the `dump adapters...` command
 func (r *AdapterRunner) Dump(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	res, err := r.resource.GetAll()
 	if err != nil {
@@ -451,7 +451,7 @@ Loader interface
 
 // Load implements the `load adapters ...` command
 func (r *AdapterRunner) Load(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	elements, err := loadAssets(in)
 	if err != nil {
@@ -499,7 +499,7 @@ Private functions
 */
 
 func (r *AdapterRunner) importAdapter(in services.Adapter, replace bool) error {
-	logger.Trace()
+	logging.Trace()
 
 	adapters, err := r.resource.GetAll()
 	if err != nil {

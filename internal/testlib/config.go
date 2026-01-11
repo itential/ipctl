@@ -5,8 +5,8 @@
 package testlib
 
 import (
+	"github.com/itential/ipctl/internal/logging"
 	"github.com/itential/ipctl/pkg/config"
-	"github.com/itential/ipctl/pkg/logger"
 	"github.com/mitchellh/go-homedir"
 	"github.com/spf13/viper"
 )
@@ -50,7 +50,7 @@ func DefaultConfig() *config.Config {
 
 	ac.WorkingDir, err = homedir.Expand(ac.WorkingDir)
 	if err != nil {
-		logger.Fatal(err, "error attemping to expand home directory")
+		logging.Fatal(err, "error attemping to expand home directory")
 	}
 
 	return &ac

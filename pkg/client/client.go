@@ -16,8 +16,8 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/itential/ipctl/internal/logging"
 	"github.com/itential/ipctl/pkg/config"
-	"github.com/itential/ipctl/pkg/logger"
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/clientcredentials"
 )
@@ -126,7 +126,7 @@ type HttpClient struct {
 //	}
 //	client := New(ctx, cfg)
 func New(ctx context.Context, cfg *config.Profile) *HttpClient {
-	logger.Info("Creating new http client")
+	logging.Info("Creating new http client")
 
 	// create the client object and return it to the calling function.
 	return &HttpClient{
@@ -172,7 +172,7 @@ func (c *HttpClient) IsAuthenticated() bool {
 // or invalid request parameters. HTTP error status codes (4xx, 5xx) are
 // returned as successful responses with the appropriate status code.
 func (c *HttpClient) send(method string, request *Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	var scheme string = c.setScheme()
 	var remotePort int = c.setPort()
@@ -181,17 +181,17 @@ func (c *HttpClient) send(method string, request *Request) (*Response, error) {
 	// contruct the full URL object that is used to send the request
 	u := c.newUrl(scheme, remoteHost, request.Path, request.Params)
 
-	logger.Info("%s %s", method, u.String())
+	logging.Info("%s %s", method, u.String())
 
 	if !request.NoLog {
 		debugOutput := string(request.Body)
 		if debugOutput != "" {
-			logger.Debug("%s", string(request.Body))
+			logging.Debug("%s", string(request.Body))
 		} else {
-			logger.Debug("Request body is empty")
+			logging.Debug("Request body is empty")
 		}
 	} else {
-		logger.Debug("request body is omitted due to the use of NoLog")
+		logging.Debug("request body is omitted due to the use of NoLog")
 	}
 
 	client := &http.Client{
@@ -201,13 +201,13 @@ func (c *HttpClient) send(method string, request *Request) (*Response, error) {
 	// Apply timeout configuration if set
 	if c.Timeout > 0 {
 		client.Timeout = time.Duration(c.Timeout) * time.Second
-		logger.Debug("Setting HTTP client timeout to %d seconds", c.Timeout)
+		logging.Debug("Setting HTTP client timeout to %d seconds", c.Timeout)
 	}
 
 	// Disable certificate verification when UseTls is true and Verify is
 	// false.  This is inherently insecure
 	if c.UseTls && !c.Verify {
-		logger.Debug("Disabling client certificate verification")
+		logging.Debug("Disabling client certificate verification")
 		client.Transport = &http.Transport{
 			TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
 		}
@@ -215,7 +215,7 @@ func (c *HttpClient) send(method string, request *Request) (*Response, error) {
 
 	// attempt to authenticate to the server using oauth
 	if c.ClientId != "" && c.ClientSecret != "" {
-		logger.Debug("attempting to authenticate using client id")
+		logging.Debug("attempting to authenticate using client id")
 		httpClient, err := c.authenticateUsingOAuth(client, scheme, remoteHost)
 		if err != nil {
 			return nil, err
@@ -236,7 +236,7 @@ func (c *HttpClient) send(method string, request *Request) (*Response, error) {
 	}
 	defer resp.Body.Close()
 
-	logger.Info("HTTP response is %s", resp.Status)
+	logging.Info("HTTP response is %s", resp.Status)
 
 	return c.newResponse(resp, method, u.String())
 }
@@ -247,11 +247,11 @@ func (c *HttpClient) send(method string, request *Request) (*Response, error) {
 // used to send the request.  The `u` argument is the full URL path.  This
 // function will return a client Response object or an error.
 func (c *HttpClient) newResponse(r *http.Response, method, u string) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	b, err := io.ReadAll(r.Body)
 	if err != nil {
-		logger.Error(err, "failed to read the response body")
+		logging.Error(err, "failed to read the response body")
 		return nil, err
 	}
 
@@ -275,7 +275,7 @@ func (c *HttpClient) newResponse(r *http.Response, method, u string) (*Response,
 // URL.  This function returns either ProtocolHttp or ProtocolHttps depending
 // on the value of UseTls
 func (c *HttpClient) setScheme() string {
-	logger.Trace()
+	logging.Trace()
 
 	if c.UseTls {
 		return ProtocolHttps
@@ -289,7 +289,7 @@ func (c *HttpClient) setScheme() string {
 // on the value of UseTls.  When UseTls is true, the port value will be set to
 // 443 and when UseTls is falase, the port value will be set to 80.
 func (c *HttpClient) setPort() int {
-	logger.Trace()
+	logging.Trace()
 
 	var port int = c.Port
 
@@ -298,7 +298,7 @@ func (c *HttpClient) setPort() int {
 	} else if port == 0 && !c.UseTls {
 		port = 80
 	} else if port == 0 {
-		logger.Fatal(fmt.Errorf("could not determine the value for port"), "")
+		logging.Fatal(fmt.Errorf("could not determine the value for port"), "")
 	}
 
 	return port
@@ -314,7 +314,7 @@ func (c *HttpClient) setPort() int {
 //
 // This function returns a URL object.
 func (c *HttpClient) newUrl(scheme, host, path string, params map[string]string) url.URL {
-	logger.Trace()
+	logging.Trace()
 
 	u := url.URL{
 		Scheme: scheme,
@@ -342,7 +342,7 @@ func (c *HttpClient) newUrl(scheme, host, path string, params map[string]string)
 // This function will also update the request with the set of default headers
 // designed to work with Itential Platform.
 func (c *HttpClient) newHttpRequest(method, u string, body []byte) (*http.Request, error) {
-	logger.Trace()
+	logging.Trace()
 
 	// create the http request
 	req, err := http.NewRequestWithContext(
@@ -371,7 +371,7 @@ func (c *HttpClient) newHttpRequest(method, u string, body []byte) (*http.Reques
 // will set the value of authenticate to true if the client successfully
 // authenticates.
 func (c *HttpClient) authenticateUsingBasicAuth() {
-	logger.Trace()
+	logging.Trace()
 
 	// Construct the body use to authenticate the session.  Itential Platform
 	// does not use a standard basic authentication mechanism, rather it
@@ -386,7 +386,7 @@ func (c *HttpClient) authenticateUsingBasicAuth() {
 
 	b, err := json.Marshal(body)
 	if err != nil {
-		logger.Fatal(err, "error attempting to marshal authentication credentials")
+		logging.Fatal(err, "error attempting to marshal authentication credentials")
 	}
 
 	// Be sure to always set WithNoLog(true) for this call to prevent the
@@ -395,14 +395,14 @@ func (c *HttpClient) authenticateUsingBasicAuth() {
 
 	res, err := c.send("POST", req)
 	if err != nil {
-		logger.Fatal(
+		logging.Fatal(
 			fmt.Errorf("error sending POST request to the server for authentication"),
 			"",
 		)
 	}
 
 	if res.StatusCode != http.StatusOK {
-		logger.Fatal(
+		logging.Fatal(
 			fmt.Errorf("http returned status code `%v` while attempting to authenticate", res.StatusCode),
 			"",
 		)
@@ -416,7 +416,7 @@ func (c *HttpClient) authenticateUsingBasicAuth() {
 // authentication is successful, this function will return a http.Client object
 // that can be used.  If there is an error, the error is returned.
 func (c *HttpClient) authenticateUsingOAuth(httpClient *http.Client, scheme, remoteHost string) (*http.Client, error) {
-	logger.Trace()
+	logging.Trace()
 
 	if c.ClientId == "" || c.ClientSecret == "" {
 		return nil, fmt.Errorf("missing client_id or client_secret, authentication failed")

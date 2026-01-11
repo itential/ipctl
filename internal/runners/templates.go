@@ -11,10 +11,10 @@ import (
 	"strings"
 
 	"github.com/itential/ipctl/internal/flags"
+	"github.com/itential/ipctl/internal/logging"
 	"github.com/itential/ipctl/internal/terminal"
 	"github.com/itential/ipctl/pkg/client"
 	"github.com/itential/ipctl/pkg/config"
-	"github.com/itential/ipctl/pkg/logger"
 	"github.com/itential/ipctl/pkg/resources"
 	"github.com/itential/ipctl/pkg/services"
 )
@@ -39,7 +39,7 @@ Reader interface
 
 // Get implements the `get command-templates` command
 func (r *TemplateRunner) Get(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	options := in.Options.(*flags.TemplateGetOptions)
 
@@ -67,7 +67,7 @@ func (r *TemplateRunner) Get(in Request) (*Response, error) {
 
 // Describe implements the `describe command-template <name>` command
 func (r *TemplateRunner) Describe(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	name := in.Args[0]
 
@@ -99,7 +99,7 @@ Writer interface
 
 // Create implements the `create template ...` command
 func (r *TemplateRunner) Create(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	options := in.Options.(*flags.TemplateCreateOptions)
 
@@ -136,7 +136,7 @@ func (r *TemplateRunner) Create(in Request) (*Response, error) {
 }
 
 func (r *TemplateRunner) Delete(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	t, err := r.resource.GetByName(in.Args[0])
 	if err != nil {
@@ -153,7 +153,7 @@ func (r *TemplateRunner) Delete(in Request) (*Response, error) {
 }
 
 func (r *TemplateRunner) Clear(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	elements, err := r.resource.GetAll()
 	if err != nil {
@@ -163,7 +163,7 @@ func (r *TemplateRunner) Clear(in Request) (*Response, error) {
 	for _, ele := range elements {
 		terminal.Display("Deleting template `%s`  (%s)", ele.Name, ele.Id)
 		if err := r.resource.Delete(ele.Id); err != nil {
-			logger.Debug("failed to delete template `%s` (%s)", ele.Name, ele.Id)
+			logging.Debug("failed to delete template `%s` (%s)", ele.Name, ele.Id)
 			return nil, err
 		}
 	}
@@ -180,7 +180,7 @@ Copier interface
 */
 
 func (r *TemplateRunner) Copy(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	res, err := Copy(CopyRequest{Request: in, Type: "template"}, r)
 	if err != nil {
@@ -193,7 +193,7 @@ func (r *TemplateRunner) Copy(in Request) (*Response, error) {
 }
 
 func (r *TemplateRunner) CopyFrom(profile, name string) (any, error) {
-	logger.Trace()
+	logging.Trace()
 
 	client, cancel, err := NewClient(profile, r.config)
 	if err != nil {
@@ -212,7 +212,7 @@ func (r *TemplateRunner) CopyFrom(profile, name string) (any, error) {
 }
 
 func (r *TemplateRunner) CopyTo(profile string, in any, replace bool) (any, error) {
-	logger.Trace()
+	logging.Trace()
 
 	client, cancel, err := NewClient(profile, r.config)
 	if err != nil {
@@ -230,7 +230,7 @@ func (r *TemplateRunner) CopyTo(profile string, in any, replace bool) (any, erro
 		} else if err != nil {
 			return nil, err
 		}
-		logger.Info("Deleting existing template `%s` from `%s`", name, profile)
+		logging.Info("Deleting existing template `%s` from `%s`", name, profile)
 		if err := svc.Delete(name); err != nil {
 			return nil, err
 		}
@@ -252,7 +252,7 @@ Importer interface
 */
 
 func (r *TemplateRunner) Import(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	common := in.Common.(*flags.AssetImportCommon)
 
@@ -278,7 +278,7 @@ Exporter interface
 */
 
 func (r *TemplateRunner) Export(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	name := in.Args[0]
 
@@ -311,7 +311,7 @@ Dumper interface
 
 // Dump implements the `dump templates...` command
 func (r *TemplateRunner) Dump(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	res, err := r.resource.GetAll()
 	if err != nil {
@@ -344,7 +344,7 @@ Loader interface
 
 // Load implements the `load template ...` command
 func (r *TemplateRunner) Load(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	options := in.Options.(*flags.TemplateLoadOptions)
 
@@ -408,8 +408,8 @@ Private functions
 */
 
 func (r TemplateRunner) importTemplate(in services.Template, replace bool) error {
-	logger.Trace()
-	logger.Debug("attempting to import template `%s`", in.Name)
+	logging.Trace()
+	logging.Debug("attempting to import template `%s`", in.Name)
 
 	p, err := r.resource.GetByName(in.Name)
 	if err != nil {
@@ -419,7 +419,7 @@ func (r TemplateRunner) importTemplate(in services.Template, replace bool) error
 	}
 	if p != nil {
 		if replace {
-			logger.Debug("template exists, deleting it")
+			logging.Debug("template exists, deleting it")
 			r.resource.Delete(p.Id)
 		} else {
 			return errors.New(fmt.Sprintf("template with name `%s` already exists, use `--replace` to overwrite", p.Name))
@@ -431,7 +431,7 @@ func (r TemplateRunner) importTemplate(in services.Template, replace bool) error
 		return err
 	}
 
-	logger.Debug("successfully imported template `%s`", in.Name)
+	logging.Debug("successfully imported template `%s`", in.Name)
 
 	return nil
 }

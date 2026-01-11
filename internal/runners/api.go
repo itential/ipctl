@@ -10,9 +10,9 @@ import (
 	"strings"
 
 	"github.com/itential/ipctl/internal/flags"
+	"github.com/itential/ipctl/internal/logging"
 	"github.com/itential/ipctl/internal/utils"
 	"github.com/itential/ipctl/pkg/client"
-	"github.com/itential/ipctl/pkg/logger"
 	"github.com/itential/ipctl/pkg/services"
 )
 
@@ -28,7 +28,7 @@ func NewApiRunner(client client.Client) ApiRunner {
 }
 
 func (r *ApiRunner) readData(in string) (map[string]interface{}, error) {
-	logger.Trace()
+	logging.Trace()
 
 	var data map[string]interface{}
 
@@ -54,7 +54,7 @@ func (r *ApiRunner) readData(in string) (map[string]interface{}, error) {
 
 }
 func (r *ApiRunner) jsonResponse(in string) (interface{}, error) {
-	logger.Trace()
+	logging.Trace()
 
 	var response interface{}
 
@@ -67,7 +67,7 @@ func (r *ApiRunner) jsonResponse(in string) (interface{}, error) {
 }
 
 func (r *ApiRunner) Get(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	res, err := r.service.Get(in.Args[0], 0)
 	if err != nil {
@@ -85,7 +85,7 @@ func (r *ApiRunner) Get(in Request) (*Response, error) {
 }
 
 func (r *ApiRunner) Delete(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	var options *flags.ApiDeleteOptions
 	utils.LoadObject(in.Common, &options)
@@ -106,7 +106,7 @@ func (r *ApiRunner) Delete(in Request) (*Response, error) {
 }
 
 func (r *ApiRunner) Post(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	var options *flags.ApiPostOptions
 	utils.LoadObject(in.Common, &options)
@@ -132,7 +132,7 @@ func (r *ApiRunner) Post(in Request) (*Response, error) {
 }
 
 func (r *ApiRunner) Put(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	var options *flags.ApiPutOptions
 	utils.LoadObject(in.Common, &options)
@@ -158,7 +158,7 @@ func (r *ApiRunner) Put(in Request) (*Response, error) {
 }
 
 func (r *ApiRunner) Patch(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	var options *flags.ApiPatchOptions
 	utils.LoadObject(in.Common, &options)

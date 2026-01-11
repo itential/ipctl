@@ -5,8 +5,8 @@
 package services
 
 import (
+	"github.com/itential/ipctl/internal/logging"
 	"github.com/itential/ipctl/pkg/client"
-	"github.com/itential/ipctl/pkg/logger"
 )
 
 type View struct {
@@ -26,7 +26,7 @@ func NewViewService(c client.Client) *ViewService {
 // them as an array.  If there are no configured authorization views, this
 // function will return an empty array
 func (svc *ViewService) GetAll() ([]View, error) {
-	logger.Trace()
+	logging.Trace()
 
 	type Response struct {
 		Results []View `json:"results"`
@@ -58,7 +58,7 @@ func (svc *ViewService) GetAll() ([]View, error) {
 		skip += limit
 	}
 
-	logger.Info("Found %v view(s)", len(views))
+	logging.Info("Found %v view(s)", len(views))
 
 	return views, nil
 }

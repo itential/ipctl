@@ -7,7 +7,7 @@ package localaaa
 import (
 	"context"
 
-	"github.com/itential/ipctl/pkg/logger"
+	"github.com/itential/ipctl/internal/logging"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -26,7 +26,7 @@ type LocalAAAService struct {
 func NewLocalAAAService(uri string) LocalAAAService {
 	client, err := mongo.Connect(context.TODO(), options.Client().ApplyURI(uri))
 	if err != nil {
-		logger.Fatal(err, "failed to connect to db")
+		logging.Fatal(err, "failed to connect to db")
 	}
 
 	return LocalAAAService{

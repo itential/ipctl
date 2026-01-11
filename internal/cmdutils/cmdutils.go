@@ -8,8 +8,8 @@ import (
 	"embed"
 	"strings"
 
+	"github.com/itential/ipctl/internal/logging"
 	"github.com/itential/ipctl/internal/terminal"
-	"github.com/itential/ipctl/pkg/logger"
 	"gopkg.in/yaml.v2"
 )
 
@@ -57,7 +57,7 @@ func (d Descriptor) Short() string {
 func LoadDescriptor(data []byte) map[string]Descriptor {
 	var s map[string]Descriptor
 	if err := yaml.Unmarshal(data, &s); err != nil {
-		logger.Fatal(err, "failed to unmarshal data")
+		logging.Fatal(err, "failed to unmarshal data")
 	}
 	return s
 }
@@ -86,7 +86,7 @@ func CheckError(err error, terminalNoColor bool) {
 	if err != nil {
 		terminal.Error(err, terminalNoColor)
 		terminal.Display("")
-		logger.Fatal(err, "")
+		logging.Fatal(err, "")
 	}
 }
 
@@ -110,13 +110,13 @@ func CheckError(err error, terminalNoColor bool) {
 // 	 get: <descriptor>
 
 func LoadDescriptorsFromContent(path string, content *embed.FS) Descriptors {
-	logger.Trace()
+	logging.Trace()
 
 	descriptors := map[string]map[string]Descriptor{}
 
 	entries, err := content.ReadDir(path)
 	if err != nil {
-		logger.Fatal(err, "failed to read descriptors directory")
+		logging.Fatal(err, "failed to read descriptors directory")
 	}
 
 	for _, ele := range entries {
@@ -125,7 +125,7 @@ func LoadDescriptorsFromContent(path string, content *embed.FS) Descriptors {
 
 		data, err := content.ReadFile(fn)
 		if err != nil {
-			logger.Fatal(err, "failed to read descriptor")
+			logging.Fatal(err, "failed to read descriptor")
 		}
 
 		descriptors[name] = LoadDescriptor(data)

@@ -5,9 +5,9 @@
 package runners
 
 import (
+	"github.com/itential/ipctl/internal/logging"
 	"github.com/itential/ipctl/pkg/client"
 	"github.com/itential/ipctl/pkg/config"
-	"github.com/itential/ipctl/pkg/logger"
 	"github.com/itential/ipctl/pkg/services"
 )
 
@@ -24,7 +24,7 @@ func NewViewRunner(client client.Client, cfg *config.Config) *ViewRunner {
 
 // Get implements the `get views` command
 func (r *ViewRunner) Get(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	views, err := r.service.GetAll()
 	if err != nil {

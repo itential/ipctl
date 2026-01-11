@@ -9,8 +9,8 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/itential/ipctl/internal/logging"
 	"github.com/itential/ipctl/pkg/client"
-	"github.com/itential/ipctl/pkg/logger"
 )
 
 // Template represents a template in the Automation Studio
@@ -44,7 +44,7 @@ func NewTemplateService(c client.Client) *TemplateService {
 // NewTemplate creates a new Template instance with the given parameters
 // If type t is empty, defaults to "textfsm"
 func NewTemplate(name, group, description, t string) Template {
-	logger.Trace()
+	logging.Trace()
 
 	if t == "" {
 		t = "textfsm"
@@ -60,7 +60,7 @@ func NewTemplate(name, group, description, t string) Template {
 
 // GetAll retrieves all templates from the server
 func (svc *TemplateService) GetAll() ([]Template, error) {
-	logger.Trace()
+	logging.Trace()
 
 	var res PaginatedResponse
 	var templates []Template
@@ -94,14 +94,14 @@ func (svc *TemplateService) GetAll() ([]Template, error) {
 		skip += limit
 	}
 
-	logger.Info("GetAll found %v template(s)", len(templates))
+	logging.Info("GetAll found %v template(s)", len(templates))
 
 	return templates, nil
 }
 
 // Get retrieves a template by its ID
 func (svc *TemplateService) Get(id string) (*Template, error) {
-	logger.Trace()
+	logging.Trace()
 
 	var res *Template
 	var uri = fmt.Sprintf("/automation-studio/templates/%s", id)
@@ -118,7 +118,7 @@ func (svc *TemplateService) Get(id string) (*Template, error) {
 // GetByName retrieves a template by name using client-side filtering.
 // DEPRECATED: Business logic method - prefer using resources.TemplateResource.GetByName
 func (svc *TemplateService) GetByName(name string) (*Template, error) {
-	logger.Trace()
+	logging.Trace()
 
 	templates, err := svc.GetAll()
 	if err != nil {
@@ -136,7 +136,7 @@ func (svc *TemplateService) GetByName(name string) (*Template, error) {
 
 // Create creates a new template
 func (svc *TemplateService) Create(in Template) (*Template, error) {
-	logger.Trace()
+	logging.Trace()
 
 	body := map[string]map[string]interface{}{
 		"template": map[string]interface{}{
@@ -167,7 +167,7 @@ func (svc *TemplateService) Create(in Template) (*Template, error) {
 
 // Delete removes a template by its ID
 func (svc *TemplateService) Delete(id string) error {
-	logger.Trace()
+	logging.Trace()
 	return svc.BaseService.Delete(
 		fmt.Sprintf("/automation-studio/templates/%s", id),
 	)
@@ -175,7 +175,7 @@ func (svc *TemplateService) Delete(id string) error {
 
 // Import imports a template into the system
 func (svc *TemplateService) Import(in Template) (*Template, error) {
-	logger.Trace()
+	logging.Trace()
 
 	body := map[string][]Template{"templates": []Template{in}}
 
@@ -197,14 +197,14 @@ func (svc *TemplateService) Import(in Template) (*Template, error) {
 		return nil, err
 	}
 
-	logger.Info("%s", res.Imported[0].Message)
+	logging.Info("%s", res.Imported[0].Message)
 
 	return res.Imported[0].Original, nil
 }
 
 // Export exports a template by its ID
 func (svc *TemplateService) Export(id string) (*Template, error) {
-	logger.Trace()
+	logging.Trace()
 
 	var res *Template
 	var uri = fmt.Sprintf("/automation-studio/templates/%s/export", id)

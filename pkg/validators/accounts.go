@@ -7,8 +7,8 @@ package validators
 import (
 	"fmt"
 
+	"github.com/itential/ipctl/internal/logging"
 	"github.com/itential/ipctl/pkg/client"
-	"github.com/itential/ipctl/pkg/logger"
 	"github.com/itential/ipctl/pkg/services"
 )
 
@@ -37,11 +37,11 @@ func NewAccountValidator(c client.Client) AccountValidator {
 }
 
 func (v AccountValidator) Exists(accounts []string) error {
-	logger.Trace()
+	logging.Trace()
 
 	res, err := services.NewAccountService(v.client).GetAll()
 	if err != nil {
-		logger.Fatal(err, "")
+		logging.Fatal(err, "")
 	}
 
 	var existing []string

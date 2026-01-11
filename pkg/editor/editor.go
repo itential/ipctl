@@ -10,14 +10,14 @@ import (
 	"os/exec"
 	"reflect"
 
-	"github.com/itential/ipctl/pkg/logger"
+	"github.com/itential/ipctl/internal/logging"
 	"github.com/mitchellh/mapstructure"
 )
 
 const defaultEditor = "vi"
 
 func Run(in interface{}, ptr any) error {
-	logger.Trace()
+	logging.Trace()
 
 	editor := os.Getenv("EDITOR")
 	if editor == "" {
@@ -27,22 +27,22 @@ func Run(in interface{}, ptr any) error {
 	// Create the temp directory
 	tempFile, err := os.CreateTemp("", "iag*.json")
 	if err != nil {
-		logger.Fatal(err, "could not create temp file")
+		logging.Fatal(err, "could not create temp file")
 	}
 	defer os.Remove(tempFile.Name())
 
 	// Marshal the object to bytes and write it to a file in the temp directory
 	b, err := json.MarshalIndent(in, "", "    ")
 	if err != nil {
-		logger.Fatal(err, "failed to marshal object")
+		logging.Fatal(err, "failed to marshal object")
 	}
 
 	if _, err := tempFile.Write(b); err != nil {
-		logger.Fatal(err, "could not write temp file")
+		logging.Fatal(err, "could not write temp file")
 
 	}
 	if err := tempFile.Close(); err != nil {
-		logger.Fatal(err, "could not close temp file")
+		logging.Fatal(err, "could not close temp file")
 	}
 
 	// Create the editor command and launch it
@@ -53,19 +53,19 @@ func Run(in interface{}, ptr any) error {
 	editorCmd.Stderr = os.Stderr
 
 	if err := editorCmd.Run(); err != nil {
-		logger.Fatal(err, "could not open file in editor")
+		logging.Fatal(err, "could not open file in editor")
 	}
 
 	// Read the contents of the updated file back
 	data, err := os.ReadFile(tempFile.Name())
 	if err != nil {
-		logger.Fatal(err, "failed to temp file")
+		logging.Fatal(err, "failed to temp file")
 	}
 
 	if ptr != nil {
 		err = json.Unmarshal(data, &ptr)
 		if err != nil {
-			logger.Fatal(err, "failed to unmarshal temp file")
+			logging.Fatal(err, "failed to unmarshal temp file")
 		}
 
 		var out = reflect.Zero(reflect.TypeOf(in)).Interface()

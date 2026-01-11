@@ -8,8 +8,8 @@ import (
 	"errors"
 	"fmt"
 
+	"github.com/itential/ipctl/internal/logging"
 	"github.com/itential/ipctl/pkg/client"
-	"github.com/itential/ipctl/pkg/logger"
 	"github.com/itential/ipctl/pkg/resources"
 	"github.com/itential/ipctl/pkg/services"
 )
@@ -27,7 +27,7 @@ func NewAutomationValidator(c client.Client) AutomationValidator {
 }
 
 func (v AutomationValidator) CanImport(in services.Automation) error {
-	logger.Trace()
+	logging.Trace()
 
 	if v.Exists(in.Name) {
 		return errors.New(
@@ -50,19 +50,19 @@ func (v AutomationValidator) CanImport(in services.Automation) error {
 }
 
 func (v AutomationValidator) Exists(name string) bool {
-	logger.Trace()
+	logging.Trace()
 
 	exists, err := v.resource.GetByName(name)
 	if err != nil {
 		if err.Error() != "automation not found" {
-			logger.Fatal(err, "")
+			logging.Fatal(err, "")
 		}
 	}
 	return exists != nil
 }
 
 func (v AutomationValidator) validateAccountsExist(in services.Automation) error {
-	logger.Trace()
+	logging.Trace()
 
 	if err := v.checkAccounts(in.Gbac.Read); err != nil {
 		return errors.New(

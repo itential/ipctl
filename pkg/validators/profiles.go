@@ -8,8 +8,8 @@ import (
 	"errors"
 	"fmt"
 
+	"github.com/itential/ipctl/internal/logging"
 	"github.com/itential/ipctl/pkg/client"
-	"github.com/itential/ipctl/pkg/logger"
 	"github.com/itential/ipctl/pkg/services"
 )
 
@@ -31,7 +31,7 @@ func NewProfileValidator(c client.Client) ProfileValidator {
 // ValidationError.  If one doesn't, nil will be returned indiciating the
 // profile can be successfully imported.
 func (v ProfileValidator) CanImport(p services.Profile) *ValidatorError {
-	logger.Trace()
+	logging.Trace()
 
 	existing, err := v.service.Get(p.Id)
 	if err != nil {

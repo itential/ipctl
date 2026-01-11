@@ -10,10 +10,10 @@ import (
 	"strings"
 
 	"github.com/itential/ipctl/internal/flags"
+	"github.com/itential/ipctl/internal/logging"
 	"github.com/itential/ipctl/internal/utils"
 	"github.com/itential/ipctl/pkg/client"
 	"github.com/itential/ipctl/pkg/config"
-	"github.com/itential/ipctl/pkg/logger"
 	"github.com/itential/ipctl/pkg/services"
 )
 
@@ -31,7 +31,7 @@ func NewTagRunner(client client.Client, cfg *config.Config) *TagRunner {
 
 // Get implements the `get tags` command
 func (r *TagRunner) Get(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	tags, err := r.service.GetAll()
 	if err != nil {
@@ -46,7 +46,7 @@ func (r *TagRunner) Get(in Request) (*Response, error) {
 
 // Describe implements the `describe tag <name>` command
 func (r *TagRunner) Describe(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	name := in.Args[0]
 
@@ -61,7 +61,7 @@ func (r *TagRunner) Describe(in Request) (*Response, error) {
 }
 
 func (r *TagRunner) Create(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	name := in.Args[0]
 
@@ -84,7 +84,7 @@ func (r *TagRunner) Create(in Request) (*Response, error) {
 }
 
 func (r *TagRunner) Delete(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	name := in.Args[0]
 
@@ -103,7 +103,7 @@ func (r *TagRunner) Delete(in Request) (*Response, error) {
 }
 
 func (r *TagRunner) Clear(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	tags, err := r.service.GetAll()
 	if err != nil {
@@ -122,7 +122,7 @@ func (r *TagRunner) Clear(in Request) (*Response, error) {
 }
 
 func (r *TagRunner) Copy(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	res, err := Copy(CopyRequest{Request: in, Type: "tag"}, r)
 	if err != nil {
@@ -136,7 +136,7 @@ func (r *TagRunner) Copy(in Request) (*Response, error) {
 }
 
 func (r *TagRunner) CopyFrom(profile, name string) (any, error) {
-	logger.Trace()
+	logging.Trace()
 
 	client, cancel, err := NewClient(profile, r.config)
 	if err != nil {
@@ -153,7 +153,7 @@ func (r *TagRunner) CopyFrom(profile, name string) (any, error) {
 }
 
 func (r *TagRunner) CopyTo(profile string, in any, replace bool) (any, error) {
-	logger.Trace()
+	logging.Trace()
 
 	client, cancel, err := NewClient(profile, r.config)
 	if err != nil {

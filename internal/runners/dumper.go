@@ -5,7 +5,7 @@
 package runners
 
 import (
-	"github.com/itential/ipctl/pkg/logger"
+	"github.com/itential/ipctl/internal/logging"
 )
 
 // dumpAssets takes the Request object and a map of objects and dumps all
@@ -14,6 +14,6 @@ import (
 // to disk.  The key of the map must be the filename for the asset and the
 // value must be the object instance.
 func dumpAssets(in Request, objects map[string]interface{}) error {
-	logger.Trace()
+	logging.Trace()
 	return exportAssets(in, objects)
 }

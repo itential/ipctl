@@ -8,8 +8,8 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/itential/ipctl/internal/logging"
 	"github.com/itential/ipctl/pkg/client"
-	"github.com/itential/ipctl/pkg/logger"
 )
 
 // Integration represents an integration configuration in the Itential Platform.
@@ -43,7 +43,7 @@ func NewIntegrationService(c client.Client) *IntegrationService {
 // It initializes the integration with default properties including ID and type fields.
 // This is a helper function for creating integration configurations programmatically.
 func NewIntegration(name, integrationType string) Integration {
-	logger.Trace()
+	logging.Trace()
 
 	return Integration{
 		Name: name,
@@ -59,7 +59,7 @@ func NewIntegration(name, integrationType string) Integration {
 // The Type field is automatically set to "Adapter" and Virtual to true as required by the API.
 // Returns the created integration or an error if the operation fails.
 func (svc *IntegrationService) Create(in Integration) (*Integration, error) {
-	logger.Trace()
+	logging.Trace()
 
 	// Make sure to set the Type and Virtual fields to these values otherwise
 	// the POST call will return an error
@@ -82,7 +82,7 @@ func (svc *IntegrationService) Create(in Integration) (*Integration, error) {
 		return nil, err
 	}
 
-	logger.Info("%s", res.Message)
+	logging.Info("%s", res.Message)
 
 	return res.Data, nil
 
@@ -92,7 +92,7 @@ func (svc *IntegrationService) Create(in Integration) (*Integration, error) {
 // It sends a DELETE request to /integrations/{name}.
 // Returns an error if the operation fails or the integration is not found.
 func (svc *IntegrationService) Delete(name string) error {
-	logger.Trace()
+	logging.Trace()
 	return svc.BaseService.Delete(fmt.Sprintf("/integrations/%s", name))
 }
 
@@ -100,7 +100,7 @@ func (svc *IntegrationService) Delete(name string) error {
 // It sends a GET request to /integrations/{name}.
 // Returns the integration configuration or an error if the operation fails or integration is not found.
 func (svc *IntegrationService) Get(name string) (*Integration, error) {
-	logger.Trace()
+	logging.Trace()
 
 	type Response struct {
 		Data     *Integration           `json:"data"`
@@ -121,7 +121,7 @@ func (svc *IntegrationService) Get(name string) (*Integration, error) {
 // It sends a GET request to /integrations and processes the paginated results.
 // Returns a slice of all integration configurations or an error if the operation fails.
 func (svc *IntegrationService) GetAll() ([]Integration, error) {
-	logger.Trace()
+	logging.Trace()
 
 	type Result struct {
 		Data     *Integration           `json:"data"`

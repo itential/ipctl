@@ -9,8 +9,8 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/itential/ipctl/internal/logging"
 	"github.com/itential/ipctl/pkg/client"
-	"github.com/itential/ipctl/pkg/logger"
 )
 
 type GoldenConfigTreeSummary struct {
@@ -50,7 +50,7 @@ func NewGoldenConfigService(c client.Client) *GoldenConfigService {
 
 // Create calls `POST /configuration_manager/configs`
 func (svc *GoldenConfigService) Create(in GoldenConfigTree) (*GoldenConfigTree, error) {
-	logger.Trace()
+	logging.Trace()
 
 	body := map[string]interface{}{
 		"name":       in.Name,
@@ -72,14 +72,14 @@ func (svc *GoldenConfigService) Create(in GoldenConfigTree) (*GoldenConfigTree, 
 
 // Delete calls `DELETE /configuration_manager/configs/{id}`
 func (svc *GoldenConfigService) Delete(id string) error {
-	logger.Trace()
+	logging.Trace()
 	var uri = fmt.Sprintf("/configuration_manager/configs/%s", id)
 	return svc.BaseService.Delete(uri)
 }
 
 // GetAll calls `GET /configuration_manager/configs`
 func (svc *GoldenConfigService) GetAll() ([]GoldenConfigTreeSummary, error) {
-	logger.Trace()
+	logging.Trace()
 
 	var res []GoldenConfigTreeSummary
 	var uri = "/configuration_manager/configs"
@@ -92,7 +92,7 @@ func (svc *GoldenConfigService) GetAll() ([]GoldenConfigTreeSummary, error) {
 }
 
 func (svc *GoldenConfigService) GetByName(name string) (*GoldenConfigTreeSummary, error) {
-	logger.Trace()
+	logging.Trace()
 
 	trees, err := svc.GetAll()
 	if err != nil {
@@ -119,7 +119,7 @@ func (svc *GoldenConfigService) GetByName(name string) (*GoldenConfigTreeSummary
 // `in` argument and import it to the server.  This function will return an
 // error or nil if no error is encountered
 func (svc *GoldenConfigService) Import(in GoldenConfigTree) error {
-	logger.Trace()
+	logging.Trace()
 
 	body := map[string]interface{}{
 		"trees": []map[string]interface{}{
@@ -145,14 +145,14 @@ func (svc *GoldenConfigService) Import(in GoldenConfigTree) error {
 		return err
 	}
 
-	logger.Info("%s", res.Message)
+	logging.Info("%s", res.Message)
 
 	return nil
 }
 
 // Export calls `POST /configuration_manager/export/goldenconfigs`
 func (svc *GoldenConfigService) Export(id string) (*GoldenConfigTree, error) {
-	logger.Trace()
+	logging.Trace()
 
 	body := map[string]interface{}{"treeId": id}
 

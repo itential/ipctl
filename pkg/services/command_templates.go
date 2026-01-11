@@ -9,8 +9,8 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/itential/ipctl/internal/logging"
 	"github.com/itential/ipctl/pkg/client"
-	"github.com/itential/ipctl/pkg/logger"
 )
 
 type CommandTemplateRule struct {
@@ -49,7 +49,7 @@ func NewCommandTemplateService(c client.Client) *CommandTemplateService {
 }
 
 func NewCommandTemplate(name string) CommandTemplate {
-	logger.Trace()
+	logging.Trace()
 
 	cmd := CommandTemplateCommand{
 		PassRule: true,
@@ -71,7 +71,7 @@ func NewCommandTemplate(name string) CommandTemplate {
 // Get will return the specified command template from the server.  If the
 // specified template does not exist, this function will return an error.
 func (svc *CommandTemplateService) Get(name string) (*CommandTemplate, error) {
-	logger.Trace()
+	logging.Trace()
 
 	var res []*CommandTemplate
 	var uri = fmt.Sprintf("/mop/listATemplate/%s", name)
@@ -90,7 +90,7 @@ func (svc *CommandTemplateService) Get(name string) (*CommandTemplate, error) {
 }
 
 func (svc *CommandTemplateService) GetByName(name string) (*CommandTemplate, error) {
-	logger.Trace()
+	logging.Trace()
 
 	elements, err := svc.GetAll()
 	if err != nil {
@@ -114,7 +114,7 @@ func (svc *CommandTemplateService) GetByName(name string) (*CommandTemplate, err
 }
 
 func (svc *CommandTemplateService) GetAll() ([]CommandTemplate, error) {
-	logger.Trace()
+	logging.Trace()
 	var res []CommandTemplate
 	var uri = "/mop/listTemplates"
 	if err := svc.BaseService.Get(uri, &res); err != nil {
@@ -124,7 +124,7 @@ func (svc *CommandTemplateService) GetAll() ([]CommandTemplate, error) {
 }
 
 func (svc *CommandTemplateService) Create(in CommandTemplate) (*CommandTemplate, error) {
-	logger.Trace()
+	logging.Trace()
 
 	// NOTE (hashdigest) The Id must be set to the same value as the name
 	// otherwise the document cannot be found later
@@ -153,7 +153,7 @@ func (svc *CommandTemplateService) Create(in CommandTemplate) (*CommandTemplate,
 }
 
 func (svc *CommandTemplateService) Delete(name string) error {
-	logger.Trace()
+	logging.Trace()
 
 	type Response struct {
 		Acknowledged bool `json:"acknowledged"`
@@ -173,7 +173,7 @@ func (svc *CommandTemplateService) Delete(name string) error {
 }
 
 func (svc *CommandTemplateService) Clear() error {
-	logger.Trace()
+	logging.Trace()
 	elements, err := svc.GetAll()
 	if err != nil {
 		return err
@@ -187,7 +187,7 @@ func (svc *CommandTemplateService) Clear() error {
 }
 
 func (svc *CommandTemplateService) Import(in CommandTemplate) error {
-	logger.Trace()
+	logging.Trace()
 
 	body := map[string]interface{}{
 		"type":     "templates",
@@ -202,7 +202,7 @@ func (svc *CommandTemplateService) Import(in CommandTemplate) error {
 }
 
 func (svc *CommandTemplateService) Export(name string) (*CommandTemplate, error) {
-	logger.Trace()
+	logging.Trace()
 
 	body := map[string]interface{}{
 		"options": map[string]interface{}{

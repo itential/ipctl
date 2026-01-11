@@ -155,8 +155,8 @@
 //
 // Request and response details are logged when the logger is configured:
 //
-//	logger.Debug("Request: %s %s", req.Method, req.URL)
-//	logger.Debug("Response: %d %s", resp.StatusCode, resp.Status)
+//	logging.Debug("Request: %s %s", req.Method, req.URL)
+//	logging.Debug("Response: %d %s", resp.StatusCode, resp.Status)
 //
 // Request bodies can be suppressed from logs by setting:
 //

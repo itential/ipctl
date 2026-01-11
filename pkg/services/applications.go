@@ -8,8 +8,8 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/itential/ipctl/internal/logging"
 	"github.com/itential/ipctl/pkg/client"
-	"github.com/itential/ipctl/pkg/logger"
 )
 
 // ApplicationOperationResponse represents the response structure for application operations
@@ -40,7 +40,7 @@ func NewApplicationService(c client.Client) *ApplicationService {
 
 // GetAll retrieves all applications from the Itential platform
 func (svc *ApplicationService) GetAll() ([]Application, error) {
-	logger.Trace()
+	logging.Trace()
 
 	type Result struct {
 		Data     Application `json:"data"`
@@ -72,7 +72,7 @@ func (svc *ApplicationService) GetAll() ([]Application, error) {
 
 // Get retrieves a specific application by name from the Itential platform
 func (svc *ApplicationService) Get(name string) (*Application, error) {
-	logger.Trace()
+	logging.Trace()
 
 	type Response struct {
 		Metadata struct {
@@ -94,7 +94,7 @@ func (svc *ApplicationService) Get(name string) (*Application, error) {
 
 // Create creates a new application in the Itential platform
 func (svc *ApplicationService) Create(in Application) (*Application, error) {
-	logger.Trace()
+	logging.Trace()
 
 	type Response struct {
 		Status  string       `json:"status"`
@@ -112,14 +112,14 @@ func (svc *ApplicationService) Create(in Application) (*Application, error) {
 		return nil, err
 	}
 
-	logger.Info("%s", res.Message)
+	logging.Info("%s", res.Message)
 
 	return res.Data, nil
 }
 
 // Start starts the specified application by name
 func (svc *ApplicationService) Start(name string) error {
-	logger.Trace()
+	logging.Trace()
 
 	type Response struct {
 		Status  string `json:"status"`
@@ -133,14 +133,14 @@ func (svc *ApplicationService) Start(name string) error {
 		return err
 	}
 
-	logger.Info("%s", res.Message)
+	logging.Info("%s", res.Message)
 
 	return nil
 }
 
 // Stop stops the specified application by name
 func (svc *ApplicationService) Stop(name string) error {
-	logger.Trace()
+	logging.Trace()
 
 	type Response struct {
 		Status  string `json:"status"`
@@ -154,14 +154,14 @@ func (svc *ApplicationService) Stop(name string) error {
 		return err
 	}
 
-	logger.Info("%s", res.Message)
+	logging.Info("%s", res.Message)
 
 	return nil
 }
 
 // Restart restarts the specified application by name
 func (svc *ApplicationService) Restart(name string) error {
-	logger.Trace()
+	logging.Trace()
 
 	type Response struct {
 		Status  string `json:"status"`

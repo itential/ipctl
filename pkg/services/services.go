@@ -11,8 +11,8 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/itential/ipctl/internal/logging"
 	"github.com/itential/ipctl/pkg/client"
-	"github.com/itential/ipctl/pkg/logger"
 )
 
 func tobytes(obj any) ([]byte, error) {
@@ -36,7 +36,7 @@ type Request struct {
 }
 
 func Do(r *Request) (*client.Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	req := &client.Request{
 		Path: r.uri,
@@ -96,12 +96,12 @@ func Do(r *Request) (*client.Response, error) {
 	}
 
 	if resp.Body != nil {
-		logger.Debug("%s", string(resp.Body))
+		logging.Debug("%s", string(resp.Body))
 	}
 
 	if r.response != nil {
 		if err := json.Unmarshal(resp.Body, r.response); err != nil {
-			logger.Error(err, "failed to unmarshal reponse")
+			logging.Error(err, "failed to unmarshal reponse")
 			return resp, err
 		}
 	}
@@ -112,8 +112,8 @@ func Do(r *Request) (*client.Response, error) {
 func checkResponseForError(r *Request, resp *client.Response) error {
 	if !r.disableStatusCodeCheck {
 		if r.expectedStatusCode != 0 && r.expectedStatusCode != resp.StatusCode {
-			logger.Error(nil, "status code = %v, expected status code = %v", resp.StatusCode, r.expectedStatusCode)
-			logger.Error(nil, "%s", string(resp.Body))
+			logging.Error(nil, "status code = %v, expected status code = %v", resp.StatusCode, r.expectedStatusCode)
+			logging.Error(nil, "%s", string(resp.Body))
 			if resp != nil {
 				return errors.New(string(resp.Body))
 			} else {
@@ -131,19 +131,19 @@ func checkResponseForError(r *Request, resp *client.Response) error {
 			var body map[string]interface{}
 			json.Unmarshal(resp.Body, &body)
 			b, _ := json.MarshalIndent(body, "", "    ")
-			logger.Debug("\n%s", string(b))
+			logging.Debug("\n%s", string(b))
 
-			logger.Error(errors.New(resp.Status), "%s", errMsg.Message)
+			logging.Error(errors.New(resp.Status), "%s", errMsg.Message)
 		}
 	}
 
 	if value, exists := resp.Headers["Content-Type"]; exists {
 		parts := strings.Split(value, ";")
 		if parts[0] != "application/json" {
-			logger.Warn("expected response header Content-Type=application/json, got %s", parts[0])
+			logging.Warn("expected response header Content-Type=application/json, got %s", parts[0])
 		}
 	} else {
-		logger.Warn("missing Content-Type response header")
+		logging.Warn("missing Content-Type response header")
 	}
 
 	return nil

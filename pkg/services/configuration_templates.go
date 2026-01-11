@@ -7,8 +7,8 @@ package services
 import (
 	"errors"
 
+	"github.com/itential/ipctl/internal/logging"
 	"github.com/itential/ipctl/pkg/client"
-	"github.com/itential/ipctl/pkg/logger"
 )
 
 type ConfigurationTemplateCollection struct {
@@ -38,7 +38,7 @@ func NewConfigurationTemplateService(c client.Client) *ConfigurationTemplateServ
 }
 
 func (svc *ConfigurationTemplateService) GetAll() ([]ConfigurationTemplate, error) {
-	logger.Trace()
+	logging.Trace()
 	// FIXME (privateip) need to implement full paging
 	body := map[string]interface{}{
 		"name": "",
@@ -59,7 +59,7 @@ func (svc *ConfigurationTemplateService) GetAll() ([]ConfigurationTemplate, erro
 }
 
 func (svc *ConfigurationTemplateService) Get(id string) (*ConfigurationTemplate, error) {
-	logger.Trace()
+	logging.Trace()
 	body := map[string]interface{}{
 		"name":    id,
 		"options": make(map[string]interface{}),
@@ -75,7 +75,7 @@ func (svc *ConfigurationTemplateService) Get(id string) (*ConfigurationTemplate,
 // GetByName retrieves a configuration template by name using client-side filtering.
 // DEPRECATED: Business logic method - prefer using resources.ConfigurationTemplateResource.GetByName
 func (svc *ConfigurationTemplateService) GetByName(name string) (*ConfigurationTemplate, error) {
-	logger.Trace()
+	logging.Trace()
 
 	templates, err := svc.GetAll()
 	if err != nil {

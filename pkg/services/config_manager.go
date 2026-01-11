@@ -5,8 +5,8 @@
 package services
 
 import (
+	"github.com/itential/ipctl/internal/logging"
 	"github.com/itential/ipctl/pkg/client"
-	"github.com/itential/ipctl/pkg/logger"
 )
 
 type ConfigManagerJinja2Template struct {
@@ -24,7 +24,7 @@ func NewConfigManagerService(c client.Client) *ConfigManagerService {
 }
 
 func (svc *ConfigManagerService) Render(in ConfigManagerJinja2Template) {
-	logger.Trace()
+	logging.Trace()
 
 	if err := svc.Post("/configuration_manager/jinja2", in, nil); err != nil {
 		panic(err)

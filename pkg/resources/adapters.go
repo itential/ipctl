@@ -5,7 +5,7 @@
 package resources
 
 import (
-	"github.com/itential/ipctl/pkg/logger"
+	"github.com/itential/ipctl/internal/logging"
 	"github.com/itential/ipctl/pkg/services"
 )
 
@@ -26,7 +26,7 @@ func NewAdapterResource(svc services.AdapterServicer) AdapterResourcer {
 // Restart orchestrates stopping and then starting an adapter.
 // This is a composite operation that ensures proper adapter restart.
 func (r *AdapterResource) Restart(name string) error {
-	logger.Trace()
+	logging.Trace()
 
 	if err := r.service.Stop(name); err != nil {
 		return err

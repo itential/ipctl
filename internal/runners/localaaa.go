@@ -6,12 +6,12 @@ package runners
 
 import (
 	"github.com/itential/ipctl/internal/flags"
+	"github.com/itential/ipctl/internal/logging"
 	"github.com/itential/ipctl/internal/terminal"
 	"github.com/itential/ipctl/internal/utils"
 	"github.com/itential/ipctl/pkg/client"
 	"github.com/itential/ipctl/pkg/config"
 	"github.com/itential/ipctl/pkg/localaaa"
-	"github.com/itential/ipctl/pkg/logger"
 )
 
 type LocalAAARunner struct {
@@ -22,7 +22,7 @@ type LocalAAARunner struct {
 func NewLocalAAARunner(client client.Client, cfg *config.Config) LocalAAARunner {
 	activeProfile, err := cfg.ActiveProfile()
 	if err != nil {
-		logger.Warn("failed to load active profile, using defaults")
+		logging.Warn("failed to load active profile, using defaults")
 	}
 
 	mongoUrl := activeProfile.MongoUrl
@@ -33,7 +33,7 @@ func NewLocalAAARunner(client client.Client, cfg *config.Config) LocalAAARunner 
 		if mongoUrl == "" {
 			p, err := services.NewProfileService(client).GetActiveProfile()
 			if err != nil {
-				logger.Fatal(err, "failed to find the active profile")
+				logging.Fatal(err, "failed to find the active profile")
 			}
 
 			adapters := p.Adapter["adapters"].([]interface{})
@@ -52,7 +52,7 @@ func NewLocalAAARunner(client client.Client, cfg *config.Config) LocalAAARunner 
 	runner := LocalAAARunner{BaseRunner: NewBaseRunner(client, cfg)}
 
 	if mongoUrl != "" {
-		logger.Info("mongo url is %s", mongoUrl)
+		logging.Info("mongo url is %s", mongoUrl)
 		runner.service = localaaa.NewLocalAAAService(mongoUrl)
 	}
 
@@ -60,7 +60,7 @@ func NewLocalAAARunner(client client.Client, cfg *config.Config) LocalAAARunner 
 }
 
 func (r *LocalAAARunner) GetGroups(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	res, err := r.service.GetGroups()
 	if err != nil {
@@ -74,7 +74,7 @@ func (r *LocalAAARunner) GetGroups(in Request) (*Response, error) {
 }
 
 func (r *LocalAAARunner) CreateGroup(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	grp := localaaa.NewGroup(in.Args[0])
 
@@ -89,7 +89,7 @@ func (r *LocalAAARunner) CreateGroup(in Request) (*Response, error) {
 }
 
 func (r *LocalAAARunner) DeleteGroup(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	if err := r.service.DeleteGroup(in.Args[0]); err != nil {
 		return nil, err
@@ -101,7 +101,7 @@ func (r *LocalAAARunner) DeleteGroup(in Request) (*Response, error) {
 }
 
 func (r *LocalAAARunner) GetAccounts(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	res, err := r.service.GetAccounts()
 	if err != nil {
@@ -115,7 +115,7 @@ func (r *LocalAAARunner) GetAccounts(in Request) (*Response, error) {
 }
 
 func (r *LocalAAARunner) CreateAccount(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	var options *flags.LocalAAAOptions
 	utils.LoadObject(in.Options, &options)
@@ -135,7 +135,7 @@ func (r *LocalAAARunner) CreateAccount(in Request) (*Response, error) {
 }
 
 func (r *LocalAAARunner) DeleteAccount(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	if err := r.service.DeleteAccount(in.Args[0]); err != nil {
 		return nil, err

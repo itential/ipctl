@@ -8,7 +8,7 @@ import (
 	"errors"
 
 	"github.com/itential/ipctl/internal/flags"
-	"github.com/itential/ipctl/pkg/logger"
+	"github.com/itential/ipctl/internal/logging"
 )
 
 type CopyRequest struct {
@@ -25,7 +25,7 @@ type CopyResponse struct {
 }
 
 func Copy(in CopyRequest, r Copier) (*CopyResponse, error) {
-	logger.Trace()
+	logging.Trace()
 
 	name := in.Request.Args[0]
 
@@ -35,7 +35,7 @@ func Copy(in CopyRequest, r Copier) (*CopyResponse, error) {
 		return nil, errors.New("source (--from) and destination (--to) servers must be different values")
 	}
 
-	logger.Info("attempting to copy `%s` (type of %s) from `%s` to `%s`", name, in.Type, common.From, common.To)
+	logging.Info("attempting to copy `%s` (type of %s) from `%s` to `%s`", name, in.Type, common.From, common.To)
 
 	src, err := r.CopyFrom(common.From, name)
 	if err != nil {

@@ -5,8 +5,8 @@
 package services
 
 import (
+	"github.com/itential/ipctl/internal/logging"
 	"github.com/itential/ipctl/pkg/client"
-	"github.com/itential/ipctl/pkg/logger"
 )
 
 type ConfigurationParser struct {
@@ -24,7 +24,7 @@ type ConfigurationParserService struct {
 }
 
 func NewConfigurationParser(name string) ConfigurationParser {
-	logger.Trace()
+	logging.Trace()
 	return ConfigurationParser{Name: name}
 }
 
@@ -33,7 +33,7 @@ func NewConfigurationParserService(c client.Client) *ConfigurationParserService 
 }
 
 func (svc *ConfigurationParserService) GetAll() ([]ConfigurationParser, error) {
-	logger.Trace()
+	logging.Trace()
 
 	type Response struct {
 		List  []ConfigurationParser `json:"list"`

@@ -11,7 +11,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/itential/ipctl/pkg/logger"
+	"github.com/itential/ipctl/internal/logging"
 	"github.com/mitchellh/go-homedir"
 	"gopkg.in/yaml.v2"
 )
@@ -27,11 +27,11 @@ func PathExists(fp string) bool {
 func LoadObject(in any, ptr any) {
 	b, err := json.Marshal(in)
 	if err != nil {
-		logger.Fatal(err, "failed to marshal data")
+		logging.Fatal(err, "failed to marshal data")
 	}
 
 	if err := json.Unmarshal(b, ptr); err != nil {
-		logger.Fatal(err, "failed to unmarshal data")
+		logging.Fatal(err, "failed to unmarshal data")
 	}
 }
 
@@ -39,7 +39,7 @@ func LoadObject(in any, ptr any) {
 // commbine them.  It will also check the filename and replace all instances of
 // "/" with "_".
 func NormalizeFilename(fn, fp string) (string, error) {
-	logger.Trace()
+	logging.Trace()
 
 	fn = strings.Replace(fn, "/", "_", -1)
 
@@ -59,7 +59,7 @@ func NormalizeFilename(fn, fp string) (string, error) {
 // If the destination already exists, the function will not overwrite the file
 // unless the overwrite argument is set to true.
 func WriteBytesToDisk(b []byte, dst string, overwrite bool) error {
-	logger.Trace()
+	logging.Trace()
 
 	if err := EnsurePathExists(filepath.Dir(dst)); err != nil {
 		return err
@@ -92,13 +92,13 @@ func WriteBytesToDisk(b []byte, dst string, overwrite bool) error {
 // write.  The fp argument defines the path.  If the fp argument is empty, the
 // current working directory is used.
 func WriteJsonToDisk(o any, fn, fp string) error {
-	logger.Trace()
+	logging.Trace()
 
 	dst, err := NormalizeFilename(fn, fp)
 	if err != nil {
 		return err
 	}
-	logger.Debug("Writing file `%s` to path `%s`", fn, fp)
+	logging.Debug("Writing file `%s` to path `%s`", fn, fp)
 
 	b, err := json.MarshalIndent(o, "", "    ")
 	if err != nil {
@@ -111,7 +111,7 @@ func WriteJsonToDisk(o any, fn, fp string) error {
 // WRiteYamlToDisck will accept an object, marshal it to yaml encoding and
 // write it to disk.
 func WriteYamlToDisk(o any, fn, fp string) error {
-	logger.Trace()
+	logging.Trace()
 
 	dst, err := NormalizeFilename(fn, fp)
 	if err != nil {
@@ -129,7 +129,7 @@ func WriteYamlToDisk(o any, fn, fp string) error {
 // Write accepts any object and will write it to disk as specified by the
 // filename and filepath.
 func Write(o any, fn, fp, encoding string) error {
-	logger.Trace()
+	logging.Trace()
 
 	if encoding == "" {
 		encoding = "json"
@@ -148,7 +148,7 @@ func Write(o any, fn, fp, encoding string) error {
 }
 
 func ReadFromFile(path string) ([]byte, error) {
-	logger.Trace()
+	logging.Trace()
 	_, err := os.Stat(path)
 	if os.IsNotExist(err) {
 		return nil, err
@@ -160,7 +160,7 @@ func ReadFromFile(path string) ([]byte, error) {
 // disk into the ptr argument.  The path argument must specify the full path
 // including filename to the file to read.
 func ReadObjectFromDisk(path string, ptr any) error {
-	logger.Trace()
+	logging.Trace()
 
 	data, err := ReadFromFile(path)
 	if err != nil {
@@ -173,7 +173,7 @@ func ReadObjectFromDisk(path string, ptr any) error {
 }
 
 func ReadStringFromFile(path string) (string, error) {
-	logger.Trace()
+	logging.Trace()
 	data, err := ReadFromFile(path)
 	if err != nil {
 		return "", err

@@ -10,10 +10,10 @@ import (
 	"strings"
 
 	"github.com/itential/ipctl/internal/flags"
+	"github.com/itential/ipctl/internal/logging"
 	"github.com/itential/ipctl/internal/utils"
 	"github.com/itential/ipctl/pkg/client"
 	"github.com/itential/ipctl/pkg/config"
-	"github.com/itential/ipctl/pkg/logger"
 	"github.com/itential/ipctl/pkg/services"
 	"github.com/itential/ipctl/pkg/validators"
 )
@@ -40,7 +40,7 @@ Reader interface
 
 // Get implements the `get profiles` command
 func (r *ProfileRunner) Get(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	profiles, err := r.service.GetAll()
 	if err != nil {
@@ -55,7 +55,7 @@ func (r *ProfileRunner) Get(in Request) (*Response, error) {
 
 // Describe implements the `describe profile <name>` command
 func (r *ProfileRunner) Describe(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	name := in.Args[0]
 
@@ -66,7 +66,7 @@ func (r *ProfileRunner) Describe(in Request) (*Response, error) {
 
 	tmpl, err := templates.ReadFile("templates/profiles/describe.tmpl")
 	if err != nil {
-		logger.Fatal(err, "failed to load template")
+		logging.Fatal(err, "failed to load template")
 	}
 
 	return &Response{
@@ -83,7 +83,7 @@ Writer interface
 
 // Create is the implementation of the command `ccreate profile <name>`
 func (r *ProfileRunner) Create(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	name := in.Args[0]
 
@@ -103,7 +103,7 @@ func (r *ProfileRunner) Create(in Request) (*Response, error) {
 
 // Delete is the implementation of the command `delete profile <name>`
 func (r *ProfileRunner) Delete(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	name := in.Args[0]
 
@@ -118,7 +118,7 @@ func (r *ProfileRunner) Delete(in Request) (*Response, error) {
 
 // Clear is the implementation of the command `clear profiles`
 func (r *ProfileRunner) Clear(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	cnt := 0
 
@@ -146,7 +146,7 @@ Copier interface
 
 // Copy implements the `copy profile <name> <dst>` command
 func (r *ProfileRunner) Copy(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	res, err := Copy(CopyRequest{Request: in, Type: "profile"}, r)
 	if err != nil {
@@ -159,7 +159,7 @@ func (r *ProfileRunner) Copy(in Request) (*Response, error) {
 }
 
 func (r *ProfileRunner) CopyFrom(profile, name string) (any, error) {
-	logger.Trace()
+	logging.Trace()
 
 	client, cancel, err := NewClient(profile, r.config)
 	if err != nil {
@@ -176,7 +176,7 @@ func (r *ProfileRunner) CopyFrom(profile, name string) (any, error) {
 }
 
 func (r *ProfileRunner) CopyTo(profile string, in any, replace bool) (any, error) {
-	logger.Trace()
+	logging.Trace()
 
 	client, cancel, err := NewClient(profile, r.config)
 	if err != nil {
@@ -211,7 +211,7 @@ Importer interface
 
 // Import implements the command `import profile <path>`
 func (r *ProfileRunner) Import(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	common := in.Common.(*flags.AssetImportCommon)
 
@@ -238,7 +238,7 @@ Exporter interface
 
 // Export is the implementation of the command `export profile <name>`
 func (r *ProfileRunner) Export(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	name := in.Args[0]
 
@@ -266,7 +266,7 @@ Dumper interface
 
 // Dump implements the `dump prorfiles` command
 func (r *ProfileRunner) Dump(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	res, err := r.service.GetAll()
 	if err != nil {
@@ -296,7 +296,7 @@ Loader interface
 
 // Load implements the `load profiles ...` command
 func (r *ProfileRunner) Load(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	elements, err := loadAssets(in)
 	if err != nil {
@@ -345,7 +345,7 @@ Private functions
 */
 
 func (r *ProfileRunner) importProfile(in services.Profile, replace bool) error {
-	logger.Trace()
+	logging.Trace()
 
 	profile, err := r.service.Get(in.Id)
 	if err != nil {
@@ -357,7 +357,7 @@ func (r *ProfileRunner) importProfile(in services.Profile, replace bool) error {
 			return err
 		}
 	} else {
-		logger.Error(err, "")
+		logging.Error(err, "")
 		return errors.New(fmt.Sprintf("profile `%s` already exists", profile.Id))
 	}
 

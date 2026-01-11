@@ -5,7 +5,7 @@
 package resources
 
 import (
-	"github.com/itential/ipctl/pkg/logger"
+	"github.com/itential/ipctl/internal/logging"
 	"github.com/itential/ipctl/pkg/services"
 )
 
@@ -50,7 +50,7 @@ func (r *GroupResource) Delete(id string) error {
 // GetByName retrieves a group by name using client-side filtering.
 // It fetches all groups and searches for a matching name.
 func (r *GroupResource) GetByName(name string) (*services.Group, error) {
-	logger.Trace()
+	logging.Trace()
 
 	groups, err := r.service.GetAll()
 	if err != nil {

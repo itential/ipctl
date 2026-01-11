@@ -10,8 +10,8 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/itential/ipctl/internal/logging"
 	"github.com/itential/ipctl/pkg/client"
-	"github.com/itential/ipctl/pkg/logger"
 	"github.com/mitchellh/mapstructure"
 )
 
@@ -143,7 +143,7 @@ func NewTriggerService(c client.Client) *TriggerService {
 }
 
 func NewEndpointTrigger(name, desc, route, action string) Trigger {
-	logger.Trace()
+	logging.Trace()
 	return EndpointTrigger{
 		Name:        name,
 		Description: desc,
@@ -154,7 +154,7 @@ func NewEndpointTrigger(name, desc, route, action string) Trigger {
 }
 
 func (svc *TriggerService) Create(in Trigger) (Trigger, error) {
-	logger.Trace()
+	logging.Trace()
 
 	type Response struct {
 		Message  string                 `json:"message"`
@@ -192,14 +192,14 @@ func (svc *TriggerService) Create(in Trigger) (Trigger, error) {
 }
 
 func (svc *TriggerService) DeleteAction(id string) error {
-	logger.Trace()
+	logging.Trace()
 	return svc.BaseService.Delete(
 		fmt.Sprintf("/operations-manager/triggers/action/%s", id),
 	)
 }
 
 func (svc *TriggerService) Import(in Trigger) (*Trigger, error) {
-	logger.Trace()
+	logging.Trace()
 
 	body := map[string]interface{}{
 		"triggers": []Trigger{in},
@@ -226,7 +226,7 @@ func (svc *TriggerService) Import(in Trigger) (*Trigger, error) {
 		return nil, err
 	}
 
-	logger.Info("%s", res.Message)
+	logging.Info("%s", res.Message)
 
 	data := res.Data[0].Data
 

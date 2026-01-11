@@ -9,8 +9,8 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/itential/ipctl/internal/logging"
 	"github.com/itential/ipctl/internal/utils"
-	"github.com/itential/ipctl/pkg/logger"
 )
 
 type LoadOptions struct {
@@ -20,7 +20,7 @@ type LoadOptions struct {
 
 // loadAssets receives the Request argument and loads the assets from disk.
 func loadAssets(in Request) (map[string]interface{}, error) {
-	logger.Trace()
+	logging.Trace()
 
 	path, err := importGetPathFromRequest(in)
 	if err != nil {
@@ -46,7 +46,7 @@ func loadAssets(in Request) (map[string]interface{}, error) {
 }
 
 func loadStringAssets(in Request, options LoadOptions) (map[string]interface{}, error) {
-	logger.Trace()
+	logging.Trace()
 
 	path, err := importGetPathFromRequest(in)
 	if err != nil {
@@ -74,7 +74,7 @@ func loadStringAssets(in Request, options LoadOptions) (map[string]interface{}, 
 
 // loadUnmarshalAsset unmarshals the interface in argument to ptr
 func loadUnmarshalAsset(in interface{}, ptr any) error {
-	logger.Trace()
+	logging.Trace()
 
 	b, err := json.Marshal(in)
 	if err != nil {

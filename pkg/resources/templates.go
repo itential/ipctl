@@ -5,7 +5,7 @@
 package resources
 
 import (
-	"github.com/itential/ipctl/pkg/logger"
+	"github.com/itential/ipctl/internal/logging"
 	"github.com/itential/ipctl/pkg/services"
 )
 
@@ -26,7 +26,7 @@ func NewTemplateResource(svc services.TemplateServicer) TemplateResourcer {
 // GetByName retrieves a template by name using client-side filtering.
 // It fetches all templates and searches for an exact name match.
 func (r *TemplateResource) GetByName(name string) (*services.Template, error) {
-	logger.Trace()
+	logging.Trace()
 
 	templates, err := r.service.GetAll()
 	if err != nil {

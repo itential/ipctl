@@ -5,7 +5,7 @@
 package resources
 
 import (
-	"github.com/itential/ipctl/pkg/logger"
+	"github.com/itential/ipctl/internal/logging"
 	"github.com/itential/ipctl/pkg/services"
 )
 
@@ -26,7 +26,7 @@ func NewJsonFormResource(svc services.JsonFormServicer) JsonFormResourcer {
 // GetByName retrieves a JSON form by name using client-side filtering.
 // It fetches all forms and searches for a matching name.
 func (r *JsonFormResource) GetByName(name string) (*services.JsonForm, error) {
-	logger.Trace()
+	logging.Trace()
 
 	forms, err := r.service.GetAll()
 	if err != nil {
@@ -41,7 +41,7 @@ func (r *JsonFormResource) GetByName(name string) (*services.JsonForm, error) {
 // Clear deletes all JSON forms from the server.
 // This is a bulk operation that collects all form IDs and performs a single delete.
 func (r *JsonFormResource) Clear() error {
-	logger.Trace()
+	logging.Trace()
 
 	forms, err := r.service.GetAll()
 	if err != nil {

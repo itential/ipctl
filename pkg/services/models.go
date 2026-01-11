@@ -9,8 +9,8 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/itential/ipctl/internal/logging"
 	"github.com/itential/ipctl/pkg/client"
-	"github.com/itential/ipctl/pkg/logger"
 )
 
 // RunActionRequest represents the payload for executing a model action
@@ -79,7 +79,7 @@ type ModelService struct {
 
 // NewModel creates a new Model instance with the specified name and description
 func NewModel(name, desc string) Model {
-	logger.Trace()
+	logging.Trace()
 
 	return Model{
 		Name:        name,
@@ -94,7 +94,7 @@ func NewModelService(c client.Client) *ModelService {
 
 // Get retrieves a model by its ID from the lifecycle manager
 func (svc *ModelService) Get(id string) (*Model, error) {
-	logger.Trace()
+	logging.Trace()
 
 	var res *Model
 	var uri = fmt.Sprintf("/lifecycle-manager/resources/%s", id)
@@ -108,7 +108,7 @@ func (svc *ModelService) Get(id string) (*Model, error) {
 
 // GetAll retrieves all models from the lifecycle manager
 func (svc *ModelService) GetAll() ([]Model, error) {
-	logger.Trace()
+	logging.Trace()
 
 	var res ModelOperation
 	var uri = "/lifecycle-manager/resources"
@@ -123,7 +123,7 @@ func (svc *ModelService) GetAll() ([]Model, error) {
 // GetByName retrieves a model by name using client-side filtering.
 // DEPRECATED: Business logic method - prefer using resources.ModelResource.GetByName
 func (svc *ModelService) GetByName(name string) (*Model, error) {
-	logger.Trace()
+	logging.Trace()
 
 	models, err := svc.GetAll()
 	if err != nil {
@@ -141,7 +141,7 @@ func (svc *ModelService) GetByName(name string) (*Model, error) {
 
 // Create creates a new model in the lifecycle manager
 func (svc *ModelService) Create(in Model) (*Model, error) {
-	logger.Trace()
+	logging.Trace()
 
 	body := map[string]interface{}{
 		"name":        in.Name,
@@ -175,7 +175,7 @@ func (svc *ModelService) Create(in Model) (*Model, error) {
 // Delete removes a model from the lifecycle manager
 // If deleteInstances is true, associated instances will also be deleted
 func (svc *ModelService) Delete(id string, deleteInstances bool) error {
-	logger.Trace()
+	logging.Trace()
 
 	req := &Request{
 		uri: fmt.Sprintf("/lifecycle-manager/resources/%s", id),
@@ -194,7 +194,7 @@ func (svc *ModelService) Delete(id string, deleteInstances bool) error {
 
 // RunAction executes an action on a model instance
 func (svc *ModelService) RunAction(model string, in RunActionRequest) (*RunActionResponse, error) {
-	logger.Trace()
+	logging.Trace()
 
 	var res *RunActionResponse
 	var uri = fmt.Sprintf("/lifecycle-manager/resources/%s/run-action", model)
@@ -208,7 +208,7 @@ func (svc *ModelService) RunAction(model string, in RunActionRequest) (*RunActio
 
 // Import imports a model into the lifecycle manager
 func (svc *ModelService) Import(in Model) (*Model, error) {
-	logger.Trace()
+	logging.Trace()
 
 	body := map[string]interface{}{
 		"model": in,
@@ -234,7 +234,7 @@ func (svc *ModelService) Import(in Model) (*Model, error) {
 
 // Export exports a model from the lifecycle manager by its ID
 func (svc *ModelService) Export(id string) (*Model, error) {
-	logger.Trace()
+	logging.Trace()
 
 	type Response struct {
 		Message string `json:"message"`
@@ -249,7 +249,7 @@ func (svc *ModelService) Export(id string) (*Model, error) {
 		return nil, err
 	}
 
-	logger.Info("%s", res.Message)
+	logging.Info("%s", res.Message)
 
 	return res.Data, nil
 }

@@ -5,7 +5,7 @@
 package resources
 
 import (
-	"github.com/itential/ipctl/pkg/logger"
+	"github.com/itential/ipctl/internal/logging"
 	"github.com/itential/ipctl/pkg/services"
 )
 
@@ -50,7 +50,7 @@ func (r *AccountResource) Deactivate(id string) error {
 // GetByName retrieves an account by username using client-side filtering.
 // It fetches all accounts and searches for a matching username.
 func (r *AccountResource) GetByName(name string) (*services.Account, error) {
-	logger.Trace()
+	logging.Trace()
 
 	accounts, err := r.service.GetAll()
 	if err != nil {

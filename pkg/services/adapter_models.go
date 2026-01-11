@@ -5,8 +5,8 @@
 package services
 
 import (
+	"github.com/itential/ipctl/internal/logging"
 	"github.com/itential/ipctl/pkg/client"
-	"github.com/itential/ipctl/pkg/logger"
 )
 
 type AdapterModelService struct {
@@ -20,7 +20,7 @@ func NewAdapterModelService(c client.Client) *AdapterModelService {
 // GetAll will retrieve all of the adapter models that are avalalbe on the
 // Itential Platform server and return them as a string array.
 func (svc *AdapterModelService) GetAll() ([]string, error) {
-	logger.Trace()
+	logging.Trace()
 
 	type Response struct {
 		Models []string `json:"adapterModels"`
@@ -33,7 +33,7 @@ func (svc *AdapterModelService) GetAll() ([]string, error) {
 		return nil, err
 	}
 
-	logger.Info("Found %v adapter model(s)", res.Total)
+	logging.Info("Found %v adapter model(s)", res.Total)
 
 	return res.Models, nil
 }

@@ -5,8 +5,8 @@
 package services
 
 import (
+	"github.com/itential/ipctl/internal/logging"
 	"github.com/itential/ipctl/pkg/client"
-	"github.com/itential/ipctl/pkg/logger"
 )
 
 type ServiceStatus struct {
@@ -111,7 +111,7 @@ func NewHealthService(c client.Client) *HealthService {
 }
 
 func (svc *HealthService) GetStatus() (*HealthStatus, error) {
-	logger.Trace()
+	logging.Trace()
 
 	var res *HealthStatus
 
@@ -123,7 +123,7 @@ func (svc *HealthService) GetStatus() (*HealthStatus, error) {
 }
 
 func (svc *HealthService) GetSystemHealth() (*SystemHealth, error) {
-	logger.Trace()
+	logging.Trace()
 
 	var res *SystemHealth
 
@@ -135,7 +135,7 @@ func (svc *HealthService) GetSystemHealth() (*SystemHealth, error) {
 }
 
 func (svc *HealthService) GetServerHealth() (*ServerHealth, error) {
-	logger.Trace()
+	logging.Trace()
 
 	var res *ServerHealth
 
@@ -147,7 +147,7 @@ func (svc *HealthService) GetServerHealth() (*ServerHealth, error) {
 }
 
 func (svc *HealthService) GetApplicationHealth() ([]ApplicationHealth, error) {
-	logger.Trace()
+	logging.Trace()
 
 	type Response struct {
 		Results []ApplicationHealth `json:"results"`
@@ -163,7 +163,7 @@ func (svc *HealthService) GetApplicationHealth() ([]ApplicationHealth, error) {
 }
 
 func (svc *HealthService) GetAdapterHealth() ([]ApplicationHealth, error) {
-	logger.Trace()
+	logging.Trace()
 
 	type Response struct {
 		Results []ApplicationHealth `json:"results"`

@@ -10,10 +10,10 @@ import (
 	"strings"
 
 	"github.com/itential/ipctl/internal/flags"
+	"github.com/itential/ipctl/internal/logging"
 	"github.com/itential/ipctl/internal/utils"
 	"github.com/itential/ipctl/pkg/client"
 	"github.com/itential/ipctl/pkg/config"
-	"github.com/itential/ipctl/pkg/logger"
 	"github.com/itential/ipctl/pkg/services"
 )
 
@@ -35,7 +35,7 @@ func NewCommandTemplateRunner(c client.Client, cfg *config.Config) *CommandTempl
 
 // Get implements the `get command-templates` command
 func (r *CommandTemplateRunner) Get(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	var options flags.CommandTemplateGetOptions
 	utils.LoadObject(in.Options, &options)
@@ -64,7 +64,7 @@ func (r *CommandTemplateRunner) Get(in Request) (*Response, error) {
 
 // Describe implements the `describe command-template <name>` command
 func (r *CommandTemplateRunner) Describe(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	name := in.Args[0]
 
@@ -84,7 +84,7 @@ func (r *CommandTemplateRunner) Describe(in Request) (*Response, error) {
 //
 
 func (r *CommandTemplateRunner) Create(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	name := in.Args[0]
 
@@ -100,7 +100,7 @@ func (r *CommandTemplateRunner) Create(in Request) (*Response, error) {
 }
 
 func (r *CommandTemplateRunner) Delete(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	name := in.Args[0]
 
@@ -114,7 +114,7 @@ func (r *CommandTemplateRunner) Delete(in Request) (*Response, error) {
 }
 
 func (r *CommandTemplateRunner) Clear(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	elements, err := r.service.GetAll()
 	if err != nil {
@@ -137,7 +137,7 @@ func (r *CommandTemplateRunner) Clear(in Request) (*Response, error) {
 //
 
 func (r *CommandTemplateRunner) Import(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	common := in.Common.(*flags.AssetImportCommon)
 
@@ -161,7 +161,7 @@ func (r *CommandTemplateRunner) Import(in Request) (*Response, error) {
 //
 
 func (r *CommandTemplateRunner) Export(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	name := in.Args[0]
 
@@ -186,7 +186,7 @@ func (r *CommandTemplateRunner) Export(in Request) (*Response, error) {
 //
 
 func (r *CommandTemplateRunner) Copy(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	res, err := Copy(CopyRequest{Request: in, Type: "command-template"}, r)
 	if err != nil {
@@ -199,7 +199,7 @@ func (r *CommandTemplateRunner) Copy(in Request) (*Response, error) {
 }
 
 func (r *CommandTemplateRunner) CopyFrom(profile, name string) (any, error) {
-	logger.Trace()
+	logging.Trace()
 
 	client, cancel, err := NewClient(profile, r.config)
 	if err != nil {
@@ -215,7 +215,7 @@ func (r *CommandTemplateRunner) CopyFrom(profile, name string) (any, error) {
 }
 
 func (r *CommandTemplateRunner) CopyTo(profile string, in any, replace bool) (any, error) {
-	logger.Trace()
+	logging.Trace()
 
 	client, cancel, err := NewClient(profile, r.config)
 	if err != nil {
@@ -233,7 +233,7 @@ func (r *CommandTemplateRunner) CopyTo(profile string, in any, replace bool) (an
 		} else if err != nil {
 			return nil, err
 		}
-		logger.Info("Deleting existing command template `%s` from `%s`", name, profile)
+		logging.Info("Deleting existing command template `%s` from `%s`", name, profile)
 		if err := svc.Delete(name); err != nil {
 			return nil, err
 		}
@@ -251,7 +251,7 @@ func (r *CommandTemplateRunner) CopyTo(profile string, in any, replace bool) (an
 //
 
 func (r *CommandTemplateRunner) importCommandTemplate(in services.CommandTemplate, replace bool) error {
-	logger.Trace()
+	logging.Trace()
 
 	res, err := r.service.GetAll()
 	if err != nil {

@@ -5,7 +5,7 @@
 package resources
 
 import (
-	"github.com/itential/ipctl/pkg/logger"
+	"github.com/itential/ipctl/internal/logging"
 	"github.com/itential/ipctl/pkg/services"
 )
 
@@ -74,7 +74,7 @@ func (r *WorkflowResource) Update(in services.Workflow) (*services.Workflow, err
 // GetById retrieves a workflow by ID using client-side filtering.
 // It fetches all workflows and searches for a matching ID.
 func (r *WorkflowResource) GetById(id string) (*services.Workflow, error) {
-	logger.Trace()
+	logging.Trace()
 
 	workflows, err := r.service.GetAll()
 	if err != nil {
@@ -89,7 +89,7 @@ func (r *WorkflowResource) GetById(id string) (*services.Workflow, error) {
 // Clear deletes all workflows from the server.
 // This is a bulk operation that orchestrates multiple delete calls.
 func (r *WorkflowResource) Clear() error {
-	logger.Trace()
+	logging.Trace()
 
 	workflows, err := r.service.GetAll()
 	if err != nil {

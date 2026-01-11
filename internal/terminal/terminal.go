@@ -13,7 +13,7 @@ import (
 	"text/tabwriter"
 	"time"
 
-	"github.com/itential/ipctl/pkg/logger"
+	"github.com/itential/ipctl/internal/logging"
 	"github.com/manifoldco/promptui"
 	"gopkg.in/yaml.v2"
 )
@@ -96,7 +96,7 @@ func FormatTimestamp(timestamp time.Time, timezone *time.Location) string {
 // it does not echo back to the terminal.   It will return what text is entered
 // by the user.
 func Password() string {
-	logger.Trace()
+	logging.Trace()
 
 	prompt := promptui.Prompt{
 		Label: "Password",
@@ -110,7 +110,7 @@ func Password() string {
 
 	value, err := prompt.Run()
 	if err != nil {
-		logger.Fatal(err, "failed to get password")
+		logging.Fatal(err, "failed to get password")
 	}
 
 	return value
@@ -120,7 +120,7 @@ func Password() string {
 // format and display it to stdout.   This function will return an error if it
 // cannot marhsal the object.
 func DisplayJson(o any) error {
-	logger.Trace()
+	logging.Trace()
 
 	b, err := json.MarshalIndent(o, "", "    ")
 	if err != nil {
@@ -136,7 +136,7 @@ func DisplayJson(o any) error {
 // format and display it to stdout.   This function will return an error if it
 // cannot marhsal the object.
 func DisplayYaml(o any) error {
-	logger.Trace()
+	logging.Trace()
 
 	b, err := yaml.Marshal(o)
 	if err != nil {

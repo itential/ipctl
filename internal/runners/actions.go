@@ -5,8 +5,8 @@
 package runners
 
 import (
+	"github.com/itential/ipctl/internal/logging"
 	"github.com/itential/ipctl/pkg/client"
-	"github.com/itential/ipctl/pkg/logger"
 	"github.com/itential/ipctl/pkg/services"
 )
 
@@ -21,7 +21,7 @@ func NewActionRunner(client client.Client) *ActionRunner {
 }
 
 func (r *ActionRunner) Render(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	r.config_manager.Render(services.ConfigManagerJinja2Template{
 		Template:  "hostname {{ foo }}",

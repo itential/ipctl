@@ -10,8 +10,8 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/itential/ipctl/internal/logging"
 	"github.com/itential/ipctl/pkg/client"
-	"github.com/itential/ipctl/pkg/logger"
 )
 
 // RoleMethod represents an allowed method for a role in the authorization system.
@@ -55,7 +55,7 @@ func NewRoleService(c client.Client) *RoleService {
 // It sends a POST request to /authorization/roles with the role data.
 // Returns the created role or an error if the operation fails.
 func (svc *RoleService) Create(in Role) (*Role, error) {
-	logger.Trace()
+	logging.Trace()
 
 	type Response struct {
 		Status  string `json:"status"`
@@ -101,7 +101,7 @@ func (svc *RoleService) Create(in Role) (*Role, error) {
 		return nil, err
 	}
 
-	logger.Info("%s", response.Message)
+	logging.Info("%s", response.Message)
 
 	return response.Data, nil
 }
@@ -110,7 +110,7 @@ func (svc *RoleService) Create(in Role) (*Role, error) {
 // It sends a DELETE request to /authorization/roles/{id}.
 // Returns an error if the operation fails or the role is not found.
 func (svc *RoleService) Delete(id string) error {
-	logger.Trace()
+	logging.Trace()
 
 	resp, err := Do(&Request{
 		client: svc.client,
@@ -133,7 +133,7 @@ func (svc *RoleService) Delete(id string) error {
 		return err
 	}
 
-	logger.Info("%s", response.Message)
+	logging.Info("%s", response.Message)
 
 	return nil
 }
@@ -142,7 +142,7 @@ func (svc *RoleService) Delete(id string) error {
 // It handles pagination automatically, fetching all pages of results.
 // Returns a slice of all roles or an error if the operation fails.
 func (svc *RoleService) GetAll() ([]Role, error) {
-	logger.Trace()
+	logging.Trace()
 
 	type Response struct {
 		Results []Role `json:"results"`
@@ -182,7 +182,7 @@ func (svc *RoleService) GetAll() ([]Role, error) {
 		skip += limit
 	}
 
-	logger.Info("Found %v roles", len(roles))
+	logging.Info("Found %v roles", len(roles))
 
 	return roles, nil
 }
@@ -191,7 +191,7 @@ func (svc *RoleService) GetAll() ([]Role, error) {
 // It sends a GET request to /authorization/roles/{id}.
 // Returns the role or an error if the operation fails or the role is not found.
 func (svc *RoleService) Get(id string) (*Role, error) {
-	logger.Trace()
+	logging.Trace()
 
 	var response map[string]interface{}
 
@@ -210,7 +210,7 @@ func (svc *RoleService) Get(id string) (*Role, error) {
 
 	var body map[string]interface{}
 	if err := json.Unmarshal(res.Body, &body); err != nil {
-		logger.Fatal(err, "failed to unmarshal body")
+		logging.Fatal(err, "failed to unmarshal body")
 	}
 
 	if err := Unmarshal(body, &role); err != nil {
@@ -226,7 +226,7 @@ func (svc *RoleService) Get(id string) (*Role, error) {
 // It's typically used when restoring roles from exports or backups.
 // Returns the imported role or an error if the operation fails.
 func (svc *RoleService) Import(in Role) (*Role, error) {
-	logger.Trace()
+	logging.Trace()
 
 	body := map[string]interface{}{
 		"role": in,
@@ -256,7 +256,7 @@ func (svc *RoleService) Import(in Role) (*Role, error) {
 		return nil, err
 	}
 
-	logger.Info("%s", response.Message)
+	logging.Info("%s", response.Message)
 
 	return response.Data, nil
 }

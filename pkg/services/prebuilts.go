@@ -10,8 +10,8 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/itential/ipctl/internal/logging"
 	"github.com/itential/ipctl/pkg/client"
-	"github.com/itential/ipctl/pkg/logger"
 )
 
 // PrebuiltPackageMetadataRepository represents repository information for a prebuilt package
@@ -126,7 +126,7 @@ func NewPrebuiltService(c client.Client) *PrebuiltService {
 
 // Get retrieves a prebuilt by its ID
 func (svc *PrebuiltService) Get(id string) (*Prebuilt, error) {
-	logger.Trace()
+	logging.Trace()
 
 	res, err := Do(&Request{
 		client: svc.client,
@@ -149,7 +149,7 @@ func (svc *PrebuiltService) Get(id string) (*Prebuilt, error) {
 
 // GetByName retrieves a prebuilt by its name
 func (p *PrebuiltService) GetByName(name string) (*Prebuilt, error) {
-	logger.Trace()
+	logging.Trace()
 
 	prebuilts, err := p.GetAll()
 	if err != nil {
@@ -177,7 +177,7 @@ func (p *PrebuiltService) GetByName(name string) (*Prebuilt, error) {
 
 // GetAll retrieves all prebuilts from the Itential Platform
 func (svc *PrebuiltService) GetAll() ([]Prebuilt, error) {
-	logger.Trace()
+	logging.Trace()
 
 	res, err := Do(&Request{
 		client: svc.client,
@@ -200,14 +200,14 @@ func (svc *PrebuiltService) GetAll() ([]Prebuilt, error) {
 		return nil, err
 	}
 
-	logger.Info("Found %v prebuilts", response.Total)
+	logging.Info("Found %v prebuilts", response.Total)
 
 	return response.Results, nil
 }
 
 // Delete removes a prebuilt by its ID
 func (svc *PrebuiltService) Delete(id string) error {
-	logger.Trace()
+	logging.Trace()
 
 	_, err := Do(&Request{
 		client: svc.client,
@@ -220,7 +220,7 @@ func (svc *PrebuiltService) Delete(id string) error {
 
 // Import imports a prebuilt package into the Itential Platform
 func (svc *PrebuiltService) Import(in PrebuiltPackage, overwrite bool) (*Prebuilt, error) {
-	logger.Trace()
+	logging.Trace()
 
 	b, err := json.Marshal(in)
 	if err != nil {
@@ -237,7 +237,7 @@ func (svc *PrebuiltService) Import(in PrebuiltPackage, overwrite bool) (*Prebuil
 
 // ImportRaw imports raw prebuilt data into the Itential Platform
 func (svc *PrebuiltService) ImportRaw(in any, overwrite bool) (*Prebuilt, error) {
-	logger.Trace()
+	logging.Trace()
 
 	body := map[string]interface{}{
 		"options":  map[string]interface{}{"overwrite": overwrite},
@@ -272,7 +272,7 @@ func (svc *PrebuiltService) ImportRaw(in any, overwrite bool) (*Prebuilt, error)
 
 // Export exports a prebuilt as a package from the Itential Platform
 func (svc *PrebuiltService) Export(id string) (*PrebuiltPackage, error) {
-	logger.Trace()
+	logging.Trace()
 
 	res, err := Do(&Request{
 		client: svc.client,

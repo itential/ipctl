@@ -10,7 +10,7 @@ import (
 
 	"github.com/itential/ipctl/internal/cmdutils"
 	"github.com/itential/ipctl/internal/handlers"
-	"github.com/itential/ipctl/pkg/logger"
+	"github.com/itential/ipctl/internal/logging"
 	"github.com/spf13/cobra"
 )
 
@@ -52,7 +52,7 @@ func makeRootCommand(rootCommands []RootCommand) []*cobra.Command {
 				commands = append(commands, c)
 			}
 		} else {
-			logger.Fatal(fmt.Errorf("missing root command descriptor: %s", ele.Descriptor), "")
+			logging.Fatal(fmt.Errorf("missing root command descriptor: %s", ele.Descriptor), "")
 		}
 	}
 

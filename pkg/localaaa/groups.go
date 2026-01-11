@@ -7,7 +7,7 @@ package localaaa
 import (
 	"context"
 
-	"github.com/itential/ipctl/pkg/logger"
+	"github.com/itential/ipctl/internal/logging"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
@@ -20,7 +20,7 @@ func NewGroup(name string) Group {
 }
 
 func (svc LocalAAAService) GetGroups() ([]Group, error) {
-	logger.Trace()
+	logging.Trace()
 
 	cur, err := svc.groups.Find(context.TODO(), bson.D{})
 	if err != nil {
@@ -52,14 +52,14 @@ func (svc LocalAAAService) GetGroups() ([]Group, error) {
 }
 
 func (svc LocalAAAService) CreateGroup(in Group) error {
-	logger.Trace()
+	logging.Trace()
 	_, err := svc.groups.InsertOne(context.TODO(), in)
 	return err
 
 }
 
 func (svc LocalAAAService) DeleteGroup(name string) error {
-	logger.Trace()
+	logging.Trace()
 
 	_, err := svc.groups.DeleteOne(
 		context.TODO(),

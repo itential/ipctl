@@ -9,8 +9,8 @@ import (
 	"net/http"
 	"reflect"
 
+	"github.com/itential/ipctl/internal/logging"
 	"github.com/itential/ipctl/pkg/client"
-	"github.com/itential/ipctl/pkg/logger"
 )
 
 // Device represents a device in the Configuration Manager
@@ -74,7 +74,7 @@ func (svc *DeviceService) unmarshal(in map[string]interface{}, d *Device) error 
 
 // GetAll retrieves all devices from the Configuration Manager
 func (svc *DeviceService) GetAll() ([]Device, error) {
-	logger.Trace()
+	logging.Trace()
 
 	var devices []Device
 
@@ -133,7 +133,7 @@ func (svc *DeviceService) GetAll() ([]Device, error) {
 
 // Get retrieves a device by its name
 func (svc *DeviceService) Get(name string) (*Device, error) {
-	logger.Trace()
+	logging.Trace()
 
 	body := map[string]interface{}{
 		"options": map[string]interface{}{

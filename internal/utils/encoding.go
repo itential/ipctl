@@ -7,7 +7,7 @@ package utils
 import (
 	"encoding/json"
 
-	"github.com/itential/ipctl/pkg/logger"
+	"github.com/itential/ipctl/internal/logging"
 	"gopkg.in/yaml.v2"
 )
 
@@ -29,9 +29,9 @@ func UnmarshalData(data []byte, ptr any) {
 	// FIXME (privateip) This function should be refactored to return an error
 	// instead of simply logging a fatal error.
 	if err := json.Unmarshal(data, ptr); err != nil {
-		logger.Error(err, "failed to unmarshal json data")
+		logging.Error(err, "failed to unmarshal json data")
 		if err = yaml.Unmarshal(data, ptr); err != nil {
-			logger.Fatal(err, "failed to unmarshal data")
+			logging.Fatal(err, "failed to unmarshal data")
 		}
 	}
 }

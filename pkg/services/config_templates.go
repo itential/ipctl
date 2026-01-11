@@ -7,8 +7,8 @@ package services
 import (
 	"net/http"
 
+	"github.com/itential/ipctl/internal/logging"
 	"github.com/itential/ipctl/pkg/client"
-	"github.com/itential/ipctl/pkg/logger"
 )
 
 type ConfigTemplate struct {
@@ -37,7 +37,7 @@ func NewConfigTemplate(name string) ConfigTemplate {
 }
 
 func (svc *ConfigTemplateService) Create(in ConfigTemplate) (*ConfigTemplate, error) {
-	logger.Trace()
+	logging.Trace()
 
 	body := map[string]interface{}{
 		"name":     in.Name,

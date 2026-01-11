@@ -8,8 +8,8 @@ import (
 	"errors"
 	"net/http"
 
+	"github.com/itential/ipctl/internal/logging"
 	"github.com/itential/ipctl/pkg/client"
-	"github.com/itential/ipctl/pkg/logger"
 )
 
 type Tag struct {
@@ -23,7 +23,7 @@ type TagService struct {
 }
 
 func NewTag(name, desc string) Tag {
-	logger.Trace()
+	logging.Trace()
 	return Tag{Name: name, Description: desc}
 
 }
@@ -34,7 +34,7 @@ func NewTagService(c client.Client) *TagService {
 
 // GetAll implements `GET /tags/all`
 func (svc *TagService) GetAll() ([]Tag, error) {
-	logger.Trace()
+	logging.Trace()
 
 	var res []Tag
 
@@ -46,7 +46,7 @@ func (svc *TagService) GetAll() ([]Tag, error) {
 }
 
 func (svc *TagService) Get(id string) (*Tag, error) {
-	logger.Trace()
+	logging.Trace()
 
 	var res *Tag
 
@@ -66,7 +66,7 @@ func (svc *TagService) Get(id string) (*Tag, error) {
 }
 
 func (svc *TagService) GetByName(name string) (*Tag, error) {
-	logger.Trace()
+	logging.Trace()
 
 	tags, err := svc.GetAll()
 	if err != nil {
@@ -90,7 +90,7 @@ func (svc *TagService) GetByName(name string) (*Tag, error) {
 }
 
 func (svc *TagService) GetTagsForReference(id string) ([]Tag, error) {
-	logger.Trace()
+	logging.Trace()
 
 	body := map[string]interface{}{
 		"data": map[string]string{"ref_id": id},
@@ -110,7 +110,7 @@ func (svc *TagService) GetTagsForReference(id string) ([]Tag, error) {
 }
 
 func (svc *TagService) Create(in Tag) (*Tag, error) {
-	logger.Trace()
+	logging.Trace()
 
 	body := map[string]interface{}{
 		"name":        in.Name,
@@ -131,7 +131,7 @@ func (svc *TagService) Create(in Tag) (*Tag, error) {
 }
 
 func (svc *TagService) Delete(id string) error {
-	logger.Trace()
+	logging.Trace()
 	return svc.PostRequest(&Request{
 		uri:                "/tags/delete",
 		body:               map[string]interface{}{"_id": id},

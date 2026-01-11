@@ -10,10 +10,10 @@ import (
 	"strings"
 
 	"github.com/itential/ipctl/internal/flags"
+	"github.com/itential/ipctl/internal/logging"
 	"github.com/itential/ipctl/internal/utils"
 	"github.com/itential/ipctl/pkg/client"
 	"github.com/itential/ipctl/pkg/config"
-	"github.com/itential/ipctl/pkg/logger"
 	"github.com/itential/ipctl/pkg/services"
 )
 
@@ -39,7 +39,7 @@ Reader interface
 
 // Get implements the `get integration-models` command
 func (r *IntegrationRunner) Get(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	res, err := r.service.GetAll()
 	if err != nil {
@@ -55,7 +55,7 @@ func (r *IntegrationRunner) Get(in Request) (*Response, error) {
 
 // Describe implements the `describe integration-model <name>` command
 func (r *IntegrationRunner) Describe(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	name := in.Args[0]
 
@@ -78,7 +78,7 @@ Writer interface
 
 // Create implements the `create integration <name>` command
 func (r *IntegrationRunner) Create(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	name := in.Args[0]
 
@@ -111,7 +111,7 @@ func (r *IntegrationRunner) Create(in Request) (*Response, error) {
 
 // Delete implements the `delete integration <name>` command
 func (r *IntegrationRunner) Delete(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	name := in.Args[0]
 
@@ -126,7 +126,7 @@ func (r *IntegrationRunner) Delete(in Request) (*Response, error) {
 
 // Clear implements the `clear integrations` command
 func (r *IntegrationRunner) Clear(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	elements, err := r.service.GetAll()
 	if err != nil {
@@ -152,7 +152,7 @@ Copier interface
 
 // Copy implements the `copy integration <name>` command
 func (r *IntegrationRunner) Copy(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	name := in.Args[0]
 
@@ -208,7 +208,7 @@ Exporter interface
 
 // Export implements the `export integration ...` command
 func (r *IntegrationRunner) Export(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	name := in.Args[0]
 
@@ -237,7 +237,7 @@ Importer interface
 
 // Import implements the `import integration ...` command
 func (r *IntegrationRunner) Import(in Request) (*Response, error) {
-	logger.Trace()
+	logging.Trace()
 
 	common := in.Common.(*flags.AssetImportCommon)
 
@@ -283,7 +283,7 @@ func (r *IntegrationRunner) Import(in Request) (*Response, error) {
 }
 
 func (r *IntegrationRunner) checkIfModelExists(name string) error {
-	logger.Trace()
+	logging.Trace()
 	_, err := services.NewIntegrationModelService(r.client).Get(name)
 	if err != nil {
 		return err

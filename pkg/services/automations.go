@@ -10,8 +10,8 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/itential/ipctl/internal/logging"
 	"github.com/itential/ipctl/pkg/client"
-	"github.com/itential/ipctl/pkg/logger"
 )
 
 // automationCollection represents a collection of automations returned by the API
@@ -64,7 +64,7 @@ type AutomationService struct {
 
 // NewAutomation creates a new Automation instance with the given name and description
 func NewAutomation(name, desc string) Automation {
-	logger.Trace()
+	logging.Trace()
 	return Automation{
 		Name:          name,
 		Description:   desc,
@@ -79,7 +79,7 @@ func NewAutomationService(c client.Client) *AutomationService {
 
 // Get implements `GET /operations-manager/automations/{id}`
 func (svc *AutomationService) Get(id string) (*Automation, error) {
-	logger.Trace()
+	logging.Trace()
 
 	type Response struct {
 		Message string      `json:"message"`
@@ -93,14 +93,14 @@ func (svc *AutomationService) Get(id string) (*Automation, error) {
 		return nil, err
 	}
 
-	logger.Info("%s", res.Message)
+	logging.Info("%s", res.Message)
 
 	return res.Data, nil
 }
 
 // Create implements `POST /operations-manager/automations`
 func (svc *AutomationService) Create(in Automation) (*Automation, error) {
-	logger.Trace()
+	logging.Trace()
 
 	body := map[string]interface{}{
 		"name":          in.Name,
@@ -124,20 +124,20 @@ func (svc *AutomationService) Create(in Automation) (*Automation, error) {
 		return nil, err
 	}
 
-	logger.Info("%s", res.Message)
+	logging.Info("%s", res.Message)
 
 	return res.Data, nil
 }
 
 // Delete implements `DELETE /operations-manager/automations/{id}`
 func (svc *AutomationService) Delete(id string) error {
-	logger.Trace()
+	logging.Trace()
 	return svc.BaseService.Delete(fmt.Sprintf("/operations-manager/automations/%s", id))
 }
 
 // GetAll implements `GET /operations-manager/automations`
 func (svc *AutomationService) GetAll() ([]*Automation, error) {
-	logger.Trace()
+	logging.Trace()
 
 	type Response struct {
 		Message  string        `json:"message"`
@@ -171,7 +171,7 @@ func (svc *AutomationService) GetAll() ([]*Automation, error) {
 		skip += limit
 	}
 
-	logger.Info("Found %v automations", len(automations))
+	logging.Info("Found %v automations", len(automations))
 
 	return automations, nil
 }
@@ -179,7 +179,7 @@ func (svc *AutomationService) GetAll() ([]*Automation, error) {
 // GetByName retrieves an automation by name using client-side filtering.
 // DEPRECATED: Business logic method - prefer using resources.AutomationResource.GetByName
 func (svc *AutomationService) GetByName(name string) (*Automation, error) {
-	logger.Trace()
+	logging.Trace()
 
 	automations, err := svc.GetAll()
 	if err != nil {
@@ -198,7 +198,7 @@ func (svc *AutomationService) GetByName(name string) (*Automation, error) {
 // Import imports an automation with business rule validation and data transformation.
 // DEPRECATED: Business logic method - prefer using resources.AutomationResource.Import
 func (svc *AutomationService) Import(in Automation) (*Automation, error) {
-	logger.Trace()
+	logging.Trace()
 
 	// Business rule validation: write group must be configured when read group is present
 	if len(in.Gbac.Read) > 0 && len(in.Gbac.Write) == 0 {
@@ -231,7 +231,7 @@ func (svc *AutomationService) Import(in Automation) (*Automation, error) {
 // Clear deletes all automations from the server.
 // DEPRECATED: Business logic method - prefer using resources.AutomationResource.Clear
 func (svc *AutomationService) Clear() error {
-	logger.Trace()
+	logging.Trace()
 
 	automations, err := svc.GetAll()
 	if err != nil {
@@ -250,7 +250,7 @@ func (svc *AutomationService) Clear() error {
 // ImportTransformed imports pre-transformed automation data.
 // The automations parameter should contain properly validated and transformed automation data.
 func (svc *AutomationService) ImportTransformed(automations []any) (*Automation, error) {
-	logger.Trace()
+	logging.Trace()
 
 	body := map[string][]any{
 		"automations": automations,
@@ -276,7 +276,7 @@ func (svc *AutomationService) ImportTransformed(automations []any) (*Automation,
 		return nil, err
 	}
 
-	logger.Info("%s", res.Message)
+	logging.Info("%s", res.Message)
 
 	return &res.Data[0].Data, nil
 }
@@ -284,7 +284,7 @@ func (svc *AutomationService) ImportTransformed(automations []any) (*Automation,
 // Export exports an automation by ID, including its triggers in raw format.
 // Returns the automation data as received from the API without trigger transformation.
 func (svc *AutomationService) Export(id string) (*Automation, error) {
-	logger.Trace()
+	logging.Trace()
 
 	type Response struct {
 		Data     *Automation `json:"data"`
@@ -299,7 +299,7 @@ func (svc *AutomationService) Export(id string) (*Automation, error) {
 		return nil, err
 	}
 
-	logger.Info("%s", res.Message)
+	logging.Info("%s", res.Message)
 
 	return res.Data, nil
 }
