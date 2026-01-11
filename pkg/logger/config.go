@@ -12,11 +12,6 @@ import (
 	"github.com/rs/zerolog"
 )
 
-// logFileName is the default filename used for log files when file logging is enabled.
-const (
-	logFileName = "iap.log"
-)
-
 // supportedLogLevels defines the valid log level strings that can be parsed by getLogLevel.
 // These correspond to zerolog's built-in log levels plus a DISABLED option.
 var supportedLogLevels = []string{"DEBUG", "INFO", "WARN", "ERROR", "FATAL", "DISABLED", "TRACE"}

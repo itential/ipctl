@@ -152,7 +152,6 @@ func TestInitializeLoggerFirstCall(t *testing.T) {
 
 	cfg := &config.Config{
 		LogLevel:             "INFO",
-		LogFileEnabled:       false,
 		LogTimestampTimezone: time.UTC,
 	}
 
@@ -176,7 +175,6 @@ func TestInitializeLoggerSubsequentCalls(t *testing.T) {
 
 	cfg := &config.Config{
 		LogLevel:             "DEBUG",
-		LogFileEnabled:       false,
 		LogTimestampTimezone: time.UTC,
 	}
 
@@ -193,7 +191,6 @@ func TestInitializeLoggerWithVerboseFlag(t *testing.T) {
 
 	cfg := &config.Config{
 		LogLevel:             "INFO",
-		LogFileEnabled:       false,
 		LogTimestampTimezone: time.UTC,
 		TerminalNoColor:      true,
 	}
