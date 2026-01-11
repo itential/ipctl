@@ -47,9 +47,6 @@ func InitializeLogger(cfg *config.Config) {
 	if verbose {
 		EnableConsoleLogs(cfg)
 	}
-	if cfg.LogFileEnabled {
-		EnableFileLogs(cfg)
-	}
 
 	// Only sets timezone on JSON loggers as they reference default zerolog settings
 	zerolog.TimestampFunc = func() time.Time {

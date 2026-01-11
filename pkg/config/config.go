@@ -26,9 +26,7 @@ const (
 	defaultFeaturesDatasetsEnabled = false
 
 	defaultLogLevel             = "INFO"
-	defaultLogFileJson          = false
 	defaultLogConsoleJson       = false
-	defaultLogFileEnabled       = false
 	defaultLogTimestampTimezone = "utc"
 
 	defaultTerminalNoColor       = false
@@ -57,9 +55,7 @@ type Config struct {
 
 	// Log settings
 	LogLevel             string         `json:"log_level"`
-	LogFileJSON          bool           `json:"log_file_json"`
 	LogConsoleJSON       bool           `json:"log_console_json"`
-	LogFileEnabled       bool           `json:"log_file_enabled"`
 	LogTimestampTimezone *time.Location `json:"log_timestamp_timezone"`
 
 	// Terminal settings
@@ -191,9 +187,7 @@ func (ac *Config) populateFields() {
 	ac.FeaturesDatasetsEnabled = viper.GetBool("features.datasets_enabled")
 
 	ac.LogLevel = viper.GetString("log.level")
-	ac.LogFileJSON = viper.GetBool("log.file_json")
 	ac.LogConsoleJSON = viper.GetBool("log.console_json")
-	ac.LogFileEnabled = viper.GetBool("log.file_enabled")
 	ac.LogTimestampTimezone = getTzLocation("log.timestamp_timezone")
 
 	ac.TerminalNoColor = viper.GetBool("terminal.no_color")
@@ -213,9 +207,7 @@ var defaultValues = map[string]interface{}{
 	"features.datasets_enabled": defaultFeaturesDatasetsEnabled,
 
 	"log.level":              defaultLogLevel,
-	"log.file_json":          defaultLogFileJson,
 	"log.console_json":       defaultLogConsoleJson,
-	"log.file_enabled":       defaultLogFileEnabled,
 	"log.timestamp_timezone": defaultLogTimestampTimezone,
 
 	"terminal.no_color":       defaultTerminalNoColor,

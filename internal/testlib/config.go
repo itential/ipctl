@@ -18,9 +18,7 @@ const (
 	defaultAppDefaultProfile = ""
 
 	defaultLogLevel             = "INFO"
-	defaultLogFileJson          = false
 	defaultLogConsoleJson       = false
-	defaultLogFileEnabled       = false
 	defaultLogTimestampTimezone = "utc"
 
 	defaultTerminalNoColor           = false
@@ -32,9 +30,7 @@ var defaultValues = map[string]interface{}{
 	"application.default_profile": defaultAppDefaultProfile,
 
 	"log.level":              defaultLogLevel,
-	"log.file_json":          defaultLogFileJson,
 	"log.console_json":       defaultLogConsoleJson,
-	"log.file_enabled":       defaultLogFileEnabled,
 	"log.timestamp_timezone": defaultLogTimestampTimezone,
 
 	"terminal.no_color":           defaultTerminalNoColor,

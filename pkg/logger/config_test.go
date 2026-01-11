@@ -96,11 +96,6 @@ func TestSupportedLogLevels(t *testing.T) {
 	}
 }
 
-// TestLogFileName tests the logFileName constant
-func TestLogFileName(t *testing.T) {
-	assert.Equal(t, "iap.log", logFileName)
-}
-
 // TestLogLevelCaseInsensitivity tests that log levels are case insensitive
 func TestLogLevelCaseInsensitivity(t *testing.T) {
 	testCases := []string{
