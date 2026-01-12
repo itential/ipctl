@@ -721,3 +721,387 @@ port = 8002
 		t.Error("cfg1 and cfg2 should have different default profiles")
 	}
 }
+
+// TestDetectConfigType verifies that detectConfigType correctly identifies file formats.
+func TestDetectConfigType(t *testing.T) {
+	tests := []struct {
+		name     string
+		filePath string
+		want     string
+	}{
+		{
+			name:     "YAML extension .yaml",
+			filePath: "/path/to/config.yaml",
+			want:     "yaml",
+		},
+		{
+			name:     "YAML extension .yml",
+			filePath: "/path/to/config.yml",
+			want:     "yaml",
+		},
+		{
+			name:     "TOML extension",
+			filePath: "/path/to/config.toml",
+			want:     "toml",
+		},
+		{
+			name:     "JSON extension",
+			filePath: "/path/to/config.json",
+			want:     "json",
+		},
+		{
+			name:     "INI extension",
+			filePath: "/path/to/config.ini",
+			want:     "ini",
+		},
+		{
+			name:     "uppercase extension",
+			filePath: "/path/to/config.YAML",
+			want:     "yaml",
+		},
+		{
+			name:     "mixed case extension",
+			filePath: "/path/to/config.ToMl",
+			want:     "toml",
+		},
+		{
+			name:     "no extension defaults to ini",
+			filePath: "/path/to/config",
+			want:     "ini",
+		},
+		{
+			name:     "unknown extension defaults to ini",
+			filePath: "/path/to/config.txt",
+			want:     "ini",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := detectConfigType(tt.filePath)
+			if got != tt.want {
+				t.Errorf("detectConfigType(%q) = %q, want %q", tt.filePath, got, tt.want)
+			}
+		})
+	}
+}
+
+// TestLoaderLoadWithYAMLConfigFile verifies that YAML config files are loaded correctly.
+func TestLoaderLoadWithYAMLConfigFile(t *testing.T) {
+	tmpDir := t.TempDir()
+	configFile := filepath.Join(tmpDir, "config.yaml")
+
+	configContent := `application:
+  working_dir: /test/yaml/working
+  default_profile: yamlprofile
+  default_repository: yamlrepo
+
+features:
+  datasets_enabled: true
+
+git:
+  name: YAML User
+  email: yaml@example.com
+  user: yamlgit
+
+profile default:
+  host: yaml-default.example.com
+  port: 9090
+  use_tls: true
+  verify: false
+  username: yamldefaultuser
+  password: yamldefaultpass
+
+profile production:
+  host: yaml-prod.example.com
+  port: 8443
+  use_tls: true
+  verify: true
+  username: yamlproduser
+
+repository myrepo:
+  url: https://github.com/example/yaml-repo.git
+  reference: develop
+`
+
+	if err := os.WriteFile(configFile, []byte(configContent), 0600); err != nil {
+		t.Fatalf("Failed to write YAML config file: %v", err)
+	}
+
+	oldArgs := os.Args
+	defer func() { os.Args = oldArgs }()
+	os.Args = []string{"ipctl"}
+
+	loader := NewLoader().WithConfigFile(configFile)
+
+	cfg, err := loader.Load()
+	if err != nil {
+		t.Fatalf("Load() returned error: %v", err)
+	}
+
+	// Verify application settings
+	if cfg.Settings.WorkingDir != "/test/yaml/working" {
+		t.Errorf("cfg.Settings.WorkingDir = %q, want %q", cfg.Settings.WorkingDir, "/test/yaml/working")
+	}
+
+	if cfg.Settings.DefaultProfile != "yamlprofile" {
+		t.Errorf("cfg.Settings.DefaultProfile = %q, want %q", cfg.Settings.DefaultProfile, "yamlprofile")
+	}
+
+	// Verify git config
+	if cfg.Settings.Git.Name != "YAML User" {
+		t.Errorf("cfg.Settings.Git.Name = %q, want %q", cfg.Settings.Git.Name, "YAML User")
+	}
+
+	// Verify profiles
+	defaultProfile, err := cfg.GetProfile("default")
+	if err != nil {
+		t.Fatalf("GetProfile(default) returned error: %v", err)
+	}
+
+	if defaultProfile.Host != "yaml-default.example.com" {
+		t.Errorf("defaultProfile.Host = %q, want %q", defaultProfile.Host, "yaml-default.example.com")
+	}
+
+	if defaultProfile.Port != 9090 {
+		t.Errorf("defaultProfile.Port = %d, want %d", defaultProfile.Port, 9090)
+	}
+}
+
+// TestLoaderLoadWithTOMLConfigFile verifies that TOML config files are loaded correctly.
+func TestLoaderLoadWithTOMLConfigFile(t *testing.T) {
+	tmpDir := t.TempDir()
+	configFile := filepath.Join(tmpDir, "config.toml")
+
+	// Note: TOML requires profile sections to use spaces in the key name,
+	// similar to INI format. The dot notation [profile.default] creates
+	// a nested table structure which won't work with our profile loading logic.
+	configContent := `[application]
+working_dir = "/test/toml/working"
+default_profile = "tomlprofile"
+default_repository = "tomlrepo"
+
+[features]
+datasets_enabled = true
+
+[git]
+name = "TOML User"
+email = "toml@example.com"
+user = "tomlgit"
+
+["profile default"]
+host = "toml-default.example.com"
+port = 7070
+use_tls = true
+verify = false
+username = "tomldefaultuser"
+password = "tomldefaultpass"
+
+["profile production"]
+host = "toml-prod.example.com"
+port = 7443
+use_tls = true
+verify = true
+username = "tomlproduser"
+
+["repository myrepo"]
+url = "https://github.com/example/toml-repo.git"
+reference = "stable"
+`
+
+	if err := os.WriteFile(configFile, []byte(configContent), 0600); err != nil {
+		t.Fatalf("Failed to write TOML config file: %v", err)
+	}
+
+	oldArgs := os.Args
+	defer func() { os.Args = oldArgs }()
+	os.Args = []string{"ipctl"}
+
+	loader := NewLoader().WithConfigFile(configFile)
+
+	cfg, err := loader.Load()
+	if err != nil {
+		t.Fatalf("Load() returned error: %v", err)
+	}
+
+	// Verify application settings
+	if cfg.Settings.WorkingDir != "/test/toml/working" {
+		t.Errorf("cfg.Settings.WorkingDir = %q, want %q", cfg.Settings.WorkingDir, "/test/toml/working")
+	}
+
+	if cfg.Settings.DefaultProfile != "tomlprofile" {
+		t.Errorf("cfg.Settings.DefaultProfile = %q, want %q", cfg.Settings.DefaultProfile, "tomlprofile")
+	}
+
+	// Verify git config
+	if cfg.Settings.Git.Name != "TOML User" {
+		t.Errorf("cfg.Settings.Git.Name = %q, want %q", cfg.Settings.Git.Name, "TOML User")
+	}
+
+	// Verify profiles
+	defaultProfile, err := cfg.GetProfile("default")
+	if err != nil {
+		t.Fatalf("GetProfile(default) returned error: %v", err)
+	}
+
+	if defaultProfile.Host != "toml-default.example.com" {
+		t.Errorf("defaultProfile.Host = %q, want %q", defaultProfile.Host, "toml-default.example.com")
+	}
+
+	if defaultProfile.Port != 7070 {
+		t.Errorf("defaultProfile.Port = %d, want %d", defaultProfile.Port, 7070)
+	}
+}
+
+// TestLoaderLoadWithJSONConfigFile verifies that JSON config files are loaded correctly.
+func TestLoaderLoadWithJSONConfigFile(t *testing.T) {
+	tmpDir := t.TempDir()
+	configFile := filepath.Join(tmpDir, "config.json")
+
+	configContent := `{
+  "application": {
+    "working_dir": "/test/json/working",
+    "default_profile": "jsonprofile",
+    "default_repository": "jsonrepo"
+  },
+  "features": {
+    "datasets_enabled": true
+  },
+  "git": {
+    "name": "JSON User",
+    "email": "json@example.com",
+    "user": "jsongit"
+  },
+  "profile default": {
+    "host": "json-default.example.com",
+    "port": 6060,
+    "use_tls": true,
+    "verify": false,
+    "username": "jsondefaultuser",
+    "password": "jsondefaultpass"
+  },
+  "profile production": {
+    "host": "json-prod.example.com",
+    "port": 6443,
+    "use_tls": true,
+    "verify": true,
+    "username": "jsonproduser"
+  },
+  "repository myrepo": {
+    "url": "https://github.com/example/json-repo.git",
+    "reference": "release"
+  }
+}`
+
+	if err := os.WriteFile(configFile, []byte(configContent), 0600); err != nil {
+		t.Fatalf("Failed to write JSON config file: %v", err)
+	}
+
+	oldArgs := os.Args
+	defer func() { os.Args = oldArgs }()
+	os.Args = []string{"ipctl"}
+
+	loader := NewLoader().WithConfigFile(configFile)
+
+	cfg, err := loader.Load()
+	if err != nil {
+		t.Fatalf("Load() returned error: %v", err)
+	}
+
+	// Verify application settings
+	if cfg.Settings.WorkingDir != "/test/json/working" {
+		t.Errorf("cfg.Settings.WorkingDir = %q, want %q", cfg.Settings.WorkingDir, "/test/json/working")
+	}
+
+	if cfg.Settings.DefaultProfile != "jsonprofile" {
+		t.Errorf("cfg.Settings.DefaultProfile = %q, want %q", cfg.Settings.DefaultProfile, "jsonprofile")
+	}
+
+	// Verify git config
+	if cfg.Settings.Git.Name != "JSON User" {
+		t.Errorf("cfg.Settings.Git.Name = %q, want %q", cfg.Settings.Git.Name, "JSON User")
+	}
+
+	// Verify profiles
+	defaultProfile, err := cfg.GetProfile("default")
+	if err != nil {
+		t.Fatalf("GetProfile(default) returned error: %v", err)
+	}
+
+	if defaultProfile.Host != "json-default.example.com" {
+		t.Errorf("defaultProfile.Host = %q, want %q", defaultProfile.Host, "json-default.example.com")
+	}
+
+	if defaultProfile.Port != 6060 {
+		t.Errorf("defaultProfile.Port = %d, want %d", defaultProfile.Port, 6060)
+	}
+}
+
+// TestLoaderLoadMixedFormats verifies that different format files can be loaded independently.
+func TestLoaderLoadMixedFormats(t *testing.T) {
+	tmpDir := t.TempDir()
+
+	// Create INI config
+	iniFile := filepath.Join(tmpDir, "config.ini")
+	iniContent := `[git]
+name = INI User
+`
+	if err := os.WriteFile(iniFile, []byte(iniContent), 0600); err != nil {
+		t.Fatal(err)
+	}
+
+	// Create YAML config
+	yamlFile := filepath.Join(tmpDir, "config.yaml")
+	yamlContent := `git:
+  name: YAML User
+`
+	if err := os.WriteFile(yamlFile, []byte(yamlContent), 0600); err != nil {
+		t.Fatal(err)
+	}
+
+	// Create TOML config
+	tomlFile := filepath.Join(tmpDir, "config.toml")
+	tomlContent := `[git]
+name = "TOML User"
+`
+	if err := os.WriteFile(tomlFile, []byte(tomlContent), 0600); err != nil {
+		t.Fatal(err)
+	}
+
+	// Create JSON config
+	jsonFile := filepath.Join(tmpDir, "config.json")
+	jsonContent := `{"git": {"name": "JSON User"}}`
+	if err := os.WriteFile(jsonFile, []byte(jsonContent), 0600); err != nil {
+		t.Fatal(err)
+	}
+
+	oldArgs := os.Args
+	defer func() { os.Args = oldArgs }()
+	os.Args = []string{"ipctl"}
+
+	// Test each format
+	tests := []struct {
+		name     string
+		file     string
+		wantName string
+	}{
+		{"INI format", iniFile, "INI User"},
+		{"YAML format", yamlFile, "YAML User"},
+		{"TOML format", tomlFile, "TOML User"},
+		{"JSON format", jsonFile, "JSON User"},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			loader := NewLoader().WithConfigFile(tt.file)
+			cfg, err := loader.Load()
+			if err != nil {
+				t.Fatalf("Load() returned error: %v", err)
+			}
+
+			if cfg.Settings.Git.Name != tt.wantName {
+				t.Errorf("cfg.Settings.Git.Name = %q, want %q", cfg.Settings.Git.Name, tt.wantName)
+			}
+		})
+	}
+}

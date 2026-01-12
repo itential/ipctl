@@ -24,7 +24,18 @@
 //
 //	~/.platform.d/config
 //
-// The file uses INI format with sections for each profile:
+// The configuration file supports multiple formats: INI (default), YAML, TOML, and JSON.
+// The format is automatically detected based on the file extension:
+//   - .ini - INI format (default)
+//   - .yaml, .yml - YAML format
+//   - .toml - TOML format
+//   - .json - JSON format
+//
+// If no extension is provided, INI format is used for backward compatibility.
+//
+// # INI Format Example
+//
+// The INI format uses sections with key-value pairs:
 //
 //	[application]
 //	working_dir = ~/.platform.d
@@ -55,6 +66,112 @@
 //	verify = true
 //	client_id = your-client-id
 //	client_secret = your-client-secret
+//
+// # YAML Format Example
+//
+// YAML format provides a more structured and readable configuration:
+//
+//	application:
+//	  working_dir: ~/.platform.d
+//	  default_profile: production
+//
+//	log:
+//	  level: INFO
+//	  file_enabled: false
+//
+//	terminal:
+//	  no_color: false
+//	  default_output: human
+//	  pager: false
+//
+//	profile default:
+//	  host: localhost
+//	  port: 3000
+//	  use_tls: true
+//	  verify: false
+//	  username: admin@pronghorn
+//	  password: admin
+//	  timeout: 30
+//
+//	profile production:
+//	  host: platform.example.com
+//	  port: 443
+//	  use_tls: true
+//	  verify: true
+//	  client_id: your-client-id
+//	  client_secret: your-client-secret
+//
+// # TOML Format Example
+//
+// TOML format is similar to INI but with more type safety.
+// Note: Profile and repository sections must use quoted keys with spaces:
+//
+//	[application]
+//	working_dir = "~/.platform.d"
+//	default_profile = "production"
+//
+//	[log]
+//	level = "INFO"
+//	file_enabled = false
+//
+//	[terminal]
+//	no_color = false
+//	default_output = "human"
+//	pager = false
+//
+//	["profile default"]
+//	host = "localhost"
+//	port = 3000
+//	use_tls = true
+//	verify = false
+//	username = "admin@pronghorn"
+//	password = "admin"
+//	timeout = 30
+//
+//	["profile production"]
+//	host = "platform.example.com"
+//	port = 443
+//	use_tls = true
+//	verify = true
+//	client_id = "your-client-id"
+//	client_secret = "your-client-secret"
+//
+// # JSON Format Example
+//
+// JSON format is useful for programmatic generation:
+//
+//	{
+//	  "application": {
+//	    "working_dir": "~/.platform.d",
+//	    "default_profile": "production"
+//	  },
+//	  "log": {
+//	    "level": "INFO",
+//	    "file_enabled": false
+//	  },
+//	  "terminal": {
+//	    "no_color": false,
+//	    "default_output": "human",
+//	    "pager": false
+//	  },
+//	  "profile default": {
+//	    "host": "localhost",
+//	    "port": 3000,
+//	    "use_tls": true,
+//	    "verify": false,
+//	    "username": "admin@pronghorn",
+//	    "password": "admin",
+//	    "timeout": 30
+//	  },
+//	  "profile production": {
+//	    "host": "platform.example.com",
+//	    "port": 443,
+//	    "use_tls": true,
+//	    "verify": true,
+//	    "client_id": "your-client-id",
+//	    "client_secret": "your-client-secret"
+//	  }
+//	}
 //
 // # Profiles
 //

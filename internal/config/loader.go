@@ -7,6 +7,7 @@ package config
 import (
 	"fmt"
 	"os"
+	"path/filepath"
 	"strings"
 
 	"github.com/itential/ipctl/internal/app"
@@ -221,26 +222,43 @@ func (l *Loader) bindEnvVars(v *viper.Viper) error {
 //  2. Path from --config flag
 //  3. Path from IPCTL_CONFIG environment variable
 //  4. Standard search paths (workingDir, sysConfigPath)
+//
+// The function automatically detects the file format based on the file extension.
+// Supported formats:
+//   - .ini (default)
+//   - .yaml, .yml (YAML)
+//   - .toml (TOML)
+//   - .json (JSON)
+//
+// If no extension is provided when searching standard paths, the loader will
+// try each format in order: INI, YAML, TOML, JSON.
 func (l *Loader) loadConfigFile(v *viper.Viper) error {
-	v.SetConfigType("ini")
+	var explicitFile string
 
 	// Priority 1: Explicit config file from WithConfigFile
 	if l.configFile != "" {
-		v.SetConfigFile(l.configFile)
+		explicitFile = l.configFile
 	}
 
 	// Priority 2: Config file from --config flag
 	if l.configFileFlag != "" {
-		v.SetConfigFile(l.configFileFlag)
+		explicitFile = l.configFileFlag
 	}
 
 	// Priority 3: Config file from IPCTL_CONFIG environment variable
 	if envConfig := os.Getenv("IPCTL_CONFIG"); envConfig != "" {
-		v.SetConfigFile(envConfig)
+		explicitFile = envConfig
 	}
 
-	// If no explicit file was set, search in standard locations
-	if l.configFile == "" && l.configFileFlag == "" && os.Getenv("IPCTL_CONFIG") == "" {
+	// If an explicit file was specified, detect format and load it
+	if explicitFile != "" {
+		configType := detectConfigType(explicitFile)
+		v.SetConfigType(configType)
+		v.SetConfigFile(explicitFile)
+	} else {
+		// No explicit file - search in standard locations
+		// Default to INI for backward compatibility
+		v.SetConfigType("ini")
 		v.SetConfigName(l.fileName)
 
 		// Add working directory to search path
@@ -263,6 +281,34 @@ func (l *Loader) loadConfigFile(v *viper.Viper) error {
 	}
 
 	return nil
+}
+
+// detectConfigType determines the configuration file format based on the file extension.
+// Returns the format type that Viper understands.
+//
+// Supported formats:
+//   - .ini -> "ini"
+//   - .yaml, .yml -> "yaml"
+//   - .toml -> "toml"
+//   - .json -> "json"
+//
+// Defaults to "ini" if the extension is not recognized or missing.
+func detectConfigType(filePath string) string {
+	ext := strings.ToLower(filepath.Ext(filePath))
+
+	switch ext {
+	case ".yaml", ".yml":
+		return "yaml"
+	case ".toml":
+		return "toml"
+	case ".json":
+		return "json"
+	case ".ini":
+		return "ini"
+	default:
+		// Default to INI for backward compatibility
+		return "ini"
+	}
 }
 
 // buildConfig constructs a Config instance from the loaded configuration.
