@@ -71,8 +71,9 @@ func versionCommand() *cobra.Command {
 }
 
 // runCli builds and runs the CLI command. It will create the command tree
-// using cobra and execute the command.
-func runCli(c client.Client, cfg config.Provider, termCfg *terminal.Config) *cobra.Command {
+// using cobra and execute the command. Returns an error if runtime initialization
+// fails (e.g., descriptor loading fails).
+func runCli(c client.Client, cfg config.Provider, termCfg *terminal.Config) (*cobra.Command, error) {
 	var cmd = &cobra.Command{
 		Use:   "ipctl",
 		Short: strings.Split(description, "\n")[0],
@@ -82,7 +83,10 @@ func runCli(c client.Client, cfg config.Provider, termCfg *terminal.Config) *cob
 	cmd.CompletionOptions.HiddenDefaultCmd = true
 	cmd.SetHelpCommand(&cobra.Command{Hidden: true})
 
-	runtime := handlers.NewRuntime(c, cfg, termCfg)
+	runtime, err := handlers.NewRuntime(c, cfg, termCfg)
+	if err != nil {
+		return nil, err
+	}
 
 	cmd.PersistentFlags().BoolVar(&runtime.Verbose, "verbose", runtime.Verbose, "Enable verbose output")
 	cmd.PersistentFlags().StringVar(&termCfg.DefaultOutput, "output", termCfg.DefaultOutput, "Output format")
@@ -95,7 +99,7 @@ func runCli(c client.Client, cfg config.Provider, termCfg *terminal.Config) *cob
 
 	cmd.AddCommand(versionCommand())
 
-	return cmd
+	return cmd, nil
 }
 
 // Execute is the entrypoint to the CLI called from main. This function will
@@ -145,10 +149,18 @@ func Execute() int {
 
 	c := client.New(ctx, profile)
 
+	// Build the CLI command tree. If runtime initialization fails (e.g., descriptor
+	// loading fails), handle the error immediately.
+	cmd, err := runCli(c, cfg, &termCfg)
+	if err != nil {
+		terminal.Error(err, termCfg.NoColor)
+		return 1
+	}
+
 	// Execute the CLI command tree. This is the only place in the application
 	// where CheckError should be called. All command handlers use RunE to return
 	// errors which are propagated up through Cobra and handled here.
-	if err := runCli(c, cfg, &termCfg).Execute(); err != nil {
+	if err := cmd.Execute(); err != nil {
 		cmdutils.CheckError(err, termCfg.NoColor)
 	}
 

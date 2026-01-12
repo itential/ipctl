@@ -6,10 +6,10 @@ package handlers
 
 import (
 	"embed"
+	"fmt"
 	"strings"
 
 	"github.com/itential/ipctl/internal/cmdutils"
-	"github.com/itential/ipctl/internal/logging"
 )
 
 const descriptorsDir = "descriptors"
@@ -61,12 +61,12 @@ var content embed.FS
 type DescriptorMap map[string]cmdutils.Descriptor
 type Descriptors map[string]DescriptorMap
 
-func loadDescriptors() Descriptors {
+func loadDescriptors() (Descriptors, error) {
 	descriptors := map[string]DescriptorMap{}
 
 	entries, err := content.ReadDir(descriptorsDir)
 	if err != nil {
-		logging.Fatal(err, "failed to read descriptors directory")
+		return nil, fmt.Errorf("failed to read descriptors directory: %w", err)
 	}
 
 	for _, ele := range entries {
@@ -75,11 +75,11 @@ func loadDescriptors() Descriptors {
 
 		data, err := content.ReadFile(fn)
 		if err != nil {
-			logging.Fatal(err, "failed to read descriptor")
+			return nil, fmt.Errorf("failed to read descriptor %s: %w", name, err)
 		}
 
 		descriptors[name] = cmdutils.LoadDescriptor(data)
 	}
 
-	return descriptors
+	return descriptors, nil
 }

@@ -28,10 +28,7 @@ type CommandRunner struct {
 	Options     flags.Flagger
 	Runtime     *Runtime
 	Runner      runners.Runner
-	Confirm     bool
 	Flags       *AssetHandlerFlags
-	PreRun      func(args []string) error
-	PostRun     func(args []string)
 }
 
 func NewCommandRunner(
