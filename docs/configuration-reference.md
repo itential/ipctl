@@ -18,6 +18,140 @@ environment variable.
 The configuration file is organized into sections with each section providing
 one or more key=value settings that can be used to configure the application.
 
+## Supported Configuration Formats
+
+`ipctl` supports multiple configuration file formats to accommodate different
+preferences and use cases. The format is automatically detected based on the
+file extension:
+
+| Format | Extensions | Best For |
+|--------|-----------|----------|
+| **INI** | `.ini`, no extension | Default format, backward compatible, simple key=value syntax |
+| **YAML** | `.yaml`, `.yml` | Human-readable, hierarchical data, popular in DevOps |
+| **TOML** | `.toml` | Type-safe, INI-like with enhanced features |
+| **JSON** | `.json` | Programmatic generation, machine-readable |
+
+### Format Detection
+
+The configuration loader automatically detects the format based on the file
+extension:
+
+- Files ending in `.yaml` or `.yml` are parsed as YAML
+- Files ending in `.toml` are parsed as TOML
+- Files ending in `.json` are parsed as JSON
+- Files ending in `.ini` or with no extension are parsed as INI (default)
+
+### Example: Same Configuration in Different Formats
+
+#### INI Format (Default)
+
+```ini
+[application]
+default_profile = production
+
+[terminal]
+no_color = false
+default_output = human
+pager = false
+
+[profile default]
+host = localhost
+port = 3000
+use_tls = true
+verify = false
+username = admin@pronghorn
+password = admin
+timeout = 30
+```
+
+#### YAML Format
+
+```yaml
+application:
+  default_profile: production
+
+terminal:
+  no_color: false
+  default_output: human
+  pager: false
+
+profile default:
+  host: localhost
+  port: 3000
+  use_tls: true
+  verify: false
+  username: admin@pronghorn
+  password: admin
+  timeout: 30
+```
+
+#### TOML Format
+
+```toml
+[application]
+default_profile = "production"
+
+[terminal]
+no_color = false
+default_output = "human"
+pager = false
+
+["profile default"]
+host = "localhost"
+port = 3000
+use_tls = true
+verify = false
+username = "admin@pronghorn"
+password = "admin"
+timeout = 30
+```
+
+#### JSON Format
+
+```json
+{
+  "application": {
+    "default_profile": "production"
+  },
+  "terminal": {
+    "no_color": false,
+    "default_output": "human",
+    "pager": false
+  },
+  "profile default": {
+    "host": "localhost",
+    "port": 3000,
+    "use_tls": true,
+    "verify": false,
+    "username": "admin@pronghorn",
+    "password": "admin",
+    "timeout": 30
+  }
+}
+```
+
+### Usage Examples
+
+```bash
+# INI format (default - backward compatible)
+ipctl --config ~/.platform.d/config
+ipctl --config ~/.platform.d/config.ini
+
+# YAML format
+ipctl --config ~/.platform.d/config.yaml
+ipctl --config ~/.platform.d/config.yml
+
+# TOML format
+ipctl --config ~/.platform.d/config.toml
+
+# JSON format
+ipctl --config ~/.platform.d/config.json
+```
+
+**Note:** All formats support the same configuration options and use the same
+internal structure. Choose the format that best fits your workflow and
+preferences.
+
 ## Avoiding security risks
 
 The `ipctl` configuration file may contain sensitive configuration values used

@@ -31,22 +31,22 @@ ipctl --version
 
 ### 1. Configure a Profile
 
-Create a configuration file at `~/.platform.d/config`:
+Create a configuration file at `~/.platform.d/config.toml`:
 
-```ini
-[profile production]
-host = platform.example.com
+```toml
+["profile production"]
+host = "platform.example.com"
 port = 443
-scheme = https
-username = admin
-password = your-password
+scheme = "https"
+username = "admin"
+password = "your-password"
 
-[profile staging]
-host = staging.example.com
+["profile staging"]
+host = "staging.example.com"
 port = 443
-scheme = https
-client_id = your-client-id
-client_secret = your-client-secret
+scheme = "https"
+client_id = "your-client-id"
+client_secret = "your-client-secret"
 ```
 
 ### 2. List Resources
@@ -105,24 +105,26 @@ ipctl copy automation "Deploy Config" \
 
 ### Configuration File
 
-The configuration file is located at `~/.platform.d/config` and uses INI format:
+The configuration file supports multiple formats (INI, YAML, TOML, JSON). By default, `ipctl` looks for `~/.platform.d/config`. Here's a TOML example:
 
-```ini
-[profile default]
-host = localhost
+```toml
+["profile default"]
+host = "localhost"
 port = 3000
-scheme = http
-username = admin@itential.com
-password = admin
+scheme = "http"
+username = "admin@itential.com"
+password = "admin"
 
-[profile production]
-host = prod.example.com
+["profile production"]
+host = "prod.example.com"
 port = 443
-scheme = https
-client_id = your-client-id
-client_secret = your-client-secret
+scheme = "https"
+client_id = "your-client-id"
+client_secret = "your-client-secret"
 verify_ssl = true
 ```
+
+**Note:** You can use `.ini`, `.yaml`, `.yml`, `.toml`, or `.json` extensions. The format is automatically detected. See [Configuration Reference](docs/configuration-reference.md) for examples in all formats.
 
 ### Configuration Options
 
@@ -410,8 +412,8 @@ env | grep IPCTL
 # Disable SSL verification (not recommended for production)
 ipctl get projects --profile myprofile --verify-ssl=false
 
-# Or set in profile
-[profile myprofile]
+# Or set in profile config
+["profile myprofile"]
 verify_ssl = false
 ```
 
@@ -419,14 +421,14 @@ verify_ssl = false
 
 ```bash
 # List available profiles
-grep "^\[profile" ~/.platform.d/config
+grep "profile" ~/.platform.d/config
 
 # Use specific profile
 ipctl get projects --profile production
 
-# Set default profile
-[profile default]
-host = your-default-host.com
+# Set default profile in your config file
+["profile default"]
+host = "your-default-host.com"
 ```
 
 ## License
