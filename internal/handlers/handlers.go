@@ -38,29 +38,29 @@ type Runtime struct {
 }
 
 // GetClient returns the HTTP client for API communication.
-func (rt Runtime) GetClient() client.Client {
+func (rt *Runtime) GetClient() client.Client {
 	return rt.client
 }
 
 // GetConfig returns the application configuration provider.
 // This returns the Provider interface, allowing handlers to access configuration
 // without depending on the concrete Config type.
-func (rt Runtime) GetConfig() config.Provider {
+func (rt *Runtime) GetConfig() config.Provider {
 	return rt.config
 }
 
 // GetTerminalConfig returns the terminal configuration.
-func (rt Runtime) GetTerminalConfig() *terminal.Config {
+func (rt *Runtime) GetTerminalConfig() *terminal.Config {
 	return rt.terminalConfig
 }
 
 // GetDescriptors returns the command descriptors.
-func (rt Runtime) GetDescriptors() Descriptors {
+func (rt *Runtime) GetDescriptors() Descriptors {
 	return rt.descriptors
 }
 
 // IsVerbose returns whether verbose output is enabled.
-func (rt Runtime) IsVerbose() bool {
+func (rt *Runtime) IsVerbose() bool {
 	return rt.Verbose
 }
 
@@ -77,14 +77,22 @@ type Handler struct {
 //
 // The configuration is accepted as a Provider interface rather than *config.Config,
 // which enables dependency injection and makes testing easier.
-func NewRuntime(c client.Client, cfg config.Provider, termCfg *terminal.Config) *Runtime {
-	descriptors := loadDescriptors()
+//
+// Returns an error if descriptor loading fails, which can occur if:
+// - The embedded descriptor directory cannot be read
+// - A descriptor file is malformed or cannot be parsed
+func NewRuntime(c client.Client, cfg config.Provider, termCfg *terminal.Config) (*Runtime, error) {
+	descriptors, err := loadDescriptors()
+	if err != nil {
+		return nil, err
+	}
+
 	return &Runtime{
 		client:         c,
 		config:         cfg,
 		terminalConfig: termCfg,
 		descriptors:    descriptors,
-	}
+	}, nil
 }
 
 // NewHandler creates a new Handler with the given runtime.
