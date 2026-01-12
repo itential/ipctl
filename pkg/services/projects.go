@@ -435,7 +435,8 @@ func (svc *ProjectService) Export(id string) (*Project, error) {
 //   - backgroundColor: string - updates the background color
 //
 // To update only members, use a map with the "members" key:
-//   data := map[string]interface{}{"members": members}
+//
+//	data := map[string]interface{}{"members": members}
 //
 // The projectId parameter must be a valid MongoDB ObjectId string.
 // The data parameter should contain the fields to update.
