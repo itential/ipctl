@@ -7,10 +7,12 @@ before:
     - go mod tidy
 
 snapshot:
-  version_template: "{{ .Version }}"
+  version_template: "{{ incpatch .Version }}-next"
 
 builds:
   - id: default
+    main: ./cmd/ipctl
+    binary: ipctl
     ldflags:
       - -s -w
       - -X github.com/itential/ipctl/internal/app.Build={{ .Env.BUILD }}
@@ -24,7 +26,7 @@ builds:
     goarch:
       - amd64
       - arm64
-    binary: ipctl
+    mod_timestamp: "{{ .CommitTimestamp }}"
 
 archives:
   - id: default
@@ -41,6 +43,21 @@ archives:
       - README.md
       - LICENSE
       - NOTICE
+
+checksum:
+  name_template: "checksums.txt"
+
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - "^docs:"
+      - "^test:"
+      - "^chore:"
+      - "merge conflict"
+      - Merge pull request
+      - Merge remote-tracking branch
+      - Merge branch
 
 brews:
   - name: ipctl
