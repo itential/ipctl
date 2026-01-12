@@ -54,6 +54,11 @@
 //	    GetMessage() string
 //	}
 //
+//	type Paramer interface {
+//	    GetParams() []string
+//	    ParseParams() (map[string]string, error)
+//	}
+//
 // # Common Flag Types
 //
 // AssetCommon provides standard flags for asset operations:
@@ -155,6 +160,17 @@
 //	        // Handle replace logic
 //	    }
 //
+//	    // Parse custom query parameters
+//	    queryParams, err := common.ParseParams()
+//	    if err != nil {
+//	        return nil, fmt.Errorf("invalid params: %w", err)
+//	    }
+//
+//	    // Pass query params to service layer
+//	    req := &services.Request{
+//	        query: queryParams,
+//	    }
+//
 //	    for _, member := range options.Members {
 //	        // Process member definitions
 //	    }
@@ -196,6 +212,15 @@
 // Replace (--replace):
 //   - Replace existing resource during import
 //   - Default: false (fail if resource exists)
+//
+// Query Parameters (--params):
+//   - Pass custom query parameters to API requests
+//   - Format: key=value
+//   - Can be specified multiple times
+//   - URL encoded automatically
+//   - Example: --params limit=10 --params offset=20 --params filter=active
+//   - Values can contain spaces, special characters, and URLs
+//   - Available on all asset operations (get, import, export, etc.) and API commands
 //
 // # Flag Persistence
 //

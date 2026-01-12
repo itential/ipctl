@@ -50,8 +50,10 @@ func (h ApiHandler) Commands() []*cobra.Command {
 
 // Get adds the `api get <path> ...` command.
 func (h ApiHandler) Get() *cobra.Command {
-	cmd := h.newCommand("get", h.runner.Get, nil)
+	options := &flags.ApiGetOptions{}
+	cmd := h.newCommand("get", h.runner.Get, options)
 	cmd.Args = cobra.ExactArgs(1)
+	options.Flags(cmd)
 	return cmd
 }
 
