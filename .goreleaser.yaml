@@ -15,3 +15,44 @@ builds:
       - -s -w
       - -X github.com/itential/ipctl/internal/app.Build={{ .Env.BUILD }}
       - -X github.com/itential/ipctl/internal/app.Version={{ .Tag }}
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+      - darwin
+      - windows
+    goarch:
+      - amd64
+      - arm64
+    binary: ipctl
+
+archives:
+  - id: default
+    format: tar.gz
+    name_template: >-
+      {{ .ProjectName }}-
+      {{- .Os }}-
+      {{- if eq .Arch "amd64" }}x86_64
+      {{- else }}{{ .Arch }}{{ end }}
+    format_overrides:
+      - goos: windows
+        format: zip
+    files:
+      - README.md
+      - LICENSE
+      - NOTICE
+
+brews:
+  - name: ipctl
+    repository:
+      owner: itential
+      name: homebrew-tap
+      token: "{{ .Env.HOMEBREW_TAP_GITHUB_TOKEN }}"
+    folder: Formula
+    homepage: https://github.com/itential/ipctl
+    description: "A powerful command-line interface for managing Itential Platform servers"
+    license: Proprietary
+    install: |
+      bin.install "ipctl"
+    test: |
+      system "#{bin}/ipctl", "--version"

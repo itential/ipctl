@@ -14,12 +14,35 @@ A powerful command-line interface for managing Itential Platform servers. `ipctl
 
 ## Installation
 
+### Homebrew (macOS and Linux)
+
+The easiest way to install `ipctl` on macOS or Linux is via Homebrew:
+
+```bash
+# Add the Itential tap
+brew tap itential/tap
+
+# Install ipctl
+brew install ipctl
+
+# Verify installation
+ipctl --version
+```
+
+To upgrade to the latest version:
+
+```bash
+brew upgrade ipctl
+```
+
+### Manual Installation
+
 Download the latest release for your platform from the [releases page](https://github.com/itential/ipctl/releases):
 
 ```bash
 # Example for Linux x64
-curl -LO https://github.com/itential/ipctl/releases/latest/download/ipctl-linux-amd64.tar.gz
-tar -xzf ipctl-linux-amd64.tar.gz
+curl -LO https://github.com/itential/ipctl/releases/latest/download/ipctl-linux-x86_64.tar.gz
+tar -xzf ipctl-linux-x86_64.tar.gz
 sudo mv ipctl /usr/local/bin/
 chmod +x /usr/local/bin/ipctl
 
