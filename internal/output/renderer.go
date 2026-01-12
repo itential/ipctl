@@ -5,6 +5,7 @@
 package output
 
 import (
+	"context"
 	"fmt"
 	"strings"
 
@@ -120,7 +121,10 @@ func (r *Renderer) renderHuman(resp *runners.Response, formatter *HumanFormatter
 		// Tabular output - use tab writer
 		lines := strings.Split(formatted, "\n")
 		if formatter.UsePager() {
-			terminal.DisplayTabWriterStringWithPager(lines, 3, 3, true)
+			// Use background context for pager - ideally this would be passed from caller
+			if err := terminal.DisplayTabWriterStringWithPager(context.Background(), lines, 3, 3, true); err != nil {
+				return fmt.Errorf("failed to display with pager: %w", err)
+			}
 		} else {
 			terminal.DisplayTabWriterString(lines, 3, 3, true)
 		}

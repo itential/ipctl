@@ -120,7 +120,10 @@ func (r *LocalAAARunner) CreateAccount(in Request) (*Response, error) {
 	var options *flags.LocalAAAOptions
 	utils.LoadObject(in.Options, &options)
 
-	pw := terminal.Password()
+	pw, err := terminal.Password()
+	if err != nil {
+		return nil, err
+	}
 
 	user := localaaa.NewAccount(in.Args[0], pw)
 	user.Groups = options.Groups
