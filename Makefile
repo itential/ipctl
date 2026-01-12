@@ -37,7 +37,8 @@ BINARY := ipctl
 	install \
 	licenses \
 	snapshot \
-	test
+	test \
+	vulncheck
 
 .DEFAULT_GOAL := help
 
@@ -116,3 +117,8 @@ test:
 	@echo "Running tests..."
 	@go run ./scripts/copyrighter/main.go -check
 	@scripts/test.sh unittest
+
+## vulncheck: Check for known vulnerabilities in dependencies
+vulncheck:
+	@echo "Checking for vulnerabilities..."
+	@govulncheck ./...
