@@ -268,8 +268,8 @@ func TestDefaultEnvBindings(t *testing.T) {
 
 	// Verify environment variable names follow the IPCTL_* convention
 	testCases := []struct {
-		key     string
-		envVar  string
+		key    string
+		envVar string
 	}{
 		{"application.working_dir", "IPCTL_APPLICATION_WORKING_DIR"},
 		{"application.default_profile", "IPCTL_APPLICATION_DEFAULT_PROFILE"},

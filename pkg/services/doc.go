@@ -78,7 +78,7 @@
 //
 // Errors can be checked for specific conditions:
 //
-//	project, err := projectSvc.GetByName("my-project")
+//	project, err := projectSvc.Get("project-id")
 //	if err != nil {
 //	    if strings.Contains(err.Error(), "not found") {
 //	        // Handle not found case

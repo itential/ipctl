@@ -261,14 +261,14 @@ func (r *ProjectRunner) CopyFrom(profile, name string) (any, error) {
 	}
 	defer cancel()
 
-	svc := services.NewProjectService(client)
+	projectRes := resources.NewProjectResource(services.NewProjectService(client))
 
-	project, err := svc.GetByName(name)
+	project, err := projectRes.GetByName(name)
 	if err != nil {
 		return nil, err
 	}
 
-	res, err := svc.Export(project.Id)
+	res, err := projectRes.Export(project.Id)
 	if err != nil {
 		return nil, err
 	}
@@ -285,11 +285,11 @@ func (r *ProjectRunner) CopyTo(profile string, in any, replace bool) (any, error
 	}
 	defer cancel()
 
-	svc := services.NewProjectService(client)
+	projectRes := resources.NewProjectResource(services.NewProjectService(client))
 
 	name := in.(services.Project).Name
 
-	if exists, err := svc.GetByName(name); exists != nil {
+	if exists, err := projectRes.GetByName(name); exists != nil {
 		if !replace {
 			return nil, errors.New(fmt.Sprintf("project `%s` exists on the destination server, use --replace to overwrite", name))
 		} else if err != nil {
@@ -297,7 +297,6 @@ func (r *ProjectRunner) CopyTo(profile string, in any, replace bool) (any, error
 		}
 	}
 
-	projectRes := resources.NewProjectResource(svc)
 	return projectRes.Import(in.(services.Project))
 }
 

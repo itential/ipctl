@@ -21,10 +21,10 @@ import (
 // The Run function is invoked to generate the actual Cobra commands, which
 // are then organized using the descriptor from the YAML configuration files.
 type RootCommand struct {
-	Name       string                    // Name of the command (e.g., "get", "create")
-	Group      string                    // Group ID for organizing in help output
-	Run        func() []*cobra.Command   // Function to generate child commands
-	Descriptor string                    // Key for YAML descriptor lookup
+	Name       string                  // Name of the command (e.g., "get", "create")
+	Group      string                  // Group ID for organizing in help output
+	Run        func() []*cobra.Command // Function to generate child commands
+	Descriptor string                  // Key for YAML descriptor lookup
 }
 
 // addRootCommand adds a new top level command to the application. Root
