@@ -5,6 +5,7 @@
 package terminal
 
 import (
+	"context"
 	"fmt"
 	"io"
 	"os"
@@ -38,13 +39,30 @@ func truncateOutput(tabbedMsg string) string {
 	return maxColMsg
 }
 
-// DisplayTabWriterWithPager taks in a string for a table that already has tabs
-// and newlines set and printes a propertly spaced table with pagination
-func DisplayTabWriterWithPager(tabbedMsg string, maxlen, padding int, limitColLen bool) {
+// DisplayTabWriterWithPager takes in a string for a table that already has tabs
+// and newlines set and prints a properly spaced table with pagination.
+// It respects the $PAGER environment variable and falls back to direct output
+// if the pager is not available or encounters an error.
+func DisplayTabWriterWithPager(ctx context.Context, tabbedMsg string, maxlen, padding int, limitColLen bool) error {
 	logging.Trace()
 
-	cmd := exec.Command("less")
+	// Respect $PAGER environment variable
+	pagerCmd := os.Getenv("PAGER")
+	if pagerCmd == "" {
+		pagerCmd = "less"
+	}
+
+	// Check if pager exists
+	if _, err := exec.LookPath(pagerCmd); err != nil {
+		// Fallback to direct output if pager not available
+		logging.Warn("pager '%s' not found, using direct output", pagerCmd)
+		DisplayTabWriter(tabbedMsg, maxlen, padding, limitColLen)
+		return nil
+	}
+
+	cmd := exec.CommandContext(ctx, pagerCmd, "-R")
 	r, stdin := io.Pipe()
+	defer r.Close()
 
 	cmd.Stdin = r
 	cmd.Stdout = os.Stdout
@@ -56,15 +74,31 @@ func DisplayTabWriterWithPager(tabbedMsg string, maxlen, padding int, limitColLe
 		tabbedMsg = truncateOutput(tabbedMsg)
 	}
 
-	c := make(chan struct{})
-	go func() {
-		defer close(c)
-		cmd.Run()
-	}()
+	// Start the pager
+	if err := cmd.Start(); err != nil {
+		logging.Warn("failed to start pager: %v, using direct output", err)
+		DisplayTabWriter(tabbedMsg, maxlen, padding, limitColLen)
+		return nil
+	}
 
-	fmt.Fprintln(tw, tabbedMsg)
-	tw.Flush()
+	// Write data
+	if _, err := fmt.Fprintln(tw, tabbedMsg); err != nil {
+		stdin.Close()
+		return fmt.Errorf("failed to write to pager: %w", err)
+	}
+	if err := tw.Flush(); err != nil {
+		stdin.Close()
+		return fmt.Errorf("failed to flush table writer: %w", err)
+	}
 	stdin.Close()
 
-	<-c
+	// Wait for pager to exit
+	if err := cmd.Wait(); err != nil {
+		// Don't return error if user just quit the pager
+		if ctx.Err() == nil {
+			logging.Debug("pager exited: %v", err)
+		}
+	}
+
+	return nil
 }

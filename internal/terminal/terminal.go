@@ -6,10 +6,12 @@ package terminal
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"fmt"
 	"os"
 	"strings"
+	"sync"
 	"text/tabwriter"
 	"time"
 
@@ -19,12 +21,17 @@ import (
 )
 
 var (
+	displayMu       sync.Mutex
 	displayBuffer   bytes.Buffer
 	displayToStdout bool = true
 )
 
 // Display Write a message to stdout.
+// This function is safe for concurrent use.
 func Display(format string, args ...interface{}) {
+	displayMu.Lock()
+	defer displayMu.Unlock()
+
 	displayBuffer.Reset()
 	displayBuffer.WriteString(fmt.Sprintf(format, args...))
 	if displayToStdout {
@@ -64,8 +71,8 @@ func DisplayTabWriterString(msg []string, maxlen, padding int, limitColLen bool)
 	DisplayTabWriter(strings.Join(msg, "\n"), maxlen, padding, limitColLen)
 }
 
-func DisplayTabWriterStringWithPager(msg []string, maxlen, padding int, limitColLen bool) {
-	DisplayTabWriterWithPager(strings.Join(msg, "\n"), maxlen, padding, limitColLen)
+func DisplayTabWriterStringWithPager(ctx context.Context, msg []string, maxlen, padding int, limitColLen bool) error {
+	return DisplayTabWriterWithPager(ctx, strings.Join(msg, "\n"), maxlen, padding, limitColLen)
 }
 
 // Confirm Write a message to stdout and prompt for a confirmation of yes or no..
@@ -93,9 +100,9 @@ func FormatTimestamp(timestamp time.Time, timezone *time.Location) string {
 }
 
 // Password will prompt the user to enter a new password and mask the input so
-// it does not echo back to the terminal.   It will return what text is entered
-// by the user.
-func Password() string {
+// it does not echo back to the terminal. It will return what text is entered
+// by the user, or an error if the prompt fails.
+func Password() (string, error) {
 	logging.Trace()
 
 	prompt := promptui.Prompt{
@@ -110,10 +117,10 @@ func Password() string {
 
 	value, err := prompt.Run()
 	if err != nil {
-		logging.Fatal(err, "failed to get password")
+		return "", fmt.Errorf("failed to get password: %w", err)
 	}
 
-	return value
+	return value, nil
 }
 
 // DisplayJson accepts any interface object and will marshal the object to JSON
