@@ -114,7 +114,7 @@
 //	func (r *ProjectResource) Import(in services.Project) (*services.Project, error) {
 //	    // Transform data structure
 //	    transformed := r.transformImport(in)
-//	    return r.service.ImportTransformed(transformed)
+//	    return r.service.Import(transformed)
 //	}
 //
 // Multi-service orchestration:

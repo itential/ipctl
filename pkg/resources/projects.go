@@ -58,13 +58,16 @@ func (r *ProjectResource) Export(id string) (*services.Project, error) {
 // ImportTransformed imports a project using pre-transformed data.
 // This is a pass-through to the service layer for pure API access.
 func (r *ProjectResource) ImportTransformed(data map[string]interface{}) (*services.Project, error) {
-	return r.service.ImportTransformed(data)
+	return r.service.Import(data)
 }
 
 // UpdateMembers updates the members of a project via PATCH request.
 // This is a pass-through to the service layer for pure API access.
 func (r *ProjectResource) UpdateMembers(projectId string, members []services.ProjectMember) error {
-	return r.service.UpdateMembers(projectId, members)
+	data := map[string]interface{}{
+		"members": members,
+	}
+	return r.service.UpdateProject(projectId, data)
 }
 
 // GetByName retrieves a project by name using client-side filtering.
@@ -130,7 +133,7 @@ func (r *ProjectResource) Import(in services.Project) (*services.Project, error)
 		}
 	}
 
-	return r.service.ImportTransformed(data)
+	return r.service.Import(data)
 }
 
 // AddMembers adds new members to an existing project.
@@ -147,5 +150,8 @@ func (r *ProjectResource) AddMembers(projectId string, members []services.Projec
 	// Merge existing members with new members
 	allMembers := append(members, project.Members...)
 
-	return r.service.UpdateMembers(projectId, allMembers)
+	data := map[string]interface{}{
+		"members": allMembers,
+	}
+	return r.service.UpdateProject(projectId, data)
 }

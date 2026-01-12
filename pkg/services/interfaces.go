@@ -222,9 +222,9 @@ type ProjectServicer interface {
 	Get(id string) (*Project, error)
 	Create(name string) (*Project, error)
 	Delete(id string) error
-	ImportTransformed(data map[string]interface{}) (*Project, error)
+	Import(data map[string]interface{}) (*Project, error)
 	Export(id string) (*Project, error)
-	UpdateMembers(projectId string, members []ProjectMember) error
+	UpdateProject(projectId string, data map[string]interface{}) error
 }
 
 // RoleServicer defines operations for managing authorization roles.
