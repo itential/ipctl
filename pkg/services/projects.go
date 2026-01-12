@@ -19,6 +19,16 @@ const (
 
 	// projectsBasePath is the base URI path for all project-related API endpoints.
 	projectsBasePath = "/automation-studio/projects"
+
+	// Member type constants
+	MemberTypeAccount = "account"
+	MemberTypeGroup   = "group"
+
+	// Member role constants
+	MemberRoleOwner    = "owner"
+	MemberRoleEditor   = "editor"
+	MemberRoleOperator = "operator"
+	MemberRoleViewer   = "viewer"
 )
 
 // ProjectComponent represents a single component within an Itential project.
