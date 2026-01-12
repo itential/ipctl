@@ -154,7 +154,7 @@ Enables or disables the pager feature in the application.  The pager feature
 will pass the returned output through `less`, which must be available on your
 system, to paginate the output.
 
-The default value for `pager` is `true`.
+The default value for `pager` is `false`.
 
 #### timestamp_timezone
 

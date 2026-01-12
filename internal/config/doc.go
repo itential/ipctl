@@ -37,7 +37,7 @@
 //	[terminal]
 //	no_color = false
 //	default_output = human
-//	pager = true
+//	pager = false
 //
 //	[profile default]
 //	host = localhost

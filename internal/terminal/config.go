@@ -18,12 +18,12 @@ type Config struct {
 }
 
 // DefaultConfig returns a Config with sensible defaults.
-// Default output is human-readable with colors enabled and paging enabled.
+// Default output is human-readable with colors enabled and paging disabled.
 func DefaultConfig() Config {
 	return Config{
 		NoColor:       false,
 		DefaultOutput: "human",
-		Pager:         true,
+		Pager:         false,
 	}
 }
 
@@ -45,8 +45,8 @@ func LoadFromEnv() Config {
 		cfg.DefaultOutput = defaultOutput
 	}
 
-	if pager := os.Getenv("IPCTL_TERMINAL_PAGER"); pager == "false" {
-		cfg.Pager = false
+	if pager := os.Getenv("IPCTL_TERMINAL_PAGER"); pager == "true" {
+		cfg.Pager = true
 	}
 
 	return cfg

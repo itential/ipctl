@@ -15,7 +15,7 @@ func TestDefaultConfig(t *testing.T) {
 
 	assert.False(t, cfg.NoColor)
 	assert.Equal(t, "human", cfg.DefaultOutput)
-	assert.True(t, cfg.Pager)
+	assert.False(t, cfg.Pager)
 }
 
 func TestLoadFromEnv(t *testing.T) {
@@ -30,7 +30,7 @@ func TestLoadFromEnv(t *testing.T) {
 			expected: Config{
 				NoColor:       false,
 				DefaultOutput: "human",
-				Pager:         true,
+				Pager:         false,
 			},
 		},
 		{
@@ -41,7 +41,7 @@ func TestLoadFromEnv(t *testing.T) {
 			expected: Config{
 				NoColor:       true,
 				DefaultOutput: "human",
-				Pager:         true,
+				Pager:         false,
 			},
 		},
 		{
@@ -52,18 +52,18 @@ func TestLoadFromEnv(t *testing.T) {
 			expected: Config{
 				NoColor:       false,
 				DefaultOutput: "json",
-				Pager:         true,
+				Pager:         false,
 			},
 		},
 		{
-			name: "disable pager",
+			name: "enable pager",
 			env: map[string]string{
-				"IPCTL_TERMINAL_PAGER": "false",
+				"IPCTL_TERMINAL_PAGER": "true",
 			},
 			expected: Config{
 				NoColor:       false,
 				DefaultOutput: "human",
-				Pager:         false,
+				Pager:         true,
 			},
 		},
 		{
@@ -71,12 +71,12 @@ func TestLoadFromEnv(t *testing.T) {
 			env: map[string]string{
 				"IPCTL_TERMINAL_NO_COLOR":       "true",
 				"IPCTL_TERMINAL_DEFAULT_OUTPUT": "yaml",
-				"IPCTL_TERMINAL_PAGER":          "false",
+				"IPCTL_TERMINAL_PAGER":          "true",
 			},
 			expected: Config{
 				NoColor:       true,
 				DefaultOutput: "yaml",
-				Pager:         false,
+				Pager:         true,
 			},
 		},
 		{
@@ -87,18 +87,18 @@ func TestLoadFromEnv(t *testing.T) {
 			expected: Config{
 				NoColor:       false,
 				DefaultOutput: "human",
-				Pager:         true,
+				Pager:         false,
 			},
 		},
 		{
-			name: "pager set to true keeps enabled",
+			name: "pager set to false keeps disabled",
 			env: map[string]string{
-				"IPCTL_TERMINAL_PAGER": "true",
+				"IPCTL_TERMINAL_PAGER": "false",
 			},
 			expected: Config{
 				NoColor:       false,
 				DefaultOutput: "human",
-				Pager:         true,
+				Pager:         false,
 			},
 		},
 	}
