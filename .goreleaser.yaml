@@ -65,7 +65,7 @@ brews:
       owner: itential
       name: homebrew-tap
       token: "{{ .Env.HOMEBREW_TAP_GITHUB_TOKEN }}"
-    folder: Formula
+    directory: Formula
     homepage: https://github.com/itential/ipctl
     description: "A powerful command-line interface for managing Itential Platform servers"
     license: Proprietary
