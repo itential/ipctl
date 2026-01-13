@@ -41,7 +41,6 @@ archives:
         format: zip
     files:
       - README.md
-      - LICENSE
       - NOTICE
 
 checksum:
