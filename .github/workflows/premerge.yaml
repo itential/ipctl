@@ -4,8 +4,8 @@ name: premerge
 
 on:
   pull_request:
-    branchs:
-      - devel
+    branches:
+      - main
 
 jobs:
   license-check:
