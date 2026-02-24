@@ -111,7 +111,7 @@ ipctl import project ./my-project/ --profile production
 # Import from Git repository
 ipctl import project \
   --repository https://github.com/org/repo.git \
-  --branch develop \
+  --branch main \
   --profile staging
 ```
 
