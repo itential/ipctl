@@ -10,7 +10,7 @@ updates:
       day: "monday"
       time: "09:00"
     open-pull-requests-limit: 10
-    target-branch: "devel"
+    target-branch: "main"
     commit-message:
       prefix: "deps"
       prefix-development: "deps"
@@ -34,7 +34,7 @@ updates:
       day: "monday"
       time: "09:00"
     open-pull-requests-limit: 5
-    target-branch: "devel"
+    target-branch: "main"
     commit-message:
       prefix: "ci"
       include: "scope"
