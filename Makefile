@@ -102,7 +102,7 @@ install:
 ## licenses: Ensure license headers exist and generate NOTICE file
 licenses:
 	@echo "Checking license headers and generating NOTICE file..."
-	@go-licenses report . \
+	@go-licenses report ./... \
 		--template ./scripts/license-attributions/template.tpl \
 		--ignore github.com/itential > NOTICE
 	@go run ./scripts/copyrighter/main.go
