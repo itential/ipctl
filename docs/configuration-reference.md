@@ -177,8 +177,7 @@ configuration file based on the profile name.
 
 The profile name can be passed to any command using the `--profile <name>`
 command line argument.  A default profile can also be set in the configuration
-file.  See `default_profile` in the [Application Settings}(#Application
-Settings) section for a description.
+file.  See `default_profile` in the [Application Settings](#application-settings) section for a description.
 
 ## Configuration options
 
