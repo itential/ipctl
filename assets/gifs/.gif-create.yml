@@ -1,0 +1,57 @@
+# .gif-create.yml
+# Itential brand configuration for terminal GIF recordings
+# Colors sourced from Itential Brand Guidelines (January 2022)
+
+brand:
+  # Custom colors derived from Itential brand palette
+  colors:
+    background: "#101625"   # Navy (primary brand color)
+    foreground: "#FFFFFF"   # White (body text on dark backgrounds)
+    cursor: "#FFFFFF"       # White (matches foreground)
+    cursorAccent: "#101625" # Navy (text inside cursor block)
+    border: "#1B93D2"       # Bright Blue (primary accent)
+    selection: "#1B93D2"    # Bright Blue (selection highlight)
+    # ANSI colors mapped to Itential brand palette
+    black: "#101625"        # Navy
+    red: "#FF6633"          # Orange (secondary palette)
+    green: "#99CA3C"        # Green (secondary palette)
+    yellow: "#FFAC73"       # Light Orange (extended palette)
+    blue: "#1B93D2"         # Bright Blue (primary palette)
+    magenta: "#C5258F"      # Pink (secondary palette)
+    cyan: "#E5F2FE"         # Light Blue (secondary palette)
+    white: "#FFFFFF"        # White
+    brightBlack: "#414042"  # 90% Grey (text color)
+    brightRed: "#FF6633"    # Orange
+    brightGreen: "#99CA3C"  # Green
+    brightYellow: "#FFAC73" # Light Orange
+    brightBlue: "#1B93D2"   # Bright Blue
+    brightMagenta: "#C5258F" # Pink
+    brightCyan: "#E5F2FE"   # Light Blue
+    brightWhite: "#FFFFFF"  # White
+
+  # Typography
+  font_family: "MonoLisa, Menlo, monospace"
+  font_size: 14
+  line_height: 1.4
+  letter_spacing: 0
+  padding: 20
+
+  # Terminal chrome
+  border_radius: 8
+  margin: 4
+  margin_fill: "#0D1018"
+  window_bar: "Colorful"
+
+  # Prompt styling
+  prompt: "bold"
+  prompt_color: "#C5258F"  # Pink (secondary palette)
+
+# Default output settings
+defaults:
+  preset: "github-readme"
+  typing_speed: "50ms"
+
+# Directory conventions
+paths:
+  tapes: "assets/gifs/tapes"
+  output: "assets/gifs"
