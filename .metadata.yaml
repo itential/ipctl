@@ -1,0 +1,15 @@
+# .metadata.yaml
+name: ipctl
+type: cli-tool
+active: true
+status: community
+compatibility:
+  - platform
+description: CLI for managing Itential Platform
+tags:
+  - operations
+  - development
+maintainer:
+  - Peter Sprygada < @privateip
+repo: https://github.com/itential/ipctl
+docs: https://github.com/itential/ipctl/blob/main/README.md
