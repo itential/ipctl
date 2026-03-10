@@ -24,7 +24,7 @@ type JsonForm struct {
 	Schema           map[string]interface{} `json:"schema"`           // JSON schema defining form data structure
 	UISchema         map[string]interface{} `json:"uiSchema"`         // UI layout and presentation schema
 	BindingSchema    map[string]interface{} `json:"bindingSchema"`    // Data binding configuration
-	ValidationSchema map[string]interface{} `json:"validationSchema"` // Validation rules for form data
+	ValidationSchema interface{}            `json:"validationSchema"` // Validation rules for form data (can be object or array)
 	Created          string                 `json:"created"`          // Creation timestamp in ISO format
 	CreatedBy        string                 `json:"createdBy"`        // User ID who created the form
 	LastUpdated      string                 `json:"lastUpdated"`      // Last modification timestamp in ISO format
