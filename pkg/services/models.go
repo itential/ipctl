@@ -51,12 +51,12 @@ type ModelOperation struct {
 
 // ModelAction represents an action that can be performed on a model
 type ModelAction struct {
-	Id              string `json:"_id"`
-	Name            string `json:"name"`
-	PreWorkflowJst  string `json:"preWorkflowJst,omitempty"`
-	PostWorkflowJst string `json:"postWorkflowJst,omitempty"`
-	Workflow        string `json:"workflow,omitempty"`
-	Type            string `json:"type,omitempty"`
+	Id              string  `json:"_id"`
+	Name            string  `json:"name"`
+	PreWorkflowJst  *string `json:"preWorkflowJst"`
+	PostWorkflowJst *string `json:"postWorkflowJst"`
+	Workflow        *string `json:"workflow"`
+	Type            string  `json:"type"`
 }
 
 // Model represents a lifecycle manager resource model

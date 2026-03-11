@@ -354,20 +354,23 @@ func TestRunActionResponse_Structure(t *testing.T) {
 }
 
 func TestModelAction_Structure(t *testing.T) {
+	pre := "pre-workflow"
+	post := "post-workflow"
+	wf := "workflow-id"
 	action := ModelAction{
 		Id:              "action-id",
 		Name:            "action-name",
-		PreWorkflowJst:  "pre-workflow",
-		PostWorkflowJst: "post-workflow",
-		Workflow:        "workflow-id",
+		PreWorkflowJst:  &pre,
+		PostWorkflowJst: &post,
+		Workflow:        &wf,
 		Type:            "workflow",
 	}
 
 	assert.Equal(t, "action-id", action.Id)
 	assert.Equal(t, "action-name", action.Name)
-	assert.Equal(t, "pre-workflow", action.PreWorkflowJst)
-	assert.Equal(t, "post-workflow", action.PostWorkflowJst)
-	assert.Equal(t, "workflow-id", action.Workflow)
+	assert.Equal(t, "pre-workflow", *action.PreWorkflowJst)
+	assert.Equal(t, "post-workflow", *action.PostWorkflowJst)
+	assert.Equal(t, "workflow-id", *action.Workflow)
 	assert.Equal(t, "workflow", action.Type)
 }
 

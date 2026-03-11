@@ -453,8 +453,8 @@ func (r *ModelRunner) expandModel(in Request, model *services.Model, path string
 		mAction := mModel["actions"].([]interface{})[idx].(map[string]interface{})
 
 		// export the action workflow
-		if ele.Workflow != "" {
-			res, e = services.NewWorkflowService(r.client).Export(ele.Workflow)
+		if ele.Workflow != nil && *ele.Workflow != "" {
+			res, e = services.NewWorkflowService(r.client).Export(*ele.Workflow)
 			if e != nil {
 				return e
 			}
@@ -471,8 +471,8 @@ func (r *ModelRunner) expandModel(in Request, model *services.Model, path string
 		}
 
 		// export the preworkflow jst
-		if ele.PreWorkflowJst != "" {
-			res, e = services.NewTransformationService(r.client).Get(ele.PreWorkflowJst)
+		if ele.PreWorkflowJst != nil && *ele.PreWorkflowJst != "" {
+			res, e = services.NewTransformationService(r.client).Get(*ele.PreWorkflowJst)
 			if e != nil {
 				return e
 			}
@@ -488,8 +488,8 @@ func (r *ModelRunner) expandModel(in Request, model *services.Model, path string
 		}
 
 		// export the postworkflow jst
-		if ele.PostWorkflowJst != "" {
-			res, e = services.NewTransformationService(r.client).Get(ele.PostWorkflowJst)
+		if ele.PostWorkflowJst != nil && *ele.PostWorkflowJst != "" {
+			res, e = services.NewTransformationService(r.client).Get(*ele.PostWorkflowJst)
 			if e != nil {
 				return e
 			}

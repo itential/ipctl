@@ -107,23 +107,23 @@ func (r *ModelResource) DeleteWithOptions(model *services.Model, opts DeleteOpti
 func (r *ModelResource) deleteRelatedResources(model *services.Model) error {
 	for _, action := range model.Actions {
 		// Delete associated workflow
-		if action.Workflow != "" {
-			if err := r.deleteWorkflowIfExists(action.Workflow); err != nil {
-				return fmt.Errorf("deleting workflow %s: %w", action.Workflow, err)
+		if action.Workflow != nil && *action.Workflow != "" {
+			if err := r.deleteWorkflowIfExists(*action.Workflow); err != nil {
+				return fmt.Errorf("deleting workflow %s: %w", *action.Workflow, err)
 			}
 		}
 
 		// Delete pre-workflow transformation
-		if action.PreWorkflowJst != "" {
-			if err := r.deleteTransformationIfExists(action.PreWorkflowJst); err != nil {
-				logging.Warn("error deleting pre-workflow transformation %s: %v", action.PreWorkflowJst, err)
+		if action.PreWorkflowJst != nil && *action.PreWorkflowJst != "" {
+			if err := r.deleteTransformationIfExists(*action.PreWorkflowJst); err != nil {
+				logging.Warn("error deleting pre-workflow transformation %s: %v", *action.PreWorkflowJst, err)
 			}
 		}
 
 		// Delete post-workflow transformation
-		if action.PostWorkflowJst != "" {
-			if err := r.deleteTransformationIfExists(action.PostWorkflowJst); err != nil {
-				logging.Warn("error deleting post-workflow transformation %s: %v", action.PostWorkflowJst, err)
+		if action.PostWorkflowJst != nil && *action.PostWorkflowJst != "" {
+			if err := r.deleteTransformationIfExists(*action.PostWorkflowJst); err != nil {
+				logging.Warn("error deleting post-workflow transformation %s: %v", *action.PostWorkflowJst, err)
 			}
 		}
 	}
