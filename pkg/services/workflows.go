@@ -129,13 +129,17 @@ func NewWorkflow(name string) Workflow {
 func (svc *WorkflowService) GetAll() ([]Workflow, error) {
 	logging.Trace()
 
-	var res getWorkflowsResponse
 	var workflows []Workflow
 
 	var limit = 100
 	var skip = 0
 
 	for {
+		// Declare res inside the loop so each page decodes into a freshly
+		// allocated struct. Reusing a single res across pages lets
+		// encoding/json merge map fields and reuse slice backing arrays,
+		// bleeding fields from one page's elements into the next.
+		var res getWorkflowsResponse
 		if err := svc.GetRequest(&Request{
 			uri:    "/automation-studio/workflows",
 			params: &QueryParams{Limit: limit, Skip: skip},
@@ -143,9 +147,7 @@ func (svc *WorkflowService) GetAll() ([]Workflow, error) {
 			return nil, err
 		}
 
-		for _, ele := range res.Items {
-			workflows = append(workflows, ele)
-		}
+		workflows = append(workflows, res.Items...)
 
 		if len(workflows) == res.Total {
 			break
