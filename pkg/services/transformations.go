@@ -68,13 +68,17 @@ func (svc *TransformationService) GetAll() ([]Transformation, error) {
 		Total   int              `json:"total"`
 	}
 
-	var res Response
 	var transformations []Transformation
 
 	var limit = 100
 	var skip = 0
 
 	for {
+		// Declare res inside the loop so each page decodes into a freshly
+		// allocated struct. Reusing a single res across pages lets
+		// encoding/json merge map fields and reuse slice backing arrays,
+		// bleeding fields from one page's elements into the next.
+		var res Response
 		if err := svc.GetRequest(&Request{
 			uri:    "/transformations",
 			params: &QueryParams{Limit: limit, Skip: skip},
@@ -82,9 +86,7 @@ func (svc *TransformationService) GetAll() ([]Transformation, error) {
 			return nil, err
 		}
 
-		for _, ele := range res.Results {
-			transformations = append(transformations, ele)
-		}
+		transformations = append(transformations, res.Results...)
 
 		if len(transformations) == res.Total {
 			break
