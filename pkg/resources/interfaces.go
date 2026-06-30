@@ -6,6 +6,15 @@ package resources
 
 import "github.com/itential/ipctl/pkg/services"
 
+// AgentProjectResourcer defines operations for agent project business logic.
+type AgentProjectResourcer interface {
+	GetAll() ([]services.AgentProject, error)
+	Get(id string) (*services.AgentProject, error)
+	GetByName(name string) (*services.AgentProject, error)
+	Export(id string) (*services.AgentProjectBundle, error)
+	Import(bundle services.AgentProjectBundle) (*services.AgentProjectBundle, error)
+}
+
 // AccountResourcer defines operations for account business logic.
 // It provides methods for retrieving accounts with business logic applied.
 type AccountResourcer interface {
