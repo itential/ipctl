@@ -50,8 +50,6 @@ const (
 	configurationParsersDescriptor = "configuration_parsers"
 	gctreesDescriptor              = "gctrees"
 
-	agentProjectsDescriptor = "agent_projects"
-
 	serverDescriptor = "server"
 
 	localAAADescriptor    = "localaaa"
