@@ -30,13 +30,18 @@ make build
 
 ### Configure
 
-Create `~/.platform.d/config.ini` with a server profile:
+Create `~/.platform.d/config.ini` with a server profile, and set it as the
+default profile so it's used automatically without passing `--profile`:
 
 ```ini
-[profile default]
+[application]
+default_profile = local
+
+[profile local]
 host = platform.example.com
 port = 443
 use_tls = true
+verify = true
 username = admin
 password = your-password
 ```
