@@ -30,15 +30,20 @@ make build
 
 ### Configure
 
-Create `~/.platform.d/config.toml` with a server profile:
+Create `~/.platform.d/config.ini` with a server profile, and set it as the
+default profile so it's used automatically without passing `--profile`:
 
-```toml
-["profile default"]
-host = "platform.example.com"
+```ini
+[application]
+default_profile = local
+
+[profile local]
+host = platform.example.com
 port = 443
 use_tls = true
-username = "admin"
-password = "your-password"
+verify = true
+username = admin
+password = your-password
 ```
 
 ### Use
