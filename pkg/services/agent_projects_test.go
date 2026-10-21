@@ -5,7 +5,9 @@
 package services
 
 import (
+	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
 	"path/filepath"
 	"testing"
@@ -223,6 +225,54 @@ func TestAgentProjectService_Import_Error(t *testing.T) {
 
 	assert.NotNil(t, err)
 	assert.Nil(t, res)
+}
+
+func TestAgentProjectService_Import_ProviderResolutions(t *testing.T) {
+	svc := setupAgentProjectService()
+	defer testlib.Teardown()
+
+	var got map[string]interface{}
+
+	testlib.AddHandlerToMux("/agent-project-service/project-bundles/import", func(w http.ResponseWriter, r *http.Request) {
+		b, _ := io.ReadAll(r.Body)
+		_ = json.Unmarshal(b, &got)
+		w.Header().Set("Content-Type", "application/json")
+		_, _ = w.Write([]byte(`{"message":"ok","data":{"_id":"new-id","name":"p"}}`))
+	})
+
+	bundle := AgentProjectBundle{
+		Name: "p",
+		Agents: []map[string]interface{}{
+			{
+				"_id":      "agent-with-provider",
+				"provider": map[string]interface{}{"profileName": "anthropic", "modelName": "claude-sonnet-4-6"},
+			},
+			{
+				"_id":      "agent-model-only",
+				"provider": map[string]interface{}{"modelName": "claude-sonnet-4-6"},
+			},
+			{"_id": "agent-no-provider"},
+			{
+				"uuid":     "agent-uuid-key",
+				"provider": map[string]interface{}{"profileName": "openai", "modelName": "gpt-5"},
+			},
+		},
+	}
+
+	_, err := svc.Import(bundle, "keep-both")
+	assert.Nil(t, err)
+
+	resolutions, ok := got["providerResolutions"].(map[string]interface{})
+	assert.True(t, ok)
+	assert.Len(t, resolutions, 4)
+
+	assert.Equal(t, map[string]interface{}{"profileName": "anthropic", "modelName": "claude-sonnet-4-6"}, resolutions["agent-with-provider"])
+	assert.Equal(t, map[string]interface{}{"profileName": "openai", "modelName": "gpt-5"}, resolutions["agent-uuid-key"])
+
+	assert.Contains(t, resolutions, "agent-model-only")
+	assert.Nil(t, resolutions["agent-model-only"])
+	assert.Contains(t, resolutions, "agent-no-provider")
+	assert.Nil(t, resolutions["agent-no-provider"])
 }
 
 func TestAgentProjectService_Create(t *testing.T) {
