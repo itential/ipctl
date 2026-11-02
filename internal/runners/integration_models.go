@@ -8,6 +8,7 @@ import (
 	"fmt"
 
 	"github.com/itential/ipctl/internal/config"
+	"github.com/itential/ipctl/internal/flags"
 	"github.com/itential/ipctl/internal/logging"
 	"github.com/itential/ipctl/pkg/client"
 	"github.com/itential/ipctl/pkg/services"
@@ -133,10 +134,25 @@ func (r *IntegrationModelRunner) Clear(in Request) (*Response, error) {
 func (r *IntegrationModelRunner) Import(in Request) (*Response, error) {
 	logging.Trace()
 
+	common := in.Common.(*flags.AssetImportCommon)
+
 	var schema map[string]interface{}
 
 	if err := importUnmarshalFromRequest(in, &schema); err != nil {
 		return nil, err
+	}
+
+	if common.Replace {
+		info, _ := schema["info"].(map[string]interface{})
+		title, _ := info["title"].(string)
+		version, _ := info["version"].(string)
+		versionId := fmt.Sprintf("%s:%s", title, version)
+
+		if existing, err := r.service.Get(versionId); err == nil && existing != nil {
+			if err := r.service.Delete(versionId); err != nil {
+				return nil, err
+			}
+		}
 	}
 
 	res, err := r.service.Create(schema)
