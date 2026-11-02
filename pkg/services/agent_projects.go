@@ -242,7 +242,9 @@ func (svc *AgentProjectService) Delete(id string) error {
 
 // Import imports an agent project bundle into the platform.
 // conflictMode controls how a collision with an existing project is handled ("keep-both" or "replace").
-// providerResolutions is sent as a map of agent UUID to nil, since no provider profiles are resolved by ipctl.
+// providerResolutions maps each agent UUID to the profileName and modelName from that agent's own
+// provider in the bundle, so the destination is expected to have a profile with the same name.
+// Agents without a complete provider are sent as nil and the server chooses.
 func (svc *AgentProjectService) Import(bundle AgentProjectBundle, conflictMode string) (*AgentProjectBundle, error) {
 	logging.Trace()
 
@@ -264,7 +266,7 @@ func (svc *AgentProjectService) Import(bundle AgentProjectBundle, conflictMode s
 			continue
 		}
 
-		providerResolutions[uuid] = nil
+		providerResolutions[uuid] = agentProviderResolution(agent)
 	}
 
 	body := map[string]interface{}{
@@ -286,6 +288,27 @@ func (svc *AgentProjectService) Import(bundle AgentProjectBundle, conflictMode s
 	}
 
 	return &res.Data, nil
+}
+
+// agentProviderResolution returns the providerResolutions entry for an agent, built from the
+// agent's own provider. It returns nil when the provider or either of its names is missing.
+func agentProviderResolution(agent map[string]interface{}) interface{} {
+	provider, ok := agent["provider"].(map[string]interface{})
+	if !ok {
+		return nil
+	}
+
+	profileName, _ := provider["profileName"].(string)
+	modelName, _ := provider["modelName"].(string)
+
+	if profileName == "" || modelName == "" {
+		return nil
+	}
+
+	return map[string]interface{}{
+		"profileName": profileName,
+		"modelName":   modelName,
+	}
 }
 
 // Create creates a new agent project with the specified name and description.
